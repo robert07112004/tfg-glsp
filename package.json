@@ -1,0 +1,54 @@
+{
+  "name": "parent",
+  "version": "2.5.0",
+  "private": true,
+  "homepage": "https://www.eclipse.org/glsp/",
+  "bugs": "https://github.com/eclipse-glsp/glsp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse-glsp/glsp-examples.git"
+  },
+  "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT)",
+  "author": {
+    "name": "Eclipse GLSP"
+  },
+  "contributors": [
+    {
+      "name": "Eclipse GLSP Project",
+      "email": "glsp-dev@eclipse.org",
+      "url": "https://projects.eclipse.org/projects/ecd.glsp"
+    }
+  ],
+  "workspaces": [
+    "tasklist-glsp-server",
+    "tasklist-glsp-client",
+    "tasklist-vscode/webview",
+    "tasklist-vscode/extension"
+  ],
+  "scripts": {
+    "all": "yarn clean && yarn install && yarn lint",
+    "build": "yarn compile && yarn bundle",
+    "bundle": "yarn server bundle && yarn webview bundle && yarn extension bundle",
+    "clean": "lerna run clean",
+    "compile": "tsc -b",
+    "extension": "yarn --cwd tasklist-vscode/extension",
+    "lint": "eslint --ext .ts,.tsx .",
+    "lint:ci": "yarn lint --output-file eslint_report.json --format json",
+    "package": "yarn extension package",
+    "prepare": "yarn build",
+    "server": "yarn --cwd tasklist-glsp-server",
+    "watch": "concurrently --kill-others -n tsc,ext,server -c red,yellow,green \"tsc -b -w --preserveWatchOutput\" \"yarn -s extension watch:bundle\" \"yarn -s server watch:bundle\"",
+    "webview": "yarn --cwd tasklist-vscode/webview"
+  },
+  "devDependencies": {
+    "@eclipse-glsp/config": "2.5.0",
+    "@types/node": "20.x",
+    "concurrently": "^8.2.2",
+    "lerna": "^8.1.7",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=20",
+    "yarn": ">=1.7.0 <2"
+  }
+}
