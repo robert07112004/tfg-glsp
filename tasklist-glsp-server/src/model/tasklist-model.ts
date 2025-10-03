@@ -25,11 +25,16 @@ export interface TaskList {
     id: string;
     tasks: Task[];
     transitions: Transition[];
+    milestones?: Milestone[];
 }
 
 export namespace TaskList {
     export function is(object: any): object is TaskList {
-        return AnyObject.is(object) && hasStringProp(object, 'id') && hasArrayProp(object, 'tasks');
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasArrayProp(object, 'tasks')
+        );
     }
 }
 
@@ -42,7 +47,30 @@ export interface Task {
 
 export namespace Task {
     export function is(object: any): object is Task {
-        return AnyObject.is(object) && hasStringProp(object, 'id') && hasStringProp(object, 'name') && hasObjectProp(object, 'position');
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'name') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface Milestone {
+    id: string;
+    name: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace Milestone {
+    export function is(object: any): object is Milestone {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'title') &&
+            hasObjectProp(object, 'position')
+        );
     }
 }
 

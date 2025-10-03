@@ -28,3 +28,8 @@ svg {
 .tasklist-node > .sprotty-node {
     fill: #f1bd6c;
 }
+
+.milestone-node {
+    fill: #6cc3f1;
+    stroke: #1a6fa5;
+}

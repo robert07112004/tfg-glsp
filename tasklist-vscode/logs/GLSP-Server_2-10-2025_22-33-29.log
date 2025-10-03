@@ -1,0 +1,3 @@
+22:33:29 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 60720 
+22:33:29 info -  [SocketServerLauncher] Starting GLSP server connection 
+22:33:29 info -  [DefaultGLSPServer] Initializing server with: applicationId: 4f4164bf-4ef3-43ee-939f-584ba87ff14e, protocolVersion: 1.0.0 

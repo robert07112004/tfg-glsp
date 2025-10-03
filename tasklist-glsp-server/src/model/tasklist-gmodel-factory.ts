@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Task, Transition } from './tasklist-model';
+import { Milestone, Task, Transition } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -27,7 +27,10 @@ export class TaskListGModelFactory implements GModelFactory {
     createModel(): void {
         const taskList = this.modelState.sourceModel;
         this.modelState.index.indexTaskList(taskList);
-        const childNodes = taskList.tasks.map(task => this.createTaskNode(task));
+        const childNodes = [
+            ...taskList.tasks.map(task => this.createTaskNode(task)),
+            ...(taskList.milestones ?? []).map(milestone => this.createMilestoneNode(milestone))
+        ];
         const childEdges = taskList.transitions.map(transition => this.createTransitionEdge(transition));
         const newRoot = GGraph.builder() //
             .id(taskList.id)
@@ -48,6 +51,22 @@ export class TaskListGModelFactory implements GModelFactory {
 
         if (task.size) {
             builder.addLayoutOptions({ prefWidth: task.size.width, prefHeight: task.size.height });
+        }
+
+        return builder.build();
+    }
+
+    protected createMilestoneNode(milestone: Milestone): GNode {
+        const builder = GNode.builder()
+            .id(milestone.id)
+            .addCssClass('milestone-node')
+            .add(GLabel.builder().text(milestone.name).id(`${milestone.id}_label`).build())
+            .layout('hbox')
+            .addLayoutOption('paddingLeft', 5)
+            .position(milestone.position);
+        
+        if (milestone.size) {
+            builder.addLayoutOptions({ prefWidth: milestone.size.width, prefHeight: milestone.size.height });
         }
 
         return builder.build();

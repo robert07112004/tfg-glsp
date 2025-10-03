@@ -23,8 +23,10 @@ import {
     editLabelFeature,
     GLabel,
     GLabelView,
+    GNode,
     initializeDiagramContainer,
     LogLevel,
+    RectangularNodeView,
     TYPES
 } from '@eclipse-glsp/client';
 import 'balloon-css/balloon.min.css';
@@ -37,6 +39,9 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     const context = { bind, unbind, isBound, rebind };
     configureDefaultModelElements(context);
     configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'milestone-node', GNode, RectangularNodeView, {
+        enable: [editLabelFeature]
+    });
 });
 
 export function initializeTasklistDiagramContainer(container: Container, ...containerConfiguration: ContainerConfiguration): Container {
