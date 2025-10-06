@@ -29,6 +29,19 @@ export class CreateTransitionHandler extends JsonCreateEdgeOperationHandler {
 
     override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
+            const sourceNode = this.modelState.index.get(operation.sourceElementId);
+            const targetNode = this.modelState.index.get(operation.targetElementId);
+
+            const sourceType = sourceNode?.type;
+            const targetType = targetNode?.type;
+
+            if (
+                (sourceType === 'node:entity' && targetType === 'node:entity') ||
+                (sourceType === 'node:relation' && targetType === 'node:relation')
+            ) {
+                return undefined;
+            }
+
             const transition: Transition = {
                 id: uuid.v4(),
                 sourceTaskId: operation.sourceElementId,
@@ -37,6 +50,7 @@ export class CreateTransitionHandler extends JsonCreateEdgeOperationHandler {
             this.modelState.sourceModel.transitions.push(transition);
         });
     }
+
 
     get label(): string {
         return 'Transition';
