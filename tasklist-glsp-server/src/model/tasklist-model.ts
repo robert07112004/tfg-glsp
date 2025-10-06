@@ -25,7 +25,7 @@ export interface TaskList {
     id: string;
     tasks: Task[];
     transitions: Transition[];
-    milestones?: Milestone[];
+    relations?: Relation[];
 }
 
 export namespace TaskList {
@@ -56,19 +56,19 @@ export namespace Task {
     }
 }
 
-export interface Milestone {
+export interface Relation {
     id: string;
     name: string;
     position: { x: number; y: number };
     size?: { width: number; height: number };
 }
 
-export namespace Milestone {
-    export function is(object: any): object is Milestone {
+export namespace Relation {
+    export function is(object: any): object is Relation {
         return (
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
-            hasStringProp(object, 'title') &&
+            hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );
     }

@@ -8,12 +8,12 @@ import {
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import * as uuid from 'uuid';
-import { Milestone } from '../model/tasklist-model';
+import { Relation } from '../model/tasklist-model';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
-export class CreateMilestonesHandler extends JsonCreateNodeOperationHandler {
-    readonly elementTypeIds = ['milestone-node'];
+export class CreateRelationHandler extends JsonCreateNodeOperationHandler {
+    readonly elementTypeIds = ['node:relation'];
 
     @inject(TaskListModelState)
     protected override modelState: TaskListModelState;
@@ -21,24 +21,24 @@ export class CreateMilestonesHandler extends JsonCreateNodeOperationHandler {
     override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
             const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const milestone: Milestone = this.createMilestone(relativeLocation);
+            const relation = this.createRelation(relativeLocation);
             const taskList = this.modelState.sourceModel;
-            if (!taskList.milestones) taskList.milestones = [];
-            taskList.milestones.push(milestone);
+            if (!taskList.relations) taskList.relations = [];
+            taskList.relations.push(relation);
         });
     }
 
-    protected createMilestone(position: Point): Milestone {
+    protected createRelation(position: Point): Relation {
         const nodeCounter = this.modelState.index.getAllByClass(GNode).length;
         return {
             id: uuid.v4(),
-            name: `NewMilestoneNode${nodeCounter}`,
+            name: `NewRelationNode${nodeCounter}`,
             position
         };
     }
 
     get label(): string {
-        return 'Milestone';
+        return 'Relation';
     }
     
 }

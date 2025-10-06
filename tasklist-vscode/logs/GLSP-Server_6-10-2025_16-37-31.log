@@ -1,0 +1,48 @@
+16:37:31 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 59735 
+16:37:32 info -  [SocketServerLauncher] Starting GLSP server connection 
+16:37:32 info -  [DefaultGLSPServer] Initializing server with: applicationId: 570e25b0-0f1c-4acc-b540-d41c74055186, protocolVersion: 1.0.0 
+16:37:36 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+16:37:36 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+16:37:36 error -  [DefaultGLSPServer] Could not process action: 'requestModel 
+16:37:36 error -  [DefaultGLSPServer] Error: Could not load model from file: file:///c:/Users/roby0/Desktop/URJC/TFG/tfg-glsp/workspace/example.tasklist 
+16:37:36 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+16:37:43 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_1', diagramType: 'tasklist-diagram' 
+16:37:43 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_1] 
+16:37:43 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_1] 
+16:37:43 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+16:37:43 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_1] 
+16:37:45 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_2', diagramType: 'tasklist-diagram' 
+16:37:45 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_2] 
+16:37:45 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_2] 
+16:37:45 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_2] 
+16:37:45 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_2] 
+16:37:49 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_3', diagramType: 'tasklist-diagram' 
+16:37:49 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_3] 
+16:37:49 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_3] 
+16:37:50 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_3] 
+16:37:50 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_3] 
+16:37:53 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_3] 
+16:38:28 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_3] 
+16:38:30 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_4', diagramType: 'tasklist-diagram' 
+16:38:30 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_4] 
+16:38:30 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_4] 
+16:38:30 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_4] 
+16:38:30 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_4] 
+16:38:32 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_4] 
+16:38:32 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_4] 
+16:38:33 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_4] 
+16:38:44 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_4] 
+16:38:45 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_5', diagramType: 'tasklist-diagram' 
+16:38:45 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_5] 
+16:38:45 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_5] 
+16:38:45 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_5] 
+16:38:45 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_5] 
+16:38:47 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_5] 
+16:38:47 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_5] 
+16:38:48 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_5] 
+16:38:48 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_5] 
+16:38:49 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_5] 
+16:38:49 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_5] 
+16:38:51 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_5] 
+16:38:51 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_5] 
+16:38:52 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_5] 

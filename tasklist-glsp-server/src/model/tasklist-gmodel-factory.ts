@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Milestone, Task, Transition } from './tasklist-model';
+import { Relation, Task, Transition } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -27,12 +27,15 @@ export class TaskListGModelFactory implements GModelFactory {
     createModel(): void {
         const taskList = this.modelState.sourceModel;
         this.modelState.index.indexTaskList(taskList);
+        
         const childNodes = [
             ...taskList.tasks.map(task => this.createTaskNode(task)),
-            ...(taskList.milestones ?? []).map(milestone => this.createMilestoneNode(milestone))
+            ...(taskList.relations ?? []).map(relation => this.createRelationNode(relation))
         ];
+        
         const childEdges = taskList.transitions.map(transition => this.createTransitionEdge(transition));
-        const newRoot = GGraph.builder() //
+        
+        const newRoot = GGraph.builder()
             .id(taskList.id)
             .addChildren(childNodes)
             .addChildren(childEdges)
@@ -45,8 +48,9 @@ export class TaskListGModelFactory implements GModelFactory {
             .id(task.id)
             .addCssClass('tasklist-node')
             .add(GLabel.builder().text(task.name).id(`${task.id}_label`).build())
-            .layout('hbox')
-            .addLayoutOption('paddingLeft', 5)
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
             .position(task.position);
 
         if (task.size) {
@@ -56,24 +60,30 @@ export class TaskListGModelFactory implements GModelFactory {
         return builder.build();
     }
 
-    protected createMilestoneNode(milestone: Milestone): GNode {
+    protected createRelationNode(relation: Relation): GNode {
         const builder = GNode.builder()
-            .id(milestone.id)
-            .addCssClass('milestone-node')
-            .add(GLabel.builder().text(milestone.name).id(`${milestone.id}_label`).build())
+            .id(relation.id)
+            .type('node:relation')
+            .addCssClass('relation-node')
             .layout('hbox')
-            .addLayoutOption('paddingLeft', 5)
-            .position(milestone.position);
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'center')
+            .add(GLabel.builder().text(relation.name).id(`${relation.id}_label`).build())
+            .position(relation.position);
         
-        if (milestone.size) {
-            builder.addLayoutOptions({ prefWidth: milestone.size.width, prefHeight: milestone.size.height });
-        }
+        const width = relation.size?.width ?? 120;
+        const height = relation.size?.height ?? 80;
+
+        builder.addLayoutOptions({
+            prefWidth: width,
+            prefHeight: height,
+        });
 
         return builder.build();
     }
 
     protected createTransitionEdge(transition: Transition): GEdge {
-        return GEdge.builder() //
+        return GEdge.builder()
             .id(transition.id)
             .addCssClass('tasklist-transition')
             .sourceId(transition.sourceTaskId)

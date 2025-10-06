@@ -1,0 +1,40 @@
+16:27:14 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 51923 
+16:27:14 info -  [SocketServerLauncher] Starting GLSP server connection 
+16:27:14 info -  [DefaultGLSPServer] Initializing server with: applicationId: e5e549a4-5344-4bd2-a9e7-480418076123, protocolVersion: 1.0.0 
+16:27:18 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+16:27:18 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+16:27:18 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+16:27:19 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:27:19 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+16:27:23 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+16:27:23 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:27:24 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+16:27:24 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:27:27 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_0] 
+16:27:27 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+16:27:30 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+16:27:30 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:28:24 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_1', diagramType: 'tasklist-diagram' 
+16:28:24 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_1] 
+16:28:24 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_1] 
+16:28:25 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+16:28:25 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_1] 
+16:28:27 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_1] 
+16:28:27 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+16:28:30 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_1] 
+16:28:30 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+16:28:32 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_1] 
+16:28:32 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+16:28:33 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_1] 
+16:28:33 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+16:28:34 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_1] 
+16:28:34 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+16:28:34 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_1] 
+16:28:34 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+16:28:39 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_1] 
+16:28:41 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+16:28:41 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:28:44 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+16:28:44 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_0] 
+16:28:44 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+16:28:44 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 

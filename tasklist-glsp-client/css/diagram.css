@@ -29,7 +29,23 @@ svg {
     fill: #f1bd6c;
 }
 
-.milestone-node {
-    fill: #6cc3f1;
-    stroke: #1a6fa5;
+.relation-node > .sprotty-node,
+.relation-node.sprotty-node {
+    fill: #1E90FF;
+    stroke: #0b5fae;
+    stroke-width: 1.5px;
+}
+
+polygon.relation-node,
+polygon.relation-node.sprotty-node {
+    fill: #1E90FF;
+    stroke: #0b5fae;
+    stroke-width: 1.5px;
+}
+
+.relation-node.selected > .sprotty-node,
+.relation-node.sprotty-node.selected,
+polygon.relation-node.selected {
+    stroke: #003f7f;
+    stroke-width: 2px;
 }

@@ -16,18 +16,18 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Milestone, Task, TaskList, Transition } from './tasklist-model';
+import { Relation, Task, TaskList, Transition } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
-    protected idToTaskListElements = new Map<string, Task | Transition | Milestone>();
+    protected idToTaskListElements = new Map<string, Task | Transition | Relation>();
 
     indexTaskList(taskList: TaskList): void {
         this.idToTaskListElements.clear();
         for (const element of [
             ...taskList.tasks, 
             ...taskList.transitions,
-            ...(taskList.milestones ?? [])
+            ...(taskList.relations ?? [])
         ]) {
             this.idToTaskListElements.set(element.id, element);
         }
@@ -43,12 +43,12 @@ export class TaskListModelIndex extends GModelIndex {
         return Transition.is(element) ? element : undefined;
     }
 
-    findMilestone(id: string): Milestone | undefined {
+    findRelation(id: string): Relation | undefined {
         const element = this.findTaskOrTransition(id);
-        return Milestone.is(element) ? element : undefined;
+        return Relation.is(element) ? element : undefined;
     }
 
-    findTaskOrTransition(id: string): Task | Transition | Milestone | undefined {
+    findTaskOrTransition(id: string): Task | Transition | Relation | undefined {
         return this.idToTaskListElements.get(id);
     }
 }
