@@ -3,7 +3,7 @@
   "tasks": [
     {
       "id": "6b068132-c0a9-4a9e-ac60-7cadce23079a",
-      "name": "First Task",
+      "name": "First Entity",
       "position": {
         "x": 215.26822788729396,
         "y": 78
@@ -15,7 +15,7 @@
     },
     {
       "id": "ad877ad8-b849-4dc4-b4ca-a5f55413864c",
-      "name": "Second Task",
+      "name": "Second Entity",
       "position": {
         "x": 119,
         "y": 152
@@ -27,7 +27,7 @@
     },
     {
       "id": "3564ed38-4b63-485d-a7f0-75461a5ef50f",
-      "name": "Third Task",
+      "name": "Third Entity",
       "position": {
         "x": 278,
         "y": 152
@@ -39,7 +39,7 @@
     },
     {
       "id": "51788706-0e25-49a7-86e9-ed93389ffd45",
-      "name": "Fourth Task",
+      "name": "Fourth Entity",
       "position": {
         "x": 575.2262814761611,
         "y": 339.8715377713934
