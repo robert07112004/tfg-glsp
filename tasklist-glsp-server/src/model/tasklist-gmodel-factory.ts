@@ -46,6 +46,7 @@ export class TaskListGModelFactory implements GModelFactory {
     protected createTaskNode(task: Task): GNode {
         const builder = GNode.builder()
             .id(task.id)
+            .type('node:entity')
             .addCssClass('tasklist-node')
             .add(GLabel.builder().text(task.name).id(`${task.id}_label`).build())
             .layout('vbox')
