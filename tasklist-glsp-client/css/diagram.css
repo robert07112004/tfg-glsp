@@ -49,3 +49,13 @@ polygon.relation-node.selected {
     stroke: #003f7f;
     stroke-width: 2px;
 }
+
+.weighted-edge {
+    stroke: #ff8800;
+    stroke-width: 2px;
+}
+
+.weighted-edge-label {
+    font-size: 12px;
+    fill: #333;
+}

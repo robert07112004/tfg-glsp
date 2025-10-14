@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Relation, Task, Transition } from './tasklist-model';
+import { Relation, Task, Transition, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -30,11 +30,14 @@ export class TaskListGModelFactory implements GModelFactory {
         
         const childNodes = [
             ...taskList.tasks.map(task => this.createTaskNode(task)),
-            ...(taskList.relations ?? []).map(relation => this.createRelationNode(relation))
+            ...taskList.relations.map(relation => this.createRelationNode(relation))
         ];
         
-        const childEdges = taskList.transitions.map(transition => this.createTransitionEdge(transition));
-        
+        const childEdges = [
+            ...taskList.transitions.map(transition => this.createTransitionEdge(transition)),
+            ...taskList.weightedEdges.map(weightedEdge => this.createWeightedEdge(weightedEdge))
+        ]
+
         const newRoot = GGraph.builder()
             .id(taskList.id)
             .addChildren(childNodes)
@@ -91,4 +94,21 @@ export class TaskListGModelFactory implements GModelFactory {
             .targetId(transition.targetTaskId)
             .build();
     }
+
+    protected createWeightedEdge(weightedEdge: WeightedEdge): GEdge {
+        return GEdge.builder()
+            .id(weightedEdge.id)
+            .addCssClass('weighted-edge')
+            .sourceId(weightedEdge.sourceId)
+            .targetId(weightedEdge.targetId)
+            .add(
+                GLabel.builder()
+                    .id(`${weightedEdge.id}_label`)
+                    .type('label:weighted')
+                    .text(weightedEdge.description ?? '')
+                    .build()
+            )
+            .build();
+    }
+
 }

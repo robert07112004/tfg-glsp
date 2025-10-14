@@ -32,6 +32,7 @@ import { injectable } from 'inversify';
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
 import { CreateTransitionHandler } from '../handler/create-transition-handler';
+import { CreateWeightedEdgeHandler } from '../handler/create-weighted-edge-handler';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
 import { TaskListApplyLabelEditHandler } from '../handler/tasklist-apply-label-edit-handler';
 import { TaskListChangeBoundsHandler } from '../handler/tasklist-change-bounds-handler';
@@ -72,6 +73,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateTaskHandler);
         binding.add(CreateRelationHandler);
         binding.add(CreateTransitionHandler);
+        binding.add(CreateWeightedEdgeHandler);
         binding.add(TaskListChangeBoundsHandler);
         binding.add(TaskListApplyLabelEditHandler);
         binding.add(DeleteElementHandler);

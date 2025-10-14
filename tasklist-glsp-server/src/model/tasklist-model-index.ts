@@ -16,18 +16,19 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Relation, Task, TaskList, Transition } from './tasklist-model';
+import { Relation, Task, TaskList, Transition, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
-    protected idToTaskListElements = new Map<string, Task | Transition | Relation>();
+    protected idToTaskListElements = new Map<string, Task | Transition | Relation | WeightedEdge>();
 
     indexTaskList(taskList: TaskList): void {
         this.idToTaskListElements.clear();
         for (const element of [
             ...taskList.tasks, 
             ...taskList.transitions,
-            ...(taskList.relations ?? [])
+            ...taskList.relations,
+            ...taskList.weightedEdges
         ]) {
             this.idToTaskListElements.set(element.id, element);
         }
@@ -43,12 +44,17 @@ export class TaskListModelIndex extends GModelIndex {
         return Transition.is(element) ? element : undefined;
     }
 
+    findWeightedEdge(id: string): WeightedEdge | undefined {
+        const element = this.findTaskOrTransition(id);
+        return WeightedEdge.is(element) ? element : undefined;
+    }
+
     findRelation(id: string): Relation | undefined {
         const element = this.findTaskOrTransition(id);
         return Relation.is(element) ? element : undefined;
     }
 
-    findTaskOrTransition(id: string): Task | Transition | Relation | undefined {
+    findTaskOrTransition(id: string): Task | Transition | Relation | WeightedEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
 }

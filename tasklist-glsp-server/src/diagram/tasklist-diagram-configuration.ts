@@ -64,6 +64,14 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 routable: false,
                 sourceElementTypeIds: [DefaultTypes.NODE],
                 targetElementTypeIds: [DefaultTypes.NODE]
+            },
+            {
+                elementTypeId: 'weighted-edge',
+                deletable: true,
+                repositionable: false,
+                routable: false,
+                sourceElementTypeIds: ['node:entity', 'node:relation'],
+                targetElementTypeIds: ['node:entity', 'node:relation']
             }
         ];
     }

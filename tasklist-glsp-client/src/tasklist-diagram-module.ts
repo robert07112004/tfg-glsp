@@ -19,8 +19,11 @@ import {
     configureModelElement,
     ConsoleLogger,
     ContainerConfiguration,
+    DefaultTypes,
     DiamondNodeView,
     editLabelFeature,
+    GLabel,
+    GLabelView,
     GNode,
     initializeDiagramContainer,
     LogLevel,
@@ -30,15 +33,19 @@ import {
 import 'balloon-css/balloon.min.css';
 import { Container, ContainerModule } from 'inversify';
 import '../css/diagram.css';
+import { WeightedEdge } from './model';
+import { WeightedEdgeView } from './views';
 
 const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.warn);
     const context = { bind, unbind, isBound, rebind };
     configureDefaultModelElements(context);
-    // configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });
+    configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'label:weighted', GLabel, GLabelView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:entity', GNode, RectangularNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:relation', GNode, DiamondNodeView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'weighted-edge', WeightedEdge, WeightedEdgeView, { enable: [editLabelFeature]});
 });
 
 export function initializeTasklistDiagramContainer(container: Container, ...containerConfiguration: ContainerConfiguration): Container {

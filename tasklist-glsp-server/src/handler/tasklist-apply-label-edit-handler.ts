@@ -15,7 +15,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
  ********************************************************************************/
 import { ApplyLabelEditOperation } from '@eclipse-glsp/protocol';
-import { Command, GLSPServerError, GNode, JsonOperationHandler, MaybePromise, toTypeGuard } from '@eclipse-glsp/server/node';
+import { Command, GEdge, GLSPServerError, GNode, JsonOperationHandler, MaybePromise, toTypeGuard } from '@eclipse-glsp/server/node';
 import { inject, injectable } from 'inversify';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
@@ -29,14 +29,27 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
     override createCommand(operation: ApplyLabelEditOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
             const index = this.modelState.index;
-            // Retrieve the parent node of the label that should be edited
-            const taskNode = index.findParentElement(operation.labelId, toTypeGuard(GNode));
-            if (taskNode) {
-                const task = index.findTask(taskNode.id);
-                if (!task) {
-                    throw new GLSPServerError(`Could not retrieve the parent task for the label with id ${operation.labelId}`);
+            const parentNode = index.findParentElement(operation.labelId, toTypeGuard(GNode));
+            if (parentNode) {
+                const task = index.findTask(parentNode.id);
+                const relation = index.findRelation(parentNode.id);
+                if (task) {
+                    task.name = operation.text;
+                } else if (relation) {
+                    relation.name = operation.text;
+                } else {
+                    throw new GLSPServerError(`Could not find model element for node with id ${parentNode.id}`);
                 }
-                task.name = operation.text;
+            } else {
+                const parentEdge = index.findParentElement(operation.labelId, toTypeGuard(GEdge));
+                if (parentEdge) {
+                    const weightedEdge = index.findWeightedEdge(parentEdge.id);
+                    if (weightedEdge) {
+                        weightedEdge.description = operation.text;
+                    } else {
+                        throw new GLSPServerError(`Could not find model element for edge with id ${parentEdge.id}`);
+                    }
+                }    
             }
         });
     }

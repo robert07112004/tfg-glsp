@@ -24,8 +24,9 @@ import { AnyObject, hasArrayProp, hasObjectProp, hasStringProp } from '@eclipse-
 export interface TaskList {
     id: string;
     tasks: Task[];
+    relations: Relation[];
     transitions: Transition[];
-    relations?: Relation[];
+    weightedEdges: WeightedEdge[];
 }
 
 export namespace TaskList {
@@ -87,6 +88,25 @@ export namespace Transition {
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'sourceTaskId') &&
             hasStringProp(object, 'targetTaskId')
+        );
+    }
+}
+
+export interface WeightedEdge {
+    id: string;
+    description: string
+    sourceId: string;
+    targetId: string;
+}
+
+export namespace WeightedEdge {
+    export function is(object: any): object is WeightedEdge {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'description') &&
+            hasStringProp(object, 'sourceId') &&
+            hasStringProp(object, 'targetId')
         );
     }
 }

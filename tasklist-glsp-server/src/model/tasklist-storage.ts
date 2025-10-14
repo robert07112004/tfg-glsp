@@ -42,7 +42,8 @@ export class TaskListStorage extends AbstractJsonModelStorage {
             id: uuid.v4(),
             tasks: [],
             transitions: [],
-            relations: []
+            relations: [],
+            weightedEdges: []
         };
     }
 }
