@@ -42,9 +42,9 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     const context = { bind, unbind, isBound, rebind };
     configureDefaultModelElements(context);
     configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });
+    configureModelElement(context, DefaultTypes.NODE_RECTANGLE, GNode, RectangularNodeView, { enable: [editLabelFeature] });
+    configureModelElement(context, DefaultTypes.NODE_DIAMOND, GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'label:weighted', GLabel, GLabelView, { enable: [editLabelFeature] });
-    configureModelElement(context, 'node:entity', GNode, RectangularNodeView, { enable: [editLabelFeature] });
-    configureModelElement(context, 'node:relation', GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'weighted-edge', WeightedEdge, WeightedEdgeView, { enable: [editLabelFeature]});
 });
 

@@ -30,7 +30,7 @@ import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
 export class CreateTaskHandler extends JsonCreateNodeOperationHandler {
-    readonly elementTypeIds = [DefaultTypes.NODE];
+    readonly elementTypeIds = [DefaultTypes.NODE_RECTANGLE];
 
     @inject(TaskListModelState)
     protected override modelState: TaskListModelState;
@@ -48,6 +48,7 @@ export class CreateTaskHandler extends JsonCreateNodeOperationHandler {
         const nodeCounter = this.modelState.index.getAllByClass(GNode).length;
         return {
             id: uuid.v4(),
+            type: 'entity',
             name: `NewEntityNode${nodeCounter}`,
             position
         };

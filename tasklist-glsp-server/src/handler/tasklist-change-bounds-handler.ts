@@ -34,12 +34,15 @@ export class TaskListChangeBoundsHandler extends JsonOperationHandler {
 
     protected changeElementBounds(elementId: string, newSize: Dimension, newPosition?: Point): void {
         const index = this.modelState.index;
-        const taskNode = index.findByClass(elementId, GNode);
-        const task = taskNode ? index.findTask(taskNode.id) : undefined;
-        if (task) {
-            task.size = newSize;
+        const gNode = index.findByClass(elementId, GNode);
+        if (!gNode) {
+            return;
+        }
+        const modelElement = index.findTask(gNode.id) ?? index.findRelation(gNode.id);
+        if (modelElement) {
+            modelElement.size = newSize;
             if (newPosition) {
-                task.position = newPosition;
+                modelElement.position = newPosition;
             }
         }
     }

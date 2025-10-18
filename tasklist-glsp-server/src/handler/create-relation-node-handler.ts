@@ -1,6 +1,7 @@
 import {
     Command,
     CreateNodeOperation,
+    DefaultTypes,
     GNode,
     JsonCreateNodeOperationHandler,
     MaybePromise,
@@ -13,7 +14,7 @@ import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
 export class CreateRelationHandler extends JsonCreateNodeOperationHandler {
-    readonly elementTypeIds = ['node:relation'];
+    readonly elementTypeIds = [DefaultTypes.NODE_DIAMOND];
 
     @inject(TaskListModelState)
     protected override modelState: TaskListModelState;
@@ -23,7 +24,6 @@ export class CreateRelationHandler extends JsonCreateNodeOperationHandler {
             const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
             const relation = this.createRelation(relativeLocation);
             const taskList = this.modelState.sourceModel;
-            if (!taskList.relations) taskList.relations = [];
             taskList.relations.push(relation);
         });
     }
@@ -32,6 +32,7 @@ export class CreateRelationHandler extends JsonCreateNodeOperationHandler {
         const nodeCounter = this.modelState.index.getAllByClass(GNode).length;
         return {
             id: uuid.v4(),
+            type: 'relation',
             name: `NewRelationNode${nodeCounter}`,
             position
         };

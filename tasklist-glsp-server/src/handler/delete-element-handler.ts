@@ -74,10 +74,12 @@ export class DeleteElementHandler extends JsonOperationHandler {
 
     private deleteModelElement(modelElement: Task | Transition | Relation | WeightedEdge | undefined): void {
         if (Task.is(modelElement)) {
+            console.log('[SERVER-DELETE] Deleting Entity:', modelElement.id);
             remove(this.modelState.sourceModel.tasks, modelElement);
         } else if (Transition.is(modelElement)) {
             remove(this.modelState.sourceModel.transitions, modelElement);
         } else if (Relation.is(modelElement)) {
+            console.log('[SERVER-DELETE] Deleting Relation:', modelElement.id);
             remove(this.modelState.sourceModel.relations, modelElement);
         } else if (WeightedEdge.is(modelElement)) {
             remove(this.modelState.sourceModel.weightedEdges, modelElement);

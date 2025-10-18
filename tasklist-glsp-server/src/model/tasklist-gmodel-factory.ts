@@ -14,7 +14,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
  ********************************************************************************/
-import { GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
+import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { Relation, Task, Transition, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
@@ -49,8 +49,8 @@ export class TaskListGModelFactory implements GModelFactory {
     protected createTaskNode(task: Task): GNode {
         const builder = GNode.builder()
             .id(task.id)
-            .type('node:entity')
-            .addCssClass('tasklist-node')
+            .type(DefaultTypes.NODE_RECTANGLE)
+            .addCssClass('entity-node')
             .add(GLabel.builder().text(task.name).id(`${task.id}_label`).build())
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
@@ -67,12 +67,12 @@ export class TaskListGModelFactory implements GModelFactory {
     protected createRelationNode(relation: Relation): GNode {
         const builder = GNode.builder()
             .id(relation.id)
-            .type('node:relation')
+            .type(DefaultTypes.NODE_DIAMOND)
             .addCssClass('relation-node')
+            .add(GLabel.builder().text(relation.name).id(`${relation.id}_label`).build())
             .layout('hbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'center')
-            .add(GLabel.builder().text(relation.name).id(`${relation.id}_label`).build())
             .position(relation.position);
         
         const width = relation.size?.width ?? 120;

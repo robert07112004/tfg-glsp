@@ -25,29 +25,12 @@ svg {
     fill: inherit;
 }
 
-.tasklist-node > .sprotty-node {
+.entity-node > .sprotty-node {
     fill: #f1bd6c;
 }
 
-.relation-node > .sprotty-node,
-.relation-node.sprotty-node {
+.relation-node > .sprotty-node {
     fill: #1E90FF;
-    stroke: #0b5fae;
-    stroke-width: 1.5px;
-}
-
-polygon.relation-node,
-polygon.relation-node.sprotty-node {
-    fill: #1E90FF;
-    stroke: #0b5fae;
-    stroke-width: 1.5px;
-}
-
-.relation-node.selected > .sprotty-node,
-.relation-node.sprotty-node.selected,
-polygon.relation-node.selected {
-    stroke: #003f7f;
-    stroke-width: 2px;
 }
 
 .weighted-edge {

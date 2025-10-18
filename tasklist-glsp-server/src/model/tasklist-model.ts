@@ -41,6 +41,7 @@ export namespace TaskList {
 
 export interface Task {
     id: string;
+    type: 'entity';
     name: string;
     position: { x: number; y: number };
     size?: { width: number; height: number };
@@ -51,6 +52,7 @@ export namespace Task {
         return (
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as Task).type === 'entity' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );
@@ -59,6 +61,7 @@ export namespace Task {
 
 export interface Relation {
     id: string;
+    type: 'relation';
     name: string;
     position: { x: number; y: number };
     size?: { width: number; height: number };
@@ -69,6 +72,7 @@ export namespace Relation {
         return (
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as Relation).type === 'relation' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );

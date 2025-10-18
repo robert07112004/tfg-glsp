@@ -39,14 +39,14 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
     get shapeTypeHints(): ShapeTypeHint[] {
         return [
             {
-                elementTypeId: DefaultTypes.NODE,
+                elementTypeId: DefaultTypes.NODE_RECTANGLE,
                 deletable: true,
                 reparentable: false,
                 repositionable: true,
                 resizable: true
             },
             {
-                elementTypeId: 'node:relation',
+                elementTypeId: DefaultTypes.NODE_DIAMOND,
                 deletable: true,
                 reparentable: false,
                 repositionable: true,
@@ -70,8 +70,8 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 deletable: true,
                 repositionable: false,
                 routable: false,
-                sourceElementTypeIds: ['node:entity', 'node:relation'],
-                targetElementTypeIds: ['node:entity', 'node:relation']
+                sourceElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND],
+                targetElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND]
             }
         ];
     }
