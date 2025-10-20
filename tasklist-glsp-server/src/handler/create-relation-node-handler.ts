@@ -29,11 +29,12 @@ export class CreateRelationHandler extends JsonCreateNodeOperationHandler {
     }
 
     protected createRelation(position: Point): Relation {
-        const nodeCounter = this.modelState.index.getAllByClass(GNode).length;
+        const relationCounter = this.modelState.index.getAllByClass(GNode)
+                                .filter(node => node.type === 'relation').length;
         return {
             id: uuid.v4(),
             type: 'relation',
-            name: `NewRelationNode${nodeCounter}`,
+            name: `NewRelationNode${relationCounter + 1}`,
             position
         };
     }

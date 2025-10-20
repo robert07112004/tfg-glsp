@@ -45,11 +45,12 @@ export class CreateTaskHandler extends JsonCreateNodeOperationHandler {
     }
 
     protected createTask(position: Point): Task {
-        const nodeCounter = this.modelState.index.getAllByClass(GNode).length;
+        const entityCounter = this.modelState.index.getAllByClass(GNode)
+                                .filter(node => node.type === 'entity').length;
         return {
             id: uuid.v4(),
             type: 'entity',
-            name: `NewEntityNode${nodeCounter}`,
+            name: `NewEntityNode${entityCounter + 1}`,
             position
         };
     }
