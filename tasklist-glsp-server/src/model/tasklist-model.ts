@@ -25,6 +25,7 @@ export interface TaskList {
     id: string;
     tasks: Task[];
     relations: Relation[];
+    attributes: Attribute[];
     transitions: Transition[];
     weightedEdges: WeightedEdge[];
 }
@@ -73,6 +74,26 @@ export namespace Relation {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as Relation).type === 'relation' &&
+            hasStringProp(object, 'name') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface Attribute {
+    id: string;
+    type: 'attribute';
+    name: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace Attribute {
+    export function is(object: any): object is Attribute {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as Attribute).type === 'attribute' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );

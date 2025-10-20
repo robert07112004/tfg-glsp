@@ -33,10 +33,13 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
             if (parentNode) {
                 const task = index.findTask(parentNode.id);
                 const relation = index.findRelation(parentNode.id);
+                const attribute = index.findAttribute(parentNode.id);
                 if (task) {
                     task.name = operation.text;
                 } else if (relation) {
                     relation.name = operation.text;
+                } else if (attribute) {
+                    attribute.name = operation.text;
                 } else {
                     throw new GLSPServerError(`Could not find model element for node with id ${parentNode.id}`);
                 }

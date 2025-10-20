@@ -33,6 +33,17 @@ svg {
     fill: #1E90FF;
 }
 
+.attribute-node ellipse {
+  fill: #ffcccc; 
+  stroke: #c00;
+  stroke-width: 2px;
+}
+
+.attribute-node.selected ellipse {
+  stroke: #007bff;
+  stroke-width: 3px;
+}
+
 .weighted-edge {
     stroke: #ff8800;
     stroke-width: 2px;

@@ -16,18 +16,19 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Relation, Task, TaskList, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, Relation, Task, TaskList, Transition, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
-    protected idToTaskListElements = new Map<string, Task | Transition | Relation | WeightedEdge>();
+    protected idToTaskListElements = new Map<string, Task | Relation | Attribute | Transition | WeightedEdge>();
 
     indexTaskList(taskList: TaskList): void {
         this.idToTaskListElements.clear();
         for (const element of [
             ...taskList.tasks, 
-            ...taskList.transitions,
             ...taskList.relations,
+            ...taskList.attributes,
+            ...taskList.transitions,
             ...taskList.weightedEdges
         ]) {
             this.idToTaskListElements.set(element.id, element);
@@ -39,6 +40,16 @@ export class TaskListModelIndex extends GModelIndex {
         return Task.is(element) ? element : undefined;
     }
 
+    findRelation(id: string): Relation | undefined {
+        const element = this.findTaskOrTransition(id);
+        return Relation.is(element) ? element : undefined;
+    }
+
+    findAttribute(id: string): Attribute | undefined {
+        const element = this.findTaskOrTransition(id);
+        return Attribute.is(element) ? element : undefined;
+    }
+    
     findTransition(id: string): Transition | undefined {
         const element = this.findTaskOrTransition(id);
         return Transition.is(element) ? element : undefined;
@@ -49,12 +60,7 @@ export class TaskListModelIndex extends GModelIndex {
         return WeightedEdge.is(element) ? element : undefined;
     }
 
-    findRelation(id: string): Relation | undefined {
-        const element = this.findTaskOrTransition(id);
-        return Relation.is(element) ? element : undefined;
-    }
-
-    findTaskOrTransition(id: string): Task | Transition | Relation | WeightedEdge | undefined {
+    findTaskOrTransition(id: string): Task | Relation | Attribute | Transition | WeightedEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
 }

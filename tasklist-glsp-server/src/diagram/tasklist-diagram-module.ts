@@ -29,6 +29,7 @@ import {
     SourceModelStorage
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
+import { CreateAttributeHandler } from '../handler/create-attribute-node-handler';
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
 import { CreateTransitionHandler } from '../handler/create-transition-handler';
@@ -72,6 +73,7 @@ export class TaskListDiagramModule extends DiagramModule {
         super.configureOperationHandlers(binding);
         binding.add(CreateTaskHandler);
         binding.add(CreateRelationHandler);
+        binding.add(CreateAttributeHandler);
         binding.add(CreateTransitionHandler);
         binding.add(CreateWeightedEdgeHandler);
         binding.add(TaskListChangeBoundsHandler);

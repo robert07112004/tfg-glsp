@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Relation, Task, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, Relation, Task, Transition, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -30,7 +30,8 @@ export class TaskListGModelFactory implements GModelFactory {
         
         const childNodes = [
             ...taskList.tasks.map(task => this.createTaskNode(task)),
-            ...taskList.relations.map(relation => this.createRelationNode(relation))
+            ...taskList.relations.map(relation => this.createRelationNode(relation)),
+            ...taskList.attributes.map(attribute => this.createAttributeNode(attribute))
         ];
         
         const childEdges = [
@@ -75,13 +76,27 @@ export class TaskListGModelFactory implements GModelFactory {
             .addLayoutOption('vAlign', 'center')
             .position(relation.position);
         
-        const width = relation.size?.width ?? 120;
-        const height = relation.size?.height ?? 80;
+        if (relation.size) {
+            builder.addLayoutOptions({ prefWidth: relation.size.width, prefHeight: relation.size.height });
+        }
 
-        builder.addLayoutOptions({
-            prefWidth: width,
-            prefHeight: height,
-        });
+        return builder.build();
+    }
+
+    protected createAttributeNode(attribute: Attribute): GNode {
+        const builder = GNode.builder()
+            .id(attribute.id)
+            .type('node:attribute') 
+            .addCssClass('attribute-node')
+            .add(GLabel.builder().text(attribute.name).id(`${attribute.id}_label`).build())
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(attribute.position);
+
+        if (attribute.size) {
+            builder.addLayoutOptions({ prefWidth: attribute.size.width, prefHeight: attribute.size.height });
+        }
 
         return builder.build();
     }

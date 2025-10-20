@@ -3,6 +3,8 @@ import {
     angleOfPoint,
     GEdge,
     GLabel,
+    GNode,
+    IView,
     Point,
     PolylineEdgeViewWithGapsOnIntersections,
     RenderingContext,
@@ -46,5 +48,24 @@ export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
             }
 
         return additionals;
+    }
+}
+
+
+@injectable()
+export class AttributeView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
+        return <g>
+            <ellipse
+                class-sprotty-node={true}
+                class-selected={node.selected}
+                class-attribute-node={true} 
+                cx={node.size.width / 2}
+                cy={node.size.height / 2}
+                rx={node.size.width / 2}
+                ry={node.size.height / 2}
+            />
+            {context.renderChildren(node)}
+        </g>;
     }
 }

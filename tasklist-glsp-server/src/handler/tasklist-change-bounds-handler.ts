@@ -38,7 +38,7 @@ export class TaskListChangeBoundsHandler extends JsonOperationHandler {
         if (!gNode) {
             return;
         }
-        const modelElement = index.findTask(gNode.id) ?? index.findRelation(gNode.id);
+        const modelElement = index.findTask(gNode.id) ?? index.findRelation(gNode.id) ?? index.findAttribute(gNode.id);
         if (modelElement) {
             modelElement.size = newSize;
             if (newPosition) {

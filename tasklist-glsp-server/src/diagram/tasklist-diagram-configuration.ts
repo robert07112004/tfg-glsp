@@ -51,6 +51,13 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 reparentable: false,
                 repositionable: true,
                 resizable: true
+            },
+            {
+                elementTypeId: 'node:attribute',
+                deletable: true,
+                reparentable: false,
+                repositionable: true,
+                resizable: true
             }
         ];
     }
