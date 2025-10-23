@@ -2,7 +2,6 @@ import {
     Command,
     CreateNodeOperation,
     DefaultTypes,
-    GNode,
     JsonCreateNodeOperationHandler,
     MaybePromise,
     Point
@@ -29,8 +28,7 @@ export class CreateRelationHandler extends JsonCreateNodeOperationHandler {
     }
 
     protected createRelation(position: Point): Relation {
-        const relationCounter = this.modelState.index.getAllByClass(GNode)
-                                .filter(node => node.type === 'relation').length;
+        const relationCounter = this.modelState.sourceModel.relations.length;
         return {
             id: uuid.v4(),
             type: 'relation',

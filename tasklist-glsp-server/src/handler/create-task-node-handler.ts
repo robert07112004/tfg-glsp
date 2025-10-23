@@ -18,7 +18,6 @@ import {
     Command,
     CreateNodeOperation,
     DefaultTypes,
-    GNode,
     JsonCreateNodeOperationHandler,
     MaybePromise,
     Point
@@ -45,8 +44,7 @@ export class CreateTaskHandler extends JsonCreateNodeOperationHandler {
     }
 
     protected createTask(position: Point): Task {
-        const entityCounter = this.modelState.index.getAllByClass(GNode)
-                                .filter(node => node.type === 'entity').length;
+        const entityCounter = this.modelState.sourceModel.tasks.length;
         return {
             id: uuid.v4(),
             type: 'entity',

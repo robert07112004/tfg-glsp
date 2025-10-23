@@ -1,7 +1,6 @@
 import {
     Command,
     CreateNodeOperation,
-    GNode,
     JsonCreateNodeOperationHandler,
     MaybePromise,
     Point
@@ -28,7 +27,7 @@ export class CreateAttributeHandler extends JsonCreateNodeOperationHandler {
     }
 
     protected createAttribute(position: Point): Attribute {
-        const attributeCounter = this.modelState.index.getAllByClass(GNode).filter(node => node.type === 'attribute').length;
+        const attributeCounter = this.modelState.sourceModel.attributes.length;
         return {
             id: uuid.v4(),
             type: 'attribute',
