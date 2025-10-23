@@ -44,6 +44,19 @@ svg {
   stroke-width: 3px;
 }
 
+.multi-valued-attribute-node,
+.multi-valued-attribute-node-inner {
+  fill: #ffcccc;
+  stroke: #c00;
+  stroke-width: 1px;
+}
+
+.multi-valued-attribute-node.selected,
+.multi-valued-attribute-node.selected + .multi-valued-attribute-node-inner {
+  stroke: #007bff;
+  stroke-width: 2px;
+}
+
 .weighted-edge {
     stroke: #ff8800;
     stroke-width: 2px;

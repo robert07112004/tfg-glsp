@@ -69,3 +69,33 @@ export class AttributeView implements IView {
         </g>;
     }
 }
+
+@injectable()
+export class MultiValuedAttributeView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
+        const padding = 3; 
+
+        const innerRx = Math.max(0, (node.size.width / 2) - padding);
+        const innerRy = Math.max(0, (node.size.height / 2) - padding);
+
+        return <g>
+            <ellipse
+                class-sprotty-node={true} 
+                class-selected={node.selected}
+                class-multi-valued-attribute-node={true}
+                cx={node.size.width / 2}
+                cy={node.size.height / 2}
+                rx={node.size.width / 2}
+                ry={node.size.height / 2}
+            />
+            <ellipse
+                class-multi-valued-attribute-node-inner={true}
+                cx={node.size.width / 2}
+                cy={node.size.height / 2}
+                rx={innerRx}
+                ry={innerRy} 
+            />
+            {context.renderChildren(node)}
+        </g>;
+    }
+}

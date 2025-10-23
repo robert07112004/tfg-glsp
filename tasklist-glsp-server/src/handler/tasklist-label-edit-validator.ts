@@ -60,7 +60,6 @@ export class TaskListLabelEditValidator implements LabelEditValidator {
         if (container && isEdge(container)) {
             const weightedEdge = this.modelState.index.findWeightedEdge(container.id);
             if (weightedEdge) {
-                // This is the label for a WeightedEdge, apply specific validation
                 const regex = /^\([0-9]+\.\.([0-9]+|N)\)$/;
                 if (!regex.test(label)) {
                     return {
@@ -71,7 +70,6 @@ export class TaskListLabelEditValidator implements LabelEditValidator {
             }
         }
 
-        // Default validation for all labels: must not be empty
         if (label.length < 1) {
             return { severity: ValidationStatus.Severity.ERROR, message: 'Name must not be empty' };
         }

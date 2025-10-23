@@ -16,11 +16,11 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Attribute, Relation, Task, TaskList, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, MultiValuedAttribute, Relation, Task, TaskList, Transition, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
-    protected idToTaskListElements = new Map<string, Task | Relation | Attribute | Transition | WeightedEdge>();
+    protected idToTaskListElements = new Map<string, Task | Relation | Attribute | MultiValuedAttribute | Transition | WeightedEdge>();
 
     indexTaskList(taskList: TaskList): void {
         this.idToTaskListElements.clear();
@@ -28,6 +28,7 @@ export class TaskListModelIndex extends GModelIndex {
             ...taskList.tasks, 
             ...taskList.relations,
             ...taskList.attributes,
+            ...taskList.multiValuedAttributes,
             ...taskList.transitions,
             ...taskList.weightedEdges
         ]) {
@@ -49,6 +50,11 @@ export class TaskListModelIndex extends GModelIndex {
         const element = this.findTaskOrTransition(id);
         return Attribute.is(element) ? element : undefined;
     }
+
+    findMultiValuedAttribute(id: string): MultiValuedAttribute | undefined {
+        const element = this.findTaskOrTransition(id);
+        return MultiValuedAttribute.is(element) ? element : undefined;
+    }
     
     findTransition(id: string): Transition | undefined {
         const element = this.findTaskOrTransition(id);
@@ -60,7 +66,7 @@ export class TaskListModelIndex extends GModelIndex {
         return WeightedEdge.is(element) ? element : undefined;
     }
 
-    findTaskOrTransition(id: string): Task | Relation | Attribute | Transition | WeightedEdge | undefined {
+    findTaskOrTransition(id: string): Task | Relation | Attribute | MultiValuedAttribute | Transition | WeightedEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
 }

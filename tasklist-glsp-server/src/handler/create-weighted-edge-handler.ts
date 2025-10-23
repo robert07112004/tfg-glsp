@@ -20,8 +20,16 @@ export class CreateWeightedEdgeHandler extends JsonCreateEdgeOperationHandler {
             const targetType = targetNode?.type;
 
             if (
-                (sourceType === DefaultTypes.NODE_RECTANGLE && targetType === DefaultTypes.NODE_RECTANGLE) ||
-                (sourceType === DefaultTypes.NODE_DIAMOND && targetType === DefaultTypes.NODE_DIAMOND)
+                (sourceType === DefaultTypes.NODE_RECTANGLE && targetType === DefaultTypes.NODE_RECTANGLE) ||   // entity - entity
+                (sourceType === DefaultTypes.NODE_DIAMOND && targetType === DefaultTypes.NODE_DIAMOND) ||       // relation - relation
+                (sourceType === 'node:attribute' && targetType === 'node:attribute') ||                         // attribute - attribute  
+                (sourceType === 'node:multiValuedAttribute' && targetType === 'node:multiValuedAttribute') ||   // multiValuedAttribute - multiValuedAttribute
+                (sourceType === DefaultTypes.NODE_RECTANGLE && targetType === 'node:attribute') ||              // entity - attribute
+                (sourceType === 'node:attribute' && targetType === DefaultTypes.NODE_RECTANGLE) ||              // attribute - entity
+                (sourceType === DefaultTypes.NODE_RECTANGLE && targetType === 'node:multiValuedAttribute') ||   // entity - multiValuedAttribute
+                (sourceType === 'node:multiValuedAttribute' && targetType === DefaultTypes.NODE_RECTANGLE) ||   // multiValuedAttribute - entity
+                (sourceType === 'node:attribute' && targetType === 'node:multiValuedAttribute') ||              // attribute - multiValuedAttribute
+                (sourceType === 'node:multiValuedAttribute' && targetType === 'node:attribute')                 // multiValuedAttribute - attribute  
             ) {
                 return undefined;
             }

@@ -25,7 +25,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, Relation, Task, Transition, WeightedEdge } from '../model/tasklist-model';
+import { Attribute, MultiValuedAttribute, Relation, Task, Transition, WeightedEdge } from '../model/tasklist-model';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
@@ -72,13 +72,15 @@ export class DeleteElementHandler extends JsonOperationHandler {
         return [];
     }
 
-    private deleteModelElement(modelElement: Task |Relation | Attribute | Transition | WeightedEdge | undefined): void {
+    private deleteModelElement(modelElement: Task | Relation | Attribute | MultiValuedAttribute | Transition | WeightedEdge | undefined): void {
         if (Task.is(modelElement)) {
             remove(this.modelState.sourceModel.tasks, modelElement);
         } else if (Relation.is(modelElement)) {
             remove(this.modelState.sourceModel.relations, modelElement);
         } else if (Attribute.is(modelElement)) {
             remove(this.modelState.sourceModel.attributes, modelElement);
+        } else if (MultiValuedAttribute.is(modelElement)) {
+            remove(this.modelState.sourceModel.multiValuedAttributes, modelElement);
         } else if (Transition.is(modelElement)) {
             remove(this.modelState.sourceModel.transitions, modelElement);
         } else if (WeightedEdge.is(modelElement)) {

@@ -26,6 +26,7 @@ export interface TaskList {
     tasks: Task[];
     relations: Relation[];
     attributes: Attribute[];
+    multiValuedAttributes: MultiValuedAttribute[];
     transitions: Transition[];
     weightedEdges: WeightedEdge[];
 }
@@ -94,6 +95,26 @@ export namespace Attribute {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as Attribute).type === 'attribute' &&
+            hasStringProp(object, 'name') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface MultiValuedAttribute {
+    id: string;
+    type: 'multiValuedAttribute';
+    name: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace MultiValuedAttribute {
+    export function is(object: any): object is MultiValuedAttribute {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as MultiValuedAttribute).type === 'multiValuedAttribute' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );

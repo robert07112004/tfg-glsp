@@ -1,0 +1,80 @@
+17:21:46 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 63919 
+17:21:46 info -  [SocketServerLauncher] Starting GLSP server connection 
+17:21:46 info -  [DefaultGLSPServer] Initializing server with: applicationId: 6959fd12-f263-4bdd-b05a-7950994fbe5b, protocolVersion: 1.0.0 
+17:21:48 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+17:21:48 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+17:21:48 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+17:21:48 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:21:48 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+17:21:57 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+17:21:57 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:00 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+17:22:00 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:02 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+17:22:02 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:04 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+17:22:04 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:08 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+17:22:08 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+17:22:08 info -  [DefaultGLSPServer] process [action=applyLabelEdit, clientId=tasklist-diagram_0] 
+17:22:08 error -  [DefaultCommandStack] An error occurred during command execution. CommandStack will be flushed! Could not find model element for node with id 6752b3d0-cd82-411f-8b6b-4c17e403ad92
+            Error: Could not find model element for node with id 6752b3d0-cd82-411f-8b6b-4c17e403ad92
+    at JsonRecordingCommand.doExecute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:59540:27)
+    at JsonRecordingCommand.execute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:7930:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async DefaultCommandStack.execute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:7720:13)
+17:22:08 error -  [DefaultGLSPServer] Could not process action: 'applyLabelEdit 
+17:22:08 error -  [DefaultGLSPServer] Error: Could not find model element for node with id 6752b3d0-cd82-411f-8b6b-4c17e403ad92 
+17:22:16 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+17:22:16 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:20 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_0] 
+17:22:20 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+17:22:23 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+17:22:23 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:28 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+17:22:28 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:31 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+17:22:31 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:31 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+17:22:32 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+17:22:32 info -  [DefaultGLSPServer] process [action=applyLabelEdit, clientId=tasklist-diagram_0] 
+17:22:32 error -  [DefaultCommandStack] An error occurred during command execution. CommandStack will be flushed! Could not find model element for node with id 6752b3d0-cd82-411f-8b6b-4c17e403ad92
+            Error: Could not find model element for node with id 6752b3d0-cd82-411f-8b6b-4c17e403ad92
+    at JsonRecordingCommand.doExecute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:59540:27)
+    at JsonRecordingCommand.execute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:7930:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async DefaultCommandStack.execute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:7720:13)
+17:22:32 error -  [DefaultGLSPServer] Could not process action: 'applyLabelEdit 
+17:22:32 error -  [DefaultGLSPServer] Error: Could not find model element for node with id 6752b3d0-cd82-411f-8b6b-4c17e403ad92 
+17:22:35 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+17:22:35 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:22:36 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+17:22:37 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:23:24 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+17:23:24 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:23:26 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+17:23:26 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+17:23:26 info -  [DefaultGLSPServer] process [action=applyLabelEdit, clientId=tasklist-diagram_0] 
+17:23:27 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:23:29 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+17:23:29 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:23:32 info -  [DefaultGLSPServer] process [action=deleteElement, clientId=tasklist-diagram_0] 
+17:23:32 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:23:34 info -  [DefaultGLSPServer] process [action=deleteElement, clientId=tasklist-diagram_0] 
+17:23:34 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:24:09 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+17:24:09 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:24:19 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+17:24:19 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:24:21 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+17:24:21 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:24:21 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+17:24:21 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:24:27 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+17:24:27 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:24:29 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+17:24:29 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+17:24:39 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_0] 
+17:24:39 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+17:25:02 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+17:25:02 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 

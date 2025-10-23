@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, Relation, Task, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, MultiValuedAttribute, Relation, Task, Transition, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -31,7 +31,8 @@ export class TaskListGModelFactory implements GModelFactory {
         const childNodes = [
             ...taskList.tasks.map(task => this.createTaskNode(task)),
             ...taskList.relations.map(relation => this.createRelationNode(relation)),
-            ...taskList.attributes.map(attribute => this.createAttributeNode(attribute))
+            ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
+            ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute))
         ];
         
         const childEdges = [
@@ -96,6 +97,24 @@ export class TaskListGModelFactory implements GModelFactory {
 
         if (attribute.size) {
             builder.addLayoutOptions({ prefWidth: attribute.size.width, prefHeight: attribute.size.height });
+        }
+
+        return builder.build();
+    }
+
+    protected createMultiValuedAttributeNode(multiValuedAttribute: MultiValuedAttribute): GNode {
+        const builder = GNode.builder()
+            .id(multiValuedAttribute.id)
+            .type('node:multiValuedAttribute') 
+            .addCssClass('multi-valued-attribute-node')
+            .add(GLabel.builder().text(multiValuedAttribute.name).id(`${multiValuedAttribute.id}_label`).build())
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(multiValuedAttribute.position);
+
+        if (multiValuedAttribute.size) {
+            builder.addLayoutOptions({ prefWidth: multiValuedAttribute.size.width, prefHeight: multiValuedAttribute.size.height });
         }
 
         return builder.build();
