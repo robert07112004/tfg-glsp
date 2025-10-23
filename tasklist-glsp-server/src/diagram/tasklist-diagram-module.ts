@@ -30,6 +30,7 @@ import {
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
 import { CreateAttributeHandler } from '../handler/create-attribute-node-handler';
+import { CreateDerivedAttributeHandler } from '../handler/create-derived-attribute-node-handler';
 import { CreateMultiValuedAttributeHandler } from '../handler/create-multi-valued-attribute-node-handler';
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
@@ -76,6 +77,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateRelationHandler);
         binding.add(CreateAttributeHandler);
         binding.add(CreateMultiValuedAttributeHandler);
+        binding.add(CreateDerivedAttributeHandler);
         binding.add(CreateTransitionHandler);
         binding.add(CreateWeightedEdgeHandler);
         binding.add(TaskListChangeBoundsHandler);

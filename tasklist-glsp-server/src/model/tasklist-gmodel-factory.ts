@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, MultiValuedAttribute, Relation, Task, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, MultiValuedAttribute, Relation, Task, Transition, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -32,7 +32,8 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.tasks.map(task => this.createTaskNode(task)),
             ...taskList.relations.map(relation => this.createRelationNode(relation)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
-            ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute))
+            ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
+            ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute))
         ];
         
         const childEdges = [
@@ -115,6 +116,24 @@ export class TaskListGModelFactory implements GModelFactory {
 
         if (multiValuedAttribute.size) {
             builder.addLayoutOptions({ prefWidth: multiValuedAttribute.size.width, prefHeight: multiValuedAttribute.size.height });
+        }
+
+        return builder.build();
+    }
+
+    protected createDerivedAttributeNode(derivedAttribute: DerivedAttribute): GNode {
+        const builder = GNode.builder()
+            .id(derivedAttribute.id)
+            .type('node:derivedAttribute') 
+            .addCssClass('derived-attribute-node')
+            .add(GLabel.builder().text(derivedAttribute.name).id(`${derivedAttribute.id}_label`).build())
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(derivedAttribute.position);
+
+        if (derivedAttribute.size) {
+            builder.addLayoutOptions({ prefWidth: derivedAttribute.size.width, prefHeight: derivedAttribute.size.height });
         }
 
         return builder.build();

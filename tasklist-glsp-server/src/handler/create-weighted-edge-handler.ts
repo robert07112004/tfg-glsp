@@ -29,7 +29,11 @@ export class CreateWeightedEdgeHandler extends JsonCreateEdgeOperationHandler {
                 (sourceType === DefaultTypes.NODE_RECTANGLE && targetType === 'node:multiValuedAttribute') ||   // entity - multiValuedAttribute
                 (sourceType === 'node:multiValuedAttribute' && targetType === DefaultTypes.NODE_RECTANGLE) ||   // multiValuedAttribute - entity
                 (sourceType === 'node:attribute' && targetType === 'node:multiValuedAttribute') ||              // attribute - multiValuedAttribute
-                (sourceType === 'node:multiValuedAttribute' && targetType === 'node:attribute')                 // multiValuedAttribute - attribute  
+                (sourceType === 'node:multiValuedAttribute' && targetType === 'node:attribute') ||              // multiValuedAttribute - attribute 
+                (sourceType === 'node:derivedAttribute' && targetType === DefaultTypes.NODE_RECTANGLE) ||       // derivedAttribute - entity
+                (sourceType === DefaultTypes.NODE_RECTANGLE && targetType === 'node:derivedAttribute')          // entity - derivedAttribute
+                
+
             ) {
                 return undefined;
             }

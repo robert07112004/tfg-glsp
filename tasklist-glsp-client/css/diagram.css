@@ -41,7 +41,7 @@ svg {
 
 .attribute-node.selected ellipse {
   stroke: #007bff;
-  stroke-width: 3px;
+  stroke-width: 2px;
 }
 
 .multi-valued-attribute-node,
@@ -53,6 +53,20 @@ svg {
 
 .multi-valued-attribute-node.selected,
 .multi-valued-attribute-node.selected + .multi-valued-attribute-node-inner {
+  stroke: #007bff;
+  stroke-width: 2px;
+}
+
+.derived-attribute-node,
+.derived-attribute-node-inner {
+  fill: #ffcccc;
+  stroke: #c00;
+  stroke-width: 1px;
+  stroke-dasharray: 5, 5;
+}
+
+.derived-attribute-node.selected,
+.derived-attribute-node.selected + .derived-attribute-node-inner {
   stroke: #007bff;
   stroke-width: 2px;
 }

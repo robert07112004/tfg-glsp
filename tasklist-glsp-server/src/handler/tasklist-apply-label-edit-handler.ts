@@ -35,6 +35,7 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                 const relation = index.findRelation(parentNode.id);
                 const attribute = index.findAttribute(parentNode.id);
                 const multiValuedAttribute = index.findMultiValuedAttribute(parentNode.id);
+                const derivedAttribute = index.findDerivedAttribute(parentNode.id);
                 if (task) {
                     task.name = operation.text;
                 } else if (relation) {
@@ -43,6 +44,8 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                     attribute.name = operation.text;
                 } else if (multiValuedAttribute) {
                     multiValuedAttribute.name = operation.text;
+                } else if (derivedAttribute) {
+                    derivedAttribute.name = operation.text;
                 } else {
                     throw new GLSPServerError(`Could not find model element for node with id ${parentNode.id}`);
                 }

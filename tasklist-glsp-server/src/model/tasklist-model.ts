@@ -27,6 +27,7 @@ export interface TaskList {
     relations: Relation[];
     attributes: Attribute[];
     multiValuedAttributes: MultiValuedAttribute[];
+    derivedAttributes: DerivedAttribute[];
     transitions: Transition[];
     weightedEdges: WeightedEdge[];
 }
@@ -115,6 +116,26 @@ export namespace MultiValuedAttribute {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as MultiValuedAttribute).type === 'multiValuedAttribute' &&
+            hasStringProp(object, 'name') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface DerivedAttribute {
+    id: string;
+    type: 'derivedAttribute';
+    name: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace DerivedAttribute {
+    export function is(object: any): object is DerivedAttribute {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as DerivedAttribute).type === 'derivedAttribute' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );
