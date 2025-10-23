@@ -72,6 +72,13 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 reparentable: false,
                 repositionable: true,
                 resizable: true
+            },
+            {
+                elementTypeId: 'node:keyAttribute',
+                deletable: true,
+                reparentable: false,
+                repositionable: true,
+                resizable: true
             }
         ];
     }
@@ -91,8 +98,8 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 deletable: true,
                 repositionable: false,
                 routable: false,
-                sourceElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 'node:attribute', 'node:multiValuedAttribute', 'node:derivedAttribute'],
-                targetElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 'node:attribute', 'node:multiValuedAttribute', 'node:derivedAttribute']
+                sourceElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 'node:attribute', 'node:multiValuedAttribute', 'node:derivedAttribute', 'node:keyAttribute'],
+                targetElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 'node:attribute', 'node:multiValuedAttribute', 'node:derivedAttribute', 'node:keyAttribute']
             }
         ];
     }

@@ -128,13 +128,16 @@ export class DerivedAttributeView implements IView {
             {context.renderChildren(node)}
         </g>;
     }
-    
-    /*render(node: GNode, context: RenderingContext): VNode {
+}
+
+@injectable()
+export class KeyAttributeView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
         return <g>
             <ellipse
                 class-sprotty-node={true}
                 class-selected={node.selected}
-                class-derived-attribute-node={true} 
+                class-key-attribute-node={true} 
                 cx={node.size.width / 2}
                 cy={node.size.height / 2}
                 rx={node.size.width / 2}
@@ -142,5 +145,5 @@ export class DerivedAttributeView implements IView {
             />
             {context.renderChildren(node)}
         </g>;
-    }*/
+    }
 }

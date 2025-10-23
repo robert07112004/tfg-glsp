@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, MultiValuedAttribute, Relation, Task, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, Relation, Task, Transition, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -33,7 +33,8 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.relations.map(relation => this.createRelationNode(relation)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
-            ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute))
+            ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute)),
+            ...taskList.keyAttributes.map(keyAttribute => this.createKeyAttributeNode(keyAttribute))
         ];
         
         const childEdges = [
@@ -134,6 +135,28 @@ export class TaskListGModelFactory implements GModelFactory {
 
         if (derivedAttribute.size) {
             builder.addLayoutOptions({ prefWidth: derivedAttribute.size.width, prefHeight: derivedAttribute.size.height });
+        }
+
+        return builder.build();
+    }
+    
+    protected createKeyAttributeNode(keyAttribute: KeyAttribute): GNode {
+        const builder = GNode.builder()
+            .id(keyAttribute.id)
+            .type('node:keyAttribute') 
+            .addCssClass('key-attribute-node')
+            .add(GLabel.builder()
+                    .text(keyAttribute.name)
+                    .id(`${keyAttribute.id}_label`)
+                    .addCssClass('key-attribute-label')
+                    .build())
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(keyAttribute.position);
+
+        if (keyAttribute.size) {
+            builder.addLayoutOptions({ prefWidth: keyAttribute.size.width, prefHeight: keyAttribute.size.height });
         }
 
         return builder.build();

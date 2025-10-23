@@ -16,11 +16,13 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Attribute, DerivedAttribute, MultiValuedAttribute, Relation, Task, TaskList, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, Relation, Task, TaskList, Transition, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
-    protected idToTaskListElements = new Map<string, Task | Relation | Attribute | MultiValuedAttribute | DerivedAttribute | Transition | WeightedEdge>();
+    protected idToTaskListElements = new Map<string, Task | Relation | Attribute | 
+                                                     MultiValuedAttribute | DerivedAttribute | 
+                                                     KeyAttribute |Transition | WeightedEdge>();
 
     indexTaskList(taskList: TaskList): void {
         this.idToTaskListElements.clear();
@@ -30,6 +32,7 @@ export class TaskListModelIndex extends GModelIndex {
             ...taskList.attributes,
             ...taskList.multiValuedAttributes,
             ...taskList.derivedAttributes,
+            ...taskList.keyAttributes,
             ...taskList.transitions,
             ...taskList.weightedEdges
         ]) {
@@ -61,6 +64,11 @@ export class TaskListModelIndex extends GModelIndex {
         const element = this.findTaskOrTransition(id);
         return DerivedAttribute.is(element) ? element : undefined;
     }
+
+    findKeyAttribute(id: string): KeyAttribute | undefined {
+        const element = this.findTaskOrTransition(id);
+        return KeyAttribute.is(element) ? element : undefined;
+    }
     
     findTransition(id: string): Transition | undefined {
         const element = this.findTaskOrTransition(id);
@@ -72,7 +80,9 @@ export class TaskListModelIndex extends GModelIndex {
         return WeightedEdge.is(element) ? element : undefined;
     }
 
-    findTaskOrTransition(id: string): Task | Relation | Attribute | MultiValuedAttribute | DerivedAttribute | Transition | WeightedEdge | undefined {
+    findTaskOrTransition(id: string): Task | Relation | Attribute | MultiValuedAttribute | 
+                                      DerivedAttribute | KeyAttribute | 
+                                      Transition | WeightedEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
 }
