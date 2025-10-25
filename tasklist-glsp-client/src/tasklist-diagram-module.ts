@@ -41,15 +41,20 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.warn);
     const context = { bind, unbind, isBound, rebind };
     configureDefaultModelElements(context);
-    configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });
+
+    // Nodes
     configureModelElement(context, DefaultTypes.NODE_RECTANGLE, GNode, RectangularNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, DefaultTypes.NODE_DIAMOND, GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:attribute', GNode, AttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:multiValuedAttribute', GNode, MultiValuedAttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:derivedAttribute', GNode, DerivedAttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:keyAttribute', GNode, KeyAttributeView, { enable: [editLabelFeature] });
-    configureModelElement(context, 'label:weighted', GLabel, GLabelView, { enable: [editLabelFeature] });
     configureModelElement(context, 'weighted-edge', WeightedEdge, WeightedEdgeView, { enable: [editLabelFeature]});
+    
+    // Labels
+    configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'label:weighted', GLabel, GLabelView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'label:cardinality', GLabel, GLabelView);
 });
 
 export function initializeTasklistDiagramContainer(container: Container, ...containerConfiguration: ContainerConfiguration): Container {

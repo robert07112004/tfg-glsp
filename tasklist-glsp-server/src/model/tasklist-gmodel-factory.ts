@@ -30,7 +30,7 @@ export class TaskListGModelFactory implements GModelFactory {
         
         const childNodes = [
             ...taskList.tasks.map(task => this.createTaskNode(task)),
-            ...taskList.relations.map(relation => this.createRelationNode(relation)),
+            ...taskList.relations.map(relation => this.createRelationNode(relation, taskList.weightedEdges)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
             ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute)),
@@ -68,13 +68,24 @@ export class TaskListGModelFactory implements GModelFactory {
         return builder.build();
     }
 
-    protected createRelationNode(relation: Relation): GNode {
+    protected createRelationNode(relation: Relation, weightedEdges: WeightedEdge[]): GNode {
         const builder = GNode.builder()
             .id(relation.id)
             .type(DefaultTypes.NODE_DIAMOND)
             .addCssClass('relation-node')
-            .add(GLabel.builder().text(relation.name).id(`${relation.id}_label`).build())
-            .layout('hbox')
+
+            .add(GLabel.builder()
+                .text(relation.name)
+                .id(`${relation.id}_label`)
+                .build())
+            .add(GLabel.builder()
+                .text(this.computeCardinality(weightedEdges, relation.id))
+                .id(`${relation.id}_cardinality_label`)
+                .type('label:cardinality')
+                .addCssClass('cardinality-label')
+                .build())
+            
+            .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'center')
             .position(relation.position);
@@ -84,6 +95,28 @@ export class TaskListGModelFactory implements GModelFactory {
         }
 
         return builder.build();
+    }
+
+    protected computeCardinality(allEdges: WeightedEdge[], relationId: string): string {
+        const incomingEdges = allEdges.filter(e => e.targetId === relationId);
+        const outgoingEdges = allEdges.filter(e => e.sourceId === relationId);
+
+        const isSideMany = (edgeList: WeightedEdge[]): boolean => {
+            return edgeList.some(e => e.description.includes('..N'));
+        };
+
+        const sideAIsMany = isSideMany(incomingEdges);
+        const sideBIsMany = isSideMany(outgoingEdges);
+
+        if (sideAIsMany && sideBIsMany) {
+            return 'N:M';
+        } else if (sideAIsMany || sideBIsMany) {
+            return '1:N';
+        } else if (incomingEdges.length > 0 || outgoingEdges.length > 0) {
+            return '1:1';
+        } else {
+            return '-';
+        }
     }
 
     protected createAttributeNode(attribute: Attribute): GNode {

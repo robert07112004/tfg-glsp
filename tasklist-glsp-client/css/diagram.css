@@ -87,11 +87,17 @@ svg {
 }
 
 .weighted-edge {
-    stroke: #ff8800;
-    stroke-width: 2px;
+  stroke: #ff8800;
+  stroke-width: 2px;
 }
 
 .weighted-edge-label {
-    font-size: 12px;
-    fill: #333;
+  font-size: 12px;
+  fill: #333;
+}
+
+.cardinality-label {
+  font-style: italic;
+  font-size: 0.9em;
+  fill: #333;
 }

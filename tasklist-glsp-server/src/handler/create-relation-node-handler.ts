@@ -33,6 +33,7 @@ export class CreateRelationHandler extends JsonCreateNodeOperationHandler {
             id: uuid.v4(),
             type: 'relation',
             name: `NewRelationNode${relationCounter + 1}`,
+            cardinality: '-',
             position
         };
     }

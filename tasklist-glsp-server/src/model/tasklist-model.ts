@@ -67,6 +67,7 @@ export interface Relation {
     id: string;
     type: 'relation';
     name: string;
+    cardinality: string;
     position: { x: number; y: number };
     size?: { width: number; height: number };
 }
@@ -78,6 +79,7 @@ export namespace Relation {
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as Relation).type === 'relation' &&
             hasStringProp(object, 'name') &&
+            hasStringProp(object, 'cardinality') &&
             hasObjectProp(object, 'position')
         );
     }
