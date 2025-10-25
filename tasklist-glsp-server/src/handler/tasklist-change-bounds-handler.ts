@@ -39,6 +39,7 @@ export class TaskListChangeBoundsHandler extends JsonOperationHandler {
             return;
         }
         const modelElement = index.findTask(gNode.id) ?? 
+                             index.findWeakEntity(gNode.id) ??
                              index.findRelation(gNode.id) ?? 
                              index.findAttribute(gNode.id) ?? 
                              index.findMultiValuedAttribute(gNode.id) ??

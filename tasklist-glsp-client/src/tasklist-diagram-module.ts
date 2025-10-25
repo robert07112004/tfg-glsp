@@ -34,7 +34,7 @@ import 'balloon-css/balloon.min.css';
 import { Container, ContainerModule } from 'inversify';
 import '../css/diagram.css';
 import { WeightedEdge } from './model';
-import { AttributeView, DerivedAttributeView, KeyAttributeView, MultiValuedAttributeView, WeightedEdgeView } from './views';
+import { AttributeView, DerivedAttributeView, KeyAttributeView, MultiValuedAttributeView, WeakEntityView, WeightedEdgeView } from './views';
 
 const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
@@ -44,6 +44,7 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
 
     // Nodes
     configureModelElement(context, DefaultTypes.NODE_RECTANGLE, GNode, RectangularNodeView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'node:weakEntity', GNode, WeakEntityView, { enable: [editLabelFeature] });
     configureModelElement(context, DefaultTypes.NODE_DIAMOND, GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:attribute', GNode, AttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:multiValuedAttribute', GNode, MultiValuedAttributeView, { enable: [editLabelFeature] });

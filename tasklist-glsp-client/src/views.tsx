@@ -147,3 +147,31 @@ export class KeyAttributeView implements IView {
         </g>;
     }
 }
+
+@injectable()
+export class WeakEntityView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
+        const padding = 3;
+
+        const innerWidth = Math.max(0, node.size.width - padding * 2);
+        const innerHeight = Math.max(0, node.size.height - padding * 2);
+
+        return <g>
+            <rect
+                class-sprotty-node={true}
+                class-selected={node.selected}
+                class-weak-entity-node={true}
+                width={node.size.width}
+                height={node.size.height}
+            />
+            <rect 
+                class-weak-entity-node-inner={true}
+                x={padding}
+                y={padding}
+                width={innerWidth}
+                height={innerHeight}
+            />
+            {context.renderChildren(node)}
+        </g>;
+    }
+}

@@ -36,6 +36,7 @@ import { CreateMultiValuedAttributeHandler } from '../handler/create-multi-value
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
 import { CreateTransitionHandler } from '../handler/create-transition-handler';
+import { CreateWeakEntityHandler } from '../handler/create-weak-entity-node-handler';
 import { CreateWeightedEdgeHandler } from '../handler/create-weighted-edge-handler';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
 import { TaskListApplyLabelEditHandler } from '../handler/tasklist-apply-label-edit-handler';
@@ -75,6 +76,7 @@ export class TaskListDiagramModule extends DiagramModule {
     protected override configureOperationHandlers(binding: InstanceMultiBinding<OperationHandlerConstructor>): void {
         super.configureOperationHandlers(binding);
         binding.add(CreateTaskHandler);
+        binding.add(CreateWeakEntityHandler);
         binding.add(CreateRelationHandler);
         binding.add(CreateAttributeHandler);
         binding.add(CreateMultiValuedAttributeHandler);

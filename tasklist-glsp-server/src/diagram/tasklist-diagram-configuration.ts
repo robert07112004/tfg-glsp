@@ -46,6 +46,13 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 resizable: true
             },
             {
+                elementTypeId: 'node:weakEntity',
+                deletable: true,
+                reparentable: false,
+                repositionable: true,
+                resizable: true
+            },
+            {
                 elementTypeId: DefaultTypes.NODE_DIAMOND,
                 deletable: true,
                 reparentable: false,
@@ -98,8 +105,12 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 deletable: true,
                 repositionable: false,
                 routable: false,
-                sourceElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 'node:attribute', 'node:multiValuedAttribute', 'node:derivedAttribute', 'node:keyAttribute'],
-                targetElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 'node:attribute', 'node:multiValuedAttribute', 'node:derivedAttribute', 'node:keyAttribute']
+                sourceElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 
+                                       'node:attribute', 'node:multiValuedAttribute', 
+                                       'node:derivedAttribute', 'node:keyAttribute', 'node:weakEntity'],
+                targetElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 
+                                       'node:attribute', 'node:multiValuedAttribute', 
+                                       'node:derivedAttribute', 'node:keyAttribute', 'node:weakEntity']
             }
         ];
     }

@@ -32,6 +32,7 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
             const parentNode = index.findParentElement(operation.labelId, toTypeGuard(GNode));
             if (parentNode) {
                 const task = index.findTask(parentNode.id);
+                const weakEntity = index.findWeakEntity(parentNode.id);
                 const relation = index.findRelation(parentNode.id);
                 const attribute = index.findAttribute(parentNode.id);
                 const multiValuedAttribute = index.findMultiValuedAttribute(parentNode.id);
@@ -39,6 +40,8 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                 const keyAttribute = index.findKeyAttribute(parentNode.id);
                 if (task) {
                     task.name = operation.text;
+                } else if (weakEntity) {
+                    weakEntity.name = operation.text;
                 } else if (relation) {
                     relation.name = operation.text;
                 } else if (attribute) {

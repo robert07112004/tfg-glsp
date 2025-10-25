@@ -24,6 +24,7 @@ import { AnyObject, hasArrayProp, hasObjectProp, hasStringProp } from '@eclipse-
 export interface TaskList {
     id: string;
     tasks: Task[];
+    weakEntities: WeakEntity[];
     relations: Relation[];
     attributes: Attribute[];
     multiValuedAttributes: MultiValuedAttribute[];
@@ -57,6 +58,26 @@ export namespace Task {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as Task).type === 'entity' &&
+            hasStringProp(object, 'name') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface WeakEntity {
+    id: string;
+    type: 'weakEntity';
+    name: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace WeakEntity {
+    export function is(object: any): object is WeakEntity {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as WeakEntity).type === 'weakEntity' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );

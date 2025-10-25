@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, Relation, Task, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -30,6 +30,7 @@ export class TaskListGModelFactory implements GModelFactory {
         
         const childNodes = [
             ...taskList.tasks.map(task => this.createTaskNode(task)),
+            ...taskList.weakEntities.map(weakEntity => this.createWeakEntityNode(weakEntity)),
             ...taskList.relations.map(relation => this.createRelationNode(relation, taskList.weightedEdges)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
@@ -63,6 +64,24 @@ export class TaskListGModelFactory implements GModelFactory {
 
         if (task.size) {
             builder.addLayoutOptions({ prefWidth: task.size.width, prefHeight: task.size.height });
+        }
+
+        return builder.build();
+    }
+
+    protected createWeakEntityNode(weakEntity: WeakEntity): GNode {
+        const builder = GNode.builder()
+            .id(weakEntity.id)
+            .type('node:weakEntity')
+            .addCssClass('weak-entity-node')
+            .add(GLabel.builder().text(weakEntity.name).id(`${weakEntity.id}_label`).build())
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(weakEntity.position);
+
+        if (weakEntity.size) {
+            builder.addLayoutOptions({ prefWidth: weakEntity.size.width, prefHeight: weakEntity.size.height });
         }
 
         return builder.build();

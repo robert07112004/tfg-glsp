@@ -25,79 +25,92 @@ svg {
     fill: inherit;
 }
 
-.entity-node > .sprotty-node {
+.entity-node>.sprotty-node {
     fill: #f1bd6c;
 }
 
-.relation-node > .sprotty-node {
+.weak-entity-node,
+.weak-entity-node-inner {
+    fill: #f1bd6c;
+    stroke: #a0522d;
+    stroke-width: 2px;
+}
+
+.weak-entity-node.selected,
+.weak-entity-node.selected+.weak-entity-node-inner {
+    stroke: #007bff;
+    stroke-width: 2px;
+}
+
+.relation-node>.sprotty-node {
     fill: #1E90FF;
 }
 
 .attribute-node ellipse {
-  fill: #ffcccc; 
-  stroke: #c00;
-  stroke-width: 2px;
+    fill: #ffcccc;
+    stroke: #c00;
+    stroke-width: 2px;
 }
 
 .attribute-node.selected ellipse {
-  stroke: #007bff;
-  stroke-width: 2px;
+    stroke: #007bff;
+    stroke-width: 2px;
 }
 
 .multi-valued-attribute-node,
 .multi-valued-attribute-node-inner {
-  fill: #ffcccc;
-  stroke: #c00;
-  stroke-width: 1px;
+    fill: #ffcccc;
+    stroke: #c00;
+    stroke-width: 1px;
 }
 
 .multi-valued-attribute-node.selected,
-.multi-valued-attribute-node.selected + .multi-valued-attribute-node-inner {
-  stroke: #007bff;
-  stroke-width: 2px;
+.multi-valued-attribute-node.selected+.multi-valued-attribute-node-inner {
+    stroke: #007bff;
+    stroke-width: 2px;
 }
 
 .derived-attribute-node,
 .derived-attribute-node-inner {
-  fill: #ffcccc;
-  stroke: #c00;
-  stroke-width: 1px;
-  stroke-dasharray: 5, 5;
+    fill: #ffcccc;
+    stroke: #c00;
+    stroke-width: 1px;
+    stroke-dasharray: 5, 5;
 }
 
 .derived-attribute-node.selected,
-.derived-attribute-node.selected + .derived-attribute-node-inner {
-  stroke: #007bff;
-  stroke-width: 2px;
+.derived-attribute-node.selected+.derived-attribute-node-inner {
+    stroke: #007bff;
+    stroke-width: 2px;
 }
 
 .key-attribute-node ellipse {
-  fill: #ffcccc;
-  stroke: #c00;
-  stroke-width: 2px;
+    fill: #ffcccc;
+    stroke: #c00;
+    stroke-width: 2px;
 }
 
 .key-attribute-node.selected ellipse {
-  stroke: #007bff;
-  stroke-width: 2px;
+    stroke: #007bff;
+    stroke-width: 2px;
 }
 
 .key-attribute-label {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .weighted-edge {
-  stroke: #ff8800;
-  stroke-width: 2px;
+    stroke: #ff8800;
+    stroke-width: 2px;
 }
 
 .weighted-edge-label {
-  font-size: 12px;
-  fill: #333;
+    font-size: 12px;
+    fill: #333;
 }
 
 .cardinality-label {
-  font-style: italic;
-  font-size: 0.9em;
-  fill: #333;
+    font-style: italic;
+    font-size: 0.9em;
+    fill: #333;
 }

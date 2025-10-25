@@ -16,18 +16,19 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, Relation, Task, TaskList, Transition, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, Relation, Task, TaskList, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
-    protected idToTaskListElements = new Map<string, Task | Relation | Attribute | 
+    protected idToTaskListElements = new Map<string, Task | WeakEntity | Relation | Attribute | 
                                                      MultiValuedAttribute | DerivedAttribute | 
-                                                     KeyAttribute |Transition | WeightedEdge>();
+                                                     KeyAttribute | Transition | WeightedEdge>();
 
     indexTaskList(taskList: TaskList): void {
         this.idToTaskListElements.clear();
         for (const element of [
             ...taskList.tasks, 
+            ...taskList.weakEntities,
             ...taskList.relations,
             ...taskList.attributes,
             ...taskList.multiValuedAttributes,
@@ -43,6 +44,11 @@ export class TaskListModelIndex extends GModelIndex {
     findTask(id: string): Task | undefined {
         const element = this.findTaskOrTransition(id);
         return Task.is(element) ? element : undefined;
+    }
+
+    findWeakEntity(id: string): WeakEntity | undefined {
+        const element = this.findTaskOrTransition(id);
+        return WeakEntity.is(element) ? element : undefined
     }
 
     findRelation(id: string): Relation | undefined {
@@ -80,9 +86,10 @@ export class TaskListModelIndex extends GModelIndex {
         return WeightedEdge.is(element) ? element : undefined;
     }
 
-    findTaskOrTransition(id: string): Task | Relation | Attribute | MultiValuedAttribute | 
-                                      DerivedAttribute | KeyAttribute | 
+    findTaskOrTransition(id: string): Task | WeakEntity | Relation | Attribute | 
+                                      MultiValuedAttribute | DerivedAttribute | KeyAttribute | 
                                       Transition | WeightedEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
+    
 }
