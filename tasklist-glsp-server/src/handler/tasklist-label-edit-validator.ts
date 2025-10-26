@@ -14,7 +14,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
  ********************************************************************************/
-import { GEdge, GLabel, GModelElement, LabelEditValidator, ValidationStatus } from '@eclipse-glsp/server';
+import { GEdge, GLabel, GModelElement, GNode, LabelEditValidator, ValidationStatus } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
@@ -24,8 +24,21 @@ function isEdge(element: GModelElement): element is GEdge {
 }
 
 function isLabel(element: GModelElement): element is GLabel {
-    // Check if the type is 'label' or starts with 'label:'
     return element.type === 'label' || element.type.startsWith('label:');
+}
+
+function isNode(element: GModelElement): element is GNode {
+    return element.type === 'node' || element.type.startsWith('node:');
+}
+
+function isAttributeNode(elementType: string): boolean {
+    const attributeTypes = [
+        'node:attribute',
+        'node:keyAttribute',
+        'node:multiValuedAttribute',
+        'node:derivedAttribute'
+    ];
+    return attributeTypes.includes(elementType);
 }
 
 /**
@@ -68,12 +81,34 @@ export class TaskListLabelEditValidator implements LabelEditValidator {
                     };
                 }
             }
+        } else if (container && isNode(container) && isAttributeNode(container.type)) {
+            const allowedTypes = [
+                'integer', 'smallint', 'bigint', 'tinyint',        
+                'decimal\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)', 
+                'numeric\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
+                'float', 'real', 
+                'varchar\\(\\s*\\d+\\s*\\)', 'char\\(\\s*\\d+\\s*\\)', 'text',
+                'date', 'time', 'datetime', 'timestamp',
+                'boolean',
+                'blob', 'binary', 'varbinary',
+                'json', 'xml', 'uuid',
+                'geometry', 'geography'
+            ];
+            const typesRegex = `(${allowedTypes.join('|')})`;
+            const attributeRegex = new RegExp(`^[^:]+:\\s*${typesRegex}\\s*$`, 'i');
+            if (!attributeRegex.test(label)) {
+                return {
+                    severity: ValidationStatus.Severity.ERROR,
+                    message: 'The format is not correct, please follow the format: {name: type} with SQL types (ex. "age: integer")'
+                };
+            }
         }
 
-        if (label.length < 1) {
-            return { severity: ValidationStatus.Severity.ERROR, message: 'Name must not be empty' };
+        if (label.trim().length < 1 || label.includes(':') && label.split(':')[0].trim().length < 1) {
+            return { severity: ValidationStatus.Severity.ERROR, message: 'Name must not be empty.' };
         }
 
         return { severity: ValidationStatus.Severity.OK };
     }
+
 }
