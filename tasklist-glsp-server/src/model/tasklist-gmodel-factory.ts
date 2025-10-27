@@ -190,21 +190,23 @@ export class TaskListGModelFactory implements GModelFactory {
     }
 
     protected computeCardinality(allEdges: WeightedEdge[], relationId: string): string {
-        const incomingEdges = allEdges.filter(e => e.targetId === relationId);
-        const outgoingEdges = allEdges.filter(e => e.sourceId === relationId);
+        const allConnectedEdges = allEdges.filter(
+            e => e.targetId === relationId || e.sourceId === relationId
+        );
 
-        const isSideMany = (edgeList: WeightedEdge[]): boolean => {
-            return edgeList.some(e => e.description.includes('..N'));
-        };
+        const manyEdgesCount = allConnectedEdges.filter(
+            e => e.description.includes('..N')
+        ).length;
 
-        const sideAIsMany = isSideMany(incomingEdges);
-        const sideBIsMany = isSideMany(outgoingEdges);
-
-        if (sideAIsMany && sideBIsMany) {
+        console.log(`--- DEBUG: Calculando Cardinalidad para ${relationId} ---`);
+        console.log('Aristas Totales Conectadas:', allConnectedEdges.map(e => e.description));
+        console.log('Número de Aristas "Muchos" (N o M):', manyEdgesCount);
+        
+        if (manyEdgesCount >= 2) {
             return 'N:M';
-        } else if (sideAIsMany || sideBIsMany) {
+        } else if (manyEdgesCount === 1) {
             return '1:N';
-        } else if (incomingEdges.length > 0 || outgoingEdges.length > 0) {
+        } else if (allConnectedEdges.length > 0) {
             return '1:1';
         } else {
             return '-';
