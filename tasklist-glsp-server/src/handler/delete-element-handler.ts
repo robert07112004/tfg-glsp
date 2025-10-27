@@ -25,7 +25,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
@@ -73,7 +73,8 @@ export class DeleteElementHandler extends JsonOperationHandler {
     }
 
     private deleteModelElement(modelElement: Task | WeakEntity | Relation | ExistenceDependentRelation | 
-                                             Attribute | MultiValuedAttribute | DerivedAttribute | 
+                                             IdentifyingDependentRelation | Attribute | 
+                                             MultiValuedAttribute | DerivedAttribute | 
                                              KeyAttribute | Transition | WeightedEdge | 
                                              OptionalAttributeEdge | undefined): void {
         if (Task.is(modelElement)) {
@@ -84,6 +85,8 @@ export class DeleteElementHandler extends JsonOperationHandler {
             remove(this.modelState.sourceModel.relations, modelElement);
         } else if (ExistenceDependentRelation.is(modelElement)) {
             remove(this.modelState.sourceModel.existenceDependentRelations, modelElement);
+        } else if (IdentifyingDependentRelation.is(modelElement)) {
+            remove(this.modelState.sourceModel.identifyingDependentRelations, modelElement);
         } else if (Attribute.is(modelElement)) {
             remove(this.modelState.sourceModel.attributes, modelElement);
         } else if (MultiValuedAttribute.is(modelElement)) {

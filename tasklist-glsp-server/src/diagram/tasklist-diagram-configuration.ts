@@ -67,6 +67,13 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 resizable: true
             },
             {
+                elementTypeId: 'node:identifyingDependentRelation',
+                deletable: true,
+                reparentable: false,
+                repositionable: true,
+                resizable: true
+            },
+            {
                 elementTypeId: 'node:attribute',
                 deletable: true,
                 reparentable: false,
@@ -105,7 +112,8 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
 
         const relationTypes = [
             DefaultTypes.NODE_DIAMOND,
-            'node:existenceDependentRelation'
+            'node:existenceDependentRelation',
+            'node:identifyingDependentRelation'
         ];
 
         const attributeTypes = [

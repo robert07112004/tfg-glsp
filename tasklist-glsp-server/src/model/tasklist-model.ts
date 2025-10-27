@@ -27,6 +27,7 @@ export interface TaskList {
     weakEntities: WeakEntity[];
     relations: Relation[];
     existenceDependentRelations: ExistenceDependentRelation[];
+    identifyingDependentRelations: IdentifyingDependentRelation[];
     attributes: Attribute[];
     multiValuedAttributes: MultiValuedAttribute[];
     derivedAttributes: DerivedAttribute[];
@@ -124,6 +125,30 @@ export namespace ExistenceDependentRelation {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as ExistenceDependentRelation).type === 'existenceDependentRelation' &&
+            hasStringProp(object, 'name') &&
+            hasStringProp(object, 'cardinality') &&
+            hasStringProp(object, 'dependencyLabel') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface IdentifyingDependentRelation {
+    id: string;
+    type: 'identifyingDependentRelation';
+    name: string;
+    cardinality: string;
+    dependencyLabel: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace IdentifyingDependentRelation {
+    export function is(object: any): object is IdentifyingDependentRelation {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as IdentifyingDependentRelation).type === 'identifyingDependentRelation' &&
             hasStringProp(object, 'name') &&
             hasStringProp(object, 'cardinality') &&
             hasStringProp(object, 'dependencyLabel') &&

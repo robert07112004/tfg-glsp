@@ -32,6 +32,7 @@ import { injectable } from 'inversify';
 import { CreateAttributeHandler } from '../handler/create-attribute-node-handler';
 import { CreateDerivedAttributeHandler } from '../handler/create-derived-attribute-node-handler';
 import { CreateExistenceDependentRelationHandler } from '../handler/create-existence-dependent-relation-node-handler';
+import { CreateIdentifyingDependentRelationHandler } from '../handler/create-identifying-dependent-relation-node-handler';
 import { CreateKeyAttributeHandler } from '../handler/create-key-attribute-node-handler';
 import { CreateMultiValuedAttributeHandler } from '../handler/create-multi-valued-attribute-node-handler';
 import { CreateOptionalAttributeEdgeHandler } from '../handler/create-optional-attribute-edge-handler';
@@ -81,6 +82,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateWeakEntityHandler);
         binding.add(CreateRelationHandler);
         binding.add(CreateExistenceDependentRelationHandler);
+        binding.add(CreateIdentifyingDependentRelationHandler);
         binding.add(CreateAttributeHandler);
         binding.add(CreateMultiValuedAttributeHandler);
         binding.add(CreateDerivedAttributeHandler);

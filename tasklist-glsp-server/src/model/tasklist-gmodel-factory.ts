@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -33,6 +33,7 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.weakEntities.map(weakEntity => this.createWeakEntityNode(weakEntity)),
             ...taskList.relations.map(relation => this.createRelationNode(relation, taskList.weightedEdges)),
             ...taskList.existenceDependentRelations.map(existenceDependentRelation => this.createExistenceDependentRelationNode(existenceDependentRelation, taskList.weightedEdges)),
+            ...taskList.identifyingDependentRelations.map(identifyingDependentRelation => this.createIdentifyingDependentRelationNode(identifyingDependentRelation, taskList.weightedEdges)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
             ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute)),
@@ -148,6 +149,41 @@ export class TaskListGModelFactory implements GModelFactory {
         
         if (existenceDependentRelation.size) {
             builder.addLayoutOptions({ prefWidth: existenceDependentRelation.size.width, prefHeight: existenceDependentRelation.size.height });
+        }
+
+        return builder.build();
+    }
+
+    protected createIdentifyingDependentRelationNode(identifyingDependentRelation: IdentifyingDependentRelation, weightedEdges: WeightedEdge[]): GNode {
+        const builder = GNode.builder()
+            .id(identifyingDependentRelation.id)
+            .type('node:identifyingDependentRelation')
+            .addCssClass('existence-dependent-relation-node')
+
+            .add(GLabel.builder()
+                .text('Id')
+                .id(`${identifyingDependentRelation.id}_identifying_label`)
+                .type('label:static')
+                .addCssClass('existence-label')
+                .build())
+            .add(GLabel.builder()
+                .text(identifyingDependentRelation.name)
+                .id(`${identifyingDependentRelation.id}_label`)
+                .build())
+            .add(GLabel.builder()
+                .text(this.computeCardinality(weightedEdges, identifyingDependentRelation.id))
+                .id(`${identifyingDependentRelation.id}_cardinality_label`)
+                .type('label:cardinality')
+                .addCssClass('cardinality-label')
+                .build())
+            
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'center')
+            .position(identifyingDependentRelation.position);
+        
+        if (identifyingDependentRelation.size) {
+            builder.addLayoutOptions({ prefWidth: identifyingDependentRelation.size.width, prefHeight: identifyingDependentRelation.size.height });
         }
 
         return builder.build();

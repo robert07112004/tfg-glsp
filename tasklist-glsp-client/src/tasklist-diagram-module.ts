@@ -49,6 +49,7 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     configureModelElement(context, 'node:weakEntity', GNode, WeakEntityView, { enable: [editLabelFeature] });
     configureModelElement(context, DefaultTypes.NODE_DIAMOND, GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:existenceDependentRelation', GNode, DiamondNodeView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'node:identifyingDependentRelation', GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:attribute', GNode, AttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:multiValuedAttribute', GNode, MultiValuedAttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:derivedAttribute', GNode, DerivedAttributeView, { enable: [editLabelFeature] });

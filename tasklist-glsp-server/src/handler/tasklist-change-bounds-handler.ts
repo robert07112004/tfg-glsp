@@ -42,6 +42,7 @@ export class TaskListChangeBoundsHandler extends JsonOperationHandler {
                              index.findWeakEntity(gNode.id) ??
                              index.findRelation(gNode.id) ?? 
                              index.findExistenceDependentRelation(gNode.id) ??
+                             index.findIdentifyingDependentRelation(gNode.id) ??
                              index.findAttribute(gNode.id) ?? 
                              index.findMultiValuedAttribute(gNode.id) ??
                              index.findDerivedAttribute(gNode.id) ??
