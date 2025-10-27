@@ -44,6 +44,25 @@ svg {
 
 .relation-node>.sprotty-node {
     fill: #1E90FF;
+    stroke: #00008B;
+    stroke-width: 2px;
+}
+
+.existence-dependent-relation-node>.sprotty-node {
+    fill: #1E90FF;
+    stroke: #00008B;
+    stroke-width: 2px;
+}
+
+.existence-dependent-relation-node.selected>.sprotty-node {
+    stroke: #007bff;
+    stroke-width: 3px;
+}
+
+.existence-label {
+    font-weight: bold;
+    font-size: 0.8em;
+    fill: #000;
 }
 
 .attribute-node ellipse {

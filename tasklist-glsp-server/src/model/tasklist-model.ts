@@ -26,6 +26,7 @@ export interface TaskList {
     tasks: Task[];
     weakEntities: WeakEntity[];
     relations: Relation[];
+    existenceDependentRelations: ExistenceDependentRelation[];
     attributes: Attribute[];
     multiValuedAttributes: MultiValuedAttribute[];
     derivedAttributes: DerivedAttribute[];
@@ -102,6 +103,30 @@ export namespace Relation {
             hasStringProp(object, 'type') && (object as Relation).type === 'relation' &&
             hasStringProp(object, 'name') &&
             hasStringProp(object, 'cardinality') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface ExistenceDependentRelation {
+    id: string;
+    type: 'existenceDependentRelation';
+    name: string;
+    cardinality: string;
+    dependencyLabel: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace ExistenceDependentRelation {
+    export function is(object: any): object is ExistenceDependentRelation {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as ExistenceDependentRelation).type === 'existenceDependentRelation' &&
+            hasStringProp(object, 'name') &&
+            hasStringProp(object, 'cardinality') &&
+            hasStringProp(object, 'dependencyLabel') &&
             hasObjectProp(object, 'position')
         );
     }

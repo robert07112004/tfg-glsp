@@ -16,11 +16,12 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, TaskList, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, TaskList, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
-    protected idToTaskListElements = new Map<string, Task | WeakEntity | Relation | Attribute | 
+    protected idToTaskListElements = new Map<string, Task | WeakEntity | Relation | 
+                                                     ExistenceDependentRelation | Attribute | 
                                                      MultiValuedAttribute | DerivedAttribute | 
                                                      KeyAttribute | Transition | WeightedEdge |
                                                      OptionalAttributeEdge>();
@@ -31,6 +32,7 @@ export class TaskListModelIndex extends GModelIndex {
             ...taskList.tasks, 
             ...taskList.weakEntities,
             ...taskList.relations,
+            ...taskList.existenceDependentRelations,
             ...taskList.attributes,
             ...taskList.multiValuedAttributes,
             ...taskList.derivedAttributes,
@@ -56,6 +58,11 @@ export class TaskListModelIndex extends GModelIndex {
     findRelation(id: string): Relation | undefined {
         const element = this.findTaskOrTransition(id);
         return Relation.is(element) ? element : undefined;
+    }
+
+    findExistenceDependentRelation(id: string): ExistenceDependentRelation | undefined {
+        const element = this.findTaskOrTransition(id);
+        return ExistenceDependentRelation.is(element) ? element : undefined
     }
 
     findAttribute(id: string): Attribute | undefined {
@@ -93,9 +100,10 @@ export class TaskListModelIndex extends GModelIndex {
         return OptionalAttributeEdge.is(element) ? element : undefined
     }
 
-    findTaskOrTransition(id: string): Task | WeakEntity | Relation | Attribute | 
-                                      MultiValuedAttribute | DerivedAttribute | KeyAttribute | 
-                                      Transition | WeightedEdge | OptionalAttributeEdge | undefined {
+    findTaskOrTransition(id: string): Task | WeakEntity | Relation | ExistenceDependentRelation | 
+                                      Attribute | MultiValuedAttribute | DerivedAttribute | 
+                                      KeyAttribute | Transition | WeightedEdge | 
+                                      OptionalAttributeEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
     

@@ -48,6 +48,7 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     configureModelElement(context, DefaultTypes.NODE_RECTANGLE, GNode, RectangularNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:weakEntity', GNode, WeakEntityView, { enable: [editLabelFeature] });
     configureModelElement(context, DefaultTypes.NODE_DIAMOND, GNode, DiamondNodeView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'node:existenceDependentRelation', GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:attribute', GNode, AttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:multiValuedAttribute', GNode, MultiValuedAttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:derivedAttribute', GNode, DerivedAttributeView, { enable: [editLabelFeature] });
@@ -61,6 +62,7 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });
     configureModelElement(context, 'label:weighted', GLabel, GLabelView, { enable: [editLabelFeature] });
     configureModelElement(context, 'label:cardinality', GLabel, GLabelView);
+    configureModelElement(context, 'label:static', GLabel, GLabelView);
 });
 
 export function initializeTasklistDiagramContainer(container: Container, ...containerConfiguration: ContainerConfiguration): Container {

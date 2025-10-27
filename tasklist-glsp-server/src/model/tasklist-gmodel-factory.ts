@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -32,6 +32,7 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.tasks.map(task => this.createTaskNode(task)),
             ...taskList.weakEntities.map(weakEntity => this.createWeakEntityNode(weakEntity)),
             ...taskList.relations.map(relation => this.createRelationNode(relation, taskList.weightedEdges)),
+            ...taskList.existenceDependentRelations.map(existenceDependentRelation => this.createExistenceDependentRelationNode(existenceDependentRelation, taskList.weightedEdges)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
             ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute)),
@@ -112,6 +113,41 @@ export class TaskListGModelFactory implements GModelFactory {
         
         if (relation.size) {
             builder.addLayoutOptions({ prefWidth: relation.size.width, prefHeight: relation.size.height });
+        }
+
+        return builder.build();
+    }
+
+    protected createExistenceDependentRelationNode(existenceDependentRelation: ExistenceDependentRelation, weightedEdges: WeightedEdge[]): GNode {
+        const builder = GNode.builder()
+            .id(existenceDependentRelation.id)
+            .type('node:existenceDependentRelation')
+            .addCssClass('existence-dependent-relation-node')
+
+            .add(GLabel.builder()
+                .text('E')
+                .id(`${existenceDependentRelation.id}_existence_label`)
+                .type('label:static')
+                .addCssClass('existence-label')
+                .build())
+            .add(GLabel.builder()
+                .text(existenceDependentRelation.name)
+                .id(`${existenceDependentRelation.id}_label`)
+                .build())
+            .add(GLabel.builder()
+                .text(this.computeCardinality(weightedEdges, existenceDependentRelation.id))
+                .id(`${existenceDependentRelation.id}_cardinality_label`)
+                .type('label:cardinality')
+                .addCssClass('cardinality-label')
+                .build())
+            
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'center')
+            .position(existenceDependentRelation.position);
+        
+        if (existenceDependentRelation.size) {
+            builder.addLayoutOptions({ prefWidth: existenceDependentRelation.size.width, prefHeight: existenceDependentRelation.size.height });
         }
 
         return builder.build();
