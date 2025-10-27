@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -40,7 +40,8 @@ export class TaskListGModelFactory implements GModelFactory {
         
         const childEdges = [
             ...taskList.transitions.map(transition => this.createTransitionEdge(transition)),
-            ...taskList.weightedEdges.map(weightedEdge => this.createWeightedEdge(weightedEdge))
+            ...taskList.weightedEdges.map(weightedEdge => this.createWeightedEdge(weightedEdge)),
+            ...taskList.optionalAttributeEdges.map(optionalAttributeEdge => this.createOptionalAttributeEdge(optionalAttributeEdge))
         ]
 
         const newRoot = GGraph.builder()
@@ -239,4 +240,14 @@ export class TaskListGModelFactory implements GModelFactory {
             .build();
     }
 
+    protected createOptionalAttributeEdge(optionalAttributeEdge: OptionalAttributeEdge): GEdge {
+        return GEdge.builder()
+            .id(optionalAttributeEdge.id)
+            .type('edge:optional') 
+            .addCssClass('optional-attribute-edge') 
+            .sourceId(optionalAttributeEdge.sourceId)
+            .targetId(optionalAttributeEdge.targetId)
+            .build();
+    }
+    
 }

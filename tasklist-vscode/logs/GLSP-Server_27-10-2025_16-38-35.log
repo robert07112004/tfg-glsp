@@ -1,0 +1,22 @@
+16:38:35 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 58208 
+16:38:35 info -  [SocketServerLauncher] Starting GLSP server connection 
+16:38:35 info -  [DefaultGLSPServer] Initializing server with: applicationId: c2877633-d2a2-4e90-afbe-3480fddd594b, protocolVersion: 1.0.0 
+16:38:39 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+16:38:39 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+16:38:39 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+16:38:40 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:38:40 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+16:38:51 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+16:38:51 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:38:56 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+16:38:56 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:39:00 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+16:39:00 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:39:02 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_0] 
+16:39:02 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+16:39:05 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+16:39:05 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:39:09 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+16:39:09 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+16:39:15 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+16:39:15 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 

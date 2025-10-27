@@ -22,11 +22,13 @@ import {
     DefaultTypes,
     DiamondNodeView,
     editLabelFeature,
+    GEdge,
     GLabel,
     GLabelView,
     GNode,
     initializeDiagramContainer,
     LogLevel,
+    PolylineEdgeView,
     RectangularNodeView,
     TYPES
 } from '@eclipse-glsp/client';
@@ -52,6 +54,9 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     configureModelElement(context, 'node:keyAttribute', GNode, KeyAttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'weighted-edge', WeightedEdge, WeightedEdgeView, { enable: [editLabelFeature]});
     
+    // Edges
+    configureModelElement(context, 'edge:optional', GEdge, PolylineEdgeView);
+
     // Labels
     configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });
     configureModelElement(context, 'label:weighted', GLabel, GLabelView, { enable: [editLabelFeature] });

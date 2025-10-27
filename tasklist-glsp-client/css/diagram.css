@@ -114,3 +114,16 @@ svg {
     font-size: 0.9em;
     fill: #333;
 }
+
+.optional-attribute-edge path {
+    stroke: white;
+    stroke-width: 2px;
+    stroke-dasharray: 5, 5;
+    fill: none;
+}
+
+.optional-attribute-edge.selected path {
+    stroke: #007bff;
+    stroke-width: 2px;
+    stroke-dasharray: 5, 5;
+}

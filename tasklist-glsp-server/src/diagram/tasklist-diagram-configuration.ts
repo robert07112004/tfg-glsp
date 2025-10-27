@@ -91,6 +91,22 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
     }
 
     get edgeTypeHints(): EdgeTypeHint[] {
+        const entityTypes = [
+            DefaultTypes.NODE_RECTANGLE,
+            'node:weakEntity'
+        ];
+
+        const relationTypes = [
+            DefaultTypes.NODE_DIAMOND,
+        ];
+
+        const attributeTypes = [
+            'node:attribute',
+            'node:keyAttribute',
+            'node:multiValuedAttribute',
+            'node:derivedAttribute'
+        ];
+        
         return [
             {
                 elementTypeId: DefaultTypes.EDGE,
@@ -105,12 +121,16 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 deletable: true,
                 repositionable: false,
                 routable: false,
-                sourceElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 
-                                       'node:attribute', 'node:multiValuedAttribute', 
-                                       'node:derivedAttribute', 'node:keyAttribute', 'node:weakEntity'],
-                targetElementTypeIds: [DefaultTypes.NODE_RECTANGLE, DefaultTypes.NODE_DIAMOND, 
-                                       'node:attribute', 'node:multiValuedAttribute', 
-                                       'node:derivedAttribute', 'node:keyAttribute', 'node:weakEntity']
+                sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
+                targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
+            },
+            {
+                elementTypeId: 'edge:optional',
+                deletable: true,
+                repositionable: false,
+                routable: false,
+                sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
+                targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
             }
         ];
     }

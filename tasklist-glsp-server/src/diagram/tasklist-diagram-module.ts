@@ -33,6 +33,7 @@ import { CreateAttributeHandler } from '../handler/create-attribute-node-handler
 import { CreateDerivedAttributeHandler } from '../handler/create-derived-attribute-node-handler';
 import { CreateKeyAttributeHandler } from '../handler/create-key-attribute-node-handler';
 import { CreateMultiValuedAttributeHandler } from '../handler/create-multi-valued-attribute-node-handler';
+import { CreateOptionalAttributeEdgeHandler } from '../handler/create-optional-attribute-edge-handler';
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
 import { CreateTransitionHandler } from '../handler/create-transition-handler';
@@ -84,6 +85,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateKeyAttributeHandler);
         binding.add(CreateTransitionHandler);
         binding.add(CreateWeightedEdgeHandler);
+        binding.add(CreateOptionalAttributeEdgeHandler);
         binding.add(TaskListChangeBoundsHandler);
         binding.add(TaskListApplyLabelEditHandler);
         binding.add(DeleteElementHandler);

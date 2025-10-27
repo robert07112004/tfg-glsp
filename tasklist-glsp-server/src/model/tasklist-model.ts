@@ -32,6 +32,7 @@ export interface TaskList {
     keyAttributes: KeyAttribute[];
     transitions: Transition[];
     weightedEdges: WeightedEdge[];
+    optionalAttributeEdges: OptionalAttributeEdge[];
 }
 
 export namespace TaskList {
@@ -216,6 +217,25 @@ export namespace WeightedEdge {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'description') &&
+            hasStringProp(object, 'sourceId') &&
+            hasStringProp(object, 'targetId')
+        );
+    }
+}
+
+export interface OptionalAttributeEdge {
+    id: string;
+    type: 'edge:optional';
+    sourceId: string;
+    targetId: string;
+}
+
+export namespace OptionalAttributeEdge {
+    export function is(object: any): object is OptionalAttributeEdge {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as OptionalAttributeEdge).type === 'edge:optional' &&
             hasStringProp(object, 'sourceId') &&
             hasStringProp(object, 'targetId')
         );

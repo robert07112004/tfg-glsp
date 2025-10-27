@@ -16,13 +16,14 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, Relation, Task, TaskList, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, TaskList, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
     protected idToTaskListElements = new Map<string, Task | WeakEntity | Relation | Attribute | 
                                                      MultiValuedAttribute | DerivedAttribute | 
-                                                     KeyAttribute | Transition | WeightedEdge>();
+                                                     KeyAttribute | Transition | WeightedEdge |
+                                                     OptionalAttributeEdge>();
 
     indexTaskList(taskList: TaskList): void {
         this.idToTaskListElements.clear();
@@ -35,7 +36,8 @@ export class TaskListModelIndex extends GModelIndex {
             ...taskList.derivedAttributes,
             ...taskList.keyAttributes,
             ...taskList.transitions,
-            ...taskList.weightedEdges
+            ...taskList.weightedEdges,
+            ...taskList.optionalAttributeEdges
         ]) {
             this.idToTaskListElements.set(element.id, element);
         }
@@ -86,9 +88,14 @@ export class TaskListModelIndex extends GModelIndex {
         return WeightedEdge.is(element) ? element : undefined;
     }
 
+    findOptionalAttributeEdge(id: string): OptionalAttributeEdge | undefined {
+        const element = this.findTaskOrTransition(id);
+        return OptionalAttributeEdge.is(element) ? element : undefined
+    }
+
     findTaskOrTransition(id: string): Task | WeakEntity | Relation | Attribute | 
                                       MultiValuedAttribute | DerivedAttribute | KeyAttribute | 
-                                      Transition | WeightedEdge | undefined {
+                                      Transition | WeightedEdge | OptionalAttributeEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
     
