@@ -1,0 +1,35 @@
+22:23:52 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 55552 
+22:23:52 info -  [SocketServerLauncher] Starting GLSP server connection 
+22:23:52 info -  [DefaultGLSPServer] Initializing server with: applicationId: 83d09395-261e-4edc-beda-9c8a13dd6822, protocolVersion: 1.0.0 
+22:23:55 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+22:23:55 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+22:23:55 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+22:23:55 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:23:55 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+22:24:03 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:24:03 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:25:07 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+22:25:07 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:25:10 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:25:10 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:25:11 info -  [DefaultGLSPServer] process [action=applyLabelEdit, clientId=tasklist-diagram_0] 
+22:25:11 error -  [DefaultCommandStack] An error occurred during command execution. CommandStack will be flushed! Could not find model element for node with id cdac5c20-f6d0-46bb-b36c-b6dbf3d33145
+            Error: Could not find model element for node with id cdac5c20-f6d0-46bb-b36c-b6dbf3d33145
+    at JsonRecordingCommand.doExecute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:60118:27)
+    at JsonRecordingCommand.execute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:7930:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async DefaultCommandStack.execute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:7720:13)
+22:25:11 error -  [DefaultGLSPServer] Could not process action: 'applyLabelEdit 
+22:25:11 error -  [DefaultGLSPServer] Error: Could not find model element for node with id cdac5c20-f6d0-46bb-b36c-b6dbf3d33145 
+22:25:18 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+22:25:18 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:25:20 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+22:25:20 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:25:22 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+22:25:22 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:25:23 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+22:25:23 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:25:23 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_0] 
+22:25:23 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+22:25:25 info -  [DefaultGLSPServer] process [action=deleteElement, clientId=tasklist-diagram_0] 
+22:25:25 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 

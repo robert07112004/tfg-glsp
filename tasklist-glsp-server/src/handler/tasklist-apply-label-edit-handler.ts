@@ -36,6 +36,7 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                 const relation = index.findRelation(parentNode.id);
                 const existenceDependentRelation = index.findExistenceDependentRelation(parentNode.id);
                 const identifyingDependentRelation = index.findIdentifyingDependentRelation(parentNode.id);
+                const exclusiveSpecialization = index.findExlcusiveSpecialization(parentNode.id);
                 const attribute = index.findAttribute(parentNode.id);
                 const multiValuedAttribute = index.findMultiValuedAttribute(parentNode.id);
                 const derivedAttribute = index.findDerivedAttribute(parentNode.id);
@@ -50,6 +51,8 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                     existenceDependentRelation.name = operation.text;
                 } else if (identifyingDependentRelation) {
                     identifyingDependentRelation.name = operation.text;
+                } else if (exclusiveSpecialization) {
+                    exclusiveSpecialization.name = operation.text;
                 } else if (attribute) {
                     attribute.name = operation.text;
                 } else if (multiValuedAttribute) {

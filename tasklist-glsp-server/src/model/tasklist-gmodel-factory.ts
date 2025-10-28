@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExclusiveSpecialization, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -34,6 +34,7 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.relations.map(relation => this.createRelationNode(relation, taskList.weightedEdges)),
             ...taskList.existenceDependentRelations.map(existenceDependentRelation => this.createExistenceDependentRelationNode(existenceDependentRelation, taskList.weightedEdges)),
             ...taskList.identifyingDependentRelations.map(identifyingDependentRelation => this.createIdentifyingDependentRelationNode(identifyingDependentRelation, taskList.weightedEdges)),
+            ...taskList.exclusiveSpecializations.map(exclusiveSpecialization => this.createExclusiveSpecializationNode(exclusiveSpecialization)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
             ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute)),
@@ -189,6 +190,28 @@ export class TaskListGModelFactory implements GModelFactory {
         return builder.build();
     }
 
+    protected createExclusiveSpecializationNode(exclusiveSpecialization: ExclusiveSpecialization): GNode {
+        const builder = GNode.builder()
+            .id(exclusiveSpecialization.id)
+            .type('node:exclusiveSpecialization')
+            .addCssClass('exclusive-specialization-node')
+            .add(GLabel.builder()
+                .text(exclusiveSpecialization.name)
+                .id(`${exclusiveSpecialization.id}_label`)
+                .build()
+            )
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(exclusiveSpecialization.position);
+
+        if (exclusiveSpecialization.size) {
+            builder.addLayoutOptions({ prefWidth: exclusiveSpecialization.size.width, prefHeight: exclusiveSpecialization.size.height });
+        }
+
+        return builder.build();   
+    }
+
     protected computeCardinality(allEdges: WeightedEdge[], relationId: string): string {
         const allConnectedEdges = allEdges.filter(
             e => e.targetId === relationId || e.sourceId === relationId
@@ -197,10 +220,6 @@ export class TaskListGModelFactory implements GModelFactory {
         const manyEdgesCount = allConnectedEdges.filter(
             e => e.description.includes('..N')
         ).length;
-
-        console.log(`--- DEBUG: Calculando Cardinalidad para ${relationId} ---`);
-        console.log('Aristas Totales Conectadas:', allConnectedEdges.map(e => e.description));
-        console.log('Número de Aristas "Muchos" (N o M):', manyEdgesCount);
         
         if (manyEdgesCount >= 2) {
             return 'N:M';

@@ -175,3 +175,32 @@ export class WeakEntityView implements IView {
         </g>;
     }
 }
+
+@injectable()
+export class SpecializationTriangleView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
+        const w = node.size.width;
+        const h = node.size.height;
+        const w2 = w / 2;
+
+        const trianglePath = `M ${w2},${h} L 0,0 L ${w},0 Z`;
+        const arcPath = `M ${w2 - 25},${h + 2} Q ${w2},${h + 12} ${w2 + 25},${h + 2}`;
+        
+        return <g>
+            <path
+                class-sprotty-node={true}
+                class-selected={node.selected}
+                class-specialization-node={true}
+                d={trianglePath}
+            />
+            <path
+                class-specialization-arc={true}
+                d={arcPath}
+                fill="none"
+                stroke="var(--sprotty-edge-stroke, #222)"
+                stroke-width="var(--sprotty-edge-stroke-width, 2px)"
+            />
+            {context.renderChildren(node)} 
+        </g>;
+    }
+}
