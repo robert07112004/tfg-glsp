@@ -274,3 +274,44 @@ export class PartialOverlappedSpecializationView implements IView {
         </g>;
     }
 }
+
+@injectable()
+export class TotalOverlappedSpecializationView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
+        const w = node.size.width;
+        const h = node.size.height;
+        const w2 = w / 2;
+        
+        const circleRadius = 8;
+        const lineLength = 15;
+        const circleCenterY = -lineLength - circleRadius; 
+        const lineEndY = -lineLength; 
+
+        const trianglePath = `M ${w2},${h} L 0,0 L ${w},0 Z`;
+        const linePath = `M ${w2},0 L ${w2},${lineEndY}`;
+
+        return <g>
+            <path
+                class-sprotty-node={true}
+                class-selected={node.selected}
+                class-specialization-triangle-node={true}
+                d={trianglePath}
+            />
+            <path
+                class-total-line={true}
+                d={linePath}
+                fill="none"
+                stroke="var(--sprotty-edge-stroke, #222)"
+                stroke-width="var(--sprotty-edge-stroke-width, 2px)"
+            />
+            <ellipse
+                class-total-circle={true}
+                cx={w2}
+                cy={circleCenterY}
+                rx={circleRadius}
+                ry={circleRadius}
+            />
+            {context.renderChildren(node)} 
+        </g>;
+    }
+}

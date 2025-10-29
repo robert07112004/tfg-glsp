@@ -41,6 +41,7 @@ import { CreatePartialOverlappedSpecializationNodeHandler } from '../handler/cre
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
 import { CreateTotalExclusiveSpecializationNodeHandler } from '../handler/create-total-exclusive-specialization-node-handler';
+import { CreateTotalOverlappedSpecializationNodeHandler } from '../handler/create-total-overlapped-specialization-node-handler';
 import { CreateTransitionHandler } from '../handler/create-transition-handler';
 import { CreateWeakEntityHandler } from '../handler/create-weak-entity-node-handler';
 import { CreateWeightedEdgeHandler } from '../handler/create-weighted-edge-handler';
@@ -89,6 +90,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreatePartialExclusiveSpecializationNodeHandler);
         binding.add(CreateTotalExclusiveSpecializationNodeHandler);
         binding.add(CreatePartialOverlappedSpecializationNodeHandler);
+        binding.add(CreateTotalOverlappedSpecializationNodeHandler);
         binding.add(CreateAttributeHandler);
         binding.add(CreateMultiValuedAttributeHandler);
         binding.add(CreateDerivedAttributeHandler);

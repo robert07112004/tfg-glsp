@@ -46,6 +46,7 @@ export class TaskListChangeBoundsHandler extends JsonOperationHandler {
                              index.findPartialExlcusiveSpecialization(gNode.id) ??
                              index.findTotalExclusiveSpecialization(gNode.id) ??
                              index.findPartialOverlappedSpecialization(gNode.id) ??
+                             index.findTotalOverlappedSpecialization(gNode.id) ??
                              index.findAttribute(gNode.id) ?? 
                              index.findMultiValuedAttribute(gNode.id) ??
                              index.findDerivedAttribute(gNode.id) ??
