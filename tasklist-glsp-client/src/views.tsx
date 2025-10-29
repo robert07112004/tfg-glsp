@@ -177,7 +177,7 @@ export class WeakEntityView implements IView {
 }
 
 @injectable()
-export class SpecializationTriangleView implements IView {
+export class PartialExclusiveSpecializationView implements IView {
     render(node: GNode, context: RenderingContext): VNode {
         const w = node.size.width;
         const h = node.size.height;
@@ -190,11 +190,11 @@ export class SpecializationTriangleView implements IView {
             <path
                 class-sprotty-node={true}
                 class-selected={node.selected}
-                class-exclusive-specialization-node={true}
+                class-specialization-triangle-node={true}
                 d={trianglePath}
             />
             <path
-                class-specialization-arc={true}
+                class-exclusive-arc={true}
                 d={arcPath}
                 fill="none"
                 stroke="var(--sprotty-edge-stroke, #222)"
@@ -225,25 +225,25 @@ export class TotalExclusiveSpecializationView implements IView {
             <path
                 class-sprotty-node={true}
                 class-selected={node.selected}
-                class-exclusive-specialization-node={true}
+                class-specialization-triangle-node={true}
                 d={trianglePath}
             />
             <path
-                class-specialization-arc={true}
+                class-exclusive-arc={true}
                 d={arcPath}
                 fill="none"
                 stroke="var(--sprotty-edge-stroke, #222)"
                 stroke-width="var(--sprotty-edge-stroke-width, 2px)"
             />
             <path
-                class-total-spec-line={true}
+                class-total-line={true}
                 d={linePath}
                 fill="none"
                 stroke="var(--sprotty-edge-stroke, #222)"
                 stroke-width="var(--sprotty-edge-stroke-width, 2px)"
             />
             <ellipse
-                class-total-spec-circle={true}
+                class-total-circle={true}
                 cx={w2}
                 cy={circleCenterY}
                 rx={circleRadius}

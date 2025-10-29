@@ -25,7 +25,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExclusiveSpecialization, ExistenceDependentRelation, ExlusiveSpecialization, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
@@ -73,7 +73,7 @@ export class DeleteElementHandler extends JsonOperationHandler {
     }
 
     private deleteModelElement(modelElement: Task | WeakEntity | Relation | ExistenceDependentRelation | 
-                                             IdentifyingDependentRelation | ExclusiveSpecialization | 
+                                             IdentifyingDependentRelation | PartialExclusiveSpecialization | 
                                              TotalExclusiveSpecialization | Attribute | 
                                              MultiValuedAttribute | DerivedAttribute | 
                                              KeyAttribute | Transition | WeightedEdge | 
@@ -88,8 +88,8 @@ export class DeleteElementHandler extends JsonOperationHandler {
             remove(this.modelState.sourceModel.existenceDependentRelations, modelElement);
         } else if (IdentifyingDependentRelation.is(modelElement)) {
             remove(this.modelState.sourceModel.identifyingDependentRelations, modelElement);
-        } else if (ExlusiveSpecialization.is(modelElement)) {
-            remove(this.modelState.sourceModel.exclusiveSpecializations, modelElement);
+        } else if (PartialExclusiveSpecialization.is(modelElement)) {
+            remove(this.modelState.sourceModel.partialExclusiveSpecializations, modelElement);
         } else if (TotalExclusiveSpecialization.is(modelElement)) {
             remove(this.modelState.sourceModel.totalExclusiveSpecializations, modelElement);
         } else if (Attribute.is(modelElement)) {

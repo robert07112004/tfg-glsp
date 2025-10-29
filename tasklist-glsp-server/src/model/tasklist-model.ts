@@ -28,7 +28,7 @@ export interface TaskList {
     relations: Relation[];
     existenceDependentRelations: ExistenceDependentRelation[];
     identifyingDependentRelations: IdentifyingDependentRelation[];
-    exclusiveSpecializations: ExclusiveSpecialization[];
+    partialExclusiveSpecializations: PartialExclusiveSpecialization[];
     totalExclusiveSpecializations: TotalExclusiveSpecialization[];
     attributes: Attribute[];
     multiValuedAttributes: MultiValuedAttribute[];
@@ -159,20 +159,20 @@ export namespace IdentifyingDependentRelation {
     }
 }
 
-export interface ExclusiveSpecialization {
+export interface PartialExclusiveSpecialization {
     id: string;
-    type: 'exclusiveSpecialization';
+    type: 'partialExclusiveSpecialization';
     name: string;
     position: { x: number; y: number };
     size?: { width: number; height: number };
 }
 
-export namespace ExlusiveSpecialization {
-    export function is(object: any): object is ExclusiveSpecialization {
+export namespace PartialExclusiveSpecialization {
+    export function is(object: any): object is PartialExclusiveSpecialization {
         return (
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as ExclusiveSpecialization).type === 'exclusiveSpecialization' &&
+            hasStringProp(object, 'type') && (object as PartialExclusiveSpecialization).type === 'partialExclusiveSpecialization' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );

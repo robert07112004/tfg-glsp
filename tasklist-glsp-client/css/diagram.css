@@ -147,24 +147,24 @@ svg {
 	stroke-dasharray: 5, 5;
 }
 
-.specialization-arc {
+.exclusive-arc {
 	stroke: #D9534F;
 	stroke-width: 3px;
 }
 
-.exclusive-specialization-node {
+.specialization-triangle-node {
 	fill: #FDFD96;
 	stroke: #333;
 	stroke-width: 2px;
 }
 
-.total-spec-circle {
+.total-circle {
 	fill: white;
 	stroke: #333;
 	stroke-width: 2px;
 }
 
-.total-spec-line {
+.total-line {
 	stroke: #333;
 	stroke-width: 2px;
 }

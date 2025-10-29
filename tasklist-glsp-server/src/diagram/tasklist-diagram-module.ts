@@ -31,12 +31,12 @@ import {
 import { injectable } from 'inversify';
 import { CreateAttributeHandler } from '../handler/create-attribute-node-handler';
 import { CreateDerivedAttributeHandler } from '../handler/create-derived-attribute-node-handler';
-import { CreateExclusiveSpecializationNodeHandler } from '../handler/create-exclusive-specialization-node-handler';
 import { CreateExistenceDependentRelationHandler } from '../handler/create-existence-dependent-relation-node-handler';
 import { CreateIdentifyingDependentRelationHandler } from '../handler/create-identifying-dependent-relation-node-handler';
 import { CreateKeyAttributeHandler } from '../handler/create-key-attribute-node-handler';
 import { CreateMultiValuedAttributeHandler } from '../handler/create-multi-valued-attribute-node-handler';
 import { CreateOptionalAttributeEdgeHandler } from '../handler/create-optional-attribute-edge-handler';
+import { CreatePartialExclusiveSpecializationNodeHandler } from '../handler/create-partial-exclusive-specialization-node-handler';
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
 import { CreateTotalExclusiveSpecializationNodeHandler } from '../handler/create-total-exclusive-specialization-node-handler';
@@ -85,7 +85,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateRelationHandler);
         binding.add(CreateExistenceDependentRelationHandler);
         binding.add(CreateIdentifyingDependentRelationHandler);
-        binding.add(CreateExclusiveSpecializationNodeHandler);
+        binding.add(CreatePartialExclusiveSpecializationNodeHandler);
         binding.add(CreateTotalExclusiveSpecializationNodeHandler);
         binding.add(CreateAttributeHandler);
         binding.add(CreateMultiValuedAttributeHandler);

@@ -36,7 +36,7 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                 const relation = index.findRelation(parentNode.id);
                 const existenceDependentRelation = index.findExistenceDependentRelation(parentNode.id);
                 const identifyingDependentRelation = index.findIdentifyingDependentRelation(parentNode.id);
-                const exclusiveSpecialization = index.findExlcusiveSpecialization(parentNode.id);
+                const exclusiveSpecialization = index.findPartialExlcusiveSpecialization(parentNode.id);
                 const totalExclusiveSpecialization = index.findTotalExclusiveSpecialization(parentNode.id);
                 const attribute = index.findAttribute(parentNode.id);
                 const multiValuedAttribute = index.findMultiValuedAttribute(parentNode.id);

@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExclusiveSpecialization, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -34,7 +34,7 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.relations.map(relation => this.createRelationNode(relation, taskList.weightedEdges)),
             ...taskList.existenceDependentRelations.map(existenceDependentRelation => this.createExistenceDependentRelationNode(existenceDependentRelation, taskList.weightedEdges)),
             ...taskList.identifyingDependentRelations.map(identifyingDependentRelation => this.createIdentifyingDependentRelationNode(identifyingDependentRelation, taskList.weightedEdges)),
-            ...taskList.exclusiveSpecializations.map(exclusiveSpecialization => this.createExclusiveSpecializationNode(exclusiveSpecialization)),
+            ...taskList.partialExclusiveSpecializations.map(partialExclusiveSpecialization => this.createPartialExclusiveSpecializationNode(partialExclusiveSpecialization)),
             ...taskList.totalExclusiveSpecializations.map(totalExclusiveSpecialization => this.createTotalExclusiveSpecializationNode(totalExclusiveSpecialization)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
@@ -191,23 +191,23 @@ export class TaskListGModelFactory implements GModelFactory {
         return builder.build();
     }
 
-    protected createExclusiveSpecializationNode(exclusiveSpecialization: ExclusiveSpecialization): GNode {
+    protected createPartialExclusiveSpecializationNode(partialExclusiveSpecialization: PartialExclusiveSpecialization): GNode {
         const builder = GNode.builder()
-            .id(exclusiveSpecialization.id)
-            .type('node:exclusiveSpecialization')
-            .addCssClass('exclusive-specialization-node')
+            .id(partialExclusiveSpecialization.id)
+            .type('node:partialExclusiveSpecialization')
+            .addCssClass('partial-exclusive-specialization-node')
             .add(GLabel.builder()
-                .text(exclusiveSpecialization.name)
-                .id(`${exclusiveSpecialization.id}_label`)
+                .text(partialExclusiveSpecialization.name)
+                .id(`${partialExclusiveSpecialization.id}_label`)
                 .build()
             )
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'middle')
-            .position(exclusiveSpecialization.position);
+            .position(partialExclusiveSpecialization.position);
 
-        if (exclusiveSpecialization.size) {
-            builder.addLayoutOptions({ prefWidth: exclusiveSpecialization.size.width, prefHeight: exclusiveSpecialization.size.height });
+        if (partialExclusiveSpecialization.size) {
+            builder.addLayoutOptions({ prefWidth: partialExclusiveSpecialization.size.width, prefHeight: partialExclusiveSpecialization.size.height });
         }
 
         return builder.build();   

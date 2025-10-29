@@ -74,7 +74,7 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 resizable: true
             },
             {
-                elementTypeId: 'node:exclusiveSpecialization',
+                elementTypeId: 'node:partialExclusiveSpecialization',
                 deletable: true,
                 reparentable: false,
                 repositionable: true,
@@ -128,7 +128,7 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
             DefaultTypes.NODE_DIAMOND,
             'node:existenceDependentRelation',
             'node:identifyingDependentRelation',
-            'node:exclusiveSpecialization',
+            'node:partialExclusiveSpecialization',
             'node:totalExclusiveSpecialization'
         ];
 
