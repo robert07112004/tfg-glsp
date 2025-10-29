@@ -253,3 +253,24 @@ export class TotalExclusiveSpecializationView implements IView {
         </g>;
     }
 }
+
+@injectable()
+export class PartialOverlappedSpecializationView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
+        const w = node.size.width;
+        const h = node.size.height;
+        const w2 = w / 2;
+
+        const trianglePath = `M ${w2},${h} L 0,0 L ${w},0 Z`;
+        
+        return <g>
+            <path
+                class-sprotty-node={true}
+                class-selected={node.selected}
+                class-specialization-triangle-node={true}
+                d={trianglePath}
+            />
+            {context.renderChildren(node)} 
+        </g>;
+    }
+}

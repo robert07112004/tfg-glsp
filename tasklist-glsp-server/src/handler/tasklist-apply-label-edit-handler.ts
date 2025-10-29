@@ -38,6 +38,7 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                 const identifyingDependentRelation = index.findIdentifyingDependentRelation(parentNode.id);
                 const exclusiveSpecialization = index.findPartialExlcusiveSpecialization(parentNode.id);
                 const totalExclusiveSpecialization = index.findTotalExclusiveSpecialization(parentNode.id);
+                const partialOverlappedSpecialization = index.findPartialOverlappedSpecialization(parentNode.id);
                 const attribute = index.findAttribute(parentNode.id);
                 const multiValuedAttribute = index.findMultiValuedAttribute(parentNode.id);
                 const derivedAttribute = index.findDerivedAttribute(parentNode.id);
@@ -56,6 +57,8 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                     exclusiveSpecialization.name = operation.text;
                 } else if (totalExclusiveSpecialization) {
                     totalExclusiveSpecialization.name = operation.text;
+                } else if (partialOverlappedSpecialization) {
+                    partialOverlappedSpecialization.name = operation.text;
                 } else if (attribute) {
                     attribute.name = operation.text;
                 } else if (multiValuedAttribute) {

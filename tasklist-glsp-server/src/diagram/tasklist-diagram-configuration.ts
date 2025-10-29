@@ -88,6 +88,13 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 resizable: true
             },
             {
+                elementTypeId: 'node:partialOverlappedSpecialization',
+                deletable: true,
+                reparentable: false,
+                repositionable: true,
+                resizable: true
+            },
+            {
                 elementTypeId: 'node:attribute',
                 deletable: true,
                 reparentable: false,
@@ -129,7 +136,8 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
             'node:existenceDependentRelation',
             'node:identifyingDependentRelation',
             'node:partialExclusiveSpecialization',
-            'node:totalExclusiveSpecialization'
+            'node:totalExclusiveSpecialization',
+            'node:partialOverlappedSpecialization'
         ];
 
         const attributeTypes = [

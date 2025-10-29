@@ -37,6 +37,7 @@ import { CreateKeyAttributeHandler } from '../handler/create-key-attribute-node-
 import { CreateMultiValuedAttributeHandler } from '../handler/create-multi-valued-attribute-node-handler';
 import { CreateOptionalAttributeEdgeHandler } from '../handler/create-optional-attribute-edge-handler';
 import { CreatePartialExclusiveSpecializationNodeHandler } from '../handler/create-partial-exclusive-specialization-node-handler';
+import { CreatePartialOverlappedSpecializationNodeHandler } from '../handler/create-partial-overlapped-specialization-node-handler';
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
 import { CreateTotalExclusiveSpecializationNodeHandler } from '../handler/create-total-exclusive-specialization-node-handler';
@@ -87,6 +88,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateIdentifyingDependentRelationHandler);
         binding.add(CreatePartialExclusiveSpecializationNodeHandler);
         binding.add(CreateTotalExclusiveSpecializationNodeHandler);
+        binding.add(CreatePartialOverlappedSpecializationNodeHandler);
         binding.add(CreateAttributeHandler);
         binding.add(CreateMultiValuedAttributeHandler);
         binding.add(CreateDerivedAttributeHandler);

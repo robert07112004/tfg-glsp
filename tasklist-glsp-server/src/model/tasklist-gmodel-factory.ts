@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -36,6 +36,7 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.identifyingDependentRelations.map(identifyingDependentRelation => this.createIdentifyingDependentRelationNode(identifyingDependentRelation, taskList.weightedEdges)),
             ...taskList.partialExclusiveSpecializations.map(partialExclusiveSpecialization => this.createPartialExclusiveSpecializationNode(partialExclusiveSpecialization)),
             ...taskList.totalExclusiveSpecializations.map(totalExclusiveSpecialization => this.createTotalExclusiveSpecializationNode(totalExclusiveSpecialization)),
+            ...taskList.partialOverlappedSpecializations.map(partialOverlappedSpecialization => this.createPartialOverlappedSpecializationNode(partialOverlappedSpecialization)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
             ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute)),
@@ -234,6 +235,28 @@ export class TaskListGModelFactory implements GModelFactory {
 
         return builder.build();
 
+    }
+
+    protected createPartialOverlappedSpecializationNode(partialOverlappedSpecialization: PartialOverlappedSpecialization): GNode {
+        const builder = GNode.builder()
+            .id(partialOverlappedSpecialization.id)
+            .type('node:partialOverlappedSpecialization')
+            .addCssClass('partial-overlapped-specialization-node')
+            .add(GLabel.builder()
+                .text(partialOverlappedSpecialization.name)
+                .id(`${partialOverlappedSpecialization.id}_label`)
+                .build()
+            )
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(partialOverlappedSpecialization.position);
+
+        if (partialOverlappedSpecialization.size) {
+            builder.addLayoutOptions({ prefWidth: partialOverlappedSpecialization.size.width, prefHeight: partialOverlappedSpecialization.size.height });
+        }
+
+        return builder.build();
     }
 
     protected computeCardinality(allEdges: WeightedEdge[], relationId: string): string {

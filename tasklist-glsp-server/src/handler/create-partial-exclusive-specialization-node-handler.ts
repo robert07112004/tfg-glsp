@@ -20,18 +20,18 @@ export class CreatePartialExclusiveSpecializationNodeHandler extends JsonCreateN
     override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
             const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const partialExclusiveSpecialization = this.createExclusiveSpecialization(relativeLocation);
+            const partialExclusiveSpecialization = this.createPartialExclusiveSpecialization(relativeLocation);
             const taskList = this.modelState.sourceModel;
             taskList.partialExclusiveSpecializations.push(partialExclusiveSpecialization);
         });
     }
 
-    protected createExclusiveSpecialization(position: Point): PartialExclusiveSpecialization {
-        const exclusiveSpecialization = this.modelState.sourceModel.partialExclusiveSpecializations.length;
+    protected createPartialExclusiveSpecialization(position: Point): PartialExclusiveSpecialization {
+        const partialExclusiveSpecialization = this.modelState.sourceModel.partialExclusiveSpecializations.length;
         return {
             id: uuid.v4(),
             type: 'partialExclusiveSpecialization',
-            name: `NewPartialExSpecialization${exclusiveSpecialization + 1}`,
+            name: `NewPartialExSpecialization${partialExclusiveSpecialization + 1}`,
             position
         };
     }

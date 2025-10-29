@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, Relation, Task, TaskList, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TaskList, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
@@ -24,7 +24,8 @@ export class TaskListModelIndex extends GModelIndex {
                                                      ExistenceDependentRelation | 
                                                      IdentifyingDependentRelation | 
                                                      PartialExclusiveSpecialization | 
-                                                     TotalExclusiveSpecialization | Attribute | 
+                                                     TotalExclusiveSpecialization |
+                                                     PartialOverlappedSpecialization | Attribute | 
                                                      MultiValuedAttribute | DerivedAttribute | 
                                                      KeyAttribute | Transition | WeightedEdge |
                                                      OptionalAttributeEdge>();
@@ -39,6 +40,7 @@ export class TaskListModelIndex extends GModelIndex {
             ...taskList.identifyingDependentRelations,
             ...taskList.partialExclusiveSpecializations,
             ...taskList.totalExclusiveSpecializations,
+            ...taskList.partialOverlappedSpecializations,
             ...taskList.attributes,
             ...taskList.multiValuedAttributes,
             ...taskList.derivedAttributes,
@@ -86,6 +88,11 @@ export class TaskListModelIndex extends GModelIndex {
         return TotalExclusiveSpecialization.is(element) ? element : undefined
     }
 
+    findPartialOverlappedSpecialization(id: string): PartialOverlappedSpecialization | undefined {
+        const element = this.findTaskOrTransition(id);
+        return PartialOverlappedSpecialization.is(element) ? element : undefined
+    }
+
     findAttribute(id: string): Attribute | undefined {
         const element = this.findTaskOrTransition(id);
         return Attribute.is(element) ? element : undefined;
@@ -123,8 +130,9 @@ export class TaskListModelIndex extends GModelIndex {
 
     findTaskOrTransition(id: string): Task | WeakEntity | Relation | ExistenceDependentRelation | 
                                       IdentifyingDependentRelation | PartialExclusiveSpecialization | 
-                                      TotalExclusiveSpecialization | Attribute | MultiValuedAttribute | 
-                                      DerivedAttribute | KeyAttribute | Transition | WeightedEdge | 
+                                      TotalExclusiveSpecialization | PartialOverlappedSpecialization |
+                                      Attribute | MultiValuedAttribute | DerivedAttribute | 
+                                      KeyAttribute | Transition | WeightedEdge | 
                                       OptionalAttributeEdge | undefined {
         return this.idToTaskListElements.get(id);
     }

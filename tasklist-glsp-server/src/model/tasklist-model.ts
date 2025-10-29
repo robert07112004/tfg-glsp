@@ -30,6 +30,7 @@ export interface TaskList {
     identifyingDependentRelations: IdentifyingDependentRelation[];
     partialExclusiveSpecializations: PartialExclusiveSpecialization[];
     totalExclusiveSpecializations: TotalExclusiveSpecialization[];
+    partialOverlappedSpecializations: PartialOverlappedSpecialization[];
     attributes: Attribute[];
     multiValuedAttributes: MultiValuedAttribute[];
     derivedAttributes: DerivedAttribute[];
@@ -193,6 +194,26 @@ export namespace TotalExclusiveSpecialization {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as TotalExclusiveSpecialization).type === 'totalExclusiveSpecialization' &&
+            hasStringProp(object, 'name') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface PartialOverlappedSpecialization {
+    id: string;
+    type: 'partialOverlappedSpecialization';
+    name: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace PartialOverlappedSpecialization {
+    export function is(object: any): object is PartialOverlappedSpecialization {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as PartialOverlappedSpecialization).type === 'partialOverlappedSpecialization' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );

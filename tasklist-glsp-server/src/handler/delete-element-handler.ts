@@ -25,7 +25,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
+import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
@@ -74,8 +74,8 @@ export class DeleteElementHandler extends JsonOperationHandler {
 
     private deleteModelElement(modelElement: Task | WeakEntity | Relation | ExistenceDependentRelation | 
                                              IdentifyingDependentRelation | PartialExclusiveSpecialization | 
-                                             TotalExclusiveSpecialization | Attribute | 
-                                             MultiValuedAttribute | DerivedAttribute | 
+                                             TotalExclusiveSpecialization | PartialOverlappedSpecialization | 
+                                             Attribute | MultiValuedAttribute | DerivedAttribute | 
                                              KeyAttribute | Transition | WeightedEdge | 
                                              OptionalAttributeEdge | undefined): void {
         if (Task.is(modelElement)) {
@@ -92,6 +92,8 @@ export class DeleteElementHandler extends JsonOperationHandler {
             remove(this.modelState.sourceModel.partialExclusiveSpecializations, modelElement);
         } else if (TotalExclusiveSpecialization.is(modelElement)) {
             remove(this.modelState.sourceModel.totalExclusiveSpecializations, modelElement);
+        } else if (PartialOverlappedSpecialization.is(modelElement)) {
+            remove(this.modelState.sourceModel.partialOverlappedSpecializations, modelElement);
         } else if (Attribute.is(modelElement)) {
             remove(this.modelState.sourceModel.attributes, modelElement);
         } else if (MultiValuedAttribute.is(modelElement)) {
