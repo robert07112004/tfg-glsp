@@ -36,7 +36,7 @@ import 'balloon-css/balloon.min.css';
 import { Container, ContainerModule } from 'inversify';
 import '../css/diagram.css';
 import { WeightedEdge } from './model';
-import { AttributeView, DerivedAttributeView, KeyAttributeView, MultiValuedAttributeView, SpecializationTriangleView, WeakEntityView, WeightedEdgeView } from './views';
+import { AttributeView, DerivedAttributeView, KeyAttributeView, MultiValuedAttributeView, SpecializationTriangleView, TotalExclusiveSpecializationView, WeakEntityView, WeightedEdgeView } from './views';
 
 const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
@@ -51,6 +51,7 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     configureModelElement(context, 'node:existenceDependentRelation', GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:identifyingDependentRelation', GNode, DiamondNodeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:exclusiveSpecialization', GNode, SpecializationTriangleView, { enable: [editLabelFeature] });
+    configureModelElement(context, 'node:totalExclusiveSpecialization', GNode, TotalExclusiveSpecializationView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:attribute', GNode, AttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:multiValuedAttribute', GNode, MultiValuedAttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:derivedAttribute', GNode, DerivedAttributeView, { enable: [editLabelFeature] });

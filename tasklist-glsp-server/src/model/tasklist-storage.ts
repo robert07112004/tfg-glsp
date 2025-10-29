@@ -46,6 +46,7 @@ export class TaskListStorage extends AbstractJsonModelStorage {
             existenceDependentRelations: [],
             identifyingDependentRelations: [],
             exclusiveSpecializations: [],
+            totalExclusiveSpecializations: [],
             attributes: [],
             multiValuedAttributes: [],
             derivedAttributes: [],

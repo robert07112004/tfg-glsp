@@ -190,7 +190,7 @@ export class SpecializationTriangleView implements IView {
             <path
                 class-sprotty-node={true}
                 class-selected={node.selected}
-                class-specialization-node={true}
+                class-exclusive-specialization-node={true}
                 d={trianglePath}
             />
             <path
@@ -199,6 +199,55 @@ export class SpecializationTriangleView implements IView {
                 fill="none"
                 stroke="var(--sprotty-edge-stroke, #222)"
                 stroke-width="var(--sprotty-edge-stroke-width, 2px)"
+            />
+            {context.renderChildren(node)} 
+        </g>;
+    }
+}
+
+@injectable()
+export class TotalExclusiveSpecializationView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
+        const w = node.size.width;
+        const h = node.size.height;
+        const w2 = w / 2;
+        
+        const circleRadius = 8;
+        const lineLength = 15;
+        const circleCenterY = -lineLength - circleRadius; 
+        const lineEndY = -lineLength; 
+
+        const trianglePath = `M ${w2},${h} L 0,0 L ${w},0 Z`;
+        const arcPath = `M ${w2 - 25},${h + 2} Q ${w2},${h + 12} ${w2 + 25},${h + 2}`;
+        const linePath = `M ${w2},0 L ${w2},${lineEndY}`;
+
+        return <g>
+            <path
+                class-sprotty-node={true}
+                class-selected={node.selected}
+                class-exclusive-specialization-node={true}
+                d={trianglePath}
+            />
+            <path
+                class-specialization-arc={true}
+                d={arcPath}
+                fill="none"
+                stroke="var(--sprotty-edge-stroke, #222)"
+                stroke-width="var(--sprotty-edge-stroke-width, 2px)"
+            />
+            <path
+                class-total-spec-line={true}
+                d={linePath}
+                fill="none"
+                stroke="var(--sprotty-edge-stroke, #222)"
+                stroke-width="var(--sprotty-edge-stroke-width, 2px)"
+            />
+            <ellipse
+                class-total-spec-circle={true}
+                cx={w2}
+                cy={circleCenterY}
+                rx={circleRadius}
+                ry={circleRadius}
             />
             {context.renderChildren(node)} 
         </g>;

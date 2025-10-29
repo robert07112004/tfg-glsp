@@ -16,15 +16,15 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExclusiveSpecialization, ExistenceDependentRelation, ExlusiveSpecialization, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, TaskList, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExclusiveSpecialization, ExistenceDependentRelation, ExlusiveSpecialization, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, TaskList, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
     protected idToTaskListElements = new Map<string, Task | WeakEntity | Relation | 
                                                      ExistenceDependentRelation | 
                                                      IdentifyingDependentRelation | 
-                                                     ExclusiveSpecialization | Attribute | 
-                                                     MultiValuedAttribute | DerivedAttribute | 
+                                                     ExclusiveSpecialization | TotalExclusiveSpecialization | 
+                                                     Attribute | MultiValuedAttribute | DerivedAttribute | 
                                                      KeyAttribute | Transition | WeightedEdge |
                                                      OptionalAttributeEdge>();
 
@@ -37,6 +37,7 @@ export class TaskListModelIndex extends GModelIndex {
             ...taskList.existenceDependentRelations,
             ...taskList.identifyingDependentRelations,
             ...taskList.exclusiveSpecializations,
+            ...taskList.totalExclusiveSpecializations,
             ...taskList.attributes,
             ...taskList.multiValuedAttributes,
             ...taskList.derivedAttributes,
@@ -79,6 +80,11 @@ export class TaskListModelIndex extends GModelIndex {
         return ExlusiveSpecialization.is(element) ? element : undefined
     }
 
+    findTotalExclusiveSpecialization(id: string): TotalExclusiveSpecialization | undefined {
+        const element = this.findTaskOrTransition(id);
+        return TotalExclusiveSpecialization.is(element) ? element : undefined
+    }
+
     findAttribute(id: string): Attribute | undefined {
         const element = this.findTaskOrTransition(id);
         return Attribute.is(element) ? element : undefined;
@@ -116,8 +122,8 @@ export class TaskListModelIndex extends GModelIndex {
 
     findTaskOrTransition(id: string): Task | WeakEntity | Relation | ExistenceDependentRelation | 
                                       IdentifyingDependentRelation | ExclusiveSpecialization | 
-                                      Attribute | MultiValuedAttribute | DerivedAttribute | 
-                                      KeyAttribute | Transition | WeightedEdge | 
+                                      TotalExclusiveSpecialization | Attribute | MultiValuedAttribute | 
+                                      DerivedAttribute | KeyAttribute | Transition | WeightedEdge | 
                                       OptionalAttributeEdge | undefined {
         return this.idToTaskListElements.get(id);
     }

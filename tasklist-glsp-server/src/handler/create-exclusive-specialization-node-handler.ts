@@ -27,11 +27,11 @@ export class CreateExclusiveSpecializationNodeHandler extends JsonCreateNodeOper
     }
 
     protected createExclusiveSpecialization(position: Point): ExclusiveSpecialization {
-        const relationCounter = this.modelState.sourceModel.exclusiveSpecializations.length;
+        const exclusiveSpecialization = this.modelState.sourceModel.exclusiveSpecializations.length;
         return {
             id: uuid.v4(),
             type: 'exclusiveSpecialization',
-            name: `NewExSpecialization${relationCounter + 1}`,
+            name: `NewExSpecialization${exclusiveSpecialization + 1}`,
             position
         };
     }

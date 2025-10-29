@@ -39,6 +39,7 @@ import { CreateMultiValuedAttributeHandler } from '../handler/create-multi-value
 import { CreateOptionalAttributeEdgeHandler } from '../handler/create-optional-attribute-edge-handler';
 import { CreateRelationHandler } from '../handler/create-relation-node-handler';
 import { CreateTaskHandler } from '../handler/create-task-node-handler';
+import { CreateTotalExclusiveSpecializationNodeHandler } from '../handler/create-total-exclusive-specialization-node-handler';
 import { CreateTransitionHandler } from '../handler/create-transition-handler';
 import { CreateWeakEntityHandler } from '../handler/create-weak-entity-node-handler';
 import { CreateWeightedEdgeHandler } from '../handler/create-weighted-edge-handler';
@@ -85,6 +86,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateExistenceDependentRelationHandler);
         binding.add(CreateIdentifyingDependentRelationHandler);
         binding.add(CreateExclusiveSpecializationNodeHandler);
+        binding.add(CreateTotalExclusiveSpecializationNodeHandler);
         binding.add(CreateAttributeHandler);
         binding.add(CreateMultiValuedAttributeHandler);
         binding.add(CreateDerivedAttributeHandler);

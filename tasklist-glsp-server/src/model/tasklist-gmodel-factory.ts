@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExclusiveSpecialization, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { Attribute, DerivedAttribute, ExclusiveSpecialization, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, Relation, Task, TotalExclusiveSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -35,6 +35,7 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.existenceDependentRelations.map(existenceDependentRelation => this.createExistenceDependentRelationNode(existenceDependentRelation, taskList.weightedEdges)),
             ...taskList.identifyingDependentRelations.map(identifyingDependentRelation => this.createIdentifyingDependentRelationNode(identifyingDependentRelation, taskList.weightedEdges)),
             ...taskList.exclusiveSpecializations.map(exclusiveSpecialization => this.createExclusiveSpecializationNode(exclusiveSpecialization)),
+            ...taskList.totalExclusiveSpecializations.map(totalExclusiveSpecialization => this.createTotalExclusiveSpecializationNode(totalExclusiveSpecialization)),
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
             ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute)),
@@ -210,6 +211,29 @@ export class TaskListGModelFactory implements GModelFactory {
         }
 
         return builder.build();   
+    }
+
+    protected createTotalExclusiveSpecializationNode(totalExclusiveSpecialization: TotalExclusiveSpecialization): GNode {
+        const builder = GNode.builder()
+            .id(totalExclusiveSpecialization.id)
+            .type('node:totalExclusiveSpecialization')
+            .addCssClass('total-exclusive-specialization-node')
+            .add(GLabel.builder()
+                .text(totalExclusiveSpecialization.name)
+                .id(`${totalExclusiveSpecialization.id}_label`)
+                .build()
+            )
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(totalExclusiveSpecialization.position);
+
+        if (totalExclusiveSpecialization.size) {
+            builder.addLayoutOptions({ prefWidth: totalExclusiveSpecialization.size.width, prefHeight: totalExclusiveSpecialization.size.height });
+        }
+
+        return builder.build();
+
     }
 
     protected computeCardinality(allEdges: WeightedEdge[], relationId: string): string {
