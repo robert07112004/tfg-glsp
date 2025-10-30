@@ -13,11 +13,9 @@ import { TaskListModelState } from '../model/tasklist-model-state';
 @injectable()
 export class TaskListModelValidator extends AbstractModelValidator {
     
-    // Inyectamos nuestro ModelState específico
     @inject(TaskListModelState)
     protected readonly modelState: TaskListModelState;
 
-    // Inyectamos el índice para poder buscar conexiones fácilmente
     protected get index(): TaskListModelIndex {
         return this.modelState.index as TaskListModelIndex;
     }
@@ -44,16 +42,10 @@ export class TaskListModelValidator extends AbstractModelValidator {
         'node:derivedAttribute'
     ];
 
-    /**
-     * Esta función se llama para validar el modelo completo.
-     * GLSP se encarga de llamar a esto y enviar los 'Markers' al cliente.
-     */
     override doBatchValidation(element: GModelElement): Marker[] {
         const markers: Marker[] = [];
         
-        // Validamos solo Nodos (GNode)
         if (element instanceof GNode) {
-            // Validar Entidades
             if (this.entityTypes[0] === element.type) {
                 const entityMarker = this.validateEntity(element);
                 if (entityMarker) {
@@ -76,11 +68,11 @@ export class TaskListModelValidator extends AbstractModelValidator {
         return markers;
     }
 
-    // --- REGLAS DE VALIDACIÓN DE EJEMPLO ---
-
-    /**
-     * REGLA 1: Una Entidad (fuerte o débil) debe estar conectada a ALGO.
-     * (Ya sea a una Relación o a un Atributo)
+    /* Entity rules:
+     * Entity is not connected to anything.
+     * Entity is not connected to another relation.
+     * Entity is not connected to an atribute.
+     * Entity is not connected to a key attribute but has attributes.
      */
     protected validateEntity(entityNode: GNode): Marker | undefined {
         const connectedEdges = [
@@ -99,7 +91,6 @@ export class TaskListModelValidator extends AbstractModelValidator {
         }
 
         let isConnectedToRelation = false;
-
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === entityNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
@@ -111,7 +102,6 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 }
             }
         }
-
         if (!isConnectedToRelation) {
             return {
                 kind: MarkerKind.ERROR,
@@ -123,11 +113,9 @@ export class TaskListModelValidator extends AbstractModelValidator {
 
         let isConnectedToAttributes = false;
         let isConnectedToKeyAttribute = false;
-
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === entityNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
-
             if (otherNode && otherNode instanceof GNode) {
                 if (this.attributeTypes.includes(otherNode.type)) {
                     isConnectedToAttributes = true;
@@ -138,7 +126,6 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 }
             }
         }
-
         if (!isConnectedToAttributes) {
             return {
                 kind: MarkerKind.ERROR,
@@ -147,7 +134,6 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 label: 'Esta entidad no está conectada a ningún atributo. (Solo está conectada a una relación).'
             };
         }
-
         if (!isConnectedToKeyAttribute) {
             return {
                 kind: MarkerKind.ERROR,
@@ -158,13 +144,8 @@ export class TaskListModelValidator extends AbstractModelValidator {
         }
 
         return undefined;
-        
     }
 
-    /**
-     * REGLA 2: Una Relación (de cualquier tipo) debe conectar AL MENOS DOS cosas.
-     * (Normalmente dos entidades/weakEntities)
-     */
     /*protected validateRelation(relationNode: GNode): Marker[] {
         const connectedEdges = this.index.getConnectedEdges(relationNode);
         
