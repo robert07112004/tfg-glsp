@@ -122,6 +122,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
         }
 
         let isConnectedToAttributes = false;
+        let isConnectedToKeyAttribute = false;
 
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === entityNode.id) ? edge.targetId : edge.sourceId;
@@ -130,7 +131,10 @@ export class TaskListModelValidator extends AbstractModelValidator {
             if (otherNode && otherNode instanceof GNode) {
                 if (this.attributeTypes.includes(otherNode.type)) {
                     isConnectedToAttributes = true;
-                    break;
+                    if (this.attributeTypes[1] === otherNode.type) {
+                        isConnectedToKeyAttribute = true;
+                        break;
+                    }
                 }
             }
         }
@@ -141,6 +145,15 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 description: 'Entidad no conectada a ningún atributo',
                 elementId: entityNode.id,
                 label: 'Esta entidad no está conectada a ningún atributo. (Solo está conectada a una relación).'
+            };
+        }
+
+        if (!isConnectedToKeyAttribute) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad no conectada a ningún atributo que sea una clave primaria',
+                elementId: entityNode.id,
+                label: 'No está conectada a ninguna clave primaria'
             };
         }
 
