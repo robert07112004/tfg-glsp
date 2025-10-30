@@ -46,6 +46,7 @@ import { CreateTransitionHandler } from '../handler/create-transition-handler';
 import { CreateWeakEntityHandler } from '../handler/create-weak-entity-node-handler';
 import { CreateWeightedEdgeHandler } from '../handler/create-weighted-edge-handler';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
+import { TaskListModelValidator } from '../handler/diagram-validator';
 import { TaskListApplyLabelEditHandler } from '../handler/tasklist-apply-label-edit-handler';
 import { TaskListChangeBoundsHandler } from '../handler/tasklist-change-bounds-handler';
 import { TaskListLabelEditValidator } from '../handler/tasklist-label-edit-validator';
@@ -101,6 +102,10 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(TaskListChangeBoundsHandler);
         binding.add(TaskListApplyLabelEditHandler);
         binding.add(DeleteElementHandler);
+    }
+
+    protected override bindModelValidator(): BindingTarget<TaskListModelValidator> | undefined {
+        return TaskListModelValidator;
     }
 
     protected override bindGModelIndex(): BindingTarget<GModelIndex> {

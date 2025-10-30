@@ -1,0 +1,206 @@
+import {
+    AbstractModelValidator,
+    DefaultTypes,
+    GModelElement,
+    GNode,
+    Marker,
+    MarkerKind
+} from '@eclipse-glsp/server';
+import { inject, injectable } from 'inversify';
+import { TaskListModelIndex } from '../model/tasklist-model-index';
+import { TaskListModelState } from '../model/tasklist-model-state';
+
+@injectable()
+export class TaskListModelValidator extends AbstractModelValidator {
+    
+    // Inyectamos nuestro ModelState específico
+    @inject(TaskListModelState)
+    protected readonly modelState: TaskListModelState;
+
+    // Inyectamos el índice para poder buscar conexiones fácilmente
+    protected get index(): TaskListModelIndex {
+        return this.modelState.index as TaskListModelIndex;
+    }
+
+    protected entityTypes = [
+        DefaultTypes.NODE_RECTANGLE,
+        'node:weakEntity'
+    ];
+
+    protected relationTypes = [
+        DefaultTypes.NODE_DIAMOND,
+        'node:existenceDependentRelation',
+        'node:identifyingDependentRelation',
+        'node:partialExclusiveSpecialization',
+        'node:totalExclusiveSpecialization',
+        'node:partialOverlappedSpecialization',
+        'node:totalOverlappedSpecialization'
+    ];
+
+    protected attributeTypes = [
+        'node:attribute',
+        'node:keyAttribute',
+        'node:multiValuedAttribute',
+        'node:derivedAttribute'
+    ];
+
+    /**
+     * Esta función se llama para validar el modelo completo.
+     * GLSP se encarga de llamar a esto y enviar los 'Markers' al cliente.
+     */
+    override doBatchValidation(element: GModelElement): Marker[] {
+        const markers: Marker[] = [];
+        
+        // Validamos solo Nodos (GNode)
+        if (element instanceof GNode) {
+            // Validar Entidades
+            if (this.entityTypes[0] === element.type) {
+                const entityMarker = this.validateEntity(element);
+                if (entityMarker) {
+                    markers.push(entityMarker);
+                }
+            }
+            // Validar Relaciones
+            /*else if (this.relationTypes.includes(element.type)) {
+                markers.push(...this.validateRelation(element));
+            }
+            // Validar Atributos
+            else if (this.attributeTypes.includes(element.type)) {
+                markers.push(...this.validateAttribute(element));
+            }*/
+        }
+        
+        // También podríamos validar aristas (GEdge) si quisiéramos
+        // if (GEdge.is(element)) { ... }
+        
+        return markers;
+    }
+
+    // --- REGLAS DE VALIDACIÓN DE EJEMPLO ---
+
+    /**
+     * REGLA 1: Una Entidad (fuerte o débil) debe estar conectada a ALGO.
+     * (Ya sea a una Relación o a un Atributo)
+     */
+    protected validateEntity(entityNode: GNode): Marker | undefined {
+        const connectedEdges = [
+            ...this.index.getIncomingEdges(entityNode),
+            ...this.index.getOutgoingEdges(entityNode)
+        ];
+
+        if (connectedEdges.length === 0) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad aislada',
+                elementId: entityNode.id,
+                label: 'Esta entidad no está conectada a ninguna relación o atributo.'
+            };
+            
+        }
+
+        let isConnectedToRelation = false;
+
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === entityNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.relationTypes.includes(otherNode.type)) {
+                    isConnectedToRelation = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isConnectedToRelation) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad no conectada a ninguna relación',
+                elementId: entityNode.id,
+                label: 'Esta entidad no participa en ninguna relación. (Solo está conectada a atributos).'
+            };
+        }
+
+        let isConnectedToAttributes = false;
+
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === entityNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.attributeTypes.includes(otherNode.type)) {
+                    isConnectedToAttributes = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isConnectedToAttributes) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad no conectada a ningún atributo',
+                elementId: entityNode.id,
+                label: 'Esta entidad no está conectada a ningún atributo. (Solo está conectada a una relación).'
+            };
+        }
+
+        return undefined;
+        
+    }
+
+    /**
+     * REGLA 2: Una Relación (de cualquier tipo) debe conectar AL MENOS DOS cosas.
+     * (Normalmente dos entidades/weakEntities)
+     */
+    /*protected validateRelation(relationNode: GNode): Marker[] {
+        const connectedEdges = this.index.getConnectedEdges(relationNode);
+        
+        // Contamos cuántas conexiones de tipo 'weighted-edge' (las que van a entidades) tiene
+        const entityConnections = connectedEdges.filter(
+            e => e.type === 'weighted-edge'
+        ).length;
+
+        if (entityConnections < 2) {
+            return [this.createMarker(
+                relationNode.id,
+                'Error: Relación incompleta',
+                'Una relación debe estar conectada al menos a dos entidades.',
+                MarkerKind.ERROR
+            )];
+        }
+        return [];
+    }*/
+
+    /**
+     * REGLA 3: Un Atributo (de cualquier tipo) debe estar conectado a UNA Entidad o Relación.
+     */
+    /*protected validateAttribute(attributeNode: GNode): Marker[] {
+        const connectedEdges = this.index.getConnectedEdges(attributeNode);
+        
+        // Buscamos si tiene conexiones (asumimos que se conectan con 'edge:optional')
+        const connections = connectedEdges.filter(
+            e => e.type === 'edge:optional'
+        ).length;
+
+        if (connections === 0) {
+            return [this.createMarker(
+                attributeNode.id,
+                'Error: Atributo aislado',
+                'Este atributo no está conectado a ninguna entidad o relación.',
+                MarkerKind.ERROR
+            )];
+        }
+        
+        if (connections > 1) {
+             return [this.createMarker(
+                attributeNode.id,
+                'Error: Atributo ambiguo',
+                'Este atributo está conectado a más de un elemento.',
+                MarkerKind.WARNING // Puede ser un warning
+            )];
+        }
+
+        return [];
+    }*/
+
+}
