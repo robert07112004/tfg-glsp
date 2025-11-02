@@ -165,7 +165,7 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 targetElementTypeIds: [DefaultTypes.NODE]
             },
             {
-                elementTypeId: 'weighted-edge',
+                elementTypeId: 'edge:weighted',
                 deletable: true,
                 repositionable: false,
                 routable: false,

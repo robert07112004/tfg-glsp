@@ -20,7 +20,7 @@ import { TaskListModelState } from '../model/tasklist-model-state';
 
 // Custom type guards
 function isEdge(element: GModelElement): element is GEdge {
-    return element.type === 'edge';
+    return element.type === 'edge' || element.type.startsWith('edge:');
 }
 
 function isLabel(element: GModelElement): element is GLabel {

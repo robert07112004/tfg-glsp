@@ -340,7 +340,8 @@ export namespace Transition {
 
 export interface WeightedEdge {
     id: string;
-    description: string
+    type: 'edge:weighted';
+    description: string;
     sourceId: string;
     targetId: string;
 }
@@ -350,6 +351,7 @@ export namespace WeightedEdge {
         return (
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as WeightedEdge).type === 'edge:weighted' &&
             hasStringProp(object, 'description') &&
             hasStringProp(object, 'sourceId') &&
             hasStringProp(object, 'targetId')

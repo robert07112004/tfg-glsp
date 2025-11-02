@@ -390,6 +390,7 @@ export class TaskListGModelFactory implements GModelFactory {
     protected createWeightedEdge(weightedEdge: WeightedEdge): GEdge {
         return GEdge.builder()
             .id(weightedEdge.id)
+            .type('edge:weighted')
             .addCssClass('weighted-edge')
             .sourceId(weightedEdge.sourceId)
             .targetId(weightedEdge.targetId)
@@ -397,6 +398,7 @@ export class TaskListGModelFactory implements GModelFactory {
                 GLabel.builder()
                     .id(`${weightedEdge.id}_label`)
                     .type('label:weighted')
+                    .addCssClass('weighted-edge-label')
                     .text(weightedEdge.description ?? '')
                     .build()
             )

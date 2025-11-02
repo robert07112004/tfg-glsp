@@ -35,7 +35,6 @@ import {
 import 'balloon-css/balloon.min.css';
 import { Container, ContainerModule } from 'inversify';
 import '../css/diagram.css';
-import { WeightedEdge } from './model';
 import { AttributeView, DerivedAttributeView, KeyAttributeView, MultiValuedAttributeView, PartialExclusiveSpecializationView, PartialOverlappedSpecializationView, TotalExclusiveSpecializationView, TotalOverlappedSpecializationView, WeakEntityView, WeightedEdgeView } from './views';
 
 const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
@@ -58,9 +57,9 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     configureModelElement(context, 'node:multiValuedAttribute', GNode, MultiValuedAttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:derivedAttribute', GNode, DerivedAttributeView, { enable: [editLabelFeature] });
     configureModelElement(context, 'node:keyAttribute', GNode, KeyAttributeView, { enable: [editLabelFeature] });
-    configureModelElement(context, 'weighted-edge', WeightedEdge, WeightedEdgeView, { enable: [editLabelFeature]});
     
     // Edges
+    configureModelElement(context, 'edge:weighted', GEdge, WeightedEdgeView);
     configureModelElement(context, 'edge:optional', GEdge, PolylineEdgeView);
 
     // Labels

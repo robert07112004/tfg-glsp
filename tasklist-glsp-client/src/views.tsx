@@ -2,7 +2,6 @@
 import {
     angleOfPoint,
     GEdge,
-    GLabel,
     GNode,
     IView,
     Point,
@@ -32,7 +31,7 @@ export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
         );
         additionals.push(arrow);
 
-        const label = edge.children.find(c => c.type === 'label:weighted') as GLabel | undefined;
+        /*const label = edge.children.find(c => c.type === 'label:weighted') as GLabel | undefined;
             if (label) {
                 const midPoint: Point = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
                 additionals.push(
@@ -45,7 +44,7 @@ export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
                         {label.text}
                     </text>
                 );
-            }
+            }*/
 
         return additionals;
     }

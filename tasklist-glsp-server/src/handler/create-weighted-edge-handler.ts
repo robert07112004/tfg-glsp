@@ -41,6 +41,7 @@ export class CreateWeightedEdgeHandler extends JsonCreateEdgeOperationHandler {
 
             const weightedEdge: WeightedEdge = {
                 id: uuid.v4(),
+                type: 'edge:weighted',
                 sourceId: operation.sourceElementId,
                 targetId: operation.targetElementId,
                 description: 'New Weighted Edge'
