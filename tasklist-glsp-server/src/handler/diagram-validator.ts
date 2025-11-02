@@ -42,6 +42,12 @@ export class TaskListModelValidator extends AbstractModelValidator {
         'node:derivedAttribute'
     ];
 
+    protected edgeTypes = [
+        DefaultTypes.EDGE,
+        'edge:weighted',
+        'edge:optional'
+    ];
+
     override doBatchValidation(element: GModelElement): Marker[] {
         const markers: Marker[] = [];
         
@@ -51,13 +57,14 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 if (entityMarker) {
                     markers.push(entityMarker);
                 }
-            }
-            // Validar Relaciones
-            /*else if (this.relationTypes.includes(element.type)) {
-                markers.push(...this.validateRelation(element));
+            } else if (this.relationTypes[0] === element.type) {
+                const relationMarker = this.validateRelation(element);
+                if (relationMarker) {
+                    markers.push(relationMarker);
+                }
             }
             // Validar Atributos
-            else if (this.attributeTypes.includes(element.type)) {
+            /*else if (this.attributeTypes.includes(element.type)) {
                 markers.push(...this.validateAttribute(element));
             }*/
         }
@@ -70,6 +77,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
 
     /* Entity rules:
      * Entity is not connected to anything.
+     * Entity is connected to another entity.
      * Entity is not connected to another relation.
      * Entity is not connected to an atribute.
      * Entity is not connected to a key attribute but has attributes.
@@ -85,16 +93,34 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 kind: MarkerKind.ERROR,
                 description: 'Entidad aislada',
                 elementId: entityNode.id,
-                label: 'Esta entidad no está conectada a ninguna relación o atributo.'
+                label: 'ERR: sin conectar al modelo'
             };
-            
+        }
+
+        let isNotConnectedToEntity = true;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === entityNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.entityTypes.includes(otherNode.type)) {
+                    isNotConnectedToEntity = false;
+                    break;
+                }
+            }
+        }
+        if (!isNotConnectedToEntity) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad conectada con otra entidad',
+                elementId: entityNode.id,
+                label: 'ERR: entidad-entidad'
+            };
         }
 
         let isConnectedToRelation = false;
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === entityNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
-
             if (otherNode && otherNode instanceof GNode) {
                 if (this.relationTypes.includes(otherNode.type)) {
                     isConnectedToRelation = true;
@@ -107,7 +133,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 kind: MarkerKind.ERROR,
                 description: 'Entidad no conectada a ninguna relación',
                 elementId: entityNode.id,
-                label: 'Esta entidad no participa en ninguna relación. (Solo está conectada a atributos).'
+                label: 'ERR: entidad-sinRelación'
             };
         }
 
@@ -131,7 +157,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 kind: MarkerKind.ERROR,
                 description: 'Entidad no conectada a ningún atributo',
                 elementId: entityNode.id,
-                label: 'Esta entidad no está conectada a ningún atributo. (Solo está conectada a una relación).'
+                label: 'ERR: entidad-sinAtributo'
             };
         }
         if (!isConnectedToKeyAttribute) {
@@ -139,31 +165,131 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 kind: MarkerKind.ERROR,
                 description: 'Entidad no conectada a ningún atributo que sea una clave primaria',
                 elementId: entityNode.id,
-                label: 'No está conectada a ninguna clave primaria'
+                label: 'ERR: entidad-sinClavePrimaria'
             };
         }
 
         return undefined;
     }
 
-    /*protected validateRelation(relationNode: GNode): Marker[] {
-        const connectedEdges = this.index.getConnectedEdges(relationNode);
-        
-        // Contamos cuántas conexiones de tipo 'weighted-edge' (las que van a entidades) tiene
-        const entityConnections = connectedEdges.filter(
-            e => e.type === 'weighted-edge'
-        ).length;
+    /* Relation rules:
+     * Relation is not connected to anything.
+     * Relation is connected to another relation.
+     * Relation is not connected with weighted edges.
+     * Relation is connected with key attribute.
+     * Relation is connected with a weighted edge to a attribute.
+     */
+    protected validateRelation(relationNode: GNode): Marker | undefined {
+        const connectedEdges = [
+            ...this.index.getIncomingEdges(relationNode),
+            ...this.index.getOutgoingEdges(relationNode)
+        ];
 
-        if (entityConnections < 2) {
-            return [this.createMarker(
-                relationNode.id,
-                'Error: Relación incompleta',
-                'Una relación debe estar conectada al menos a dos entidades.',
-                MarkerKind.ERROR
-            )];
+        console.log("Numero de aristas: " + connectedEdges.length);
+        for (const edge of connectedEdges) {
+            console.log("Tipo de arista: " + edge.type);
         }
-        return [];
-    }*/
+
+        if (connectedEdges.length === 0) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Relación aislada',
+                elementId: relationNode.id,
+                label: 'ERR: sin conectar al modelo'
+            };
+        }
+
+        let isConnectedToRelation = false;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === relationNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            console.log(otherNode.type);
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.relationTypes.includes(otherNode.type)) {
+                    isConnectedToRelation = true;
+                    break;
+                }
+            }
+        }
+        if (isConnectedToRelation) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Relación está conectada a otra relación',
+                elementId: relationNode.id,
+                label: 'ERR: relación-relación'
+            };
+        }
+
+        /*let entityConnectionCount = 0;
+        let weightedEntityConnectionCount = 0;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === relationNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+
+            if (otherNode && otherNode instanceof GNode) {
+                const isAttribute = this.attributeTypes.includes(otherNode.type);
+                const isRelation = this.relationTypes.includes(otherNode.type);
+                if (!isAttribute && !isRelation) {
+                    entityConnectionCount++;
+                    if (edge.type === this.edgeTypes[1]) { 
+                        weightedEntityConnectionCount++;
+                    }
+                }
+            }
+        }
+
+        if (weightedEntityConnectionCount != entityConnectionCount) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Relación debe estar conectada a entidades mediante aristas ponderadas',
+                elementId: relationNode.id,
+                label: 'ERR: cardinalidad'
+            };
+        }*/
+
+        let isConnectedToKeyAttribute = false;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === relationNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.attributeTypes[1] === otherNode.type) {
+                    isConnectedToKeyAttribute = true;
+                    break;
+                }
+            }
+        }
+        if (isConnectedToKeyAttribute) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Relación no puede estar conectada a un atributo con clave primaria',
+                elementId: relationNode.id,
+                label: 'ERR: relación-sinClavePrimaria'
+            };
+        }
+        
+        let isConnectedToAttributeWithWeightedEdge = false;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === relationNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            if (otherNode && otherNode instanceof GNode) {
+                console.log(edge.type);
+                if (this.attributeTypes[1] !== otherNode.type && edge.type === this.edgeTypes[1]) {
+                    isConnectedToAttributeWithWeightedEdge = true;
+                    break;
+                }
+            }
+        }
+        if (isConnectedToAttributeWithWeightedEdge) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Relación no puede estar conectada a un atributo mediante una arista ponderada',
+                elementId: relationNode.id,
+                label: 'ERR: relación-Atributo-aristaPonderada'
+            };
+        }
+
+        return undefined;
+    }
 
     /**
      * REGLA 3: Un Atributo (de cualquier tipo) debe estar conectado a UNA Entidad o Relación.
