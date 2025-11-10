@@ -22,17 +22,36 @@ Relation rules:
 
 Attribute rules:
     - Attribute not connected to anything.
-    - Attribute can be connected to another attribute or entity or relation or weak entity.
+    - Attribute can only be connected to the same type of attribute or an optional attribute (composite attribute).
+    - If attribute is connected to other attributes it must be connected to an entity. 
+    - Attribute can be connected only to normal relations.
     - Attribute can't be connected to a weighted edge.
+
+Composite Attribute:
+    - Can't have a key attribute in a composite attribute.
+    - Can't have a multi-valued attribute in a composite attribute.
+    - Can't have a derived attribute in a composite attribute.
+    - Can have an optional or a normal attribute in a composite attribute.
 
 Derived attribute:
     - Derived attribute not connected to anything.
-    - Derived attribute can be connected to another entity.
+    - Derived attribute can be connected to another entity, relation, weak entity.
     - Derived attribute can't be connected to a weighted edge.
 
 Key attribute:
+    - Key attribute not connected to anything.
+    - Key attribute can be connected to another entity.
+    - Key attribute can be composed with other normal attributes or optional attributes.
+    - Key attribute can't be connected to a weighted edge.
 
 Multi-valued attribute:
+    - Multi-valued attribute not connected to anything.
+    - Multi-valued attribute can be connected to another entity, weak entity.
+    - Multi-valued attribute can't be connected to a weighted edge.
+
+Existence dependence relation:
+
+Identifying dependence relation:
 
 Partial-exclusive specialization:
 

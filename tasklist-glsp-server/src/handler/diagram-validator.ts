@@ -463,8 +463,9 @@ export class TaskListModelValidator extends AbstractModelValidator {
 
     /* Normal attribute rules:
      * Attribute not connected to anything.
-     * Attribute can only be connected to the same type of attribute.
-     * Attribute can be connected to another attribute or entity or relation or or weak entity.
+     * Attribute can only be connected to the same type of attribute or an optional attribute (composite attribute).
+     * If attribute is connected to other attributes it must be connected to an entity.
+     * Attribute can be connected only to normal relations.
      * Attribute can't be connected to a weighted edge.
      */
     protected validateAttribute(attributeNode: GNode): Marker | undefined {
@@ -483,12 +484,15 @@ export class TaskListModelValidator extends AbstractModelValidator {
         }
 
         let countAttributes = 0;
+        let countRelations = 0;
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === attributeNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
             if (otherNode && otherNode instanceof GNode) {
                 if (this.attributeTypes.includes(otherNode.type)) {
                     countAttributes += 1;
+                } else if (this.relationTypes.includes(otherNode.type)) {
+                    countRelations += 1;
                 }
             }
         }
@@ -509,7 +513,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 };
             }
             if (otherNode && otherNode instanceof GNode) {
-                if (this.attributeTypes[0] === otherNode.type) {
+                if (this.attributeTypes[0] === otherNode.type || this.edgeTypes[2] === edge.type) {
                     countConnectedToAttribute += 1;
                 } else if (this.entityTypes[0] === otherNode.type) {
                     countConnectedToEntity += 1;
@@ -524,18 +528,27 @@ export class TaskListModelValidator extends AbstractModelValidator {
         if (countAttributes !== countConnectedToAttribute) {
             return {
                 kind: MarkerKind.ERROR,
-                description: 'Atributo normal solo puede conectarse a atributos normaless.',
+                description: 'Atributo normal solo puede conectarse a atributos normales u opcionales.',
                 elementId: attributeNode.id,
-                label: 'ERR: Atributo-atributo'
+                label: 'ERR: Atributo-atributoNormal-atributoOpcional'
             };
         }
 
-        if (countConnectedToEntity > 1 || countConnectedToRelation > 1 || countConnectedToWeakEntity > 1) {
+        if (countRelations !== countConnectedToRelation) {
             return {
                 kind: MarkerKind.ERROR,
-                description: 'Atributo solo puede conectarse a una entidad o a una relacion o a una entidad debil.',
+                description: 'Atributo normal solo puede conectarse a relaciones normales.',
                 elementId: attributeNode.id,
-                label: 'ERR: Atributo-soloUnElemento'
+                label: 'ERR: Atributo-relacion'
+            };
+        }
+
+        if (countConnectedToAttribute > 1 && (countConnectedToEntity == 0 || countConnectedToWeakEntity == 0)) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Atributo conectado a otro atributo deberia estar conectado a una entidad o a una entidad debil.',
+                elementId: attributeNode.id,
+                label: 'ERR: Atributo-entidad-entidadDebil'
             };
         }
 
