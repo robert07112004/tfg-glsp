@@ -1,4 +1,4 @@
-import { Command, CreateEdgeOperation, DefaultTypes, JsonCreateEdgeOperationHandler, MaybePromise } from '@eclipse-glsp/server';
+import { Command, CreateEdgeOperation, JsonCreateEdgeOperationHandler, MaybePromise } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import * as uuid from 'uuid';
 import { WeightedEdge } from '../model/tasklist-model';
@@ -13,7 +13,7 @@ export class CreateWeightedEdgeHandler extends JsonCreateEdgeOperationHandler {
 
     override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
-            const sourceNode = this.modelState.index.get(operation.sourceElementId);
+            /*const sourceNode = this.modelState.index.get(operation.sourceElementId);
             const targetNode = this.modelState.index.get(operation.targetElementId);
 
             const sourceType = sourceNode?.type;
@@ -37,7 +37,7 @@ export class CreateWeightedEdgeHandler extends JsonCreateEdgeOperationHandler {
 
             ) {
                 return undefined;
-            }
+            }*/
 
             const weightedEdge: WeightedEdge = {
                 id: uuid.v4(),

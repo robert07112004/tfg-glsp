@@ -18,7 +18,7 @@ export class CreateOptionalAttributeEdgeHandler extends JsonCreateEdgeOperationH
 
     override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
-            const sourceNode = this.modelState.index.get(operation.sourceElementId);
+            /*const sourceNode = this.modelState.index.get(operation.sourceElementId);
             const targetNode = this.modelState.index.get(operation.targetElementId);
 
             const sourceType = sourceNode?.type;
@@ -29,7 +29,7 @@ export class CreateOptionalAttributeEdgeHandler extends JsonCreateEdgeOperationH
                 (sourceType === 'node:relation' && targetType === 'node:relation')
             ) {
                 return undefined;
-            }
+            }*/
             
             const optionalAttributeEdge: OptionalAttributeEdge = {
                 id: uuid.v4(),

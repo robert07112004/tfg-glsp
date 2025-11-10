@@ -1,0 +1,29 @@
+18:09:10 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 51346 
+18:09:10 info -  [SocketServerLauncher] Starting GLSP server connection 
+18:09:10 info -  [DefaultGLSPServer] Initializing server with: applicationId: 1128b1ea-fd9f-4aa2-9883-a663d625c6b9, protocolVersion: 1.0.0 
+18:09:12 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+18:09:12 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+18:09:12 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+18:09:12 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:09:12 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+18:09:16 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+18:09:16 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:09:17 info -  [DefaultGLSPServer] process [action=requestMarkers, clientId=tasklist-diagram_0] 
+18:09:22 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_0] 
+18:09:22 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+18:09:22 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+18:09:22 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:09:26 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+18:09:26 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:09:29 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+18:09:29 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:09:30 info -  [DefaultGLSPServer] process [action=requestMarkers, clientId=tasklist-diagram_0] 
+18:09:44 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_0] 
+18:09:44 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+18:09:45 info -  [DefaultGLSPServer] process [action=deleteElement, clientId=tasklist-diagram_0] 
+18:09:45 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:09:47 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+18:09:47 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:09:53 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+18:09:53 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:09:54 info -  [DefaultGLSPServer] process [action=requestMarkers, clientId=tasklist-diagram_0] 

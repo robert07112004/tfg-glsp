@@ -57,15 +57,22 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 if (entityMarker) {
                     markers.push(entityMarker);
                 }
+            } else if (this.entityTypes[1] === element.type) {
+                const weakEntityMarker = this.validateWeakEntity(element);
+                if (weakEntityMarker) {
+                    markers.push(weakEntityMarker);
+                }
             } else if (this.relationTypes[0] === element.type) {
                 const relationMarker = this.validateRelation(element);
                 if (relationMarker) {
                     markers.push(relationMarker);
                 }
             }
-            // Validar Atributos
-            /*else if (this.attributeTypes.includes(element.type)) {
-                markers.push(...this.validateAttribute(element));
+            /*else if (this.attributeTypes[0] === element.type) {
+                const attributeMarker = this.validateAttribute(element);
+                if (attributeMarker) {
+                    markers.push(attributeMarker);
+                }
             }*/
         }
         
@@ -79,6 +86,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
      * Entity is not connected to anything.
      * Entity is connected to another entity.
      * Entity is not connected to another relation.
+     * Entity connected to a relation without a weighted edge.
      * Entity is not connected to an atribute.
      * Entity is not connected to a key attribute but has attributes.
      */
@@ -118,11 +126,15 @@ export class TaskListModelValidator extends AbstractModelValidator {
         }
 
         let isConnectedToRelation = false;
+        let isConnectedWithWeightedEdge = false;
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === entityNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
             if (otherNode && otherNode instanceof GNode) {
                 if (this.relationTypes.includes(otherNode.type)) {
+                    if (this.edgeTypes[1] === edge.type) {
+                        isConnectedWithWeightedEdge = true;     
+                    }
                     isConnectedToRelation = true;
                     break;
                 }
@@ -134,6 +146,14 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 description: 'Entidad no conectada a ninguna relación',
                 elementId: entityNode.id,
                 label: 'ERR: entidad-sinRelación'
+            };
+        }
+        if (!isConnectedWithWeightedEdge) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad no conectada a ninguna relación con una arista ponderada',
+                elementId: entityNode.id,
+                label: 'ERR: entidad-sinRelación-aristaPonderada'
             };
         }
 
@@ -154,7 +174,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
         }
         if (!isConnectedToAttributes) {
             return {
-                kind: MarkerKind.ERROR,
+                kind: MarkerKind.WARNING,
                 description: 'Entidad no conectada a ningún atributo',
                 elementId: entityNode.id,
                 label: 'ERR: entidad-sinAtributo'
@@ -172,23 +192,177 @@ export class TaskListModelValidator extends AbstractModelValidator {
         return undefined;
     }
 
+    /* Weak entity rules:
+     * Weak entity not connected to anything.
+     * Must be connected to an existence dependent relation or an identifying dependent relation with a weighted edge.
+     * Must be connected to a normal entity through an existence or identifying dependent relation.
+     * If is connected to an existence relation must have a primary key.
+     * If is connected to an identifying relation cant have a primary key.
+     */
+    protected validateWeakEntity(weakEntityNode: GNode): Marker | undefined {
+        const connectedEdges = [
+            ...this.index.getIncomingEdges(weakEntityNode),
+            ...this.index.getOutgoingEdges(weakEntityNode)
+        ];
+
+        if (connectedEdges.length === 0) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad débil aislada',
+                elementId: weakEntityNode.id,
+                label: 'ERR: weakEntity-isolated'
+            };
+        }
+
+        let connectedToExistenceDep = false;
+        let connectedToIdentifyingDep = false;
+        let connectedToStrongEntity = false;
+        let hasPrimaryKey = false;
+        let hasAnyAttribute = false;
+
+        for (const edge of connectedEdges) {
+            const attrNodeId = (edge.sourceId === weakEntityNode.id) ? edge.targetId : edge.sourceId;
+            const attrNode = this.index.get(attrNodeId);
+            if (attrNode && attrNode instanceof GNode) {
+                if (this.edgeTypes[0] === edge.type && this.attributeTypes.includes(attrNode.type)) {
+                    if (this.attributeTypes[1] === attrNode.type) {
+                        hasPrimaryKey = true;
+                    } else {
+                        hasAnyAttribute = true;
+                    }
+                }
+            }
+        }
+
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === weakEntityNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            if (!otherNode || !(otherNode instanceof GNode)) continue;
+            if (edge.type !== this.edgeTypes[0]  && this.attributeTypes.includes(otherNode.type)) {
+                return {
+                    kind: MarkerKind.ERROR,
+                    description: 'Entidad débil no puede estar conectada a atributos mediante otro tipo de aristas que no sean transiciones.',
+                    elementId: weakEntityNode.id,
+                    label: 'ERR: weakEntity-noDependence-weightedEdge'
+                };
+            }
+
+            if (this.relationTypes[1] === otherNode.type) {
+                if (this.edgeTypes[1] !== edge.type) {
+                    return {
+                        kind: MarkerKind.ERROR,
+                        description: 'Entidad débil no está conectada a ninguna dependencia en existencia mediante aristas ponderadas.',
+                        elementId: weakEntityNode.id,
+                        label: 'ERR: weakEntity-noDependence'
+                    };
+                } else {
+                    connectedToExistenceDep = true;
+                    connectedToStrongEntity ||= this.isConnectedToStrongEntity(otherNode);
+                    if (!connectedToStrongEntity) {
+                        return {
+                            kind: MarkerKind.ERROR,
+                            description: 'Entidad débil no está conectada a ninguna entidad fuerte con aristas ponderadas mediante una dependencia en existencia.',
+                            elementId: weakEntityNode.id,
+                            label: 'ERR: weakEntity-noStrongEntity'
+                        };
+                    }
+                }
+            }
+
+            if (this.relationTypes[2] === otherNode.type) {
+                if (this.edgeTypes[1] !== edge.type) {
+                    return {
+                        kind: MarkerKind.ERROR,
+                        description: 'Entidad débil no está conectada a ninguna dependencia en identificacion mediante aristas ponderadas.',
+                        elementId: weakEntityNode.id,
+                        label: 'ERR: weakEntity-noDependence'
+                    };
+                } else {
+                    connectedToIdentifyingDep = true;
+                    connectedToStrongEntity ||= this.isConnectedToStrongEntity(otherNode);
+                    if (!connectedToStrongEntity) {
+                        return {
+                            kind: MarkerKind.ERROR,
+                            description: 'Entidad débil no está conectada a ninguna entidad fuerte con aristas ponderadas mediante una dependencia en identificacion.',
+                            elementId: weakEntityNode.id,
+                            label: 'ERR: weakEntity-noStrongEntity'
+                        };
+                    }
+                }
+            }
+        }
+
+        if (!connectedToExistenceDep && !connectedToIdentifyingDep) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad débil no está conectada a ninguna dependencia en existencia o identificación.',
+                elementId: weakEntityNode.id,
+                label: 'ERR: weakEntity-noDependence'
+            };
+        }
+
+        if (connectedToExistenceDep && !hasPrimaryKey) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad débil conectada a una dependencia en existencia debe tener un atributo clave primaria.',
+                elementId: weakEntityNode.id,
+                label: 'ERR: weakEntity-existence-noPrimaryKey'
+            };
+        }
+
+        if (connectedToIdentifyingDep && hasPrimaryKey) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad débil conectada a una dependencia en identificación no puede tener clave primaria propia (solo clave parcial).',
+                elementId: weakEntityNode.id,
+                label: 'ERR: weakEntity-identifying-hasPrimaryKey'
+            };
+        }
+
+        if (connectedToIdentifyingDep && !hasAnyAttribute) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Entidad débil con dependencia en identificación debe tener al menos un atributo (por ejemplo, clave parcial).',
+                elementId: weakEntityNode.id,
+                label: 'ERR: weakEntity-identifying-noAttributes'
+            };
+        }
+
+        return undefined;
+    }
+
+    protected isConnectedToStrongEntity(dependenceNode: GNode): boolean {
+        const connectedEdges = [
+            ...this.index.getIncomingEdges(dependenceNode),
+            ...this.index.getOutgoingEdges(dependenceNode)
+        ];
+
+        for (const edge of connectedEdges) {
+            const nodeId = (edge.sourceId === dependenceNode.id) ? edge.targetId : edge.sourceId;
+            const node = this.index.get(nodeId);
+            if (node && node instanceof GNode) {
+                if (this.edgeTypes[1] === edge.type && this.entityTypes[0] === node.type) {
+                    return true;
+                } else {
+
+                }
+            }
+        }
+        return false;
+    }
+
     /* Relation rules:
      * Relation is not connected to anything.
      * Relation is connected to another relation.
      * Relation is not connected with weighted edges.
      * Relation is connected with key attribute.
-     * Relation is connected with a weighted edge to a attribute.
+     * Relation is connected with a weighted edge to an attribute.
      */
     protected validateRelation(relationNode: GNode): Marker | undefined {
         const connectedEdges = [
             ...this.index.getIncomingEdges(relationNode),
             ...this.index.getOutgoingEdges(relationNode)
         ];
-
-        console.log("Numero de aristas: " + connectedEdges.length);
-        for (const edge of connectedEdges) {
-            console.log("Tipo de arista: " + edge.type);
-        }
 
         if (connectedEdges.length === 0) {
             return {
@@ -203,7 +377,6 @@ export class TaskListModelValidator extends AbstractModelValidator {
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === relationNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
-            console.log(otherNode.type);
             if (otherNode && otherNode instanceof GNode) {
                 if (this.relationTypes.includes(otherNode.type)) {
                     isConnectedToRelation = true;
@@ -220,12 +393,11 @@ export class TaskListModelValidator extends AbstractModelValidator {
             };
         }
 
-        /*let entityConnectionCount = 0;
+        let entityConnectionCount = 0;
         let weightedEntityConnectionCount = 0;
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === relationNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
-
             if (otherNode && otherNode instanceof GNode) {
                 const isAttribute = this.attributeTypes.includes(otherNode.type);
                 const isRelation = this.relationTypes.includes(otherNode.type);
@@ -245,7 +417,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 elementId: relationNode.id,
                 label: 'ERR: cardinalidad'
             };
-        }*/
+        }
 
         let isConnectedToKeyAttribute = false;
         for (const edge of connectedEdges) {
@@ -272,7 +444,6 @@ export class TaskListModelValidator extends AbstractModelValidator {
             const otherNodeId = (edge.sourceId === relationNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
             if (otherNode && otherNode instanceof GNode) {
-                console.log(edge.type);
                 if (this.attributeTypes[1] !== otherNode.type && edge.type === this.edgeTypes[1]) {
                     isConnectedToAttributeWithWeightedEdge = true;
                     break;
@@ -291,36 +462,55 @@ export class TaskListModelValidator extends AbstractModelValidator {
         return undefined;
     }
 
-    /**
-     * REGLA 3: Un Atributo (de cualquier tipo) debe estar conectado a UNA Entidad o Relación.
-     */
-    /*protected validateAttribute(attributeNode: GNode): Marker[] {
-        const connectedEdges = this.index.getConnectedEdges(attributeNode);
-        
-        // Buscamos si tiene conexiones (asumimos que se conectan con 'edge:optional')
-        const connections = connectedEdges.filter(
-            e => e.type === 'edge:optional'
-        ).length;
+    /*protected validateAttribute(attributeNode: GNode): Marker | undefined {
+        const connectedEdges = [
+            ...this.index.getIncomingEdges(attributeNode),
+            ...this.index.getOutgoingEdges(attributeNode)
+        ];
 
-        if (connections === 0) {
-            return [this.createMarker(
-                attributeNode.id,
-                'Error: Atributo aislado',
-                'Este atributo no está conectado a ninguna entidad o relación.',
-                MarkerKind.ERROR
-            )];
-        }
-        
-        if (connections > 1) {
-             return [this.createMarker(
-                attributeNode.id,
-                'Error: Atributo ambiguo',
-                'Este atributo está conectado a más de un elemento.',
-                MarkerKind.WARNING // Puede ser un warning
-            )];
+        if (connectedEdges.length === 0) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Atributo aislado',
+                elementId: attributeNode.id,
+                label: 'ERR: sin conectar al modelo'
+            };
         }
 
-        return [];
+        let isConnectedToAttribute = false;
+        let isNotConnectedToEntity = false;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === attributeNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.attributeTypes[1] !== otherNode.type && edge.type === this.edgeTypes[1]) {
+                    isConnectedToAttributeWithWeightedEdge = true;
+                    break;
+                }
+            }
+        }
+        if (isConnectedToAttributeWithWeightedEdge) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Relación no puede estar conectada a un atributo mediante una arista ponderada',
+                elementId: relationNode.id,
+                label: 'ERR: relación-Atributo-aristaPonderada'
+            };
+        }
+
+
+
+        return undefined;
+
     }*/
 
+    /*protected getOtherNode(currentNode: GNode, edge: GEdge): GNode | undefined {
+        const otherNodeId = (edge.sourceId === currentNode.id) ? edge.targetId : edge.sourceId;
+        const otherNode = this.index.get(otherNodeId);
+        if (otherNode && otherNode instanceof GNode) {
+            return otherNode;
+        }
+        return undefined;
+    }*/
+   
 }

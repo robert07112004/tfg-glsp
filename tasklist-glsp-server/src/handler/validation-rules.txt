@@ -1,0 +1,25 @@
+Entity rules:
+    - Entity not connected to anything.
+    - Entity connected to another entity.
+    - Entity not connected to a relation.
+    - Entity connected to a relation without a weighted edge.
+    - Entity not connected to an atribute.
+    - Entity not connected to a key attribute but has attributes.
+
+Weak entity rules:
+    - Weak entity not connected to anything.
+    - Must be connected to an existence dependent relation or an identifying dependent relation with a weighted edge.
+    - Must be connected to a normal entity through an existence or identifying dependent relation.
+    - If is connected to a dependent relation must have a primary key.
+    - If is connected to an identifying relation cant have a primary key.
+
+Relation rules:
+    - Relation not connected to anything.
+    - Relation connected to another relation.
+    - Relation not connected with weighted edges.
+    - Relation connected with key attribute.
+    - Relation connected with a weighted edge to an attribute.
+
+Attribute rules:
+    - Attribute not connected to anything.
+    - Attribute can be connected to another attribute or entity or relation or weak entity 
