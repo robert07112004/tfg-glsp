@@ -67,13 +67,12 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 if (relationMarker) {
                     markers.push(relationMarker);
                 }
-            }
-            /*else if (this.attributeTypes[0] === element.type) {
+            } else if (this.attributeTypes[0] === element.type) {
                 const attributeMarker = this.validateAttribute(element);
                 if (attributeMarker) {
                     markers.push(attributeMarker);
                 }
-            }*/
+            }
         }
         
         // También podríamos validar aristas (GEdge) si quisiéramos
@@ -462,7 +461,13 @@ export class TaskListModelValidator extends AbstractModelValidator {
         return undefined;
     }
 
-    /*protected validateAttribute(attributeNode: GNode): Marker | undefined {
+    /* Normal attribute rules:
+     * Attribute not connected to anything.
+     * Attribute can only be connected to the same type of attribute.
+     * Attribute can be connected to another attribute or entity or relation or or weak entity.
+     * Attribute can't be connected to a weighted edge.
+     */
+    protected validateAttribute(attributeNode: GNode): Marker | undefined {
         const connectedEdges = [
             ...this.index.getIncomingEdges(attributeNode),
             ...this.index.getOutgoingEdges(attributeNode)
@@ -477,40 +482,65 @@ export class TaskListModelValidator extends AbstractModelValidator {
             };
         }
 
-        let isConnectedToAttribute = false;
-        let isNotConnectedToEntity = false;
+        let countAttributes = 0;
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === attributeNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
             if (otherNode && otherNode instanceof GNode) {
-                if (this.attributeTypes[1] !== otherNode.type && edge.type === this.edgeTypes[1]) {
-                    isConnectedToAttributeWithWeightedEdge = true;
-                    break;
+                if (this.attributeTypes.includes(otherNode.type)) {
+                    countAttributes += 1;
                 }
             }
         }
-        if (isConnectedToAttributeWithWeightedEdge) {
+
+        let countConnectedToAttribute = 0;
+        let countConnectedToEntity = 0;
+        let countConnectedToRelation = 0;
+        let countConnectedToWeakEntity = 0;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === attributeNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            if (edge.type === this.edgeTypes[1]) {
+                return {
+                    kind: MarkerKind.ERROR,
+                    description: 'Atributo no puede estar conectado a nada mediante una arista ponderada.',
+                    elementId: attributeNode.id,
+                    label: 'ERR: Atributo-aristaPonderada'
+                };
+            }
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.attributeTypes[0] === otherNode.type) {
+                    countConnectedToAttribute += 1;
+                } else if (this.entityTypes[0] === otherNode.type) {
+                    countConnectedToEntity += 1;
+                } else if (this.relationTypes[0] === otherNode.type) {
+                    countConnectedToRelation += 1;
+                } else if (this.entityTypes[1] === otherNode.type) {
+                    countConnectedToWeakEntity += 1;
+                }
+            }
+        }
+
+        if (countAttributes !== countConnectedToAttribute) {
             return {
                 kind: MarkerKind.ERROR,
-                description: 'Relación no puede estar conectada a un atributo mediante una arista ponderada',
-                elementId: relationNode.id,
-                label: 'ERR: relación-Atributo-aristaPonderada'
+                description: 'Atributo normal solo puede conectarse a atributos normaless.',
+                elementId: attributeNode.id,
+                label: 'ERR: Atributo-atributo'
             };
         }
 
-
-
-        return undefined;
-
-    }*/
-
-    /*protected getOtherNode(currentNode: GNode, edge: GEdge): GNode | undefined {
-        const otherNodeId = (edge.sourceId === currentNode.id) ? edge.targetId : edge.sourceId;
-        const otherNode = this.index.get(otherNodeId);
-        if (otherNode && otherNode instanceof GNode) {
-            return otherNode;
+        if (countConnectedToEntity > 1 || countConnectedToRelation > 1 || countConnectedToWeakEntity > 1) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Atributo solo puede conectarse a una entidad o a una relacion o a una entidad debil.',
+                elementId: attributeNode.id,
+                label: 'ERR: Atributo-soloUnElemento'
+            };
         }
+
         return undefined;
-    }*/
+
+    }
    
 }

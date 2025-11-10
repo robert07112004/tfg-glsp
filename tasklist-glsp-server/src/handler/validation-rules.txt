@@ -10,7 +10,7 @@ Weak entity rules:
     - Weak entity not connected to anything.
     - Must be connected to an existence dependent relation or an identifying dependent relation with a weighted edge.
     - Must be connected to a normal entity through an existence or identifying dependent relation.
-    - If is connected to a dependent relation must have a primary key.
+    - If is connected to an existence relation must have a primary key.
     - If is connected to an identifying relation cant have a primary key.
 
 Relation rules:
@@ -22,4 +22,22 @@ Relation rules:
 
 Attribute rules:
     - Attribute not connected to anything.
-    - Attribute can be connected to another attribute or entity or relation or weak entity 
+    - Attribute can be connected to another attribute or entity or relation or weak entity.
+    - Attribute can't be connected to a weighted edge.
+
+Derived attribute:
+    - Derived attribute not connected to anything.
+    - Derived attribute can be connected to another entity.
+    - Derived attribute can't be connected to a weighted edge.
+
+Key attribute:
+
+Multi-valued attribute:
+
+Partial-exclusive specialization:
+
+Partial-overlapped specialization:
+
+Total-exclusive specialization:
+
+Total-overlapped specialization:
