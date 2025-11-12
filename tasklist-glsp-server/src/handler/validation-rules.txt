@@ -1,4 +1,4 @@
-Entity rules:
+Entity rules: done                                      
     - Entity not connected to anything.
     - Entity connected to another entity.
     - Entity not connected to a relation.
@@ -6,45 +6,54 @@ Entity rules:
     - Entity not connected to an atribute.
     - Entity not connected to a key attribute but has attributes.
 
-Weak entity rules:
+Weak entity rules: done
     - Weak entity not connected to anything.
     - Must be connected to an existence dependent relation or an identifying dependent relation with a weighted edge.
     - Must be connected to a normal entity through an existence or identifying dependent relation.
     - If is connected to an existence relation must have a primary key.
     - If is connected to an identifying relation cant have a primary key.
 
-Relation rules:
+Relation rules: done
     - Relation not connected to anything.
     - Relation connected to another relation.
     - Relation not connected with weighted edges.
     - Relation connected with key attribute.
     - Relation connected with a weighted edge to an attribute.
 
-Attribute rules:
+Attribute rules: done
     - Attribute not connected to anything.
     - Attribute can only be connected to the same type of attribute or an optional attribute (composite attribute).
     - If attribute is connected to other attributes it must be connected to an entity. 
     - Attribute can be connected only to normal relations.
     - Attribute can't be connected to a weighted edge.
 
-Composite Attribute:
+Composite Attribute: done
     - Can't have a key attribute in a composite attribute.
     - Can't have a multi-valued attribute in a composite attribute.
     - Can't have a derived attribute in a composite attribute.
     - Can have an optional or a normal attribute in a composite attribute.
 
-Derived attribute:
+Optional attributes: done (se tiene que validar al validar un atributo normal)
+    - Optional attribute not connected to anything.
+    - Optional attribute can be connected to the same type of attribute or a normal attribute (composite attribute).
+    - If optional attribute is connected to other attributes it must be connected to an entity.
+    - Attribute can be connected only to normal relations.
+    - Optional attribute can't be connected to a weighted edge.
+
+Derived attribute: 
     - Derived attribute not connected to anything.
     - Derived attribute can be connected to another entity, relation, weak entity.
     - Derived attribute can't be connected to a weighted edge.
 
-Key attribute:
+Key attribute: (rayada cuando conecto entidad con atributo clave primaria y luego atributo normal)
     - Key attribute not connected to anything.
-    - Key attribute can be connected to another entity.
+    - Key attribute must be connected to another entity.
     - Key attribute can be composed with other normal attributes or optional attributes.
+    - Key attribute can be connected to an identifying dependence relation.
     - Key attribute can't be connected to a weighted edge.
+    - Key attribute can't be connected to an entity or an identifying relation with an optional edge used in an optional attribute.
 
-Multi-valued attribute:
+Multi-valued attribute: 
     - Multi-valued attribute not connected to anything.
     - Multi-valued attribute can be connected to another entity, weak entity.
     - Multi-valued attribute can't be connected to a weighted edge.

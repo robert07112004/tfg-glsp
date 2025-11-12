@@ -72,6 +72,11 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 if (attributeMarker) {
                     markers.push(attributeMarker);
                 }
+            } else if (this.attributeTypes[1] === element.type) {
+                const keyAttributeMarker = this.validateKeyAttribute(element);
+                if (keyAttributeMarker) {
+                    markers.push(keyAttributeMarker);
+                }
             }
         }
         
@@ -501,6 +506,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
         let countConnectedToEntity = 0;
         let countConnectedToRelation = 0;
         let countConnectedToWeakEntity = 0;
+        let countConnectedToKeyAttribute = 0;
         for (const edge of connectedEdges) {
             const otherNodeId = (edge.sourceId === attributeNode.id) ? edge.targetId : edge.sourceId;
             const otherNode = this.index.get(otherNodeId);
@@ -521,8 +527,19 @@ export class TaskListModelValidator extends AbstractModelValidator {
                     countConnectedToRelation += 1;
                 } else if (this.entityTypes[1] === otherNode.type) {
                     countConnectedToWeakEntity += 1;
+                } else if (this.attributeTypes[1] === otherNode.type) {
+                    countConnectedToKeyAttribute += 1;
                 }
             }
+        }
+
+        if ((countConnectedToEntity != 0 || countConnectedToWeakEntity != 0) && countConnectedToKeyAttribute > 0) {
+           return {
+                kind: MarkerKind.ERROR,
+                description: 'Atributo conectado a entidad normal o debil y a una clave primaria.',
+                elementId: attributeNode.id,
+                label: 'ERR: Atributo-entidad-entidadDebil-clavePrimaria'
+            }; 
         }
 
         if (countAttributes !== countConnectedToAttribute) {
@@ -543,7 +560,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
             };
         }
 
-        if (countConnectedToAttribute > 1 && (countConnectedToEntity == 0 || countConnectedToWeakEntity == 0)) {
+        if (countConnectedToAttribute > 1 && (countConnectedToEntity == 0 && countConnectedToWeakEntity == 0)) {
             return {
                 kind: MarkerKind.ERROR,
                 description: 'Atributo conectado a otro atributo deberia estar conectado a una entidad o a una entidad debil.',
@@ -555,5 +572,104 @@ export class TaskListModelValidator extends AbstractModelValidator {
         return undefined;
 
     }
-   
+
+    /* Key attribute rules:
+     * Key attribute not connected to anything.
+     * Key attribute must be connected to another entity.
+     * Key attribute can be composed with other normal attributes or optional attributes.
+     * Key attribute can be connected to an identifying dependence relation.
+     * Key attribute can't be connected to a weighted edge.
+     * Key attribute can't be connected to an entity or an identifying relation with an optional edge used in an optional attribute.
+     */
+    protected validateKeyAttribute(keyAttributeNode: GNode): Marker | undefined {
+        const connectedEdges = [
+            ...this.index.getIncomingEdges(keyAttributeNode),
+            ...this.index.getOutgoingEdges(keyAttributeNode)
+        ];
+
+        if (connectedEdges.length === 0) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Atributo aislado',
+                elementId: keyAttributeNode.id,
+                label: 'ERR: sin conectar al modelo'
+            };
+        }
+
+        let countAttributes = 0;
+        let countRelations = 0;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === keyAttributeNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.attributeTypes.includes(otherNode.type)) {
+                    countAttributes += 1;
+                } else if (this.relationTypes.includes(otherNode.type)) {
+                    countRelations += 1;
+                }
+            }
+        }
+
+        let countConnectedToEntity = 0;
+        let countConnectedToAttribute = 0;
+        let countConnectedToIdentifyingDep = 0;
+        for (const edge of connectedEdges) {
+            const otherNodeId = (edge.sourceId === keyAttributeNode.id) ? edge.targetId : edge.sourceId;
+            const otherNode = this.index.get(otherNodeId);
+            if (edge.type === this.edgeTypes[1]) {
+                return {
+                    kind: MarkerKind.ERROR,
+                    description: 'Atributo no puede estar conectado a nada mediante una arista ponderada.',
+                    elementId: keyAttributeNode.id,
+                    label: 'ERR: Atributo-aristaPonderada'
+                };
+            } else if (otherNode && otherNode instanceof GNode && (this.entityTypes.includes(otherNode.type) || this.relationTypes[2] === otherNode.type) && edge.type === this.edgeTypes[2]) {
+                return {
+                    kind: MarkerKind.ERROR,
+                    description: 'Atributo no puede estar conectado a una entidad mediante una arista utilizada en atributos opcionales.',
+                    elementId: keyAttributeNode.id,
+                    label: 'ERR: Atributo-aristaOpcional'
+                };
+            }
+            if (otherNode && otherNode instanceof GNode) {
+                if (this.entityTypes.includes(otherNode.type)) {
+                    countConnectedToEntity += 1;
+                } else if (this.attributeTypes[0] === otherNode.type) {
+                    countConnectedToAttribute += 1;
+                } else if (this.relationTypes[2] === otherNode.type) {
+                    countConnectedToIdentifyingDep += 1;
+                }
+            }
+        }
+
+        if (countConnectedToEntity == 0) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Un atributo de clave primaria tiene que estar conectado a una entidad o a una entidad debil.',
+                elementId: keyAttributeNode.id,
+                label: 'ERR: atributoClavePrimaria-entidad-entidadDebil'
+            };
+        }
+
+        if (countAttributes !== countConnectedToAttribute) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Atributo con clave primaria solo puede conectarse a atributos normales u opcionales para formar un atributo compuesto.',
+                elementId: keyAttributeNode.id,
+                label: 'ERR: atributoClavePrimaria-atributoNormal-atributoOpcional'
+            };
+        }
+
+        if (countRelations !== countConnectedToIdentifyingDep) {
+            return {
+                kind: MarkerKind.ERROR,
+                description: 'Atributo con clave primaria solo puede conectarse a una dependencia de identificacion.',
+                elementId: keyAttributeNode.id,
+                label: 'ERR: atributoClavePrimaria-dependenciaEnIdentificacion'
+            };
+        }
+
+        return undefined;
+    }
+
 }

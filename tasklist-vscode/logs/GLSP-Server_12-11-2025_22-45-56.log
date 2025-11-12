@@ -1,0 +1,20 @@
+22:45:56 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 50323 
+22:45:56 info -  [SocketServerLauncher] Starting GLSP server connection 
+22:45:56 info -  [DefaultGLSPServer] Initializing server with: applicationId: bd2fdd7a-dd3a-4496-9041-8dfa5a0b0a7f, protocolVersion: 1.0.0 
+22:45:58 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+22:45:58 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+22:45:58 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+22:45:58 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:45:58 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+22:46:22 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:46:22 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:46:24 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:46:24 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:46:27 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:46:27 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:46:30 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+22:46:30 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:46:32 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+22:46:32 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:46:33 info -  [DefaultGLSPServer] process [action=requestMarkers, clientId=tasklist-diagram_0] 
+22:47:45 info -  [DefaultGLSPServer] process [action=requestMarkers, clientId=tasklist-diagram_0] 

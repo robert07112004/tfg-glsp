@@ -1,0 +1,19 @@
+22:48:59 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 52568 
+22:48:59 info -  [SocketServerLauncher] Starting GLSP server connection 
+22:48:59 info -  [DefaultGLSPServer] Initializing server with: applicationId: c6485ad0-9767-43b7-81db-c80706173b70, protocolVersion: 1.0.0 
+22:49:02 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+22:49:02 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+22:49:02 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+22:49:02 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:49:02 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+22:49:07 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:49:07 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:49:08 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:49:08 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:49:11 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+22:49:11 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:49:13 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:49:13 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:49:14 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+22:49:15 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:49:16 info -  [DefaultGLSPServer] process [action=requestMarkers, clientId=tasklist-diagram_0] 
