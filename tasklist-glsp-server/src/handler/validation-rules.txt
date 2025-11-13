@@ -58,9 +58,14 @@ Multi-valued attribute: done
     - Multi-valued attribute can't be connected to an entity or relation with an optional edge.
     - Multi-valued attribute can't be connected to a weighted edge.
 
-Existence dependence relation:
+Existence dependence relation: done
+    - Existence dependence relation not connected to anything.
+    - Existence dependence relation must be connected to one entity and one weak entity with weighted edges.
+    - Existence dependence relation can't be connected to attributes with weighted edges.
+    - Existence dependence can't be connected to key attributes.
 
 Identifying dependence relation:
+
 
 Partial-exclusive specialization:
 
