@@ -65,7 +65,10 @@ Existence dependence relation: done
     - Existence dependence can't be connected to key attributes.
 
 Identifying dependence relation:
-
+    - Identifying dependence relation not connected to anything.
+    - Identifying dependence relation must be connected to one entity and one weak entity with weighted edges.
+    - Identifying dependence relation must be connected to a key attribute with a transition.
+    - Existence dependence relation can't be connected to attributes with weighted edges.
 
 Partial-exclusive specialization:
 

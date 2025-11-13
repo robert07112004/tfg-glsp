@@ -79,8 +79,8 @@ export class TaskListModelValidator extends AbstractModelValidator {
         [this.KEY_ATTRIBUTE_TYPE, this.validateKeyAttribute],
         [this.DERIVED_ATTRIBUTE_TYPE, this.validatDerivedAttribute],
         [this.MULTI_VALUED_ATTRIBUTE_TYPE, this.validateMultiValuedAttribute],
-        [this.EXISTENCE_DEP_RELATION_TYPE, this.validateExistenceDependenceRelation]
-        //[this.IDENTIFYING_DEP_RELATION_TYPE, this.validateIdentifyingDependenceRelation]
+        [this.EXISTENCE_DEP_RELATION_TYPE, this.validateExistenceDependenceRelation],
+        [this.IDENTIFYING_DEP_RELATION_TYPE, this.validateIdentifyingDependenceRelation]
     ]);
 
     override doBatchValidation(element: GModelElement): Marker[] {
@@ -566,6 +566,54 @@ export class TaskListModelValidator extends AbstractModelValidator {
 
     }
 
-    
+    /* Identifying dependence relation rules:
+     * Identifying dependence relation not connected to anything.
+     * Identifying dependence relation must be connected to one entity and one weak entity with weighted edges.
+     * Identifying dependence relation must be connected to a key attribute with a transition.
+     * Identifying dependence relation can't be connected to attributes with weighted edges.
+     */
+    protected validateIdentifyingDependenceRelation(identifyingDependenceRelationNode: GNode): Marker | undefined {
+        const neighbors = this.getConnectedNeighbors(identifyingDependenceRelationNode);
+
+        if (neighbors.length === 0) {
+            return this.createMarker(MarkerKind.ERROR, 'Dependencia en identificacion aislada', identifyingDependenceRelationNode.id, 'ERR: sin conectar al modelo');
+        }
+
+        let isConnectedToWeightedEdge = 0;
+        let isConnectedToEntity = 0;
+        let isConnectedToWeakEntity = 0;
+        let isConnectedToKeyAttribute = 0;
+        for (const { otherNode, edge } of neighbors) {
+            const nodeType = otherNode.type;
+            const edgeType = edge.type;
+            
+            if (nodeType === this.ENTITY_TYPE && edgeType === this.WEIGHTED_EDGE_TYPE) {
+                isConnectedToEntity += 1;
+                isConnectedToWeightedEdge += 1;
+            } else if (nodeType === this.WEAK_ENTITY_TYPE && edgeType === this.WEIGHTED_EDGE_TYPE) {
+                isConnectedToWeakEntity += 1;
+                isConnectedToWeightedEdge += 1;
+            }
+            if (nodeType === this.KEY_ATTRIBUTE_TYPE && edgeType === this.DEFAULT_EDGE_TYPE) {
+                isConnectedToKeyAttribute += 1;
+            }
+            if (edgeType === this.WEIGHTED_EDGE_TYPE && this.attributeTypes.includes(nodeType)) {
+                return this.createMarker(MarkerKind.ERROR, 'Dependencia en identificacion no puede estar conectada a atributos mediante aristas ponderadas', identifyingDependenceRelationNode.id, 'ERR: identifyingDependence-attributes-weightedEdge');
+            }
+
+        }
+
+        if ((isConnectedToEntity != 1 || isConnectedToWeakEntity != 1) && isConnectedToWeightedEdge != 2) {
+            return this.createMarker(MarkerKind.ERROR, 'Dependencia en identificacion tiene que estar conectada a una entidad y a una entidad debil mediante aristas ponderadas.', identifyingDependenceRelationNode.id, 'ERR: entitites-weighted-edge');
+        }
+
+        if (isConnectedToKeyAttribute != 1) {
+            return this.createMarker(MarkerKind.ERROR, 'Dependencia en identificacion tiene que estar conectada a un atributo con clave primaria.', identifyingDependenceRelationNode.id, 'ERR: identifyingDependence-keyAttribute');
+        }
+
+        return undefined;
+
+    }
+
 
 }
