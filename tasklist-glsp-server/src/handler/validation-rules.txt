@@ -53,9 +53,9 @@ Key attribute: done
     - Key attribute can't be connected to a weighted edge.
     - Key attribute can't be connected to an entity or an identifying relation with an optional edge used in an optional attribute.
 
-Multi-valued attribute: 
+Multi-valued attribute: done
     - Multi-valued attribute not connected to anything.
-    - Multi-valued attribute can be connected to another entity, weak entity.
+    - Multi-valued attribute can't be connected to an entity or relation with an optional edge.
     - Multi-valued attribute can't be connected to a weighted edge.
 
 Existence dependence relation:

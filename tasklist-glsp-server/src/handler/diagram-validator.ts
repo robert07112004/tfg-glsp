@@ -77,7 +77,8 @@ export class TaskListModelValidator extends AbstractModelValidator {
         [this.RELATION_TYPE, this.validateRelation],
         [this.ATTRIBUTE_TYPE, this.validateAttribute],
         [this.KEY_ATTRIBUTE_TYPE, this.validateKeyAttribute],
-        [this.DERIVED_ATTRIBUTE_TYPE, this.validatDerivedAttribute]
+        [this.DERIVED_ATTRIBUTE_TYPE, this.validatDerivedAttribute],
+        [this.MULTI_VALUED_ATTRIBUTE_TYPE, this.validateMultiValuedAttribute]
     ]);
 
     override doBatchValidation(element: GModelElement): Marker[] {
@@ -479,6 +480,35 @@ export class TaskListModelValidator extends AbstractModelValidator {
 
         if (isConnectedToDependence) {
             return this.createMarker(MarkerKind.ERROR, 'Atributo derivado no puede estar conectado a una dependencia.', derivedAttributeNode.id, 'ERR: atrbutoDerivado-dependencia');
+        }
+
+        return undefined;
+
+    }
+
+    /* 
+     * Multi-valued attribute not connected to anything.
+     * Multi-valued attribute can't be connected to an entity or relation with an optional edge.
+     * Multi-valued attribute can't be connected to a weighted edge.
+     */
+    protected validateMultiValuedAttribute(multiValuedAttributeNode: GNode): Marker | undefined {
+        const neighbors = this.getConnectedNeighbors(multiValuedAttributeNode);
+
+        if (neighbors.length === 0) {
+            return this.createMarker(MarkerKind.ERROR, 'Atributo multivaluado aislado', multiValuedAttributeNode.id, 'ERR: sin conectar al modelo');
+        }
+
+        for (const { otherNode, edge } of neighbors) {
+            const nodeType = otherNode.type;
+            const edgeType = edge.type;
+            
+            if (edgeType === this.WEIGHTED_EDGE_TYPE) {
+                return this.createMarker(MarkerKind.ERROR, 'Atributo multivaluado no puede estar conectado a nada mediante una arista ponderada.', multiValuedAttributeNode.id, 'ERR: Atributo-multivaluado-aristaPonderada');
+            }
+
+            if (edgeType === this.OPTIONAL_EDGE_TYPE && (this.entityTypes.includes(nodeType) || this.relationTypes.includes(nodeType))) {
+                return this.createMarker(MarkerKind.ERROR, 'Atributo multivaluado no puede estar conectado a una entidad o relacion mediante una arista opcional.', multiValuedAttributeNode.id, 'ERR: Atributo-multivaluado-aristaOpcional');
+            }
         }
 
         return undefined;
