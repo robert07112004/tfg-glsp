@@ -76,7 +76,8 @@ export class TaskListModelValidator extends AbstractModelValidator {
         [this.WEAK_ENTITY_TYPE, this.validateWeakEntity],
         [this.RELATION_TYPE, this.validateRelation],
         [this.ATTRIBUTE_TYPE, this.validateAttribute],
-        [this.KEY_ATTRIBUTE_TYPE, this.validateKeyAttribute]
+        [this.KEY_ATTRIBUTE_TYPE, this.validateKeyAttribute],
+        [this.DERIVED_ATTRIBUTE_TYPE, this.validatDerivedAttribute]
     ]);
 
     override doBatchValidation(element: GModelElement): Marker[] {
@@ -361,7 +362,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
                 isConnectedToOtherAttribute = true;
             } else if (this.attributeTypes.includes(nodeType)) {
                 isConnectedToOtherAttribute = true;
-            } else if (this.relationTypes.includes(nodeType)) {
+            } else if (this.relationTypes.includes(nodeType) && nodeType !== this.RELATION_TYPE) {
                 isConnectedToOtherRelation = true;
             } else if (nodeType === this.ENTITY_TYPE) {
                 isConnectedToEntity = true;
@@ -374,7 +375,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
             return this.createMarker(MarkerKind.ERROR, 'Atributo conectado a entidad (normal o débil) y a una clave primaria.', attributeNode.id, 'ERR: Atributo-entidad-clavePrimaria');
         }
         
-        if (isConnectedToOtherAttribute) {
+        if (compositeAttributeCount == 0 && isConnectedToOtherAttribute) {
             return this.createMarker(MarkerKind.ERROR, 'Atributo normal solo puede conectarse a atributos normales u opcionales.', attributeNode.id, 'ERR: Atributo-atributoNormal-atributoOpcional');
         }
 
@@ -383,7 +384,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
         }
         
         if (compositeAttributeCount > 0 && !isConnectedToEntity && !isConnectedToWeakEntity) {
-            return this.createMarker(MarkerKind.ERROR, 'Atributo compuesto (conectado a otro atributo) debe estar conectado a una entidad o entidad débil.', attributeNode.id, 'ERR: Atributo-entidad-entidadDebil');
+            return this.createMarker(MarkerKind.ERROR, 'Atributo compuesto debe estar conectado a una entidad o entidad débil.', attributeNode.id, 'ERR: Atributo-entidad-entidadDebil');
         }
 
         return undefined;
@@ -441,12 +442,47 @@ export class TaskListModelValidator extends AbstractModelValidator {
             return this.createMarker(MarkerKind.ERROR, 'Atributo clave solo puede conectarse a atributos normales u opcionales para formar un atributo compuesto.', keyAttributeNode.id, 'ERR: atributoClavePrimaria-atributoNormal-atributoOpcional');
         }
 
-        if (isConnectedToOtherRelation) {
+        if (isConnectedToOtherRelation && !isConnectedToIdentifyingDep) {
             return this.createMarker(MarkerKind.ERROR, 'Atributo clave solo puede conectarse a una dependencia de identificación.', keyAttributeNode.id, 'ERR: atributoClavePrimaria-dependenciaEnIdentificacion');
         }
 
         return undefined;
         
+    }
+
+    /* Derived attribute rules:
+     * Derived attribute not connected to anything.
+     * Derived attribute can be connected to another entity, relation, weak entity, specialization. But can't be connected to dependencies.
+     * Derived attribute can't be connected to a weighted edge.
+     */
+    protected validatDerivedAttribute(derivedAttributeNode: GNode): Marker | undefined {
+        const neighbors = this.getConnectedNeighbors(derivedAttributeNode);
+
+        if (neighbors.length === 0) {
+            return this.createMarker(MarkerKind.ERROR, 'Atributo derivado aislado', derivedAttributeNode.id, 'ERR: sin conectar al modelo');
+        }
+
+        let isConnectedToDependence = false;
+        for (const { otherNode, edge } of neighbors) {
+            const nodeType = otherNode.type;
+            const edgeType = edge.type;
+            
+            if (edgeType === this.WEIGHTED_EDGE_TYPE) {
+                return this.createMarker(MarkerKind.ERROR, 'Atributo derivado no puede estar conectado a nada mediante una arista ponderada.', derivedAttributeNode.id, 'ERR: Atributo-aristaPonderada');
+            }
+
+            if (nodeType === this.EXISTENCE_DEP_RELATION_TYPE || nodeType === this.IDENTIFYING_DEP_RELATION_TYPE) {
+                isConnectedToDependence = true;
+            }
+
+        }
+
+        if (isConnectedToDependence) {
+            return this.createMarker(MarkerKind.ERROR, 'Atributo derivado no puede estar conectado a una dependencia.', derivedAttributeNode.id, 'ERR: atrbutoDerivado-dependencia');
+        }
+
+        return undefined;
+
     }
 
 }

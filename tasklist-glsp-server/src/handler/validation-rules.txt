@@ -40,12 +40,12 @@ Optional attributes: done (se tiene que validar al validar un atributo normal)
     - Attribute can be connected only to normal relations.
     - Optional attribute can't be connected to a weighted edge.
 
-Derived attribute: 
+Derived attribute: done
     - Derived attribute not connected to anything.
-    - Derived attribute can be connected to another entity, relation, weak entity.
+    - Derived attribute can be connected to another entity, relation, weak entity, specialization. But can't be connected to dependencies.
     - Derived attribute can't be connected to a weighted edge.
 
-Key attribute: (rayada cuando conecto entidad con atributo clave primaria y luego atributo normal)
+Key attribute: done
     - Key attribute not connected to anything.
     - Key attribute must be connected to another entity.
     - Key attribute can be composed with other normal attributes or optional attributes.
