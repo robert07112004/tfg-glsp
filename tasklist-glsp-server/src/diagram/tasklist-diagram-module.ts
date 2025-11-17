@@ -46,10 +46,19 @@ import { CreateTransitionHandler } from '../handler/create-transition-handler';
 import { CreateWeakEntityHandler } from '../handler/create-weak-entity-node-handler';
 import { CreateWeightedEdgeHandler } from '../handler/create-weighted-edge-handler';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
-import { TaskListModelValidator } from '../handler/diagram-validator';
 import { TaskListApplyLabelEditHandler } from '../handler/tasklist-apply-label-edit-handler';
 import { TaskListChangeBoundsHandler } from '../handler/tasklist-change-bounds-handler';
 import { TaskListLabelEditValidator } from '../handler/tasklist-label-edit-validator';
+import { TaskListModelValidator } from '../handler/validation/diagram-validator';
+import { AttributeValidator } from '../handler/validation/validators/attribute-validator';
+import { DerivedAttributeValidator } from '../handler/validation/validators/derived-attribute-validator';
+import { EntityValidator } from '../handler/validation/validators/entity-validator';
+import { ExistenceDependenceRelationValidator } from '../handler/validation/validators/existence-dependence-relation';
+import { IdentifyingDependenceRelationValidator } from '../handler/validation/validators/identifying-dependence-relation';
+import { KeyAttributeValidator } from '../handler/validation/validators/key-attribute-validator';
+import { MultiValuedAttributeValidator } from '../handler/validation/validators/multi-valued-attribute';
+import { RelationValidator } from '../handler/validation/validators/relation-validator';
+import { WeakEntityValidator } from '../handler/validation/validators/weak-entity-validator';
 import { TaskListGModelFactory } from '../model/tasklist-gmodel-factory';
 import { TaskListModelIndex } from '../model/tasklist-model-index';
 import { TaskListModelState } from '../model/tasklist-model-state';
@@ -105,6 +114,15 @@ export class TaskListDiagramModule extends DiagramModule {
     }
 
     protected override bindModelValidator(): BindingTarget<TaskListModelValidator> | undefined {
+        this.context.bind(EntityValidator).toSelf();
+        this.context.bind(WeakEntityValidator).toSelf();
+        this.context.bind(RelationValidator).toSelf();
+        this.context.bind(AttributeValidator).toSelf();
+        this.context.bind(KeyAttributeValidator).toSelf();
+        this.context.bind(DerivedAttributeValidator).toSelf();
+        this.context.bind(MultiValuedAttributeValidator).toSelf();
+        this.context.bind(ExistenceDependenceRelationValidator).toSelf();
+        this.context.bind(IdentifyingDependenceRelationValidator).toSelf();
         return TaskListModelValidator;
     }
 
