@@ -50,6 +50,7 @@ import { TaskListApplyLabelEditHandler } from '../handler/tasklist-apply-label-e
 import { TaskListChangeBoundsHandler } from '../handler/tasklist-change-bounds-handler';
 import { TaskListLabelEditValidator } from '../handler/tasklist-label-edit-validator';
 import { TaskListModelValidator } from '../handler/validation/diagram-validator';
+import { AllSpecializationsValidator } from '../handler/validation/validators/all-specializations-validator';
 import { AttributeValidator } from '../handler/validation/validators/attribute-validator';
 import { DerivedAttributeValidator } from '../handler/validation/validators/derived-attribute-validator';
 import { EntityValidator } from '../handler/validation/validators/entity-validator';
@@ -123,6 +124,7 @@ export class TaskListDiagramModule extends DiagramModule {
         this.context.bind(MultiValuedAttributeValidator).toSelf();
         this.context.bind(ExistenceDependenceRelationValidator).toSelf();
         this.context.bind(IdentifyingDependenceRelationValidator).toSelf();
+        this.context.bind(AllSpecializationsValidator).toSelf();
         return TaskListModelValidator;
     }
 

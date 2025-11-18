@@ -1,9 +1,7 @@
 Entity rules: done                                      
     - Entity not connected to anything.
     - Entity connected to another entity.
-    - Entity not connected to a relation.
     - Entity connected to a relation without a weighted edge.
-    - Entity not connected to an atribute.
     - Entity not connected to a key attribute but has attributes.
 
 Weak entity rules: done
@@ -70,10 +68,8 @@ Identifying dependence relation: done
     - Identifying dependence relation must be connected to a key attribute with a transition.
     - Existence dependence relation can't be connected to attributes with weighted edges.
 
-Partial-exclusive specialization: (mirar video para entender la cardinalidad de las jerarquias).
-
-Partial-overlapped specialization:
-
-Total-exclusive specialization:
-
-Total-overlapped specialization:
+Specializations: done
+    - Specializations not connected to anything.
+    - Specializations can be connected to one or more entities (at least 2 or more).
+    - Specializations must be connected through transitions.
+    - Specializations can have normal attributes.

@@ -7,7 +7,8 @@ import {
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../model/tasklist-model-index';
 import { TaskListModelState } from '../../model/tasklist-model-state';
-import { ATTRIBUTE_TYPE, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from './utils/validation-constants';
+import { ATTRIBUTE_TYPE, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE, PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE, RELATION_TYPE, TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE, TOTAL_OVERLAPPED_SPECIALIZATION_TYPE, WEAK_ENTITY_TYPE } from './utils/validation-constants';
+import { AllSpecializationsValidator } from './validators/all-specializations-validator';
 import { AttributeValidator } from './validators/attribute-validator';
 import { DerivedAttributeValidator } from './validators/derived-attribute-validator';
 import { EntityValidator } from './validators/entity-validator';
@@ -55,6 +56,9 @@ export class TaskListModelValidator extends AbstractModelValidator {
     @inject(IdentifyingDependenceRelationValidator)
     private identifyingDependenceRelationValidator!: IdentifyingDependenceRelationValidator;
 
+    @inject(AllSpecializationsValidator)
+    private allSpecializationsValidator!: AllSpecializationsValidator;
+
     protected readonly validationMap = new Map<string, (node: GNode) => Marker | undefined>([
         [ENTITY_TYPE, (node) => this.entityValidator.validate(node)],
         [WEAK_ENTITY_TYPE, (node) => this.weakEntityValidator.validate(node)],
@@ -64,7 +68,11 @@ export class TaskListModelValidator extends AbstractModelValidator {
         [DERIVED_ATTRIBUTE_TYPE, (node) => this.derivedAttributeValidator.validate(node)],
         [MULTI_VALUED_ATTRIBUTE_TYPE, (node) => this.multiValuedAttributeValidator.validate(node)],
         [EXISTENCE_DEP_RELATION_TYPE, (node) => this.existenceDependenceRelationValidator.validate(node)],
-        [IDENTIFYING_DEP_RELATION_TYPE, (node) => this.identifyingDependenceRelationValidator.validate(node)]
+        [IDENTIFYING_DEP_RELATION_TYPE, (node) => this.identifyingDependenceRelationValidator.validate(node)],
+        [PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE, (node) => this.allSpecializationsValidator.validate(node)],
+        [TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE, (node) => this.allSpecializationsValidator.validate(node)],
+        [PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE, (node) => this.allSpecializationsValidator.validate(node)],
+        [TOTAL_OVERLAPPED_SPECIALIZATION_TYPE, (node) => this.allSpecializationsValidator.validate(node)]
     ]);
 
     override doBatchValidation(element: GModelElement): Marker[] {

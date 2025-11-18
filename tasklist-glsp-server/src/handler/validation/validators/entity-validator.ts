@@ -7,6 +7,7 @@ import {
     entityTypes,
     KEY_ATTRIBUTE_TYPE,
     relationTypes,
+    specializationTypes,
     WEIGHTED_EDGE_TYPE
 } from '../utils/validation-constants';
 import { createMarker, getConnectedNeighbors } from '../utils/validation-utils';
@@ -14,9 +15,7 @@ import { createMarker, getConnectedNeighbors } from '../utils/validation-utils';
 /* Entity rules:
  * Entity is not connected to anything.
  * Entity is connected to another entity.
- * Entity is not connected to another relation.
  * Entity connected to a relation without a weighted edge.
- * Entity is not connected to an atribute.
  * Entity is not connected to a key attribute but has attributes.
  */
 
@@ -37,9 +36,6 @@ export class EntityValidator {
         }
 
         let isConnectedToEntity = false;
-        let isConnectedToRelation = false;
-        let isConnectedToRelationWithWeightedEdge = false;
-        let isConnectedToAttribute = false;
         let isConnectedToKeyAttribute = false;
 
         for (const { otherNode, edge } of neighbors) {
@@ -47,39 +43,25 @@ export class EntityValidator {
             if (entityTypes.includes(nodeType)) {
                 isConnectedToEntity = true;
             }
-            if (relationTypes.includes(nodeType)) {
-                isConnectedToRelation = true;
-                if (edge.type === WEIGHTED_EDGE_TYPE) {
-                    isConnectedToRelationWithWeightedEdge = true;
+            if (relationTypes.includes(nodeType) && !specializationTypes.includes(nodeType)) {
+                if (edge.type !== WEIGHTED_EDGE_TYPE) {
+                    return createMarker('error', 'Entidad no conectada a ninguna relación con una arista ponderada', node.id, 'ERR: entidad-sinRelación-aristaPonderada');
                 }
             }
             if (attributeTypes.includes(nodeType)) {
-                isConnectedToAttribute = true;
                 if (nodeType === KEY_ATTRIBUTE_TYPE) {
                     isConnectedToKeyAttribute = true;
                 }
             }
         }
 
-        if (isConnectedToEntity) {
-            return createMarker('error', 'Entidad conectada con otra entidad', node.id, 'ERR: entidad-entidad');
-        }
-
-        if (!isConnectedToRelation) {
-            return createMarker('error', 'Entidad no conectada a ninguna relación', node.id, 'ERR: entidad-sinRelación');
-        }
-        
-        if (!isConnectedToRelationWithWeightedEdge) {
-            return createMarker('error', 'Entidad no conectada a ninguna relación con una arista ponderada', node.id, 'ERR: entidad-sinRelación-aristaPonderada');
-        }
-
-        if (!isConnectedToAttribute) {
-            return createMarker('error', 'Entidad no conectada a ningún atributo', node.id, 'ERR: entidad-sinAtributo');
-        }
-        
         if (!isConnectedToKeyAttribute) {
             return createMarker('error', 'Entidad no conectada a ningún atributo que sea una clave primaria', node.id, 'ERR: entidad-sinClavePrimaria');
         }
+
+        if (isConnectedToEntity) {
+            return createMarker('error', 'Entidad conectada con otra entidad', node.id, 'ERR: entidad-entidad');
+        }        
 
         return undefined;
     }

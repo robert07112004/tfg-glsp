@@ -2,7 +2,7 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../model/tasklist-model-state';
-import { ATTRIBUTE_TYPE, attributeTypes, ENTITY_TYPE, KEY_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE, relationTypes, WEAK_ENTITY_TYPE, WEIGHTED_EDGE_TYPE } from '../utils/validation-constants';
+import { ATTRIBUTE_TYPE, attributeTypes, ENTITY_TYPE, KEY_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE, relationTypes, specializationTypes, WEAK_ENTITY_TYPE, WEIGHTED_EDGE_TYPE } from '../utils/validation-constants';
 import { createMarker, getConnectedNeighbors } from '../utils/validation-utils';
 
 /* Normal attribute rules:
@@ -51,7 +51,7 @@ export class AttributeValidator {
                 isConnectedToOtherAttribute = true;
             } else if (attributeTypes.includes(nodeType)) {
                 isConnectedToOtherAttribute = true;
-            } else if (relationTypes.includes(nodeType) && nodeType !== RELATION_TYPE) {
+            } else if (relationTypes.includes(nodeType) && nodeType !== RELATION_TYPE && !specializationTypes.includes(nodeType)) {
                 isConnectedToOtherRelation = true;
             } else if (nodeType === ENTITY_TYPE) {
                 isConnectedToEntity = true;
