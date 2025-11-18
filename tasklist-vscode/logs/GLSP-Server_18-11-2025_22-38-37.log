@@ -1,0 +1,28 @@
+22:38:37 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 57626 
+22:38:38 info -  [SocketServerLauncher] Starting GLSP server connection 
+22:38:38 info -  [DefaultGLSPServer] Initializing server with: applicationId: e5fe392b-01c7-4536-857b-079cee5df50c, protocolVersion: 1.0.0 
+22:38:40 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+22:38:40 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+22:38:41 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+22:38:41 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:38:41 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+22:38:46 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:38:46 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:38:48 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+22:38:48 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:38:50 info -  [DefaultGLSPServer] process [action=createEdge, clientId=tasklist-diagram_0] 
+22:38:50 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:38:53 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+22:38:53 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:38:57 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:38:59 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:38:59 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:39:00 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:39:02 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:39:03 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:39:04 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:39:05 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:39:10 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:39:10 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+22:39:10 info -  [DefaultGLSPServer] process [action=applyLabelEdit, clientId=tasklist-diagram_0] 
+22:39:10 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
