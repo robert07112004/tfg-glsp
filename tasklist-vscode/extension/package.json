@@ -49,6 +49,12 @@
   "contributes": {
     "commands": [
       {
+        "command": "tasklist.generateSql",
+        "title": "Generar SQL",
+        "icon": "$(database)", 
+        "category": "GLSP"
+      },
+      {
         "command": "tasklist.fit",
         "title": "Fit to Screen",
         "category": "Tasklist Diagram",
@@ -86,6 +92,11 @@
     ],
     "keybindings": [
       {
+        "command": "tasklist.generateSql",
+        "key": "ctrl+alt+s",
+        "when": "activeCustomEditorId == 'tasklist.glspDiagram'"
+      },
+      {
         "key": "alt+f",
         "mac": "alt+f",
         "command": "tasklist.fit",
@@ -118,6 +129,11 @@
     ],
     "menus": {
       "editor/title": [
+        {
+          "command": "tasklist.generateSql",
+          "group": "navigation",
+          "when": "activeCustomEditorId == 'tasklist.glspDiagram'"
+        },
         {
           "submenu": "tasklist.editor.title",
           "group": "bookmarks"

@@ -46,6 +46,8 @@ import { CreateTransitionHandler } from '../handler/create-transition-handler';
 import { CreateWeakEntityHandler } from '../handler/create-weak-entity-node-handler';
 import { CreateWeightedEdgeHandler } from '../handler/create-weighted-edge-handler';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
+import { GenerateSqlActionHandler } from '../handler/generate-sql-handler';
+import { SQLGenerator } from '../handler/generator/sql-generator';
 import { TaskListApplyLabelEditHandler } from '../handler/tasklist-apply-label-edit-handler';
 import { TaskListChangeBoundsHandler } from '../handler/tasklist-change-bounds-handler';
 import { TaskListLabelEditValidator } from '../handler/tasklist-label-edit-validator';
@@ -89,6 +91,7 @@ export class TaskListDiagramModule extends DiagramModule {
     protected override configureActionHandlers(binding: InstanceMultiBinding<ActionHandlerConstructor>): void {
         super.configureActionHandlers(binding);
         binding.add(ComputedBoundsActionHandler);
+        binding.add(GenerateSqlActionHandler);
     }
 
     protected override configureOperationHandlers(binding: InstanceMultiBinding<OperationHandlerConstructor>): void {
@@ -125,6 +128,8 @@ export class TaskListDiagramModule extends DiagramModule {
         this.context.bind(ExistenceDependenceRelationValidator).toSelf();
         this.context.bind(IdentifyingDependenceRelationValidator).toSelf();
         this.context.bind(AllSpecializationsValidator).toSelf();
+        this.context.bind(TaskListModelValidator).toSelf().inSingletonScope();
+        this.context.bind(SQLGenerator).toSelf().inSingletonScope();
         return TaskListModelValidator;
     }
 

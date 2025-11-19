@@ -72,4 +72,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     minimalServer.start();
 
     configureDefaultCommands({ extensionContext: context, connector: glspVscodeConnector, diagramPrefix: 'tasklist' });
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('tasklist.generateSql', () => {
+            // Esto busca el editor GLSP activo y le envía la acción.
+            // El servidor recibirá esto y el GenerateSqlActionHandler se ejecutará.
+            glspVscodeConnector.sendActionToActiveClient({ kind: 'generateSql' });
+        })
+    );
 }
