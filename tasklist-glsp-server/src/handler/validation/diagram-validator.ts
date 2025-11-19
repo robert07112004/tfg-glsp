@@ -8,16 +8,16 @@ import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../model/tasklist-model-index';
 import { TaskListModelState } from '../../model/tasklist-model-state';
 import { ATTRIBUTE_TYPE, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE, PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE, RELATION_TYPE, TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE, TOTAL_OVERLAPPED_SPECIALIZATION_TYPE, WEAK_ENTITY_TYPE } from './utils/validation-constants';
-import { AllSpecializationsValidator } from './validators/all-specializations-validator';
-import { AttributeValidator } from './validators/attribute-validator';
-import { DerivedAttributeValidator } from './validators/derived-attribute-validator';
-import { EntityValidator } from './validators/entity-validator';
-import { ExistenceDependenceRelationValidator } from './validators/existence-dependence-relation';
-import { IdentifyingDependenceRelationValidator } from './validators/identifying-dependence-relation';
-import { KeyAttributeValidator } from './validators/key-attribute-validator';
-import { MultiValuedAttributeValidator } from './validators/multi-valued-attribute';
-import { RelationValidator } from './validators/relation-validator';
-import { WeakEntityValidator } from './validators/weak-entity-validator';
+import { AttributeValidator } from './validators/attribute-validators/attribute-validator';
+import { DerivedAttributeValidator } from './validators/attribute-validators/derived-attribute-validator';
+import { KeyAttributeValidator } from './validators/attribute-validators/key-attribute-validator';
+import { MultiValuedAttributeValidator } from './validators/attribute-validators/multi-valued-attribute';
+import { EntityValidator } from './validators/entity-validators/entity-validator';
+import { WeakEntityValidator } from './validators/entity-validators/weak-entity-validator';
+import { ExistenceDependenceRelationValidator } from './validators/relation-validators/existence-dependence-relation';
+import { IdentifyingDependenceRelationValidator } from './validators/relation-validators/identifying-dependence-relation';
+import { RelationValidator } from './validators/relation-validators/relation-validator';
+import { AllSpecializationsValidator } from './validators/specialization-validators/all-specializations-validator';
 
 @injectable()
 export class TaskListModelValidator extends AbstractModelValidator {
