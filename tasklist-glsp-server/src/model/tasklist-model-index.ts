@@ -16,19 +16,13 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TaskList, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TaskList, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
-    protected idToTaskListElements = new Map<string, Task | WeakEntity | Relation | 
-                                                     ExistenceDependentRelation | 
-                                                     IdentifyingDependentRelation | 
-                                                     PartialExclusiveSpecialization | 
-                                                     TotalExclusiveSpecialization |
-                                                     PartialOverlappedSpecialization |
-                                                     TotalOverlappedSpecialization | Attribute | 
-                                                     MultiValuedAttribute | DerivedAttribute | 
-                                                     KeyAttribute | Transition | WeightedEdge |
+    protected idToTaskListElements = new Map<string, Task | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization | 
+                                                     TotalExclusiveSpecialization |PartialOverlappedSpecialization |TotalOverlappedSpecialization | Attribute | 
+                                                     MultiValuedAttribute | DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge |
                                                      OptionalAttributeEdge>();
 
     indexTaskList(taskList: TaskList): void {
@@ -47,6 +41,7 @@ export class TaskListModelIndex extends GModelIndex {
             ...taskList.multiValuedAttributes,
             ...taskList.derivedAttributes,
             ...taskList.keyAttributes,
+            ...taskList.alternativeKeyAttributes,
             ...taskList.transitions,
             ...taskList.weightedEdges,
             ...taskList.optionalAttributeEdges
@@ -119,6 +114,11 @@ export class TaskListModelIndex extends GModelIndex {
         const element = this.findTaskOrTransition(id);
         return KeyAttribute.is(element) ? element : undefined;
     }
+
+    findAlternativeKeyAttribute(id: string): AlternativeKeyAttribute | undefined {
+        const element = this.findTaskOrTransition(id);
+        return AlternativeKeyAttribute.is(element) ? element : undefined;
+    }
     
     findTransition(id: string): Transition | undefined {
         const element = this.findTaskOrTransition(id);
@@ -135,12 +135,9 @@ export class TaskListModelIndex extends GModelIndex {
         return OptionalAttributeEdge.is(element) ? element : undefined
     }
 
-    findTaskOrTransition(id: string): Task | WeakEntity | Relation | ExistenceDependentRelation | 
-                                      IdentifyingDependentRelation | PartialExclusiveSpecialization | 
-                                      TotalExclusiveSpecialization | PartialOverlappedSpecialization |
-                                      TotalOverlappedSpecialization | Attribute | MultiValuedAttribute | 
-                                      DerivedAttribute | KeyAttribute | Transition | WeightedEdge | 
-                                      OptionalAttributeEdge | undefined {
+    findTaskOrTransition(id: string): Task | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization | 
+                                      TotalExclusiveSpecialization | PartialOverlappedSpecialization | TotalOverlappedSpecialization | Attribute | MultiValuedAttribute | 
+                                      DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge | OptionalAttributeEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
     

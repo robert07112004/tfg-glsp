@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -41,7 +41,8 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.attributes.map(attribute => this.createAttributeNode(attribute)),
             ...taskList.multiValuedAttributes.map(multiValuedAttribute => this.createMultiValuedAttributeNode(multiValuedAttribute)),
             ...taskList.derivedAttributes.map(derivedAttribute => this.createDerivedAttributeNode(derivedAttribute)),
-            ...taskList.keyAttributes.map(keyAttribute => this.createKeyAttributeNode(keyAttribute))
+            ...taskList.keyAttributes.map(keyAttribute => this.createKeyAttributeNode(keyAttribute)),
+            ...taskList.alternativeKeyAttributes.map(alternativeKeyAttribute => this.createAlternativeKeyAttributeNode(alternativeKeyAttribute))
         ];
         
         const childEdges = [
@@ -373,6 +374,28 @@ export class TaskListGModelFactory implements GModelFactory {
 
         if (keyAttribute.size) {
             builder.addLayoutOptions({ prefWidth: keyAttribute.size.width, prefHeight: keyAttribute.size.height });
+        }
+
+        return builder.build();
+    }
+
+    protected createAlternativeKeyAttributeNode(alternativeKeyAttribute: AlternativeKeyAttribute): GNode {
+        const builder = GNode.builder()
+            .id(alternativeKeyAttribute.id)
+            .type('node:alternativeKeyAttribute') 
+            .addCssClass('alternative-key-attribute-node')
+            .add(GLabel.builder()
+                    .text(alternativeKeyAttribute.name)
+                    .id(`${alternativeKeyAttribute.id}_label`)
+                    .addCssClass('alternative-key-attribute-label')
+                    .build())
+            .layout('vbox')
+            .addLayoutOption('hAlign', 'center')
+            .addLayoutOption('vAlign', 'middle')
+            .position(alternativeKeyAttribute.position);
+
+        if (alternativeKeyAttribute.size) {
+            builder.addLayoutOptions({ prefWidth: alternativeKeyAttribute.size.width, prefHeight: alternativeKeyAttribute.size.height });
         }
 
         return builder.build();

@@ -36,6 +36,7 @@ export interface TaskList {
     multiValuedAttributes: MultiValuedAttribute[];
     derivedAttributes: DerivedAttribute[];
     keyAttributes: KeyAttribute[];
+    alternativeKeyAttributes: AlternativeKeyAttribute[];
     transitions: Transition[];
     weightedEdges: WeightedEdge[];
     optionalAttributeEdges: OptionalAttributeEdge[];
@@ -315,6 +316,26 @@ export namespace KeyAttribute {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as KeyAttribute).type === 'keyAttribute' &&
+            hasStringProp(object, 'name') &&
+            hasObjectProp(object, 'position')
+        );
+    }
+}
+
+export interface AlternativeKeyAttribute {
+    id: string;
+    type: 'alternativeKeyAttribute';
+    name: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export namespace AlternativeKeyAttribute {
+    export function is(object: any): object is AlternativeKeyAttribute {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as AlternativeKeyAttribute).type === 'alternativeKeyAttribute' &&
             hasStringProp(object, 'name') &&
             hasObjectProp(object, 'position')
         );

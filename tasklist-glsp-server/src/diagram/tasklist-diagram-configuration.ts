@@ -128,6 +128,13 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 reparentable: false,
                 repositionable: true,
                 resizable: true
+            },
+            {
+                elementTypeId: 'node:alternativeKeyAttribute',
+                deletable: true,
+                reparentable: false,
+                repositionable: true,
+                resizable: true
             }
         ];
     }
@@ -152,7 +159,8 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
             'node:attribute',
             'node:keyAttribute',
             'node:multiValuedAttribute',
-            'node:derivedAttribute'
+            'node:derivedAttribute',
+            'node:alternativeKeyAttribute'
         ];
         
         return [

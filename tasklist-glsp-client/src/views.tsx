@@ -130,6 +130,40 @@ export class KeyAttributeView implements IView {
 }
 
 @injectable()
+export class AlternativeKeyAttributeView implements IView {
+    render(node: GNode, context: RenderingContext): VNode {
+        const cx = node.size.width / 2;
+        const cy = node.size.height / 2;
+        const linePadding = 15; 
+        const lineOffsetY = 5; 
+
+        return <g>
+            <ellipse
+                class-sprotty-node={true}
+                class-selected={node.selected}
+                class-alternative-key-attribute-node={true}
+                cx={cx}
+                cy={cy}
+                rx={cx}
+                ry={cy}
+            />
+            {context.renderChildren(node)}
+            <line
+                x1={linePadding}
+                y1={cy + lineOffsetY}
+                x2={node.size.width - linePadding}
+                y2={cy + lineOffsetY}
+                
+                stroke="black"            
+                stroke-width="1"          
+                stroke-dasharray="5, 3"   
+                class-alternative-key-line={true} 
+            />
+        </g>;
+    }
+}
+
+@injectable()
 export class WeakEntityView implements IView {
     render(node: GNode, context: RenderingContext): VNode {
         const padding = 3;

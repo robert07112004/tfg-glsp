@@ -50,7 +50,8 @@ export class TaskListChangeBoundsHandler extends JsonOperationHandler {
                              index.findAttribute(gNode.id) ?? 
                              index.findMultiValuedAttribute(gNode.id) ??
                              index.findDerivedAttribute(gNode.id) ??
-                             index.findKeyAttribute(gNode.id);
+                             index.findKeyAttribute(gNode.id) ??
+                             index.findAlternativeKeyAttribute(gNode.id);
         if (modelElement) {
             modelElement.size = newSize;
             if (newPosition) {

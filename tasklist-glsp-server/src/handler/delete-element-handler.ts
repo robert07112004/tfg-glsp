@@ -25,7 +25,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
@@ -72,12 +72,9 @@ export class DeleteElementHandler extends JsonOperationHandler {
         return [];
     }
 
-    private deleteModelElement(modelElement: Task | WeakEntity | Relation | ExistenceDependentRelation | 
-                                             IdentifyingDependentRelation | PartialExclusiveSpecialization | 
-                                             TotalExclusiveSpecialization | PartialOverlappedSpecialization | 
-                                             TotalOverlappedSpecialization | Attribute | MultiValuedAttribute | 
-                                             DerivedAttribute | KeyAttribute | Transition | WeightedEdge | 
-                                             OptionalAttributeEdge | undefined): void {
+    private deleteModelElement(modelElement: Task | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization | 
+                                             TotalExclusiveSpecialization | PartialOverlappedSpecialization | TotalOverlappedSpecialization | Attribute | MultiValuedAttribute | 
+                                             DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge | OptionalAttributeEdge | undefined): void {
         if (Task.is(modelElement)) {
             remove(this.modelState.sourceModel.tasks, modelElement);
         } else if (WeakEntity.is(modelElement)) {
@@ -104,6 +101,8 @@ export class DeleteElementHandler extends JsonOperationHandler {
             remove(this.modelState.sourceModel.derivedAttributes, modelElement);
         } else if (KeyAttribute.is(modelElement)) {
             remove(this.modelState.sourceModel.keyAttributes, modelElement);
+        } else if (AlternativeKeyAttribute.is(modelElement)) {
+            remove(this.modelState.sourceModel.alternativeKeyAttributes, modelElement);
         } else if (Transition.is(modelElement)) {
             remove(this.modelState.sourceModel.transitions, modelElement);
         } else if (WeightedEdge.is(modelElement)) {

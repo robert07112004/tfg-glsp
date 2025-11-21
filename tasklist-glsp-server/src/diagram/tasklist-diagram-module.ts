@@ -34,6 +34,7 @@ import { CreateOptionalAttributeEdgeHandler } from '../handler/edge-handlers/cre
 import { CreateTransitionHandler } from '../handler/edge-handlers/create-transition-handler';
 import { CreateWeightedEdgeHandler } from '../handler/edge-handlers/create-weighted-edge-handler';
 import { SQLGenerator } from '../handler/generator/sql-generator';
+import { CreateAlternativeKeyAttributeHandler } from '../handler/node-handlers/attribute-handlers/create-alternative-key-attribute-node-handler';
 import { CreateAttributeHandler } from '../handler/node-handlers/attribute-handlers/create-attribute-node-handler';
 import { CreateDerivedAttributeHandler } from '../handler/node-handlers/attribute-handlers/create-derived-attribute-node-handler';
 import { CreateKeyAttributeHandler } from '../handler/node-handlers/attribute-handlers/create-key-attribute-node-handler';
@@ -109,6 +110,7 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateMultiValuedAttributeHandler);
         binding.add(CreateDerivedAttributeHandler);
         binding.add(CreateKeyAttributeHandler);
+        binding.add(CreateAlternativeKeyAttributeHandler);
         binding.add(CreateTransitionHandler);
         binding.add(CreateWeightedEdgeHandler);
         binding.add(CreateOptionalAttributeEdgeHandler);

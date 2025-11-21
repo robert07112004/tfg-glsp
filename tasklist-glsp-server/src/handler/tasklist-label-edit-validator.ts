@@ -35,6 +35,7 @@ function isAttributeNode(elementType: string): boolean {
     const attributeTypes = [
         'node:attribute',
         'node:keyAttribute',
+        'node:alternativeKeyAttribute',
         'node:multiValuedAttribute',
         'node:derivedAttribute'
     ];

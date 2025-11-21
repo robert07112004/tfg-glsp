@@ -118,6 +118,17 @@ svg {
 	text-decoration: underline;
 }
 
+.alternative-key-attribute-node ellipse {
+	fill: #ffcccc;
+	stroke: #c00;
+	stroke-width: 2px;
+}
+
+.alternative-key-attribute-node.selected ellipse {
+	stroke: #007bff;
+	stroke-width: 2px;
+}
+
 .weighted-edge {
 	stroke: #ff8800;
 	stroke-width: 2px;

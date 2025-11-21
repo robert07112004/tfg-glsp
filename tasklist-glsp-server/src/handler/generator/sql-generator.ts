@@ -30,8 +30,6 @@ export class SQLGenerator {
         let sqlScript = "-- Script generado por GLSP-ER\n";
         sqlScript += "-- Fecha: " + new Date().toLocaleString() + "\n\n";
 
-        // 1. Identificar todas las Entidades buscando por su clase CSS
-        // Recorremos los hijos del root (que es donde están todos los nodos en tu factory)
         const entities = root.children.filter(element => 
             isGNode(element) && element.type === ENTITY_TYPE
         ) as GNode[];
