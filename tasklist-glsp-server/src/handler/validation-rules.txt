@@ -1,5 +1,6 @@
 Entity rules: done                                      
     - Entity not connected to anything.
+    - Entity connected to a key attribute.
     - Entity connected to another entity.
     - Entity connected to a relation without a weighted edge.
     - Entity not connected to a key attribute but has attributes.
@@ -42,6 +43,7 @@ Derived attribute: done
     - Derived attribute not connected to anything.
     - Derived attribute can be connected to another entity, relation, weak entity, specialization. But can't be connected to dependencies.
     - Derived attribute can't be connected to a weighted edge.
+    - The names of attributes in the equation label has to match with the attributes that are connected to the same entity. 
 
 Key attribute: done
     - Key attribute not connected to anything.

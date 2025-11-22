@@ -31,7 +31,7 @@ export class CreateAttributeHandler extends JsonCreateNodeOperationHandler {
         return {
             id: uuid.v4(),
             type: 'attribute',
-            name: `NewAttribute${attributeCounter + 1}: int`,
+            name: `NewAttribute${attributeCounter + 1}: integer`,
             position
         };
     }

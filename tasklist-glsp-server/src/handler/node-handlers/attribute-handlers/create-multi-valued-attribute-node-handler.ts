@@ -31,7 +31,7 @@ export class CreateMultiValuedAttributeHandler extends JsonCreateNodeOperationHa
         return {
             id: uuid.v4(),
             type: 'multiValuedAttribute',
-            name: `NewMultiValuedAttribute${attributeCounter + 1}: int`,
+            name: `NewMultiValuedAttribute${attributeCounter + 1}: integer`,
             position
         };
     }

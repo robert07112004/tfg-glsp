@@ -31,7 +31,8 @@ export class CreateDerivedAttributeHandler extends JsonCreateNodeOperationHandle
         return {
             id: uuid.v4(),
             type: 'derivedAttribute',
-            name: `NewDerivedAttribute${attributeCounter + 1}: int`,
+            name: `NewDerivedAttribute${attributeCounter + 1}: integer`,
+            equation: 'Equation of Derived Attribute',
             position
         };
     }

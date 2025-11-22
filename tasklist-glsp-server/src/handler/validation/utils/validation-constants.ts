@@ -36,11 +36,13 @@ export const ATTRIBUTE_TYPE = 'node:attribute';
 export const KEY_ATTRIBUTE_TYPE = 'node:keyAttribute';
 export const MULTI_VALUED_ATTRIBUTE_TYPE = 'node:multiValuedAttribute';
 export const DERIVED_ATTRIBUTE_TYPE = 'node:derivedAttribute';
+export const ALTERNATIVE_KEY_ATTRIBUTE_TYPE = 'node:alternativeKeyAttribute';
 export const attributeTypes = [
     ATTRIBUTE_TYPE,
     KEY_ATTRIBUTE_TYPE,
     MULTI_VALUED_ATTRIBUTE_TYPE,
-    DERIVED_ATTRIBUTE_TYPE
+    DERIVED_ATTRIBUTE_TYPE,
+    ALTERNATIVE_KEY_ATTRIBUTE_TYPE
 ];
 
 export const DEFAULT_EDGE_TYPE = DefaultTypes.EDGE;

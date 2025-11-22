@@ -83,25 +83,35 @@ export class TaskListLabelEditValidator implements LabelEditValidator {
                 }
             }
         } else if (container && isNode(container) && isAttributeNode(container.type)) {
-            const allowedTypes = [
-                'integer', 'smallint', 'bigint', 'tinyint',        
-                'decimal\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)', 
-                'numeric\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
-                'float', 'real', 
-                'varchar\\(\\s*\\d+\\s*\\)', 'char\\(\\s*\\d+\\s*\\)', 'text',
-                'date', 'time', 'datetime', 'timestamp',
-                'boolean',
-                'blob', 'binary', 'varbinary',
-                'json', 'xml', 'uuid',
-                'geometry', 'geography'
-            ];
-            const typesRegex = `(${allowedTypes.join('|')})`;
-            const attributeRegex = new RegExp(`^[^:]+:\\s*${typesRegex}\\s*$`, 'i');
-            if (!attributeRegex.test(label)) {
-                return {
-                    severity: ValidationStatus.Severity.ERROR,
-                    message: 'The format is not correct, please follow the format: {name: type} with SQL types (ex. "age: integer")'
-                };
+            if (element.id.endsWith('_equation_label')) {
+                const equationRegex = /^[a-zA-Z0-9_\s+\-*/().]+$/;
+                if (!equationRegex.test(label)) {
+                    return {
+                        severity: ValidationStatus.Severity.ERROR,
+                        message: 'Invalid formula. Only attributes, numbers and operators (+ - * /) are allowed.'
+                    };
+                }
+            } else {
+                const allowedTypes = [
+                    'integer', 'smallint', 'bigint', 'tinyint',        
+                    'decimal\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)', 
+                    'numeric\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
+                    'float', 'real', 
+                    'varchar\\(\\s*\\d+\\s*\\)', 'char\\(\\s*\\d+\\s*\\)', 'text',
+                    'date', 'time', 'datetime', 'timestamp',
+                    'boolean',
+                    'blob', 'binary', 'varbinary',
+                    'json', 'xml', 'uuid',
+                    'geometry', 'geography'
+                ];
+                const typesRegex = `(${allowedTypes.join('|')})`;
+                const attributeRegex = new RegExp(`^[^:]+:\\s*${typesRegex}\\s*$`, 'i');
+                if (!attributeRegex.test(label)) {
+                    return {
+                        severity: ValidationStatus.Severity.ERROR,
+                        message: 'The format is not correct, please follow the format: {name: type} with SQL types (ex. "age: integer")'
+                    };
+                }
             }
         }
 

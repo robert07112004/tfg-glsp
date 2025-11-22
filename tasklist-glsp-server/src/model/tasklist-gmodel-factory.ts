@@ -345,6 +345,7 @@ export class TaskListGModelFactory implements GModelFactory {
             .type('node:derivedAttribute') 
             .addCssClass('derived-attribute-node')
             .add(GLabel.builder().text(derivedAttribute.name).id(`${derivedAttribute.id}_label`).build())
+            .add(GLabel.builder().text(derivedAttribute.equation).id(`${derivedAttribute.id}_equation_label`).build())
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'middle')

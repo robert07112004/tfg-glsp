@@ -68,7 +68,11 @@ export class TaskListApplyLabelEditHandler extends JsonOperationHandler {
                 } else if (multiValuedAttribute) {
                     multiValuedAttribute.name = operation.text;
                 } else if (derivedAttribute) {
-                    derivedAttribute.name = operation.text;
+                    if (operation.labelId.endsWith('_equation_label')) {
+                        derivedAttribute.equation = operation.text;
+                    } else {
+                        derivedAttribute.name = operation.text;
+                    }
                 } else if (keyAttribute) {
                     keyAttribute.name = operation.text;
                 } else if (alternativeKeyAttribute) {

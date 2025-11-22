@@ -286,6 +286,7 @@ export interface DerivedAttribute {
     id: string;
     type: 'derivedAttribute';
     name: string;
+    equation: string;
     position: { x: number; y: number };
     size?: { width: number; height: number };
 }
@@ -297,6 +298,7 @@ export namespace DerivedAttribute {
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as DerivedAttribute).type === 'derivedAttribute' &&
             hasStringProp(object, 'name') &&
+            hasStringProp(object, 'equation') &&
             hasObjectProp(object, 'position')
         );
     }

@@ -31,7 +31,7 @@ export class CreateAlternativeKeyAttributeHandler extends JsonCreateNodeOperatio
         return {
             id: uuid.v4(),
             type: 'alternativeKeyAttribute',
-            name: `NewAlternativeKeyAttribute${attributeCounter + 1}: int`,
+            name: `NewAlternativeKeyAttribute${attributeCounter + 1}: integer`,
             position
         };
     }
