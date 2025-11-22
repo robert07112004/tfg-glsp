@@ -1,9 +1,11 @@
 Entity rules: done                                      
     - Entity not connected to anything.
-    - Entity connected to a key attribute.
-    - Entity connected to another entity.
-    - Entity connected to a relation without a weighted edge.
-    - Entity not connected to a key attribute but has attributes.
+    - If entity connected to relation, must have key attribute.
+    - If entity connected to specialization and is a father node, it must have key attribute.
+    - If has attributes, they can only be connected with: transitions and optional links.
+    - If has relations, they can only be connected with weighted edges.
+    - If has specializations, they can only be connected with transitions.
+    - Entity can't be connected with another entity
 
 Weak entity rules: done
     - Weak entity not connected to anything.
