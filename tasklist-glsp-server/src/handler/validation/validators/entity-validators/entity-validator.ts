@@ -15,13 +15,14 @@ import {
 import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
 
 /* Entity rules:
- * Entity not connected to anything.
- * If entity connected to relation, must have key attribute.
- * If entity connected to specialization and is a father node, it must have key attribute.
- * If has attributes, they can only be connected with: transitions and optional links.
- * If has relations, they can only be connected with weighted edges.
- * If has specializations, they can only be connected with transitions.
- * Entity can't be connected with another entity
+ * 1.- Entity not connected to anything.
+ * 2.- Relations:
+ *     - If entity connected to relation, must have key attribute.
+ *     - If has relations, they can only be connected with weighted edges.
+ * 3.- Specializations:
+ *     - If entity connected to specialization and is a superclass, it must have key attribute.
+ *     - If has specializations, they can only be connected with transitions.
+ * 4.- If has attributes, they can only be connected with: transitions and optional links.
  */
 
 @injectable()
@@ -36,7 +37,7 @@ export class EntityValidator {
     validate(node: GNode): Marker | undefined {
         const neighbors = getConnectedNeighbors(node, this.index);
         
-        // Rule 1: Entity not connected to anything
+        // Rule 1: Entity not connected to anything.
         if (neighbors.length === 0) {
             return createMarker('error', 'Entidad aislada', node.id, 'ERR: sin conectar al modelo');
         }
@@ -65,7 +66,7 @@ export class EntityValidator {
                 }
             }
 
-            // Rule 5: If has relations, they can only be connected with weighted edges.
+            // Rule 2b: If has relations, they can only be connected with weighted edges.
             if (relationTypes.includes(otherType) && !specializationTypes.includes(otherType)) {
                 isConnectedToRelation = true;
                 if (edgeType !== WEIGHTED_EDGE_TYPE) {
@@ -78,7 +79,7 @@ export class EntityValidator {
                 }
             }
 
-            // Rule 6: If has specializations, they can only be connected with transitions.
+            // Rule 3b: If has specializations, they can only be connected with transitions.
             if (specializationTypes.includes(otherType)) {
                 if (edge.sourceId === node.id) {
                     isFatherNode = true;
@@ -93,13 +94,13 @@ export class EntityValidator {
                 }
             }
 
-            // Rule 7: Entity can't be connected with another entity
+            // Entity rules: Entity can't be connected with another entity
             if (entityTypes.includes(otherType)) {
                 return createMarker('error', 'Entidad conectada directamente con otra entidad', node.id, 'ERR: entidad-entidad');
             }
         }
 
-        // Rule 2: If entity connected to relation, must have key attribute.
+        // Rule 2a: If entity connected to relation, must have key attribute.
         if (isConnectedToRelation && !hasKeyAttribute) {
             return createMarker(
                 'error', 
@@ -109,7 +110,7 @@ export class EntityValidator {
             );
         }
 
-        // Rule 3: If entity connected to specialization and is a father node, it must have key attribute.
+        // Rule 3a: If entity connected to specialization and is a superclass, it must have key attribute.
         if (isFatherNode && !hasKeyAttribute) {
             return createMarker(
                 'error', 
