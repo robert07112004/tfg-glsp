@@ -2,7 +2,7 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { attributeTypes, entityTypes, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, specializationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
+import { attributeTypes, entityTypes, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
 
 /* Derived attribute rules:
@@ -12,7 +12,6 @@ import { createMarker, getConnectedNeighbors } from '../../utils/validation-util
  * 3. Valid connections:
  *    - Entities (Strong/Weak).
  *    - Relations.
- *    - Specializations.
  * 4. Derived attributes can't have child attributes.
  * 5. Derived attributes can't be connected to dependencies.
  * 6. Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
@@ -57,7 +56,7 @@ export class DerivedAttributeValidator {
                 return createMarker('error', 'Atributo derivado no puede estar conectado a una dependencia.', node.id, 'ERR: atrbutoDerivado-dependencia');
             }
 
-            isOwner = entityTypes.includes(nodeType) || nodeType === RELATION_TYPE || specializationTypes.includes(nodeType);
+            isOwner = entityTypes.includes(nodeType) || nodeType === RELATION_TYPE;
             if (isOwner) {
                 ownerCount++;
             }

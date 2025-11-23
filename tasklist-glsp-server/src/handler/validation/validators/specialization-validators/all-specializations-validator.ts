@@ -2,14 +2,16 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, ENTITY_TYPE } from '../../utils/validation-constants';
+import { ENTITY_TYPE, OPTIONAL_EDGE_TYPE, WEAK_ENTITY_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
 
 /* Specializations rules:
- * Specializations not connected to anything.
- * Specializations can be connected to one or more entities (at least 2 or more).
- * Specializations must be connected through transitions.
- * Specializations can have normal attributes.
+ * 1. Specializations not connected to anything.
+ * 2. Prohibited connections:
+ *    - NO weighted edges and optional links allowed.
+ * 3. Valid connections:
+ *    - Entities (Strong/Weak).
+ * 4. Specializations must be connected to at leats 2 entities.
  */
 
 @injectable()
@@ -24,34 +26,49 @@ export class AllSpecializationsValidator {
     validate(node: GNode): Marker | undefined {
         const neighbors = getConnectedNeighbors(node, this.index);
 
+        // Rule 1: Specializations not connected to anything.
         if (neighbors.length === 0) {
             return createMarker('error', 'Especialización aislada', node.id, 'ERR: sin conectar al modelo');
         }
 
-        let isConnectedToEntity = 0;
-        let isConnectedToOtherAttributes = 0;
+        let entityCount = 0;
 
         for (const { otherNode, edge } of neighbors) {
             const nodeType = otherNode.type;
             const edgeType = edge.type;
 
-            if (nodeType === ENTITY_TYPE) {
-                isConnectedToEntity += 1;
+            // Rule 2: Prohibited connections.
+            if (edgeType === WEIGHTED_EDGE_TYPE || edgeType === OPTIONAL_EDGE_TYPE) {
+                return createMarker(
+                    'error', 
+                    'Una especialización no puede tener aristas ponderadas (cardinalidad).', 
+                    node.id, 
+                    'ERR: spec-weighted'
+                );
             }
 
-            if (edgeType !== DEFAULT_EDGE_TYPE) {
-                return createMarker('error', 'Especialización solo puede estar conectada mediante transiciones.', node.id, 'ERR: Especializacion-arista');
-            } else if (attributeTypes.includes(nodeType) && nodeType !== ATTRIBUTE_TYPE) {
-                isConnectedToOtherAttributes += 1;
+            // Rule 4: Specializations must be connected to at leats 2 entities.
+            if (nodeType === ENTITY_TYPE || nodeType === WEAK_ENTITY_TYPE) {
+                entityCount++;
+            }
+            // Rule 3: Valid connections.
+            else {
+                return createMarker(
+                    'error', 
+                    'Una especialización no puede estar conectada a algo que no sea una entidad.',
+                    node.id, 
+                    'ERR: spec-invalid-connection'
+                );
             }
         }
 
-        if (isConnectedToEntity < 2) {
-            return createMarker('error', 'Especialización tiene que estar conectada a dos o más entidades.', node.id, 'ERR: Especializacion-enitdades');
-        }
-
-        if (isConnectedToOtherAttributes > 0) {
-            return createMarker('error', 'Especialización solo puede estar conectada a atributos normales.', node.id, 'ERR: Especializacion-atributoNormal');
+        if (entityCount < 2) {
+            return createMarker(
+                'error', 
+                'La especialización debe conectar al menos 2 entidades (1 Superclase y 1 Subclase).', 
+                node.id, 
+                'ERR: spec-min-entities'
+            );
         }
 
         return undefined;

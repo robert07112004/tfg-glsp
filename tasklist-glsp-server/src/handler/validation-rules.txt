@@ -48,7 +48,6 @@ Attribute rules: done
     - Valid Connections (Owners/Children):
         - Entities (Strong/Weak).
         - Relations (Any type).
-        - Specializations (Triangles).
     - Prohibited Connections:
         - KEY Attributes (Primary/Alternative).
     - Attribute can't be connected through other attributes to more than one Entities/Relations/Specializations.
@@ -57,7 +56,7 @@ Attribute rules: done
 Key attribute: done
     - Key attribute not connected to anything.
     - Prohibited connections:
-        - ONLY transitions.
+        - NO weighted edges and optional links allowed.
     - Valid connections:
         - Entities (Strong/Weak).
         - Identifying dependence relations.
@@ -67,7 +66,7 @@ Key attribute: done
 Alternative key attribute: done
     - Alternative key attribute not connected to anything.
     - Prohibited connections:
-        - ONLY transitions.
+        - NO weighted edges and optional links allowed.
     - Valid connections:
         - Entities (Strong/Weak).
     - Alternative key attributes can't have children (NO composite attributes).
@@ -80,7 +79,6 @@ Derived attribute: done
     - Valid connections:
         - Entities (Strong/Weak).
         - Relations.
-        - Specializations.
     - Derived attributes can't have child attributes.
     - Derived attributes can't be connected to dependencies.
     - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
@@ -92,13 +90,14 @@ Multi-valued attribute: done
     - Valid connections:
         - Entities (Strong/Weak).
         - Relations.
-        - Specializations.
     - Multi-valued attributes can't have child attributes.
     - Multi-valued attributes can't be connected to dependencies.
     - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
 
 Specializations: done
     - Specializations not connected to anything.
-    - Specializations can be connected to one or more entities (at least 2 or more).
-    - Specializations must be connected through transitions.
-    - Specializations can have normal attributes.
+    - Prohibited connections:
+        - NO weighted edges and optional links allowed.
+    - Valid connections:
+        - Entities (Strong/Weak).
+    - Specializations must be connected to at leats 2 entities.

@@ -8,7 +8,7 @@ import { createMarker, getConnectedNeighbors } from '../../utils/validation-util
 /* Key attribute rules:
  * 1. Alternative key attribute not connected to anything.
  * 2. Prohibited connections:
- *    - ONLY transitions.
+ *    - NO weighted edges and optional links allowed.
  * 4. Valid connections:
  *    - Entities (Strong/Weak).
  * 5. Alternative key attributes can't have children (NO composite attributes).

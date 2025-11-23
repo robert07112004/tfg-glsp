@@ -11,7 +11,6 @@ import { createMarker, getConnectedNeighbors } from '../../utils/validation-util
  * 3. Valid Connections (Owners/Children):
  *    - Entities (Strong/Weak).
  *    - Relations (Any type).
- *    - Specializations (Triangles).
  * 4. Prohibited Connections:
  *    - KEY Attributes (Primary/Alternative).
  * 5. Attribute can't be connected through other attributes to more than one Entities/Relations/Specializations.
@@ -67,10 +66,6 @@ export class AttributeValidator {
             }
             // Rule 3b Valid connections: Relations (Any type).
             else if (relationTypes.includes(otherType) && !specializationTypes.includes(otherType)) {
-                rootOwnerCount++;
-            }
-            // Rule 3c Valid connections: Specializations.
-            else if (specializationTypes.includes(otherType)) {
                 rootOwnerCount++;
             }
         }
