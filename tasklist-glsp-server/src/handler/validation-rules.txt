@@ -44,9 +44,12 @@ Existence dependence relation: done
 
 Identifying dependence relation: done
     - Identifying dependence relation not connected to anything.
-    - Identifying dependence relation must be connected to one entity and one weak entity with weighted edges.
-    - Identifying dependence relation must be connected to a key attribute with a transition.
-    - Existence dependence relation can't be connected to attributes with weighted edges.
+    -  Prohibited connections:
+        - Transitions and optional links aren't allowed.
+    - Valid connections:
+        - Entities (Strong/Weak).
+    - Identifying dependence relation can't be connected to attributes, relations, other dependencies and specializations.
+    - Identifying dependence relation must be connected to an entity and a weak entity.
 
 Attribute rules: done
     - Attribute not connected to anything.
