@@ -7,7 +7,8 @@ import {
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../model/tasklist-model-index';
 import { TaskListModelState } from '../../model/tasklist-model-state';
-import { ATTRIBUTE_TYPE, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE, PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE, RELATION_TYPE, TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE, TOTAL_OVERLAPPED_SPECIALIZATION_TYPE, WEAK_ENTITY_TYPE } from './utils/validation-constants';
+import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE, PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE, RELATION_TYPE, TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE, TOTAL_OVERLAPPED_SPECIALIZATION_TYPE, WEAK_ENTITY_TYPE } from './utils/validation-constants';
+import { AlternativeKeyAttributeValidator } from './validators/attribute-validators/alternative-key-attribute-validator';
 import { AttributeValidator } from './validators/attribute-validators/attribute-validator';
 import { DerivedAttributeValidator } from './validators/attribute-validators/derived-attribute-validator';
 import { KeyAttributeValidator } from './validators/attribute-validators/key-attribute-validator';
@@ -44,6 +45,9 @@ export class TaskListModelValidator extends AbstractModelValidator {
     @inject(KeyAttributeValidator)
     private keyAttributeValidator!: KeyAttributeValidator;
 
+    @inject(AlternativeKeyAttributeValidator)
+    private alternativeKeyAttributeValidator!: AlternativeKeyAttributeValidator;
+
     @inject(DerivedAttributeValidator)
     private derivedAttributeValidator!: DerivedAttributeValidator;
 
@@ -65,6 +69,7 @@ export class TaskListModelValidator extends AbstractModelValidator {
         [RELATION_TYPE, (node) => this.relationValidator.validate(node)],
         [ATTRIBUTE_TYPE, (node) => this.attributeValidator.validate(node)],
         [KEY_ATTRIBUTE_TYPE, (node) => this.keyAttributeValidator.validate(node)],
+        [ALTERNATIVE_KEY_ATTRIBUTE_TYPE, (node) => this.alternativeKeyAttributeValidator.validate(node)],
         [DERIVED_ATTRIBUTE_TYPE, (node) => this.derivedAttributeValidator.validate(node)],
         [MULTI_VALUED_ATTRIBUTE_TYPE, (node) => this.multiValuedAttributeValidator.validate(node)],
         [EXISTENCE_DEP_RELATION_TYPE, (node) => this.existenceDependenceRelationValidator.validate(node)],

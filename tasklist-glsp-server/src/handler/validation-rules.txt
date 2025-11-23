@@ -64,7 +64,14 @@ Key attribute: done
     - Key attributes can't have children (NO composite attributes).
     - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
 
-Alternative key attribute:
+Alternative key attribute: done
+    - Alternative key attribute not connected to anything.
+    - Prohibited connections:
+        - ONLY transitions.
+    - Valid connections:
+        - Entities (Strong/Weak).
+    - Alternative key attributes can't have children (NO composite attributes).
+    - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
 
 Derived attribute: done
     - Derived attribute not connected to anything.
