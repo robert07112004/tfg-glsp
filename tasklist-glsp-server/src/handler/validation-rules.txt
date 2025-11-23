@@ -54,18 +54,17 @@ Attribute rules: done
     - Attribute can't be connected through other attributes to more than one Entities/Relations/Specializations.
     - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
 
-Composite Attribute: done
-    - Can't have a key attribute in a composite attribute.
-    - Can't have a multi-valued attribute in a composite attribute.
-    - Can't have a derived attribute in a composite attribute.
-    - Can have an optional or a normal attribute in a composite attribute.
+Key attribute: done
+    - Key attribute not connected to anything.
+    - Prohibited connections:
+        - ONLY transitions.
+    - Valid connections:
+        - Entities (Strong/Weak).
+        - Identifying dependence relations.
+    - Key attributes can't have children (NO composite attributes).
+    - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
 
-Optional attributes: done (se tiene que validar al validar un atributo normal)
-    - Optional attribute not connected to anything.
-    - Optional attribute can be connected to the same type of attribute or a normal attribute (composite attribute).
-    - If optional attribute is connected to other attributes it must be connected to an entity.
-    - Attribute can be connected only to normal relations.
-    - Optional attribute can't be connected to a weighted edge.
+Alternative key attribute:
 
 Derived attribute: done
     - Derived attribute not connected to anything.
@@ -73,18 +72,11 @@ Derived attribute: done
     - Derived attribute can't be connected to a weighted edge.
     - The names of attributes in the equation label has to match with the attributes that are connected to the same entity. 
 
-Key attribute: done
-    - Key attribute not connected to anything.
-    - Key attribute must be connected to another entity.
-    - Key attribute can be composed with other normal attributes or optional attributes.
-    - Key attribute can be connected to an identifying dependence relation.
-    - Key attribute can't be connected to a weighted edge.
-    - Key attribute can't be connected to an entity or an identifying relation with an optional edge used in an optional attribute.
-
 Multi-valued attribute: done
     - Multi-valued attribute not connected to anything.
     - Multi-valued attribute can't be connected to an entity or relation with an optional edge.
     - Multi-valued attribute can't be connected to a weighted edge.
+
 
 Specializations: done
     - Specializations not connected to anything.

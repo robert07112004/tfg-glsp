@@ -2,16 +2,18 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { attributeTypes, entityTypes, IDENTIFYING_DEP_RELATION_TYPE, OPTIONAL_EDGE_TYPE, relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
+import { attributeTypes, entityTypes, IDENTIFYING_DEP_RELATION_TYPE, OPTIONAL_EDGE_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
 
 /* Key attribute rules:
- * Key attribute not connected to anything.
- * Key attribute must be connected to another entity.
- * Key attribute can be composed with other normal attributes or optional attributes.
- * Key attribute can be connected to an identifying dependence relation.
- * Key attribute can't be connected to a weighted edge.
- * Key attribute can't be connected to an entity or an identifying relation with an optional edge used in an optional attribute.
+ * 1. Key attribute not connected to anything.
+ * 2. Prohibited connections:
+ *    - ONLY transitions.
+ * 3. Valid connections:
+ *    - Entities (Strong/Weak).
+ *    - Identifying dependence relations.
+ * 4. Key attributes can't have children (NO composite attributes).
+ * 5. Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
  */
 
 @injectable()
@@ -26,48 +28,67 @@ export class KeyAttributeValidator {
     validate(node: GNode): Marker | undefined {
         const neighbors = getConnectedNeighbors(node, this.index);
 
+        // Rule 1: Key attribute not connected to anything.
         if (neighbors.length === 0) {
             return createMarker('error', 'Atributo clave aislado', node.id, 'ERR: sin conectar al modelo');
         }
 
-        let isConnectedToEntity = false; 
-        let isConnectedToOtherAttribute = false; 
-        let isConnectedToIdentifyingDep = false;
-        let isConnectedToOtherRelation = false; 
+        let isValidConnection = false;
+        let rootOwnerCount = 0; 
 
         for (const { otherNode, edge } of neighbors) {
             const nodeType = otherNode.type;
             const edgeType = edge.type;
 
-            if (edgeType === WEIGHTED_EDGE_TYPE) {
-                return createMarker('error', 'Atributo clave no puede estar conectado a nada mediante una arista ponderada.', node.id, 'ERR: Atributo-aristaPonderada');
+            // Rule 2: Prohibited connections.
+            if (edgeType === WEIGHTED_EDGE_TYPE || edgeType === OPTIONAL_EDGE_TYPE) {
+                return createMarker(
+                    'error', 
+                    'Atributo de clave primaria no puede estar conectado a nada mediante una arista ponderada o una arista opcional.', 
+                    node.id, 
+                    'ERR: Atributo-aristaPonderada-aristaOpcional'
+                );
             }
 
-            if (edgeType === OPTIONAL_EDGE_TYPE && (entityTypes.includes(nodeType) || nodeType === IDENTIFYING_DEP_RELATION_TYPE)) {
-                return createMarker('error', 'Atributo clave no puede conectarse a una entidad o dependencia con una arista opcional.', node.id, 'ERR: AtributoClave-aristaOpcional');
-            }
-
+            // Rule 3a Valid connections: Entities (Strong/Weak). 
             if (entityTypes.includes(nodeType)) {
-                isConnectedToEntity = true;
-            } else if (attributeTypes.includes(nodeType)) {
-                isConnectedToOtherAttribute = true;
-            } else if (nodeType === IDENTIFYING_DEP_RELATION_TYPE) {
-                isConnectedToIdentifyingDep = true;
-            } else if (relationTypes.includes(nodeType)) {
-                isConnectedToOtherRelation = true;
+                isValidConnection = true;
+                rootOwnerCount++;
+            } 
+            // Rule 3b Valid connections: Identifying dependence relations.
+            else if (nodeType === IDENTIFYING_DEP_RELATION_TYPE) {
+                isValidConnection = true;
+                rootOwnerCount++;
+            }
+
+            // Rule 4: Key attributes can't have children (NO composite attributes).
+            if (attributeTypes.includes(nodeType)) {
+                return createMarker(
+                    'error', 'Un atributo de clave primaria no puede ser un atributo compuesto (no puede conectarse a otros atributos).',
+                    node.id,
+                    'ERR: atributoClavePrimaria-atributoCompuesto'
+                );            
             }
         }
 
-        if (!isConnectedToEntity) {
-            return createMarker('error', 'Un atributo de clave primaria tiene que estar conectado a una entidad o a una entidad débil.', node.id, 'ERR: atributoClavePrimaria-entidad-entidadDebil');
+        // Rule 3: Valid connections:
+        if (!isValidConnection) {
+            return createMarker(
+                'error',
+                'Un atributo de clave primaria tiene que estar conectado a una entidad fuerte o débil o a una dependencia en identificación.',
+                node.id,
+                'ERR: atributoClavePrimaria-entities-IdentifyingDependence'
+            );
         }
 
-        if (isConnectedToOtherAttribute) {
-            return createMarker('error', 'Atributo clave solo puede conectarse a atributos normales u opcionales para formar un atributo compuesto.', node.id, 'ERR: atributoClavePrimaria-atributoNormal-atributoOpcional');
-        }
-
-        if (isConnectedToOtherRelation && !isConnectedToIdentifyingDep) {
-            return createMarker('error', 'Atributo clave solo puede conectarse a una dependencia de identificación.', node.id, 'ERR: atributoClavePrimaria-dependenciaEnIdentificacion');
+        // Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B"
+        if (rootOwnerCount > 1) {
+            return createMarker(
+                'error', 
+                'Un atributo no puede pertenecer a múltiples elementos raíz (Entidades/Relaciones/Especializaciones) a la vez.', 
+                node.id, 
+                'ERR: atributo-ambiguo'
+            );
         }
 
         return undefined;
