@@ -87,9 +87,15 @@ Derived attribute: done
 
 Multi-valued attribute: done
     - Multi-valued attribute not connected to anything.
-    - Multi-valued attribute can't be connected to an entity or relation with an optional edge.
-    - Multi-valued attribute can't be connected to a weighted edge.
-
+    - Prohibited connections:
+        - NO weighted edges allowed.
+    - Valid connections:
+        - Entities (Strong/Weak).
+        - Relations.
+        - Specializations.
+    - Multi-valued attributes can't have child attributes.
+    - Multi-valued attributes can't be connected to dependencies.
+    - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
 
 Specializations: done
     - Specializations not connected to anything.
