@@ -2,15 +2,18 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { attributeTypes, entityTypes, KEY_ATTRIBUTE_TYPE, relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
+import { DEFAULT_EDGE_TYPE, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, OPTIONAL_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
 
 /* Relation rules:
- * Relation is not connected to anything.
- * Relation is connected to another relation.
- * Relation is not connected with weighted edges.
- * Relation is connected with key attribute.
- * Relation is connected with a weighted edge to an attribute.
+ * 1. Relation not connected to anything.
+ * 2. Prohibited connections:
+ *    - Transitions and optional links aren't allowed.
+ * 3. Valid connections:
+ *    - Entities (Strong).
+ *    - Attributes (Normal/Derived).
+ * 4. Relations must be connected with at least two entities.
+ * 5. Relations can't be connected with specializations, dependencies and other relations.
  */
 
 @injectable()
@@ -25,54 +28,58 @@ export class RelationValidator {
     validate(node: GNode): Marker | undefined {
         const neighbors = getConnectedNeighbors(node, this.index);
 
+        // Rule 1: Relation not connected to anything.
         if (neighbors.length === 0) {
             return createMarker('error', 'Relación aislada', node.id, 'ERR: sin conectar al modelo');
         }
 
-        let isConnectedToRelation = false;
-        let entityConnectionCount = 0;
-        let weightedEntityConnectionCount = 0;
-        let isConnectedToKeyAttribute = false;
-        let isConnectedToAttributeWithWeightedEdge = false;
+        let validConnection = false;
+        let entityCount = 0;
 
         for (const { otherNode, edge } of neighbors) {
             const nodeType = otherNode.type;
             const edgeType = edge.type;
-            if (relationTypes.includes(nodeType)) {
-                isConnectedToRelation = true;
+            
+            // Rule 2: Prohibited connections.
+            if (edgeType === DEFAULT_EDGE_TYPE || edgeType === OPTIONAL_EDGE_TYPE) {
+                return createMarker(
+                    'error',
+                    'Una relación no puede estar conectada con nada que no sea mediante aristas ponderadas.',
+                    node.id,
+                    'ERR: relation-weighted-edge'
+                );
             }
-            else if (attributeTypes.includes(nodeType)) {
-                if (nodeType === KEY_ATTRIBUTE_TYPE) {
-                    isConnectedToKeyAttribute = true;
-                }
-                if (edgeType === WEIGHTED_EDGE_TYPE && nodeType !== KEY_ATTRIBUTE_TYPE) {
-                    isConnectedToAttributeWithWeightedEdge = true;
-                }
+
+            // Rule 3: Valid connections.
+            if (nodeType === ENTITY_TYPE) {
+                entityCount++;
+                validConnection = true;
+            } else if (nodeType === DERIVED_ATTRIBUTE_TYPE || (edgeType !== OPTIONAL_EDGE_TYPE && getConnectedNeighbors(otherNode, this.index).length == 0)) {
+                validConnection = true;
             }
-            else if (entityTypes.includes(nodeType)) {
-                entityConnectionCount++;
-                if (edgeType === WEIGHTED_EDGE_TYPE) {
-                    weightedEntityConnectionCount++;
-                }
-            }
+            
+        }
+
+        // Rule 5: Relations can't be connected with specializations, dependencies and other relations.
+        if (!validConnection) {
+            return createMarker(
+                'error',
+                'Relación no puede conectarse con especializaciones, dependencias u otras relaciones.',
+                node.id,
+                'ERR: relation-specializations-dependencies'
+            );
+        }
+
+        // Rule 4: Relations must be connected with at least two entities.
+        if (entityCount < 2) {
+            return createMarker(
+                'error',
+                'Relación debe estar conectada con al menos dos entidades.',
+                node.id,
+                'ERR: relation-entities'
+            );
         }
         
-        if (isConnectedToRelation) {
-            return createMarker('error', 'Relación está conectada a otra relación', node.id, 'ERR: relación-relación');
-        }
-
-        if (weightedEntityConnectionCount !== entityConnectionCount) {
-            return createMarker('error', 'Relación debe estar conectada a entidades mediante aristas ponderadas', node.id, 'ERR: cardinalidad');
-        }
-
-        if (isConnectedToKeyAttribute) {
-            return createMarker('error', 'Relación no puede estar conectada a un atributo con clave primaria', node.id, 'ERR: relación-sinClavePrimaria');
-        }
-        
-        if (isConnectedToAttributeWithWeightedEdge) {
-            return createMarker('error', 'Relación no puede estar conectada a un atributo mediante una arista ponderada', node.id, 'ERR: relación-Atributo-aristaPonderada');
-        }
-
         return undefined;
 
     }

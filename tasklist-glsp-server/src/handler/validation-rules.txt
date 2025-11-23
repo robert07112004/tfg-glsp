@@ -25,16 +25,22 @@ Weak entity rules: done
 
 Relation rules: done
     - Relation not connected to anything.
-    - Relation connected to another relation.
-    - Relation not connected with weighted edges.
-    - Relation connected with key attribute.
-    - Relation connected with a weighted edge to an attribute.
+    - Prohibited connections:
+        - Transitions and optional links aren't allowed.
+    - Valid connections:
+        - Entities (Strong).
+        - Attributes (Normal/Derived).
+    - Relations must be connected with at least two entities.
+    - Relations can't be connected with specializations, dependencies and other relations.
 
 Existence dependence relation: done
     - Existence dependence relation not connected to anything.
-    - Existence dependence relation must be connected to one entity and one weak entity with weighted edges.
-    - Existence dependence relation can't be connected to attributes with weighted edges.
-    - Existence dependence can't be connected to key attributes.
+    - Prohibited connections:
+        - Transitions and optional links aren't allowed.
+    - Valid connections:
+        - Entities (Strong/Weak).
+    - Existence dependence relation can't be connected to attributes, relations, other dependencies and specializations.
+    - Existence dependence relation must be connected to an entity and a weak entity. 
 
 Identifying dependence relation: done
     - Identifying dependence relation not connected to anything.
@@ -89,7 +95,6 @@ Multi-valued attribute: done
         - NO weighted edges allowed.
     - Valid connections:
         - Entities (Strong/Weak).
-        - Relations.
     - Multi-valued attributes can't have child attributes.
     - Multi-valued attributes can't be connected to dependencies.
     - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
