@@ -44,10 +44,15 @@ Identifying dependence relation: done
 
 Attribute rules: done
     - Attribute not connected to anything.
-    - Attribute can only be connected to the same type of attribute or an optional attribute (composite attribute).
-    - If attribute is connected to other attributes it must be connected to an entity. 
-    - Attribute can be connected only to normal relations.
-    - Attribute can't be connected to a weighted edge.
+    - Edges: Only Transitions (Default) or Optional Links. NEVER Weighted edges.
+    - Valid Connections (Owners/Children):
+        - Entities (Strong/Weak).
+        - Relations (Any type).
+        - Specializations (Triangles).
+    - Prohibited Connections:
+        - KEY Attributes (Primary/Alternative).
+    - Attribute can't be connected through other attributes to more than one Entities/Relations/Specializations.
+    - Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
 
 Composite Attribute: done
     - Can't have a key attribute in a composite attribute.
