@@ -51,6 +51,8 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.optionalAttributeEdges.map(optionalAttributeEdge => this.createOptionalAttributeEdge(optionalAttributeEdge))
         ]
 
+        this.preprocessParallelEdges(childEdges, childNodes);
+
         const newRoot = GGraph.builder()
             .id(taskList.id)
             .addChildren(childNodes)
@@ -436,5 +438,71 @@ export class TaskListGModelFactory implements GModelFactory {
             .targetId(optionalAttributeEdge.targetId)
             .build();
     }
-    
+ 
+    /**
+     * Detecta aristas que conectan los mismos nodos (paralelas) y añade puntos de enrutamiento
+     * para separarlas visualmente.
+     */
+    private preprocessParallelEdges(edges: GEdge[], nodes: GNode[]): void {
+        const nodeMap = new Map<string, GNode>();
+        nodes.forEach(n => nodeMap.set(n.id, n));
+
+        // 1. Agrupar aristas por par de nodos (A-B es lo mismo que B-A para colisiones visuales)
+        const groups = new Map<string, GEdge[]>();
+        
+        edges.forEach(edge => {
+            // Ordenamos los IDs para identificar el par de nodos sin importar la dirección
+            const key = [edge.sourceId, edge.targetId].sort().join('-');
+            if (!groups.has(key)) {
+                groups.set(key, []);
+            }
+            groups.get(key)!.push(edge);
+        });
+
+        // 2. Procesar solo los grupos donde hay conflicto (>1 arista)
+        groups.forEach((groupEdges, key) => {
+            if (groupEdges.length > 1) {
+                const firstEdge = groupEdges[0];
+                const sourceNode = nodeMap.get(firstEdge.sourceId);
+                const targetNode = nodeMap.get(firstEdge.targetId);
+
+                // Solo podemos calcular si tenemos posiciones válidas y los nodos son distintos
+                if (sourceNode && targetNode && sourceNode.position && targetNode.position && sourceNode.id !== targetNode.id) {
+                    const x1 = sourceNode.position.x;
+                    const y1 = sourceNode.position.y;
+                    const x2 = targetNode.position.x;
+                    const y2 = targetNode.position.y;
+
+                    // Punto medio entre los dos nodos
+                    const mx = (x1 + x2) / 2;
+                    const my = (y1 + y2) / 2;
+
+                    // Vector dirección del nodo A al B
+                    const dx = x2 - x1;
+                    const dy = y2 - y1;
+                    
+                    // Calcular vector perpendicular normalizado para desplazar lateralmente
+                    const length = Math.sqrt(dx * dx + dy * dy) || 1;
+                    const px = -dy / length;
+                    const py = dx / length;
+
+                    // Distancia de separación (puedes ajustar este 30 a tu gusto)
+                    const amplitude = 30; 
+
+                    groupEdges.forEach((edge, index) => {
+                        // Distribuimos las aristas:
+                        // Si hay 2: una a -15 y otra a +15 del centro.
+                        const offset = (index - (groupEdges.length - 1) / 2) * amplitude;
+                        
+                        // Asignamos un punto de control que fuerza la curva
+                        edge.routingPoints = [{
+                            x: mx + px * offset,
+                            y: my + py * offset
+                        }];
+                    });
+                }
+            }
+        });
+    }
+
 }
