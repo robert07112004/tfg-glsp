@@ -1,0 +1,126 @@
+{
+  "id": "5a86a79d-b65e-4803-a844-7fdc38a5ff57",
+  "tasks": [
+    {
+      "id": "1d277d41-5c2f-46cb-8692-e5ec9f213f00",
+      "type": "entity",
+      "name": "Presidente",
+      "position": {
+        "x": 113,
+        "y": 527
+      },
+      "size": {
+        "width": 61.01737976074219,
+        "height": 22
+      }
+    },
+    {
+      "id": "b217c46a-cd12-49b7-b0fa-44852e947ebe",
+      "type": "entity",
+      "name": "Pais",
+      "position": {
+        "x": 448,
+        "y": 520
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "0568dce4-d9d6-4503-ba6e-c146f2735ab0",
+      "type": "relation",
+      "name": "Dirige",
+      "cardinality": "-",
+      "position": {
+        "x": 284,
+        "y": 525
+      },
+      "size": {
+        "width": 37.90510940551758,
+        "height": 35
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "50cbe86c-3a4f-4bfb-8bfc-d26d566b26ea",
+      "type": "attribute",
+      "name": "fecha: date",
+      "position": {
+        "x": 274,
+        "y": 432
+      },
+      "size": {
+        "width": 64.00207138061523,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "f6e6a2de-cf75-4253-8013-f22400d46219",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 72,
+        "y": 411
+      }
+    },
+    {
+      "id": "15357923-a8f2-4928-9240-fe8b82735fbb",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 445,
+        "y": 450
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "f34dd9db-fe11-4e48-840e-a54dab9c19d7",
+      "sourceTaskId": "15357923-a8f2-4928-9240-fe8b82735fbb",
+      "targetTaskId": "b217c46a-cd12-49b7-b0fa-44852e947ebe"
+    },
+    {
+      "id": "bbc7d8d8-0daa-4e71-907c-da400ac006ae",
+      "sourceTaskId": "f6e6a2de-cf75-4253-8013-f22400d46219",
+      "targetTaskId": "1d277d41-5c2f-46cb-8692-e5ec9f213f00"
+    },
+    {
+      "id": "3d41783f-87c1-466a-bd39-b29cb214f749",
+      "sourceTaskId": "0568dce4-d9d6-4503-ba6e-c146f2735ab0",
+      "targetTaskId": "50cbe86c-3a4f-4bfb-8bfc-d26d566b26ea"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "605d0776-f1ba-4023-adb6-4f5335ee1517",
+      "type": "edge:weighted",
+      "sourceId": "0568dce4-d9d6-4503-ba6e-c146f2735ab0",
+      "targetId": "b217c46a-cd12-49b7-b0fa-44852e947ebe",
+      "description": "(1..1)"
+    },
+    {
+      "id": "fa187ecc-6182-4b77-9c57-3c8403c79401",
+      "type": "edge:weighted",
+      "sourceId": "0568dce4-d9d6-4503-ba6e-c146f2735ab0",
+      "targetId": "1d277d41-5c2f-46cb-8692-e5ec9f213f00",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}

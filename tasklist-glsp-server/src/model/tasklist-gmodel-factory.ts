@@ -100,7 +100,6 @@ export class TaskListGModelFactory implements GModelFactory {
             .id(relation.id)
             .type(DefaultTypes.NODE_DIAMOND)
             .addCssClass('relation-node')
-
             .add(GLabel.builder()
                 .text(relation.name)
                 .id(`${relation.id}_label`)
@@ -111,7 +110,6 @@ export class TaskListGModelFactory implements GModelFactory {
                 .type('label:cardinality')
                 .addCssClass('cardinality-label')
                 .build())
-            
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'center')

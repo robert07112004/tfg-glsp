@@ -26,11 +26,11 @@ Weak entity rules: done
 Relation rules: done
     - Relation not connected to anything.
     - Prohibited connections:
-        - Transitions and optional links aren't allowed.
+        -Optional links aren't allowed.
     - Valid connections:
         - Entities (Strong).
         - Attributes (Normal/Derived).
-    - Relations must be connected with at least two entities.
+    - Relations must be connected with at least one entities.
     - Relations can't be connected with specializations, dependencies and other relations.
 
 Existence dependence relation: done

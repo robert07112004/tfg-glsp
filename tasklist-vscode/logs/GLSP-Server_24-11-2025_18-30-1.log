@@ -1,0 +1,19 @@
+18:30:01 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 64067 
+18:30:02 info -  [SocketServerLauncher] Starting GLSP server connection 
+18:30:02 info -  [DefaultGLSPServer] Initializing server with: applicationId: 9d9b9dd7-486d-431a-bb30-6dfe42bcc7fa, protocolVersion: 1.0.0 
+18:30:03 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+18:30:03 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+18:30:03 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+18:30:03 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+18:30:03 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+18:30:06 info -  [DefaultGLSPServer] process [action=saveModel, clientId=tasklist-diagram_0] 
+18:30:10 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_0] 
+18:30:10 error -  [DefaultGLSPServer] Could not process action: 'generateSql 
+18:30:10 error -  [DefaultGLSPServer] TypeError: Cannot read properties of undefined (reading 'replace') 
+18:30:19 info -  [DefaultGLSPServer] process [action=requestMarkers, clientId=tasklist-diagram_0] 
+18:30:20 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_0] 
+18:30:20 error -  [DefaultGLSPServer] Could not process action: 'generateSql 
+18:30:20 error -  [DefaultGLSPServer] TypeError: Cannot read properties of undefined (reading 'replace') 
+18:30:30 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_0] 
+18:30:30 error -  [DefaultGLSPServer] Could not process action: 'generateSql 
+18:30:30 error -  [DefaultGLSPServer] TypeError: Cannot read properties of undefined (reading 'replace') 

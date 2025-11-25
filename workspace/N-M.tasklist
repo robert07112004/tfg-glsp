@@ -1,0 +1,134 @@
+{
+  "id": "0c56954b-7507-4dad-aa5c-1ee27cfc30b4",
+  "tasks": [
+    {
+      "id": "be0d8a95-cad8-4506-a0a0-7cdc42d02e00",
+      "type": "entity",
+      "name": "Estudiante",
+      "position": {
+        "x": 129,
+        "y": 446.00000000000006
+      },
+      "size": {
+        "width": 60.42942810058594,
+        "height": 22
+      }
+    },
+    {
+      "id": "c7eb7815-a52d-43fb-a8db-9d390c91db06",
+      "type": "entity",
+      "name": "Asignatura",
+      "position": {
+        "x": 504,
+        "y": 454.00000000000006
+      },
+      "size": {
+        "width": 62.21738052368164,
+        "height": 22
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "5b09f7c9-c4d8-4bb7-a0e1-32b7480abb21",
+      "type": "relation",
+      "name": "Matricula",
+      "cardinality": "-",
+      "position": {
+        "x": 305.9035826098848,
+        "y": 441.42270152568074
+      },
+      "size": {
+        "width": 53.30113220214844,
+        "height": 35
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "6d11e8ed-69ae-4b49-8a55-cf1b294ac22e",
+      "type": "attribute",
+      "name": "fecha: date",
+      "position": {
+        "x": 296,
+        "y": 372
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "f0e3c98e-6095-4b96-8525-1c6af2191818",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 127,
+        "y": 358
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    },
+    {
+      "id": "77f00eb2-6dea-4304-a27c-fde397850c19",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 489,
+        "y": 361
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "044f682c-d6ef-445c-a74a-e93a9601314c",
+      "sourceTaskId": "c7eb7815-a52d-43fb-a8db-9d390c91db06",
+      "targetTaskId": "77f00eb2-6dea-4304-a27c-fde397850c19"
+    },
+    {
+      "id": "97bcc97d-40cc-4ad7-86e0-eec9858e7b27",
+      "sourceTaskId": "be0d8a95-cad8-4506-a0a0-7cdc42d02e00",
+      "targetTaskId": "f0e3c98e-6095-4b96-8525-1c6af2191818"
+    },
+    {
+      "id": "21ef0763-91c2-4702-951a-0016ddb23c81",
+      "sourceTaskId": "6d11e8ed-69ae-4b49-8a55-cf1b294ac22e",
+      "targetTaskId": "5b09f7c9-c4d8-4bb7-a0e1-32b7480abb21"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "eea00f40-37d2-43df-88d9-214cf061f810",
+      "type": "edge:weighted",
+      "sourceId": "be0d8a95-cad8-4506-a0a0-7cdc42d02e00",
+      "targetId": "5b09f7c9-c4d8-4bb7-a0e1-32b7480abb21",
+      "description": "(1..N)"
+    },
+    {
+      "id": "687d6222-439b-4062-84ce-5a365ecd2e95",
+      "type": "edge:weighted",
+      "sourceId": "5b09f7c9-c4d8-4bb7-a0e1-32b7480abb21",
+      "targetId": "c7eb7815-a52d-43fb-a8db-9d390c91db06",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}

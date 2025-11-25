@@ -2,17 +2,17 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { DEFAULT_EDGE_TYPE, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, OPTIONAL_EDGE_TYPE } from '../../utils/validation-constants';
+import { ATTRIBUTE_TYPE, DEFAULT_EDGE_TYPE, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, OPTIONAL_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
 
 /* Relation rules:
  * 1. Relation not connected to anything.
  * 2. Prohibited connections:
- *    - Transitions and optional links aren't allowed.
+ *    - Optional links aren't allowed.
  * 3. Valid connections:
  *    - Entities (Strong).
  *    - Attributes (Normal/Derived).
- * 4. Relations must be connected with at least two entities.
+ * 4. Relations must be connected with at least one entities.
  * 5. Relations can't be connected with specializations, dependencies and other relations.
  */
 
@@ -41,12 +41,21 @@ export class RelationValidator {
             const edgeType = edge.type;
             
             // Rule 2: Prohibited connections.
-            if (edgeType === DEFAULT_EDGE_TYPE || edgeType === OPTIONAL_EDGE_TYPE) {
+            if (edgeType === DEFAULT_EDGE_TYPE && nodeType === ENTITY_TYPE) {
                 return createMarker(
                     'error',
-                    'Una relación no puede estar conectada con nada que no sea mediante aristas ponderadas.',
+                    'Una relación no puede estar conectada a un atributo sin una arista ponderada.',
                     node.id,
                     'ERR: relation-weighted-edge'
+                );
+            }
+
+            if (edgeType === OPTIONAL_EDGE_TYPE) {
+                return createMarker(
+                    'error',
+                    'Una relación no puede estar conectada mediante aristas opcionales',
+                    node.id,
+                    'ERR: relation-optional-edge'
                 );
             }
 
@@ -54,7 +63,7 @@ export class RelationValidator {
             if (nodeType === ENTITY_TYPE) {
                 entityCount++;
                 validConnection = true;
-            } else if (nodeType === DERIVED_ATTRIBUTE_TYPE || (edgeType !== OPTIONAL_EDGE_TYPE && getConnectedNeighbors(otherNode, this.index).length == 0)) {
+            } else if (nodeType === DERIVED_ATTRIBUTE_TYPE || (edgeType !== OPTIONAL_EDGE_TYPE && nodeType === ATTRIBUTE_TYPE)) {
                 validConnection = true;
             }
             
@@ -71,10 +80,10 @@ export class RelationValidator {
         }
 
         // Rule 4: Relations must be connected with at least two entities.
-        if (entityCount < 2) {
+        if (entityCount < 1) {
             return createMarker(
                 'error',
-                'Relación debe estar conectada con al menos dos entidades.',
+                'Relación debe estar conectada con al menos una entidad.',
                 node.id,
                 'ERR: relation-entities'
             );

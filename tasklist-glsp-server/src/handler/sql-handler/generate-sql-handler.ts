@@ -1,10 +1,11 @@
 import { Action, ActionHandler } from '@eclipse-glsp/server';
+import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
+import * as path from 'path';
 import { TaskListModelState } from '../../model/tasklist-model-state';
 import { SQLGenerator } from '../generator/sql-generator';
 import { TaskListModelValidator } from '../validation/diagram-validator';
 
-// 1. Definición de la Acción
 export interface GenerateSqlAction extends Action {
     kind: typeof GenerateSqlAction.KIND;
 }
@@ -15,20 +16,16 @@ export namespace GenerateSqlAction {
     }
 }
 
-// 2. El Manejador
 @injectable()
 export class GenerateSqlActionHandler implements ActionHandler {
-    // 3. Corregido actionKinds: debe ser un array con los tipos de acción que maneja
     readonly actionKinds = [GenerateSqlAction.KIND];
 
     @inject(SQLGenerator) protected sqlGenerator: SQLGenerator;
     @inject(TaskListModelValidator) protected validator: TaskListModelValidator;
     @inject(TaskListModelState) protected modelState: TaskListModelState;
 
-    execute(action: GenerateSqlAction): Action[] { // 4. Corregido tipo de retorno
+    execute(action: GenerateSqlAction): Action[] {
         const root = this.modelState.root;
-        
-        // A. Validar
         const markers = this.validator.doBatchValidation(root);
         const errors = markers.filter(m => m.kind === 'error');
 
@@ -38,16 +35,21 @@ export class GenerateSqlActionHandler implements ActionHandler {
             return[];
         }
 
-        // B. Generar SQL
         console.log("Validación correcta. Generando SQL...");
-        // Nota: Asegúrate de que el método generate en SqlGenerator acepte (root, index)
-        // Si en el paso 1 definiste generate(root: GModelElement, index: GModelIndex), esto funcionará.
         const sql = this.sqlGenerator.generate(root, this.modelState.index);
 
-        // C. Imprimir resultado
-        console.log("---------------- SQL GENERADO ----------------");
-        console.log(sql);
-        console.log("----------------------------------------------");
+        try {
+            const fileName = 'script_generado.sql';
+            const projectRoot = path.resolve(__dirname, '../../../');
+            const filePath = path.join(projectRoot, fileName);
+            fs.writeFileSync(filePath, sql, 'utf-8');
+            console.log("----------------------------------------------");
+            console.log(`✅ Archivo SQL generado en la raíz del proyecto:`);
+            console.log(filePath);
+            console.log("----------------------------------------------");
+        } catch (err) {
+            console.error("❌ Error al guardar el archivo:", err);
+        }
 
         return[];
     }

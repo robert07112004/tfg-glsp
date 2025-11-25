@@ -1,0 +1,134 @@
+{
+  "id": "2cde57aa-5309-465e-a6aa-56b93249d43c",
+  "tasks": [
+    {
+      "id": "7c721a14-d036-4e23-8ffc-ec7c01d0b729",
+      "type": "entity",
+      "name": "Jugador",
+      "position": {
+        "x": 194,
+        "y": 529
+      },
+      "size": {
+        "width": 49.759761810302734,
+        "height": 22
+      }
+    },
+    {
+      "id": "8eba2072-3bd5-4b9a-be9d-8294bed28bfb",
+      "type": "entity",
+      "name": "Equipo",
+      "position": {
+        "x": 559,
+        "y": 534
+      },
+      "size": {
+        "width": 43.25393295288086,
+        "height": 22
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "ddacd0e8-cf0f-4c72-aa78-ad2fb97e34c8",
+      "type": "relation",
+      "name": "juega",
+      "cardinality": "-",
+      "position": {
+        "x": 392,
+        "y": 530
+      },
+      "size": {
+        "width": 37.346473693847656,
+        "height": 35
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "dbd5f110-043c-4313-9327-1011bf23a332",
+      "type": "attribute",
+      "name": "fecha: date",
+      "position": {
+        "x": 385,
+        "y": 440
+      },
+      "size": {
+        "width": 64.00207138061523,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "79cfd32c-d227-4d1b-bd33-d0ee4f18c6b4",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 187,
+        "y": 442
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    },
+    {
+      "id": "b7b351e7-778b-42e1-aa41-9c3b3cdbfd17",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 558,
+        "y": 454
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "f1817096-8dcb-4a35-9963-dd09826dc85b",
+      "sourceTaskId": "8eba2072-3bd5-4b9a-be9d-8294bed28bfb",
+      "targetTaskId": "b7b351e7-778b-42e1-aa41-9c3b3cdbfd17"
+    },
+    {
+      "id": "c1ce0c73-bb3f-4e8c-b961-9a0085eb867e",
+      "sourceTaskId": "7c721a14-d036-4e23-8ffc-ec7c01d0b729",
+      "targetTaskId": "79cfd32c-d227-4d1b-bd33-d0ee4f18c6b4"
+    },
+    {
+      "id": "8cdb4a71-09c5-4a24-a0af-2d425fadc959",
+      "sourceTaskId": "ddacd0e8-cf0f-4c72-aa78-ad2fb97e34c8",
+      "targetTaskId": "dbd5f110-043c-4313-9327-1011bf23a332"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "7c3c46d7-0eda-4cba-83a5-45e4837a7f66",
+      "type": "edge:weighted",
+      "sourceId": "8eba2072-3bd5-4b9a-be9d-8294bed28bfb",
+      "targetId": "ddacd0e8-cf0f-4c72-aa78-ad2fb97e34c8",
+      "description": "(1..N)"
+    },
+    {
+      "id": "30cabb9d-ca10-4dc1-a46d-94df3e864e5c",
+      "type": "edge:weighted",
+      "sourceId": "7c721a14-d036-4e23-8ffc-ec7c01d0b729",
+      "targetId": "ddacd0e8-cf0f-4c72-aa78-ad2fb97e34c8",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}

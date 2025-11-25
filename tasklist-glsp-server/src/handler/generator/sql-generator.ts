@@ -6,7 +6,7 @@ import {
     GNode
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, attributeTypes, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE } from '../validation/utils/validation-constants';
+import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, attributeTypes, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE } from '../validation/utils/validation-constants';
 
 export function isGNode(element: GModelElement): element is GNode {
     return element instanceof GNode;
@@ -26,27 +26,37 @@ export class SQLGenerator {
     public generate(root: GModelElement, index: GModelIndex): string {
         let sqlScript = "-- Script generado por GLSP-ER\n";
         sqlScript += "-- Fecha: " + new Date().toLocaleString() + "\n\n";
+        
         const entities = root.children.filter(element => 
             isGNode(element) && element.type === ENTITY_TYPE
         ) as GNode[];
+        const relations = root.children.filter(element => 
+            isGNode(element) && element.type === RELATION_TYPE
+        ) as GNode[];
+
         entities.forEach(entity => {
             sqlScript += this.createTableForEntity(entity, root);
             sqlScript += "\n";
         });
+        relations.forEach(relation => {
+            sqlScript += this.createTableForRelation(relation, root);
+            sqlScript += "\n";
+        });
+
         return sqlScript;
     }
 
     private createTableForEntity(entity: GNode, root: GModelElement): string {
         const tableName = this.getNameFromNode(entity);
-        // Si no tiene nombre, usamos el ID como fallback
         const safeTableName = tableName ? tableName.replace(/\s+/g, '_') : entity.id;
         let tableSql = `CREATE TABLE ${safeTableName} (\n`;
         const columnDefinitions: string[] = [];
         let additionalTablesSql = "";
         let connectedAttributes = this.findConnectedAttributes(entity, root);
-        connectedAttributes = this.sortAttirbutes(connectedAttributes);
+        connectedAttributes = this.sortAttributes(connectedAttributes);
+        
+        // ATTRIBUTES
         if (connectedAttributes.length === 0) {
-            // Si no tiene atributos, añadimos una columna dummy o id por defecto para que el SQL sea válido
             columnDefinitions.push(`    id VARCHAR(255) PRIMARY KEY`);
         } else {
             connectedAttributes.forEach(attr => {
@@ -91,9 +101,187 @@ export class SQLGenerator {
                 }
             });
         }
+
+        // FOREIGN KEYS
+        const relations = this.findConnectedRelations(entity, root);
+        if (relations.length > 0) {
+            relations.forEach(relation => {
+                if (!relation.children) return;
+                const relationCardinality = this.getCardinalityFromNode(relation);
+                const connectedAttributes = this.findConnectedAttributes(relation, root);
+                if (relationCardinality === '1:N') {
+                    const weightedEdge = this.findEdgeBetween(entity, relation, root);
+                    if (weightedEdge) {
+                        const edgeCardinality = this.getCardinalityFromWeightedEdge(weightedEdge);
+                        if (edgeCardinality && edgeCardinality.includes('..1')) {
+                            const otherEntity = this.findOtherEntity(relation, entity, root);
+                            if (otherEntity) {
+                                const otherEntityPK = this.findPrimaryKey(otherEntity, root);
+                                if (otherEntityPK) {
+                                    const otherEntityName = this.getNameFromNode(otherEntity);
+                                    const safeOtherEntityName = otherEntityName ? otherEntityName.replace(/\s+/g, '_') : otherEntity.id;
+                                    const otherEntityPKName = this.getNameFromNode(otherEntityPK);
+                                    const safeOtherEntityPKName = otherEntityPKName ? otherEntityPKName.replace(/\s+/g, '_') : otherEntityPK.id;
+                                    const otherEntityPKNameType = this.splitLabelAttribute(safeOtherEntityPKName);
+                                    const fkColumnName = `${safeOtherEntityName}_${otherEntityPKNameType.name}`;
+                                    columnDefinitions.push(`    ${fkColumnName} ${otherEntityPKNameType.type}`);
+                                    if (connectedAttributes.length > 0) {
+                                        connectedAttributes.forEach(attr => {
+                                            const attrName = this.getNameFromNode(attr);
+                                            const attrNameType = this.splitLabelAttribute(attrName ? attrName.replace(/\s+/g, '_') : attr.id);
+                                            columnDefinitions.push(`    ${attrNameType.name} ${attrNameType.type}`);
+                                        });
+                                    }
+                                    columnDefinitions.push(`    FOREIGN KEY (${fkColumnName}) REFERENCES ${safeOtherEntityName}(${otherEntityPKNameType.name}) ON DELETE SET NULL`);
+                                }
+                            }
+                        }
+                    }
+                } else if (relationCardinality === '1:1') {
+                    const otherEntity = this.findOtherEntity(relation, entity, root);
+                    if (otherEntity) {
+                        const myEdge = this.findEdgeBetween(entity, relation, root);
+                        const otherEdge = this.findEdgeBetween(otherEntity, relation, root);
+                        const myCardinality = myEdge ? this.getCardinalityFromWeightedEdge(myEdge) : '0..1';
+                        const otherCardinality = otherEdge ? this.getCardinalityFromWeightedEdge(otherEdge) : '0..1';
+                        let iAmResponsible = false;
+                        const iAmMandatory = myCardinality.includes('1..1');
+                        const otherIsMandatory = otherCardinality.includes('1..1');
+                        if (iAmMandatory && !otherIsMandatory) {
+                            iAmResponsible = true;
+                        } else if (!iAmMandatory && otherIsMandatory) {
+                            iAmResponsible = false;
+                        } else {
+                            if (entity.id > otherEntity.id) {
+                                iAmResponsible = true;
+                            }
+                        }
+                        if (iAmResponsible) {
+                            const otherEntityPK = this.findPrimaryKey(otherEntity, root);
+                            if (otherEntityPK) {
+                                const otherEntityName = this.getNameFromNode(otherEntity);
+                                const safeOtherEntityName = otherEntityName ? otherEntityName.replace(/\s+/g, '_') : otherEntity.id;
+                                const otherEntityPKName = this.getNameFromNode(otherEntityPK);
+                                const safeOtherEntityPKName = otherEntityPKName ? otherEntityPKName.replace(/\s+/g, '_') : otherEntityPK.id;
+                                const otherEntityPKNameType = this.splitLabelAttribute(safeOtherEntityPKName);
+                                const fkColumnName = `${safeOtherEntityName}_${otherEntityPKNameType.name}`;
+                                columnDefinitions.push(`    ${fkColumnName} ${otherEntityPKNameType.type} UNIQUE`);
+                                if (connectedAttributes.length > 0) {
+                                    connectedAttributes.forEach(attr => {
+                                        const attrName = this.getNameFromNode(attr);
+                                        const attrNameType = this.splitLabelAttribute(attrName ? attrName.replace(/\s+/g, '_') : attr.id);
+                                        columnDefinitions.push(`    ${attrNameType.name} ${attrNameType.type}`);
+                                    });
+                                }
+                                // Nota: Si la relación es opcional para mi, debería ser ON DELETE SET NULL / si es obliatoria, podria ser ON DELETE CASCADE o RESTRICT
+                                columnDefinitions.push(`    FOREIGN KEY (${fkColumnName}) REFERENCES ${safeOtherEntityName}(${otherEntityPKNameType.name})`);
+                            }
+                        }
+                    }
+                }
+            });
+        }
         tableSql += columnDefinitions.join(",\n");
         tableSql += "\n);\n";
         return tableSql + additionalTablesSql;
+    }
+
+    private createTableForRelation(relation: GNode, root: GModelElement): string {
+        const relationCardinality = this.getCardinalityFromNode(relation);
+        if (relationCardinality.includes('N:M')) {
+            const tableName = this.getNameFromNode(relation);
+            const safeTableName = tableName ? tableName.replace(/\s+/g, '_') : relation.id;
+            let tableSql = `CREATE TABLE ${safeTableName} (\n`;
+            const tableLines: string[] = [];
+            const primaryKeys: string[] = [];
+            const foreignKeys: string[] = [];
+            const connectedEntities = this.findConnectedEntities(relation, root);
+            const connectedAttributes = this.findConnectedAttributes(relation, root);
+            connectedEntities.forEach(entity => {
+                const entityName = this.getNameFromNode(entity);
+                const safeEntityName = entityName ? entityName.replace(/\s+/g, '_') : entity.id;
+                const pkNode = this.findPrimaryKey(entity, root);
+                if (pkNode) {
+                    const pkName = this.getNameFromNode(pkNode);
+                    const safePkName = pkName ? pkName.replace(/\s+/g, '_') : pkNode.id;
+                    const pkNameType = this.splitLabelAttribute(safePkName);
+                    tableLines.push(`    ${safeEntityName}_${pkNameType.name} ${pkNameType.type}`);
+                    primaryKeys.push(`${safeEntityName}_${pkNameType.name}`);
+                    foreignKeys.push(`FOREIGN KEY (${safeEntityName}_${pkNameType.name}) REFERENCES ${safeEntityName}(${pkNameType.name})`);
+                }
+            });
+            if (connectedAttributes.length > 0) {
+                connectedAttributes.forEach(attr => {
+                    const attrName = this.getNameFromNode(attr);
+                    const attrNameType = this.splitLabelAttribute(attrName ? attrName.replace(/\s+/g, '_') : attr.id);
+                    tableLines.push(`    ${attrNameType.name} ${attrNameType.type}`);
+                });
+            }
+            if (primaryKeys.length > 0) {
+                tableLines.push(`    PRIMARY KEY (${primaryKeys.join(", ")})`);
+            }
+            foreignKeys.forEach(fk => {
+                tableLines.push(`    ${fk}`);
+            });
+            tableSql += tableLines.join(",\n");
+            tableSql += "\n);\n";
+            return tableSql;
+        } else {
+            return "";
+        }
+    }
+
+    private findPrimaryKey(entity: GNode, root: GModelElement): GNode | undefined {
+        const attributes = this.findConnectedAttributes(entity, root);
+        return attributes.find(attr => attr.type === KEY_ATTRIBUTE_TYPE);
+    }
+    
+    private findOtherEntity(relation: GNode, currentEntity: GNode, root: GModelElement): GNode | undefined {
+        const connectedEntities = this.findConnectedEntities(relation, root);
+        const other = connectedEntities.find(e => e.id !== currentEntity.id);
+        if (other) {
+            return other;
+        }
+        // Caso reflexivo
+        if (connectedEntities.length > 0) {
+            return currentEntity;
+        }
+        return undefined;
+    }
+
+    private getCardinalityFromNode(node: GNode): string {
+        const cardinalityLabel = node.children.find(child => 
+            isGLabel(child) && 
+            (child.type === 'label:cardinality' || child.id === `${node.id}_cardinality_label`)
+        ) as GLabel | undefined;
+        return cardinalityLabel ? cardinalityLabel.text : ''; 
+    }
+
+    private getCardinalityFromWeightedEdge(edge: GEdge): string {
+        const cardinalityLabel = edge.children.find(child => 
+            isGLabel(child) && child.type === 'label:weighted'
+        ) as GLabel | undefined;
+        return cardinalityLabel ? cardinalityLabel.text : '';
+    }
+
+    private findConnectedRelations(entity: GNode, root: GModelElement): GNode[] {
+        const relations: GNode[] = [];
+        const allEdges = root.children.filter(child => isGEdge(child)) as GEdge[];
+        const connectedEdges = allEdges.filter(edge => 
+            edge.sourceId === entity.id || edge.targetId === entity.id
+        );
+        connectedEdges.forEach(edge => {
+            const otherNodeId = (edge.sourceId === entity.id) ? edge.targetId : edge.sourceId;
+            const otherNode = root.children.find(c => c.id === otherNodeId);
+            if (otherNode) {
+                if (isGNode(otherNode)) {
+                    if (otherNode.type === RELATION_TYPE) {
+                        relations.push(otherNode);
+                    }
+                }
+            }
+        });
+        return relations;
     }
 
     private createTableMultiValuedAttribute(entity: GNode, attribute: GNode, root: GModelElement): string {
@@ -119,6 +307,26 @@ export class SQLGenerator {
         tableSql += lines.join(",\n");
         tableSql += "\n);\n";
         return tableSql;
+    }
+
+    private findConnectedEntities(relation: GNode, root: GModelElement): GNode[] {
+        const entities: GNode[] = [];
+        const allEdges = root.children.filter(child => isGEdge(child)) as GEdge[];
+        const connectedEdges = allEdges.filter(edge => 
+            edge.sourceId === relation.id || edge.targetId === relation.id
+        );
+        connectedEdges.forEach(edge => {
+            const otherNodeId = (edge.sourceId === relation.id) ? edge.targetId : edge.sourceId;
+            const otherNode = root.children.find(c => c.id === otherNodeId);
+            if (otherNode) {
+                if (isGNode(otherNode)) {
+                    if (otherNode.type === ENTITY_TYPE) {
+                        entities.push(otherNode);
+                    }
+                }
+            }
+        });
+        return entities;
     }
 
     private findConnectedAttributes(entity: GNode, root: GModelElement): GNode[] {
@@ -162,7 +370,7 @@ export class SQLGenerator {
         }
     }
 
-    private sortAttirbutes(attributes: GNode[]): GNode[] {
+    private sortAttributes(attributes: GNode[]): GNode[] {
         const priorities: Record<string, number> = {
             [KEY_ATTRIBUTE_TYPE]: 1,             
             [ALTERNATIVE_KEY_ATTRIBUTE_TYPE]: 2, 
