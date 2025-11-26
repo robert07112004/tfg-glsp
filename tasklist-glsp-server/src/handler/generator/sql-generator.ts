@@ -52,6 +52,7 @@ export class SQLGenerator {
         let tableSql = `CREATE TABLE ${safeTableName} (\n`;
         const columnDefinitions: string[] = [];
         let additionalTablesSql = "";
+        let reflexiveIterations = 0;
         let connectedAttributes = this.findConnectedAttributes(entity, root);
         connectedAttributes = this.sortAttributes(connectedAttributes);
         
@@ -110,12 +111,12 @@ export class SQLGenerator {
                 const relationCardinality = this.getCardinalityFromNode(relation);
                 const connectedAttributes = this.findConnectedAttributes(relation, root);
                 if (relationCardinality === '1:N') {
-                    const weightedEdge = this.findEdgeBetween(entity, relation, root);
-                    if (weightedEdge) {
-                        const edgeCardinality = this.getCardinalityFromWeightedEdge(weightedEdge);
-                        if (edgeCardinality && edgeCardinality.includes('..1')) {
-                            const otherEntity = this.findOtherEntity(relation, entity, root);
-                            if (otherEntity) {
+                    const otherEntity = this.findOtherEntity(relation, entity, root);
+                    if (otherEntity) {
+                        const weightedEdge = this.findEdgeBetween(entity, relation, root);
+                        if (weightedEdge) {
+                            const edgeCardinality = this.getCardinalityFromWeightedEdge(weightedEdge);
+                            if (edgeCardinality && edgeCardinality.includes('..1')) {
                                 const otherEntityPK = this.findPrimaryKey(otherEntity, root);
                                 if (otherEntityPK) {
                                     const otherEntityName = this.getNameFromNode(otherEntity);
@@ -134,6 +135,29 @@ export class SQLGenerator {
                                     }
                                     columnDefinitions.push(`    FOREIGN KEY (${fkColumnName}) REFERENCES ${safeOtherEntityName}(${otherEntityPKNameType.name}) ON DELETE SET NULL`);
                                 }
+                            }
+                        }
+                    } else {
+                        // Reflexive case
+                        if (reflexiveIterations == 0) {
+                            reflexiveIterations++;
+                            const entityPK = this.findPrimaryKey(entity, root);
+                            if (entityPK) {
+                                const relationName = this.getNameFromNode(relation);
+                                const safeRelationName = relationName ? relationName.replace(/\s+/g, '_') : relation.id;
+                                const entityPKName = this.getNameFromNode(entityPK);
+                                const safeEntityPKName = entityPKName ? entityPKName.replace(/\s+/g, '_') : entityPK.id;
+                                const entityPKNameType = this.splitLabelAttribute(safeEntityPKName);
+                                const fkColumnName = `${safeRelationName}_${entityPKNameType.name}`;
+                                columnDefinitions.push(`    ${fkColumnName} ${entityPKNameType.type}`);
+                                if (connectedAttributes.length > 0) {
+                                    connectedAttributes.forEach(attr => {
+                                        const attrName = this.getNameFromNode(attr);
+                                        const attrNameType = this.splitLabelAttribute(attrName ? attrName.replace(/\s+/g, '_') : attr.id);
+                                        columnDefinitions.push(`    ${attrNameType.name} ${attrNameType.type}`);
+                                    });
+                                }
+                                columnDefinitions.push(`    FOREIGN KEY (${fkColumnName}) REFERENCES ${safeTableName}(${entityPKNameType.name})`);
                             }
                         }
                     }
@@ -177,10 +201,34 @@ export class SQLGenerator {
                                 columnDefinitions.push(`    FOREIGN KEY (${fkColumnName}) REFERENCES ${safeOtherEntityName}(${otherEntityPKNameType.name})`);
                             }
                         }
+                    } else {
+                        // Reflexive case
+                        if (reflexiveIterations == 0) {
+                            reflexiveIterations++;
+                            const entityPK = this.findPrimaryKey(entity, root);
+                            if (entityPK) {
+                                const relationName = this.getNameFromNode(relation);
+                                const safeRelationName = relationName ? relationName.replace(/\s+/g, '_') : relation.id;
+                                const entityPKName = this.getNameFromNode(entityPK);
+                                const safeEntityPKName = entityPKName ? entityPKName.replace(/\s+/g, '_') : entityPK.id;
+                                const entityPKNameType = this.splitLabelAttribute(safeEntityPKName);
+                                const fkColumnName = `${safeRelationName}_${entityPKNameType.name}`;
+                                columnDefinitions.push(`    ${fkColumnName} ${entityPKNameType.type} UNIQUE`);
+                                if (connectedAttributes.length > 0) {
+                                    connectedAttributes.forEach(attr => {
+                                        const attrName = this.getNameFromNode(attr);
+                                        const attrNameType = this.splitLabelAttribute(attrName ? attrName.replace(/\s+/g, '_') : attr.id);
+                                        columnDefinitions.push(`    ${attrNameType.name} ${attrNameType.type}`);
+                                    });
+                                }
+                                columnDefinitions.push(`    FOREIGN KEY (${fkColumnName}) REFERENCES ${safeTableName}(${entityPKNameType.name})`);
+                            }
+                        }
                     }
                 }
             });
         }
+        reflexiveIterations = 0;
         tableSql += columnDefinitions.join(",\n");
         tableSql += "\n);\n";
         return tableSql + additionalTablesSql;
@@ -206,8 +254,17 @@ export class SQLGenerator {
                     const safePkName = pkName ? pkName.replace(/\s+/g, '_') : pkNode.id;
                     const pkNameType = this.splitLabelAttribute(safePkName);
                     tableLines.push(`    ${safeEntityName}_${pkNameType.name} ${pkNameType.type}`);
+                    if (connectedEntities.length == 1) {
+                        tableLines.push(`    ${safeTableName}_${pkNameType.name} ${pkNameType.type}`);
+                    }
                     primaryKeys.push(`${safeEntityName}_${pkNameType.name}`);
+                    if (connectedEntities.length == 1) {
+                        primaryKeys.push(`${safeTableName}_${pkNameType.name}`);
+                    }
                     foreignKeys.push(`FOREIGN KEY (${safeEntityName}_${pkNameType.name}) REFERENCES ${safeEntityName}(${pkNameType.name})`);
+                    if (connectedEntities.length == 1) {
+                        foreignKeys.push(`FOREIGN KEY (${safeTableName}_${pkNameType.name}) REFERENCES ${safeEntityName}(${pkNameType.name})`);
+                    }
                 }
             });
             if (connectedAttributes.length > 0) {
@@ -239,14 +296,8 @@ export class SQLGenerator {
     private findOtherEntity(relation: GNode, currentEntity: GNode, root: GModelElement): GNode | undefined {
         const connectedEntities = this.findConnectedEntities(relation, root);
         const other = connectedEntities.find(e => e.id !== currentEntity.id);
-        if (other) {
-            return other;
-        }
-        // Caso reflexivo
-        if (connectedEntities.length > 0) {
-            return currentEntity;
-        }
-        return undefined;
+        if (other) return other;
+        else return undefined;
     }
 
     private getCardinalityFromNode(node: GNode): string {
@@ -311,6 +362,7 @@ export class SQLGenerator {
 
     private findConnectedEntities(relation: GNode, root: GModelElement): GNode[] {
         const entities: GNode[] = [];
+        const seenIds = new Set<string>();
         const allEdges = root.children.filter(child => isGEdge(child)) as GEdge[];
         const connectedEdges = allEdges.filter(edge => 
             edge.sourceId === relation.id || edge.targetId === relation.id
@@ -318,9 +370,10 @@ export class SQLGenerator {
         connectedEdges.forEach(edge => {
             const otherNodeId = (edge.sourceId === relation.id) ? edge.targetId : edge.sourceId;
             const otherNode = root.children.find(c => c.id === otherNodeId);
-            if (otherNode) {
-                if (isGNode(otherNode)) {
-                    if (otherNode.type === ENTITY_TYPE) {
+            if (otherNode && isGNode(otherNode)) {
+                if (otherNode.type === ENTITY_TYPE) {
+                    if (!seenIds.has(otherNode.id)) {
+                        seenIds.add(otherNode.id);
                         entities.push(otherNode);
                     }
                 }

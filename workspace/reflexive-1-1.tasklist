@@ -1,0 +1,80 @@
+{
+  "id": "c0538543-9d36-4a39-bdd9-6d528fa567eb",
+  "tasks": [
+    {
+      "id": "6ffde743-6613-46ee-b79d-dea7f9b04021",
+      "type": "entity",
+      "name": "Rey",
+      "position": {
+        "x": 380,
+        "y": 478
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "86f68213-73b8-4e00-bb7f-8c45caf17d6f",
+      "type": "relation",
+      "name": "tieneSucesor",
+      "cardinality": "-",
+      "position": {
+        "x": 167,
+        "y": 460
+      },
+      "size": {
+        "width": 101.81875610351562,
+        "height": 35
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "fa1ed485-a52d-4e51-88a7-15cf4294eb0b",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 402,
+        "y": 416
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "673c45c9-85ee-4119-a0e6-c4a8d52cae1e",
+      "sourceTaskId": "6ffde743-6613-46ee-b79d-dea7f9b04021",
+      "targetTaskId": "fa1ed485-a52d-4e51-88a7-15cf4294eb0b"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "65784e8f-465f-4fc8-9987-0d2c0f4236b7",
+      "type": "edge:weighted",
+      "sourceId": "6ffde743-6613-46ee-b79d-dea7f9b04021",
+      "targetId": "86f68213-73b8-4e00-bb7f-8c45caf17d6f",
+      "description": "(1..1)"
+    },
+    {
+      "id": "7723eccd-858d-4795-8f50-a731948a52cc",
+      "type": "edge:weighted",
+      "sourceId": "86f68213-73b8-4e00-bb7f-8c45caf17d6f",
+      "targetId": "6ffde743-6613-46ee-b79d-dea7f9b04021",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}

@@ -1,0 +1,76 @@
+{
+  "id": "d8c89db0-5b48-4f3b-8df3-adcc6d27f089",
+  "tasks": [
+    {
+      "id": "067d91fa-1eb9-451f-be11-1ef4f99c3c89",
+      "type": "entity",
+      "name": "Pieza",
+      "position": {
+        "x": 451,
+        "y": 376
+      },
+      "size": {
+        "width": 89.3687515258789,
+        "height": 22
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "ab048c70-2b43-4004-b328-12dc5ea7b3e9",
+      "type": "relation",
+      "name": "Es_parte_De",
+      "cardinality": "-",
+      "position": {
+        "x": 266,
+        "y": 391
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "127a3701-de09-4d76-a57e-2c412bd28702",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 435,
+        "y": 287
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "c42a5fc9-2234-4ac0-bf56-8abdd786e8a7",
+      "sourceTaskId": "127a3701-de09-4d76-a57e-2c412bd28702",
+      "targetTaskId": "067d91fa-1eb9-451f-be11-1ef4f99c3c89"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "aeaf6227-ca74-48fe-85f0-3935a2f4f33c",
+      "type": "edge:weighted",
+      "sourceId": "067d91fa-1eb9-451f-be11-1ef4f99c3c89",
+      "targetId": "ab048c70-2b43-4004-b328-12dc5ea7b3e9",
+      "description": "(1..N)"
+    },
+    {
+      "id": "c02ba5d3-2498-4fae-a045-0a3ffaa5e188",
+      "type": "edge:weighted",
+      "sourceId": "ab048c70-2b43-4004-b328-12dc5ea7b3e9",
+      "targetId": "067d91fa-1eb9-451f-be11-1ef4f99c3c89",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}

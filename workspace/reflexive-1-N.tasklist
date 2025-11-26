@@ -1,0 +1,80 @@
+{
+  "id": "4b62c250-b516-4ebe-a666-40042e58e786",
+  "tasks": [
+    {
+      "id": "905407ec-5382-4ddf-9595-1c05d98d8640",
+      "type": "entity",
+      "name": "Empleado",
+      "position": {
+        "x": 329,
+        "y": 381
+      },
+      "size": {
+        "width": 58.056800842285156,
+        "height": 22
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "5e15d0c5-8bad-4e0f-a2f7-b282d9fc21b9",
+      "type": "relation",
+      "name": "tieneJefe",
+      "cardinality": "-",
+      "position": {
+        "x": 106,
+        "y": 372
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "94c2af6d-a9ad-4216-b82b-f22af1eb0923",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 406,
+        "y": 324
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "0dd0df26-cf51-47ae-9ea1-e68520779911",
+      "sourceTaskId": "905407ec-5382-4ddf-9595-1c05d98d8640",
+      "targetTaskId": "94c2af6d-a9ad-4216-b82b-f22af1eb0923"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "72d6c193-9cf0-4861-a73d-4e191cbacfc6",
+      "type": "edge:weighted",
+      "sourceId": "5e15d0c5-8bad-4e0f-a2f7-b282d9fc21b9",
+      "targetId": "905407ec-5382-4ddf-9595-1c05d98d8640",
+      "description": "(1..1)"
+    },
+    {
+      "id": "5a6f0f31-63db-4ebe-a5f5-cfa5f5d686d4",
+      "type": "edge:weighted",
+      "sourceId": "905407ec-5382-4ddf-9595-1c05d98d8640",
+      "targetId": "5e15d0c5-8bad-4e0f-a2f7-b282d9fc21b9",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}
