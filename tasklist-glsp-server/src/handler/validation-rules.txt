@@ -52,6 +52,7 @@ Identifying dependence relation: done
         - Key attributes.
     - Identifying dependence relation can't be connected to relations, other dependencies and specializations.
     - Identifying dependence relation must be connected to an entity, a weak entity and a key attribute.
+    - Cardinality of existende dependence relations can't be N..M
 
 Attribute rules: done
     - Attribute not connected to anything.

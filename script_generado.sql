@@ -1,16 +1,15 @@
 -- Script generado por GLSP-ER
--- Fecha: 27/11/2025, 16:58:41
+-- Fecha: 27/11/2025, 18:47:07
 
-CREATE TABLE Usuario (
-    email VARCHAR(20) PRIMARY KEY,
+CREATE TABLE Empleado (
+    id INTEGER PRIMARY KEY,
     nombre VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE Configuracion_Preferencias (
-    tema INTEGER NOT NULL,
-    idioma VARCHAR(2) NOT NULL,
-    Usuario_email VARCHAR(20) NOT NULL,
-    PRIMARY KEY (Usuario_email),
-    FOREIGN KEY (Usuario_email) REFERENCES Usuario(tema) ON DELETE CASCADE
+CREATE TABLE Tarjeta_acceso (
+    fecha_emision DATE NOT NULL,
+    Empleado_id INTEGER NOT NULL,
+    PRIMARY KEY (Empleado_id),
+    FOREIGN KEY (Empleado_id) REFERENCES Empleado(id) ON DELETE CASCADE
 );
 

@@ -1,4 +1,4 @@
-import { GNode, Marker } from '@eclipse-glsp/server';
+import { GLabel, GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
@@ -14,6 +14,7 @@ import { createMarker, getConnectedNeighbors } from '../../utils/validation-util
  *    - Key attributes.
  * 4. Identifying dependence relation can't be connected to relations, other dependencies and specializations.
  * 5. Identifying dependence relation must be connected to an entity, a weak entity and a key attribute. 
+ * 6. Cardinality of existende dependence relations can't be N..M
  */
 
 @injectable()
@@ -83,6 +84,19 @@ export class IdentifyingDependenceRelationValidator {
                 'Dependencia en identificación debe estar conectada a una entidad, a una entidad debil y a un atributo de clave primaria.',
                 node.id,
                 'ERR: IdentifyingDependence-entities-keyAttribute'
+            );
+        }
+
+        // Rule 6: Cardinality of existende dependence relations can't be N..M
+        const cardinalityLabel = node.children.find(
+            child => child instanceof GLabel && child.type === 'label:cardinality'
+        ) as GLabel | undefined;
+        if (cardinalityLabel && cardinalityLabel.text === 'N:M') {
+            return createMarker(
+                'error',
+                'Una relación de dependencia en existencia no puede ser N:M (Muchos a Muchos).',
+                node.id,
+                'ERR: existenceDependence-cardinality-nm'
             );
         }
         

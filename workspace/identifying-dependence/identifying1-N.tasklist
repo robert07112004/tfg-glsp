@@ -1,0 +1,120 @@
+{
+  "id": "2966038e-abb2-4a14-9026-5a6b47cc21dc",
+  "tasks": [
+    {
+      "id": "03399a3e-bf8a-4dc0-922b-6f1b5a079ae6",
+      "type": "entity",
+      "name": "Edficio",
+      "position": {
+        "x": 98,
+        "y": 664
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "4c3f2820-57bd-449e-8f9c-c011e1e9dc72",
+      "type": "weakEntity",
+      "name": "Sala",
+      "position": {
+        "x": 543,
+        "y": 683
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [
+    {
+      "id": "1e675feb-c29b-426a-a757-4b3d130d5806",
+      "type": "identifyingDependentRelation",
+      "name": "tiene",
+      "cardinality": "-",
+      "dependencyLabel": "Id",
+      "position": {
+        "x": 315,
+        "y": 647
+      },
+      "size": {
+        "width": 34.38069534301758,
+        "height": 48
+      }
+    }
+  ],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "70de925d-24bf-4c36-9824-541faf011ffc",
+      "type": "attribute",
+      "name": "capacidad: integer",
+      "position": {
+        "x": 508,
+        "y": 580
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "913101b4-f2cf-4979-8a35-eea5bd3e9375",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 99,
+        "y": 592
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    },
+    {
+      "id": "37fb41a6-4496-4d20-9def-f08998f889f3",
+      "type": "keyAttribute",
+      "name": "numero: integer",
+      "position": {
+        "x": 621,
+        "y": 625
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "16364d99-731f-469c-8e9f-e6cf2934ce40",
+      "sourceTaskId": "1e675feb-c29b-426a-a757-4b3d130d5806",
+      "targetTaskId": "37fb41a6-4496-4d20-9def-f08998f889f3"
+    },
+    {
+      "id": "ac845ecc-ae2f-4ebc-9473-bdecf5df056e",
+      "sourceTaskId": "4c3f2820-57bd-449e-8f9c-c011e1e9dc72",
+      "targetTaskId": "70de925d-24bf-4c36-9824-541faf011ffc"
+    },
+    {
+      "id": "0e8e0722-8cf4-4591-8938-8d6b46f1dab1",
+      "sourceTaskId": "913101b4-f2cf-4979-8a35-eea5bd3e9375",
+      "targetTaskId": "03399a3e-bf8a-4dc0-922b-6f1b5a079ae6"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "2b6b149e-2d97-4ae7-834d-326696f64ba3",
+      "type": "edge:weighted",
+      "sourceId": "1e675feb-c29b-426a-a757-4b3d130d5806",
+      "targetId": "03399a3e-bf8a-4dc0-922b-6f1b5a079ae6",
+      "description": "(1..N)"
+    },
+    {
+      "id": "b2a8e767-f705-47d1-adbe-76065bacd6f2",
+      "type": "edge:weighted",
+      "sourceId": "1e675feb-c29b-426a-a757-4b3d130d5806",
+      "targetId": "4c3f2820-57bd-449e-8f9c-c011e1e9dc72",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}

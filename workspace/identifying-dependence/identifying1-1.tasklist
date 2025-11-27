@@ -1,0 +1,120 @@
+{
+  "id": "70294bc4-8800-4cd2-9963-4ae4b96df053",
+  "tasks": [
+    {
+      "id": "b89015a0-9e7b-445d-a46a-c09aaa1ace73",
+      "type": "entity",
+      "name": "Empleado",
+      "position": {
+        "x": 156,
+        "y": 702
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "552c8f62-2aa1-44c1-a61e-375758378b57",
+      "type": "weakEntity",
+      "name": "Tarjeta_acceso",
+      "position": {
+        "x": 492,
+        "y": 697
+      },
+      "size": {
+        "width": 82.94660186767578,
+        "height": 22
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [
+    {
+      "id": "9c042995-9512-462e-9b40-c5043eceed1d",
+      "type": "identifyingDependentRelation",
+      "name": "tiene",
+      "cardinality": "-",
+      "dependencyLabel": "Id",
+      "position": {
+        "x": 331,
+        "y": 706
+      }
+    }
+  ],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "99769877-71f3-4bd0-8e99-9e5159300c5b",
+      "type": "attribute",
+      "name": "nombre: varchar(20)",
+      "position": {
+        "x": 50,
+        "y": 764
+      },
+      "size": {
+        "width": 106.58495330810547,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "e05d6f3e-ba93-4c35-a695-10804e3a2e94",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 109,
+        "y": 641
+      }
+    },
+    {
+      "id": "03e50dfb-fcd0-487a-bf9d-b4b3034b298e",
+      "type": "keyAttribute",
+      "name": "fecha_emision: date",
+      "position": {
+        "x": 431,
+        "y": 609
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "389845fe-16cc-49ce-ae74-489e74cb674a",
+      "sourceTaskId": "b89015a0-9e7b-445d-a46a-c09aaa1ace73",
+      "targetTaskId": "99769877-71f3-4bd0-8e99-9e5159300c5b"
+    },
+    {
+      "id": "7c9611db-1604-442e-8994-ba15c76a34fd",
+      "sourceTaskId": "b89015a0-9e7b-445d-a46a-c09aaa1ace73",
+      "targetTaskId": "e05d6f3e-ba93-4c35-a695-10804e3a2e94"
+    },
+    {
+      "id": "1668cb11-7b25-48ae-85ad-19408bd325ea",
+      "sourceTaskId": "9c042995-9512-462e-9b40-c5043eceed1d",
+      "targetTaskId": "03e50dfb-fcd0-487a-bf9d-b4b3034b298e"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "5e87ce72-2a4d-42d1-b872-541964640d90",
+      "type": "edge:weighted",
+      "sourceId": "b89015a0-9e7b-445d-a46a-c09aaa1ace73",
+      "targetId": "9c042995-9512-462e-9b40-c5043eceed1d",
+      "description": "(1..1)"
+    },
+    {
+      "id": "54ec99f7-ef88-472e-983b-3b0959869054",
+      "type": "edge:weighted",
+      "sourceId": "9c042995-9512-462e-9b40-c5043eceed1d",
+      "targetId": "552c8f62-2aa1-44c1-a61e-375758378b57",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}
