@@ -27,11 +27,10 @@ export class CreatePartialOverlappedSpecializationNodeHandler extends JsonCreate
     }
 
     protected createPartialOverlappedSpecialization(position: Point): PartialOverlappedSpecialization {
-        const partialOverlappedSpecialization = this.modelState.sourceModel.partialOverlappedSpecializations.length;
         return {
             id: uuid.v4(),
             type: 'partialOverlappedSpecialization',
-            name: `NewPartialOvSpecialization${partialOverlappedSpecialization + 1}`,
+            name: 'Partial Overlapped',
             position
         };
     }

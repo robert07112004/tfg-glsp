@@ -1,15 +1,20 @@
 -- Script generado por GLSP-ER
--- Fecha: 27/11/2025, 18:47:07
+-- Fecha: 27/11/2025, 19:39:47
 
-CREATE TABLE Empleado (
-    id INTEGER PRIMARY KEY,
-    nombre VARCHAR(20) NOT NULL
+CREATE TABLE Vehiculo (
+    matricula VARCHAR(10) PRIMARY KEY,
+    marca VARCHAR(10) NOT NULL
 );
 
-CREATE TABLE Tarjeta_acceso (
-    fecha_emision DATE NOT NULL,
-    Empleado_id INTEGER NOT NULL,
-    PRIMARY KEY (Empleado_id),
-    FOREIGN KEY (Empleado_id) REFERENCES Empleado(id) ON DELETE CASCADE
+CREATE TABLE Coche (
+    matricula VARCHAR(10) PRIMARY KEY,
+    numero_puertas INTEGER NOT NULL,
+    FOREIGN KEY (matricula) REFERENCES Vehiculo(matricula) ON DELETE CASCADE
+);
+
+CREATE TABLE Moto (
+    matricula VARCHAR(10) PRIMARY KEY,
+    cilindrada INTEGER NOT NULL,
+    FOREIGN KEY (matricula) REFERENCES Vehiculo(matricula) ON DELETE CASCADE
 );
 

@@ -27,11 +27,10 @@ export class CreateTotalExclusiveSpecializationNodeHandler extends JsonCreateNod
     }
 
     protected createTotalExclusiveSpecialization(position: Point): TotalExclusiveSpecialization {
-        const totalExclusiveSpecializationCounter = this.modelState.sourceModel.totalExclusiveSpecializations.length;
         return {
             id: uuid.v4(),
             type: 'totalExclusiveSpecialization',
-            name: `NewTotalExSpecialization${totalExclusiveSpecializationCounter + 1}`,
+            name: 'Total Exclusive',
             position
         };
     }

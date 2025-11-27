@@ -70,7 +70,7 @@ export class TaskListLabelEditValidator implements LabelEditValidator {
 
     validate(label: string, element: GModelElement): ValidationStatus {
         const container = isLabel(element) ? this.findParentElement(element.id) : element;
-
+        
         if (container && isEdge(container)) {
             const weightedEdge = this.modelState.index.findWeightedEdge(container.id);
             if (weightedEdge) {

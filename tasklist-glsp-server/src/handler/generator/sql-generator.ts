@@ -6,7 +6,7 @@ import {
     GNode
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, attributeTypes, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
+import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, attributeTypes, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE, specializationTypes, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
 
 export function isGNode(element: GModelElement): element is GNode {
     return element instanceof GNode;
@@ -56,61 +56,73 @@ export class SQLGenerator {
     }
 
     private createTableForEntity(entity: GNode, root: GModelElement): string {
+        const parentEntity = this.findParentFromSpecialization(entity, root);
+        const isChild = !!parentEntity;
         const tableName = this.getNameFromNode(entity);
         const safeTableName = tableName ? tableName.replace(/\s+/g, '_') : entity.id;
         let tableSql = `CREATE TABLE ${safeTableName} (\n`;
         const columnDefinitions: string[] = [];
+        const foreignKeys: string[] = [];
         let additionalTablesSql = "";
         let reflexiveIterations = 0;
         let connectedAttributes = this.findConnectedAttributes(entity, root);
         connectedAttributes = this.sortAttributes(connectedAttributes);
         
-        // ATTRIBUTES
-        if (connectedAttributes.length === 0) {
-            columnDefinitions.push(`    id VARCHAR(255) PRIMARY KEY`);
-        } else {
-            connectedAttributes.forEach(attr => {
-                const attrName = this.getNameFromNode(attr);
-                const safeAttrName = attrName ? attrName.replace(/\s+/g, '_') : attr.id;
-                const { name, type } = this.splitLabelAttribute(safeAttrName);
-                let colDef = "";
-                if (attr.type === KEY_ATTRIBUTE_TYPE) {
-                    colDef += `    ${name} ${type} PRIMARY KEY`;
-                } else if (attr.type === ALTERNATIVE_KEY_ATTRIBUTE_TYPE) {
-                    colDef += `    ${name} ${type} UNIQUE`;
-                } else if (attr.type === ATTRIBUTE_TYPE) {
-                    const compositeAttributes = this.findConnectedAttributes(attr, root);
-                    if (compositeAttributes.length > 0) {
-                        for (const compositeAttr of compositeAttributes) {
-                            const compositeAttrName = this.getNameFromNode(compositeAttr);
-                            const safeCompositeAttrName = compositeAttrName ? compositeAttrName.replace(/\s+/g, '_') : compositeAttr.id;
-                            const { name, type } = this.splitLabelAttribute(safeCompositeAttrName);
-                            columnDefinitions.push(`    ${name} ${type} NOT NULL`);
-                        }
-                        return;
-                    } else {
-                        const edge = this.findEdgeBetween(entity, attr, root);
-                        if (edge) {
-                            if (edge.type === OPTIONAL_EDGE_TYPE) {
-                                colDef += `    ${name} ${type} NULL`;
-                            } else {
-                                colDef += `    ${name} ${type} NOT NULL`;
-                            }
-                        }
-                    }
-                } else if (attr.type === DERIVED_ATTRIBUTE_TYPE) {
-                    const equation = this.getEquationFromDerivedAttribute(attr);
-                    if (equation) {
-                        colDef += `    ${name} ${type} GENERATED ALWAYS AS (${equation}) STORED`;
-                    }
-                } else if (attr.type === MULTI_VALUED_ATTRIBUTE_TYPE) {
-                    additionalTablesSql += "\n" + this.createTableMultiValuedAttribute(entity, attr, root);
-                }   
-                if (colDef) {
-                    columnDefinitions.push(colDef);
-                }
-            });
+        if (isChild && parentEntity) {
+            const parentEntityName = this.getNameFromNode(parentEntity);
+            const safeParentEntityName = parentEntityName ? parentEntityName.replace(/\s+/g, '_') : parentEntity.id;
+            const parentPKNode = this.findPrimaryKey(parentEntity, root);
+            if (parentPKNode) {
+                const parentPKName = this.getNameFromNode(parentPKNode);
+                const safeParentPKName = parentPKName ? parentPKName.replace(/\s+/g, '_') : parentPKNode.id;
+                const { name, type } = this.splitLabelAttribute(safeParentPKName);
+                columnDefinitions.push(`    ${name} ${type} PRIMARY KEY`);
+                foreignKeys.push(`    FOREIGN KEY (${name}) REFERENCES ${safeParentEntityName}(${name}) ON DELETE CASCADE`);
+            }
         }
+
+        // ATTRIBUTES
+        connectedAttributes.forEach(attr => {
+            const attrName = this.getNameFromNode(attr);
+            const safeAttrName = attrName ? attrName.replace(/\s+/g, '_') : attr.id;
+            const { name, type } = this.splitLabelAttribute(safeAttrName);
+            let colDef = "";
+            if (attr.type === KEY_ATTRIBUTE_TYPE) {
+                colDef += `    ${name} ${type} PRIMARY KEY`;
+            } else if (attr.type === ALTERNATIVE_KEY_ATTRIBUTE_TYPE) {
+                colDef += `    ${name} ${type} UNIQUE`;
+            } else if (attr.type === ATTRIBUTE_TYPE) {
+                const compositeAttributes = this.findConnectedAttributes(attr, root);
+                if (compositeAttributes.length > 0) {
+                    for (const compositeAttr of compositeAttributes) {
+                        const compositeAttrName = this.getNameFromNode(compositeAttr);
+                        const safeCompositeAttrName = compositeAttrName ? compositeAttrName.replace(/\s+/g, '_') : compositeAttr.id;
+                        const { name, type } = this.splitLabelAttribute(safeCompositeAttrName);
+                        columnDefinitions.push(`    ${name} ${type} NOT NULL`);
+                    }
+                    return;
+                } else {
+                    const edge = this.findEdgeBetween(entity, attr, root);
+                    if (edge) {
+                        if (edge.type === OPTIONAL_EDGE_TYPE) {
+                            colDef += `    ${name} ${type} NULL`;
+                        } else {
+                            colDef += `    ${name} ${type} NOT NULL`;
+                        }
+                    }
+                }
+            } else if (attr.type === DERIVED_ATTRIBUTE_TYPE) {
+                const equation = this.getEquationFromDerivedAttribute(attr);
+                if (equation) {
+                    colDef += `    ${name} ${type} GENERATED ALWAYS AS (${equation}) STORED`;
+                }
+            } else if (attr.type === MULTI_VALUED_ATTRIBUTE_TYPE) {
+                additionalTablesSql += "\n" + this.createTableMultiValuedAttribute(entity, attr, root);
+            }   
+            if (colDef) {
+                columnDefinitions.push(colDef);
+            }
+        });
 
         // FOREIGN KEYS
         const relations = this.findConnectedRelations(entity, root);
@@ -237,6 +249,9 @@ export class SQLGenerator {
                 }
             });
         }
+        foreignKeys.forEach(fk => {
+            columnDefinitions.push(`${fk}`);
+        });
         reflexiveIterations = 0;
         tableSql += columnDefinitions.join(",\n");
         tableSql += "\n);\n";
@@ -411,6 +426,23 @@ export class SQLGenerator {
         } else {
             return "";
         }
+    }
+
+    private findParentFromSpecialization(childEntity: GNode, root: GModelElement): GNode | undefined {
+        const allEdges = root.children.filter(child => isGEdge(child)) as GEdge[];
+        const incomingEdge = allEdges.find(edge => 
+            edge.targetId === childEntity.id && 
+            root.children.find(c => c.id === edge.sourceId && specializationTypes.includes(c.type))
+        );
+        if (incomingEdge) {
+            const specializationNode = root.children.find(c => c.id === incomingEdge.sourceId) as GNode;
+            const parentEdge = allEdges.find(edge => edge.targetId === specializationNode.id);
+            if (parentEdge) {
+                const parentNode = root.children.find(c => c.id === parentEdge.sourceId && c.type === ENTITY_TYPE) as GNode;
+                return parentNode;
+            }
+        }
+        return undefined;
     }
 
     private findPrimaryKey(entity: GNode, root: GModelElement): GNode | undefined {

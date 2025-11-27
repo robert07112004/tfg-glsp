@@ -27,11 +27,10 @@ export class CreatePartialExclusiveSpecializationNodeHandler extends JsonCreateN
     }
 
     protected createPartialExclusiveSpecialization(position: Point): PartialExclusiveSpecialization {
-        const partialExclusiveSpecialization = this.modelState.sourceModel.partialExclusiveSpecializations.length;
         return {
             id: uuid.v4(),
             type: 'partialExclusiveSpecialization',
-            name: `NewPartialExSpecialization${partialExclusiveSpecialization + 1}`,
+            name: 'Partial Exclusive',
             position
         };
     }

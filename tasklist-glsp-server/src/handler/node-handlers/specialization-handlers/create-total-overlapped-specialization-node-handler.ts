@@ -27,11 +27,10 @@ export class CreateTotalOverlappedSpecializationNodeHandler extends JsonCreateNo
     }
 
     protected createTotalOverlappedSpecialization(position: Point): TotalOverlappedSpecialization {
-        const totalOverlappedSpecialization = this.modelState.sourceModel.totalOverlappedSpecializations.length;
         return {
             id: uuid.v4(),
             type: 'totalOverlappedSpecialization',
-            name: `NewTotalOvSpecialization${totalOverlappedSpecialization + 1}`,
+            name: 'Total Overlapped',
             position
         };
     }

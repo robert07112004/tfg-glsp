@@ -1,0 +1,25 @@
+19:27:03 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 49742 
+19:27:03 info -  [SocketServerLauncher] Starting GLSP server connection 
+19:27:03 info -  [DefaultGLSPServer] Initializing server with: applicationId: 2d64e292-f221-4b92-9692-e6a862943aee, protocolVersion: 1.0.0 
+19:27:04 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+19:27:04 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+19:27:04 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+19:27:04 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+19:27:04 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+19:28:08 info -  [DefaultGLSPServer] process [action=createNode, clientId=tasklist-diagram_0] 
+19:28:08 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+19:28:10 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+19:28:11 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_0] 
+19:28:11 info -  [DefaultGLSPServer] process [action=applyLabelEdit, clientId=tasklist-diagram_0] 
+19:28:11 error -  [DefaultCommandStack] An error occurred during command execution. CommandStack will be flushed! Could not find model element for node with id efec32de-177e-40c1-9079-22cebb1553a8
+            Error: Could not find model element for node with id efec32de-177e-40c1-9079-22cebb1553a8
+    at JsonRecordingCommand.doExecute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:61117:27)
+    at JsonRecordingCommand.execute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:7930:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async DefaultCommandStack.execute (c:\Users\roby0\Desktop\URJC\TFG\tfg-glsp\tasklist-vscode\extension\dist\tasklist-glsp-server.js:7720:13)
+19:28:11 error -  [DefaultGLSPServer] Could not process action: 'applyLabelEdit 
+19:28:11 error -  [DefaultGLSPServer] Error: Could not find model element for node with id efec32de-177e-40c1-9079-22cebb1553a8 
+19:28:14 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_0] 
+19:28:14 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+19:28:16 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_0] 
+19:28:16 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
