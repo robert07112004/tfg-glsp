@@ -40,16 +40,18 @@ Existence dependence relation: done
     - Valid connections:
         - Entities (Strong/Weak).
     - Existence dependence relation can't be connected to attributes, relations, other dependencies and specializations.
-    - Existence dependence relation must be connected to an entity and a weak entity. 
+    - Existence dependence relation must be connected to an entity and a weak entity.
+    - Cardinality of existende dependence relations can't be N..M
 
 Identifying dependence relation: done
     - Identifying dependence relation not connected to anything.
     -  Prohibited connections:
-        - Transitions and optional links aren't allowed.
+        - Optional links aren't allowed.
     - Valid connections:
         - Entities (Strong/Weak).
-    - Identifying dependence relation can't be connected to attributes, relations, other dependencies and specializations.
-    - Identifying dependence relation must be connected to an entity and a weak entity.
+        - Key attributes.
+    - Identifying dependence relation can't be connected to relations, other dependencies and specializations.
+    - Identifying dependence relation must be connected to an entity, a weak entity and a key attribute.
 
 Attribute rules: done
     - Attribute not connected to anything.

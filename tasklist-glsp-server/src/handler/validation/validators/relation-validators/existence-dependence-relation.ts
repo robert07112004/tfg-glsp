@@ -1,4 +1,4 @@
-import { GNode, Marker } from '@eclipse-glsp/server';
+import { GLabel, GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
@@ -12,7 +12,8 @@ import { createMarker, getConnectedNeighbors } from '../../utils/validation-util
  * 3. Valid connections:
  *    - Entities (Strong/Weak).
  * 4. Existence dependence relation can't be connected to attributes, relations, other dependencies and specializations.
- * 5. Existence dependence relation must be connected to an entity and a weak entity. 
+ * 5. Existence dependence relation must be connected to an entity and a weak entity.
+ * 6. Cardinality of existende dependence relations can't be N..M 
  */
 
 @injectable()
@@ -81,6 +82,19 @@ export class ExistenceDependenceRelationValidator {
             );
         }
         
+        // Rule 6: Cardinality of existende dependence relations can't be N..M
+        const cardinalityLabel = node.children.find(
+            child => child instanceof GLabel && child.type === 'label:cardinality'
+        ) as GLabel | undefined;
+        if (cardinalityLabel && cardinalityLabel.text === 'N:M') {
+            return createMarker(
+                'error',
+                'Una relación de dependencia en existencia no puede ser N:M (Muchos a Muchos).',
+                node.id,
+                'ERR: existenceDependence-cardinality-nm'
+            );
+        }
+
         return undefined;
 
     }

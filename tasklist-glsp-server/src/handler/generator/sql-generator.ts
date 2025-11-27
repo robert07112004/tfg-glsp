@@ -6,7 +6,7 @@ import {
     GNode
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, attributeTypes, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE } from '../validation/utils/validation-constants';
+import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, attributeTypes, DERIVED_ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
 
 export function isGNode(element: GModelElement): element is GNode {
     return element instanceof GNode;
@@ -30,6 +30,10 @@ export class SQLGenerator {
         const entities = root.children.filter(element => 
             isGNode(element) && element.type === ENTITY_TYPE
         ) as GNode[];
+        const weaKEntities = root.children.filter(element =>
+            isGNode(element) && element.type === WEAK_ENTITY_TYPE
+        ) as GNode[];
+
         const relations = root.children.filter(element => 
             isGNode(element) && element.type === RELATION_TYPE
         ) as GNode[];
@@ -38,6 +42,11 @@ export class SQLGenerator {
             sqlScript += this.createTableForEntity(entity, root);
             sqlScript += "\n";
         });
+        weaKEntities.forEach(weakEntity => {
+            sqlScript += this.createTableForWeakEntity(weakEntity, root);
+            sqlScript += "\n";
+        });
+
         relations.forEach(relation => {
             sqlScript += this.createTableForRelation(relation, root);
             sqlScript += "\n";
@@ -234,6 +243,110 @@ export class SQLGenerator {
         return tableSql + additionalTablesSql;
     }
 
+    private createTableForWeakEntity(weakEntity: GNode, root: GModelElement): string {
+        const tableName = this.getNameFromNode(weakEntity);
+        const safeTableName = tableName ? tableName.replace(/\s+/g, '_') : weakEntity.id;
+        let tableSql = `CREATE TABLE ${safeTableName} (\n`;
+        const columnDefinitions: string[] = [];
+        const primaryKeys: string[] = [];
+        const foreignKeys: string[] = [];
+        let additionalTablesSql = "";
+        let connectedAttributes = this.findConnectedAttributes(weakEntity, root);
+        connectedAttributes = this.sortAttributes(connectedAttributes);
+        
+        // ATTRIBUTES
+        if (connectedAttributes.length === 0) {
+            columnDefinitions.push(`    id VARCHAR(255) PRIMARY KEY`);
+        } else {
+            connectedAttributes.forEach(attr => {
+                const attrName = this.getNameFromNode(attr);
+                const safeAttrName = attrName ? attrName.replace(/\s+/g, '_') : attr.id;
+                const weakEntityPK = this.splitLabelAttribute(safeAttrName);
+                let colDef = "";
+                if (attr.type === KEY_ATTRIBUTE_TYPE) {
+                    colDef += `    ${weakEntityPK.name} ${weakEntityPK.type} NOT NULL`;
+                } else if (attr.type === ALTERNATIVE_KEY_ATTRIBUTE_TYPE) {
+                    colDef += `    ${weakEntityPK.name} ${weakEntityPK.type} UNIQUE`;
+                } else if (attr.type === ATTRIBUTE_TYPE) {
+                    const compositeAttributes = this.findConnectedAttributes(attr, root);
+                    if (compositeAttributes.length > 0) {
+                        for (const compositeAttr of compositeAttributes) {
+                            const compositeAttrName = this.getNameFromNode(compositeAttr);
+                            const safeCompositeAttrName = compositeAttrName ? compositeAttrName.replace(/\s+/g, '_') : compositeAttr.id;
+                            const { name, type } = this.splitLabelAttribute(safeCompositeAttrName);
+                            columnDefinitions.push(`    ${name} ${type} NOT NULL`);
+                        }
+                        return;
+                    } else {
+                        const edge = this.findEdgeBetween(weakEntity, attr, root);
+                        if (edge) {
+                            if (edge.type === OPTIONAL_EDGE_TYPE) {
+                                colDef += `    ${weakEntityPK.name} ${weakEntityPK.type} NULL`;
+                            } else {
+                                colDef += `    ${weakEntityPK.name} ${weakEntityPK.type} NOT NULL`;
+                            }
+                        }
+                    }
+                } else if (attr.type === DERIVED_ATTRIBUTE_TYPE) {
+                    const equation = this.getEquationFromDerivedAttribute(attr);
+                    if (equation) {
+                        colDef += `    ${weakEntityPK.name} ${weakEntityPK.type} GENERATED ALWAYS AS (${equation}) STORED`;
+                    }
+                } else if (attr.type === MULTI_VALUED_ATTRIBUTE_TYPE) {
+                    additionalTablesSql += "\n" + this.createTableMultiValuedAttribute(weakEntity, attr, root);
+                }   
+                if (colDef) {
+                    columnDefinitions.push(colDef);
+                }
+            });
+        }        
+        const dependenceRelations = this.findConnectedDependenceRelations(weakEntity, root);
+        if (dependenceRelations.length > 0) {
+            dependenceRelations.forEach(relation => {
+               if (relation.type === EXISTENCE_DEP_RELATION_TYPE) {
+                    // EXISTENCE DEPENDENCE RELATION
+                    const relationCardinality = this.getCardinalityFromNode(relation);
+                    const otherEntity = this.findOtherEntity(relation, weakEntity, root);
+                    if (!otherEntity) return;
+                    const otherEntityName = this.getNameFromNode(otherEntity);
+                    const safeOtherEntityName = otherEntityName ? otherEntityName.replace(/\s+/g, '_') : otherEntity.id;
+                    const otherEntityPK = this.findPrimaryKey(otherEntity, root);
+                    const weakEntityPK = this.findPrimaryKey(weakEntity, root);
+                    if (!otherEntityPK || !weakEntityPK) return;
+                    const weakEntityPKName = this.getNameFromNode(weakEntityPK);
+                    const safeWeakEntityPKName = weakEntityPKName ? weakEntityPKName.replace(/\s+/g, '_') : weakEntityPK.id;
+                    const weakEntityPKNameType = this.splitLabelAttribute(safeWeakEntityPKName);
+                    const otherEntityPKName = this.getNameFromNode(otherEntityPK);
+                    const safeOtherEntityPKName = otherEntityPKName ? otherEntityPKName.replace(/\s+/g, '_') : otherEntityPK.id;
+                    const otherEntityPKNameType = this.splitLabelAttribute(safeOtherEntityPKName);
+                    const fkColumnName = `${safeOtherEntityName}_${otherEntityPKNameType.name}`;
+                    columnDefinitions.push(`    ${fkColumnName} ${otherEntityPKNameType.type} NOT NULL`);
+                    foreignKeys.push(`FOREIGN KEY (${fkColumnName}) REFERENCES ${safeOtherEntityName}(${weakEntityPKNameType.name}) ON DELETE CASCADE`);
+                    if (relationCardinality === '1:N') {        
+                        primaryKeys.push(`${weakEntityPKNameType.name}, ${fkColumnName}`);
+                    } else if (relationCardinality === '1:1') {
+                        primaryKeys.push(`${fkColumnName}`);
+                    }
+                    /////////////////////////////////////////////////////////////////////
+                    // MOSTRAR ATRIBUTOS UNA VEZ SE REFACTORICE EL CODIGO EN FUNCIONES //
+                    /////////////////////////////////////////////////////////////////////
+               } else {
+                    // IDENTIFYING DEPENDENCE RELATION
+                    
+               }
+            });
+        }
+        if (primaryKeys.length > 0) {
+            columnDefinitions.push(`    PRIMARY KEY (${primaryKeys.join(", ")})`);
+        }
+        foreignKeys.forEach(fk => {
+            columnDefinitions.push(`    ${fk}`);
+        });
+        tableSql += columnDefinitions.join(",\n");
+        tableSql += "\n);\n";
+        return tableSql + additionalTablesSql;
+    }
+
     private createTableForRelation(relation: GNode, root: GModelElement): string {
         const relationCardinality = this.getCardinalityFromNode(relation);
         if (relationCardinality.includes('N:M')) {
@@ -333,6 +446,26 @@ export class SQLGenerator {
             }
         });
         return relations;
+    }
+
+    private findConnectedDependenceRelations(weakEntity: GNode, root: GModelElement): GNode[] {
+        const dependenceRelations: GNode[] = [];
+        const allEdges = root.children.filter(child => isGEdge(child)) as GEdge[];
+        const connectedEdges = allEdges.filter(edge => 
+            edge.sourceId === weakEntity.id || edge.targetId === weakEntity.id
+        );
+        connectedEdges.forEach(edge => {
+            const otherNodeId = (edge.sourceId === weakEntity.id) ? edge.targetId : edge.sourceId;
+            const otherNode = root.children.find(c => c.id === otherNodeId);
+            if (otherNode) {
+                if (isGNode(otherNode)) {
+                    if (otherNode.type === EXISTENCE_DEP_RELATION_TYPE || otherNode.type === IDENTIFYING_DEP_RELATION_TYPE) {
+                        dependenceRelations.push(otherNode);
+                    }
+                }
+            }
+        });
+        return dependenceRelations;
     }
 
     private createTableMultiValuedAttribute(entity: GNode, attribute: GNode, root: GModelElement): string {

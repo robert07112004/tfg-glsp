@@ -1,0 +1,146 @@
+{
+  "id": "84074330-6932-4745-9f58-a70b97a5e74b",
+  "tasks": [
+    {
+      "id": "279b1382-1eac-4e4b-9a87-805e956cdb17",
+      "type": "entity",
+      "name": "Usuario",
+      "position": {
+        "x": 122,
+        "y": 580
+      },
+      "size": {
+        "width": 46.79204177856445,
+        "height": 22
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "33687ec6-1646-4bef-bb9e-013220c8c22c",
+      "type": "weakEntity",
+      "name": "Configuracion_Preferencias",
+      "position": {
+        "x": 419,
+        "y": 598
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [
+    {
+      "id": "0d45f6a7-5d63-4111-b171-569713488467",
+      "type": "existenceDependentRelation",
+      "name": "tiene",
+      "cardinality": "-",
+      "dependencyLabel": "E",
+      "position": {
+        "x": 280,
+        "y": 565
+      },
+      "size": {
+        "width": 57.38069534301758,
+        "height": 62
+      }
+    }
+  ],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "96f35a76-1c4d-43f8-91eb-8f8b40cbedba",
+      "type": "attribute",
+      "name": "nombre: varchar(20)",
+      "position": {
+        "x": 71,
+        "y": 647
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    },
+    {
+      "id": "1b013ce2-f6a8-492c-b889-c820baffd742",
+      "type": "attribute",
+      "name": "idioma: varchar(2)",
+      "position": {
+        "x": 561,
+        "y": 677
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "817087e8-6a6f-4d50-a497-b0cc03dc141c",
+      "type": "keyAttribute",
+      "name": "email: varchar(20)",
+      "position": {
+        "x": 73,
+        "y": 515
+      },
+      "size": {
+        "width": 95.91852569580078,
+        "height": 22
+      }
+    },
+    {
+      "id": "41b45f99-c6b7-4434-93b3-9c38bbfee38b",
+      "type": "keyAttribute",
+      "name": "tema: integer",
+      "position": {
+        "x": 597,
+        "y": 585
+      },
+      "size": {
+        "width": 74.64436340332031,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "d478156c-065a-4c86-ad18-c43c88ed9049",
+      "sourceTaskId": "817087e8-6a6f-4d50-a497-b0cc03dc141c",
+      "targetTaskId": "279b1382-1eac-4e4b-9a87-805e956cdb17"
+    },
+    {
+      "id": "9300286d-6e65-42dd-a8d5-92b9d1083a2c",
+      "sourceTaskId": "96f35a76-1c4d-43f8-91eb-8f8b40cbedba",
+      "targetTaskId": "279b1382-1eac-4e4b-9a87-805e956cdb17"
+    },
+    {
+      "id": "8b525847-c736-4c7a-89e0-138a5b67558d",
+      "sourceTaskId": "33687ec6-1646-4bef-bb9e-013220c8c22c",
+      "targetTaskId": "41b45f99-c6b7-4434-93b3-9c38bbfee38b"
+    },
+    {
+      "id": "f47c0136-b7f7-49b6-bc8b-6c3494afa9fd",
+      "sourceTaskId": "33687ec6-1646-4bef-bb9e-013220c8c22c",
+      "targetTaskId": "1b013ce2-f6a8-492c-b889-c820baffd742"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "f1ccd52a-26a8-443e-a4d2-6929fc551aee",
+      "type": "edge:weighted",
+      "sourceId": "279b1382-1eac-4e4b-9a87-805e956cdb17",
+      "targetId": "0d45f6a7-5d63-4111-b171-569713488467",
+      "description": "(1..1)"
+    },
+    {
+      "id": "d60e8c61-ec2f-48c8-b52a-7b9b7b5599ab",
+      "type": "edge:weighted",
+      "sourceId": "0d45f6a7-5d63-4111-b171-569713488467",
+      "targetId": "33687ec6-1646-4bef-bb9e-013220c8c22c",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}

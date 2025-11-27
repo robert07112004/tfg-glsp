@@ -1,15 +1,16 @@
 -- Script generado por GLSP-ER
--- Fecha: 26/11/2025, 23:34:35
+-- Fecha: 27/11/2025, 16:58:41
 
-CREATE TABLE Pieza (
-    id INTEGER PRIMARY KEY
+CREATE TABLE Usuario (
+    email VARCHAR(20) PRIMARY KEY,
+    nombre VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE Es_parte_De (
-    Pieza_id INTEGER,
-    Es_parte_De_id INTEGER,
-    PRIMARY KEY (Pieza_id, Es_parte_De_id),
-    FOREIGN KEY (Pieza_id) REFERENCES Pieza(id),
-    FOREIGN KEY (Es_parte_De_id) REFERENCES Pieza(id)
+CREATE TABLE Configuracion_Preferencias (
+    tema INTEGER NOT NULL,
+    idioma VARCHAR(2) NOT NULL,
+    Usuario_email VARCHAR(20) NOT NULL,
+    PRIMARY KEY (Usuario_email),
+    FOREIGN KEY (Usuario_email) REFERENCES Usuario(tema) ON DELETE CASCADE
 );
 

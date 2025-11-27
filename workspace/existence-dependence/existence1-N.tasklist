@@ -1,0 +1,138 @@
+{
+  "id": "56dc3755-9c7e-48fd-891b-50c721542fc1",
+  "tasks": [
+    {
+      "id": "641f4099-63a8-4c37-854c-eb3e673069b5",
+      "type": "entity",
+      "name": "Libro",
+      "position": {
+        "x": 182,
+        "y": 726
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "af3db87e-6a8c-4224-a9a3-f22850069811",
+      "type": "weakEntity",
+      "name": "Capitulo",
+      "position": {
+        "x": 522,
+        "y": 714
+      },
+      "size": {
+        "width": 49.16986846923828,
+        "height": 22
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [
+    {
+      "id": "c9e6d350-e7da-4f2a-9509-90d3ffc07522",
+      "type": "existenceDependentRelation",
+      "name": "Tiene",
+      "cardinality": "-",
+      "dependencyLabel": "E",
+      "position": {
+        "x": 352,
+        "y": 701
+      },
+      "size": {
+        "width": 37.533790588378906,
+        "height": 48
+      }
+    }
+  ],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "41865024-2b33-4e74-9f41-4eb29de14915",
+      "type": "attribute",
+      "name": "titulo: varchar(100)",
+      "position": {
+        "x": 141,
+        "y": 809
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    },
+    {
+      "id": "c77ff3c0-39f8-4d0f-b25f-e15c866f1191",
+      "type": "attribute",
+      "name": "titulo: varchar(100)",
+      "position": {
+        "x": 584,
+        "y": 829
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "7298886a-22c1-4dcf-b9cc-509ba09e1bbb",
+      "type": "keyAttribute",
+      "name": "isbn: varchar(20)",
+      "position": {
+        "x": 163,
+        "y": 657
+      }
+    },
+    {
+      "id": "536d41ca-8af3-4ba2-becd-1412fbf7ac88",
+      "type": "keyAttribute",
+      "name": "numero: integer",
+      "position": {
+        "x": 589,
+        "y": 661
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "53e8e2b3-a11a-4f7a-b997-7b4aad1e76b5",
+      "sourceTaskId": "7298886a-22c1-4dcf-b9cc-509ba09e1bbb",
+      "targetTaskId": "641f4099-63a8-4c37-854c-eb3e673069b5"
+    },
+    {
+      "id": "e19ba664-0086-4889-bba3-77a5e6f6c147",
+      "sourceTaskId": "41865024-2b33-4e74-9f41-4eb29de14915",
+      "targetTaskId": "641f4099-63a8-4c37-854c-eb3e673069b5"
+    },
+    {
+      "id": "b7781b7a-0bea-4aaa-9b92-beca205529bb",
+      "sourceTaskId": "536d41ca-8af3-4ba2-becd-1412fbf7ac88",
+      "targetTaskId": "af3db87e-6a8c-4224-a9a3-f22850069811"
+    },
+    {
+      "id": "620f65b6-1b6b-4d91-900c-e09fc7321fed",
+      "sourceTaskId": "c77ff3c0-39f8-4d0f-b25f-e15c866f1191",
+      "targetTaskId": "af3db87e-6a8c-4224-a9a3-f22850069811"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "37307dd1-b771-44aa-ae74-56e12ab7085f",
+      "type": "edge:weighted",
+      "sourceId": "641f4099-63a8-4c37-854c-eb3e673069b5",
+      "targetId": "c9e6d350-e7da-4f2a-9509-90d3ffc07522",
+      "description": "(1..N)"
+    },
+    {
+      "id": "463400b0-a22f-44cf-8c0e-7efeb2e04e1d",
+      "type": "edge:weighted",
+      "sourceId": "af3db87e-6a8c-4224-a9a3-f22850069811",
+      "targetId": "c9e6d350-e7da-4f2a-9509-90d3ffc07522",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}
