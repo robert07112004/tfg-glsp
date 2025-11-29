@@ -12,6 +12,7 @@ import { createMarker, getConnectedNeighbors } from '../../utils/validation-util
  * 3. Valid connections:
  *    - Entities (Strong/Weak).
  * 4. Specializations must be connected to at leats 2 entities.
+ * 5. Weak entities can't be subclass of a specialization.
  */
 
 @injectable()
@@ -50,9 +51,8 @@ export class AllSpecializationsValidator {
             // Rule 4: Specializations must be connected to at leats 2 entities.
             if (nodeType === ENTITY_TYPE || nodeType === WEAK_ENTITY_TYPE) {
                 entityCount++;
-            }
-            // Rule 3: Valid connections.
-            else {
+            } else {
+                // Rule 3: Valid connections.
                 return createMarker(
                     'error', 
                     'Una especialización no puede estar conectada a algo que no sea una entidad.',
@@ -60,6 +60,17 @@ export class AllSpecializationsValidator {
                     'ERR: spec-invalid-connection'
                 );
             }
+
+            // Rule 5: Weak entities can't be the subclass of a specialization.
+            if (edge.sourceId === node.id && otherNode.type === WEAK_ENTITY_TYPE) {
+                return createMarker(
+                    'error', 
+                    'Una entidad débil no puede ser subclase (hija) en una especialización.', 
+                    node.id, 
+                    'ERR: weak-entity-subclass'
+                );
+            }
+
         }
 
         if (entityCount < 2) {

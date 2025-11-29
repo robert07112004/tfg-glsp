@@ -112,3 +112,4 @@ Specializations: done
     - Valid connections:
         - Entities (Strong/Weak).
     - Specializations must be connected to at leats 2 entities.
+    - Weak entities can't be subclass of a specialization.

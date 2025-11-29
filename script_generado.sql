@@ -1,20 +1,23 @@
 -- Script generado por GLSP-ER
--- Fecha: 27/11/2025, 19:39:47
+-- Fecha: 29/11/2025, 21:23:21
 
-CREATE TABLE Vehiculo (
-    matricula VARCHAR(10) PRIMARY KEY,
-    marca VARCHAR(10) NOT NULL
+CREATE TABLE Edificio (
+    id INTEGER PRIMARY KEY,
+    nombre VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE Coche (
-    matricula VARCHAR(10) PRIMARY KEY,
-    numero_puertas INTEGER NOT NULL,
-    FOREIGN KEY (matricula) REFERENCES Vehiculo(matricula) ON DELETE CASCADE
+CREATE TABLE Laboratorio (
+    Edificio_id INTEGER NOT NULL,
+    equipamiento VARCHAR(100) NOT NULL,
+    PRIMARY KEY (Edificio_id),
+    FOREIGN KEY (Edificio_id) REFERENCES Sala(Edificio_id) ON DELETE CASCADE
 );
 
-CREATE TABLE Moto (
-    matricula VARCHAR(10) PRIMARY KEY,
-    cilindrada INTEGER NOT NULL,
-    FOREIGN KEY (matricula) REFERENCES Vehiculo(matricula) ON DELETE CASCADE
+CREATE TABLE Sala (
+    numero INTEGER NOT NULL,
+    capacidad INTEGER NOT NULL,
+    Edificio_id INTEGER NOT NULL,
+    PRIMARY KEY (Edificio_id),
+    FOREIGN KEY (Edificio_id) REFERENCES Edificio(id) ON DELETE CASCADE
 );
 

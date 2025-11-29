@@ -1,0 +1,9 @@
+21:03:31 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 60632 
+21:03:31 info -  [SocketServerLauncher] Starting GLSP server connection 
+21:03:31 info -  [DefaultGLSPServer] Initializing server with: applicationId: 5fb2c2df-5054-4cd9-8122-0360cd4d636f, protocolVersion: 1.0.0 
+21:03:33 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+21:03:33 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+21:03:33 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+21:03:33 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+21:03:33 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+21:03:43 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_0] 

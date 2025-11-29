@@ -55,6 +55,52 @@ export class SQLGenerator {
         return sqlScript;
     }
 
+    private getIdentityColumns(entity: GNode, root: GModelElement): { name: string, type: string }[] {
+        const columns: { name: string, type: string }[] = [];
+        const isWeak = entity.type === WEAK_ENTITY_TYPE;
+        if (!isWeak) {
+            const pkNode = this.findPrimaryKey(entity, root);
+            if (pkNode) {
+                const pkName = this.getNameFromNode(pkNode);
+                const safePkName = pkName ? pkName.replace(/\s+/g, '_') : pkNode.id;
+                const { name, type } = this.splitLabelAttribute(safePkName);
+                columns.push({ name, type });
+            }
+            return columns;
+        }
+        const dependencyRelations = this.findConnectedDependenceRelations(entity, root);
+        for (const relation of dependencyRelations) {
+            const parentEntity = this.findOtherEntity(relation, entity, root);
+            if (parentEntity) {
+                const relationCardinality = this.getCardinalityFromNode(relation);
+                const parentIdentity = this.getIdentityColumns(parentEntity, root);
+                parentIdentity.forEach(pid => {
+                    const parentName = this.getNameFromNode(parentEntity);
+                    const safeParentName = parentName ? parentName.replace(/\s+/g, '_') : parentEntity.id;
+                    columns.push({ 
+                        name: `${safeParentName}_${pid.name}`, 
+                        type: pid.type 
+                    });
+                });
+                if (!relationCardinality.includes('1:1')) {
+                    let partialKeyNode: GNode | undefined;
+                    if (relation.type === EXISTENCE_DEP_RELATION_TYPE) {
+                        partialKeyNode = this.findPrimaryKey(entity, root);
+                    } else if (relation.type === IDENTIFYING_DEP_RELATION_TYPE) {
+                        partialKeyNode = this.findPrimaryKey(relation, root);
+                    }
+                    if (partialKeyNode) {
+                        const pkName = this.getNameFromNode(partialKeyNode);
+                        const safePkName = pkName ? pkName.replace(/\s+/g, '_') : partialKeyNode.id;
+                        const { name, type } = this.splitLabelAttribute(safePkName);
+                        columns.unshift({ name, type });
+                    }
+                }
+            }
+        }
+        return columns;
+    }
+
     private createTableForEntity(entity: GNode, root: GModelElement): string {
         const parentEntity = this.findParentFromSpecialization(entity, root);
         const isChild = !!parentEntity;
@@ -62,25 +108,41 @@ export class SQLGenerator {
         const safeTableName = tableName ? tableName.replace(/\s+/g, '_') : entity.id;
         let tableSql = `CREATE TABLE ${safeTableName} (\n`;
         const columnDefinitions: string[] = [];
+        const primaryKeys: string[] = [];
         const foreignKeys: string[] = [];
         let additionalTablesSql = "";
+        let subclassSpecializationPK = "PRIMARY KEY (";
+        let subclassSpecializationFK = "";
         let reflexiveIterations = 0;
-        let connectedAttributes = this.findConnectedAttributes(entity, root);
-        connectedAttributes = this.sortAttributes(connectedAttributes);
         
         if (isChild && parentEntity) {
+            const identityColumns = this.getIdentityColumns(parentEntity, root);
             const parentEntityName = this.getNameFromNode(parentEntity);
             const safeParentEntityName = parentEntityName ? parentEntityName.replace(/\s+/g, '_') : parentEntity.id;
-            const parentPKNode = this.findPrimaryKey(parentEntity, root);
-            if (parentPKNode) {
-                const parentPKName = this.getNameFromNode(parentPKNode);
-                const safeParentPKName = parentPKName ? parentPKName.replace(/\s+/g, '_') : parentPKNode.id;
-                const { name, type } = this.splitLabelAttribute(safeParentPKName);
-                columnDefinitions.push(`    ${name} ${type} PRIMARY KEY`);
-                foreignKeys.push(`    FOREIGN KEY (${name}) REFERENCES ${safeParentEntityName}(${name}) ON DELETE CASCADE`);
+            if (identityColumns.length == 1) {
+                for (const column of identityColumns) {
+                    columnDefinitions.push(`    ${column.name} ${column.type} NOT NULL`);
+                    if (parentEntity.type === WEAK_ENTITY_TYPE) {
+                        primaryKeys.push(`    PRIMARY KEY (${column.name})`);
+                    }
+                    foreignKeys.push(`    FOREIGN KEY (${column.name}) REFERENCES ${safeParentEntityName}(${column.name}) ON DELETE CASCADE`);
+                }
+            } else {
+                for (const column of identityColumns) {
+                    columnDefinitions.push(`    ${column.name} ${column.type} NOT NULL`);
+                    subclassSpecializationPK += `${column.name}, `; 
+                    subclassSpecializationFK += `${column.name}, `;
+                }
+                subclassSpecializationPK = subclassSpecializationPK.slice(0, -2);
+                subclassSpecializationPK += ")";
+                subclassSpecializationFK = subclassSpecializationFK.slice(0, -2);
+                primaryKeys.push(`    ${subclassSpecializationPK}`);
+                foreignKeys.push(`    FOREIGN KEY (${subclassSpecializationFK}) REFERENCES ${safeParentEntityName}(${subclassSpecializationFK}) ON DELETE CASCADE`);
             }
         }
 
+        let connectedAttributes = this.findConnectedAttributes(entity, root);
+        connectedAttributes = this.sortAttributes(connectedAttributes);
         // ATTRIBUTES
         connectedAttributes.forEach(attr => {
             const attrName = this.getNameFromNode(attr);
@@ -249,6 +311,9 @@ export class SQLGenerator {
                 }
             });
         }
+        primaryKeys.forEach(pk => {
+            columnDefinitions.push(`${pk}`);
+        });
         foreignKeys.forEach(fk => {
             columnDefinitions.push(`${fk}`);
         });
@@ -438,7 +503,7 @@ export class SQLGenerator {
             const specializationNode = root.children.find(c => c.id === incomingEdge.sourceId) as GNode;
             const parentEdge = allEdges.find(edge => edge.targetId === specializationNode.id);
             if (parentEdge) {
-                const parentNode = root.children.find(c => c.id === parentEdge.sourceId && c.type === ENTITY_TYPE) as GNode;
+                const parentNode = root.children.find(c => c.id === parentEdge.sourceId) as GNode;
                 return parentNode;
             }
         }
@@ -495,17 +560,13 @@ export class SQLGenerator {
     private findConnectedDependenceRelations(weakEntity: GNode, root: GModelElement): GNode[] {
         const dependenceRelations: GNode[] = [];
         const allEdges = root.children.filter(child => isGEdge(child)) as GEdge[];
-        const connectedEdges = allEdges.filter(edge => 
-            edge.sourceId === weakEntity.id || edge.targetId === weakEntity.id
-        );
-        connectedEdges.forEach(edge => {
-            const otherNodeId = (edge.sourceId === weakEntity.id) ? edge.targetId : edge.sourceId;
-            const otherNode = root.children.find(c => c.id === otherNodeId);
-            if (otherNode) {
-                if (isGNode(otherNode)) {
-                    if (otherNode.type === EXISTENCE_DEP_RELATION_TYPE || otherNode.type === IDENTIFYING_DEP_RELATION_TYPE) {
-                        dependenceRelations.push(otherNode);
-                    }
+        const incomingEdges = allEdges.filter(edge => edge.targetId === weakEntity.id);
+        incomingEdges.forEach(edge => {
+            const sourceNodeId = edge.sourceId; 
+            const sourceNode = root.children.find(c => c.id === sourceNodeId);
+            if (sourceNode && isGNode(sourceNode)) {
+                if (sourceNode.type === EXISTENCE_DEP_RELATION_TYPE || sourceNode.type === IDENTIFYING_DEP_RELATION_TYPE) {
+                    dependenceRelations.push(sourceNode);
                 }
             }
         });

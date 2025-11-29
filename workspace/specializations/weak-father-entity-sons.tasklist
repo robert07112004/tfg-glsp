@@ -1,0 +1,209 @@
+{
+  "id": "666bf7b5-3bd9-4a10-b08d-1cf16ca5027f",
+  "tasks": [
+    {
+      "id": "dda314e1-131e-4a36-b555-18b1670a8914",
+      "type": "entity",
+      "name": "Edificio",
+      "position": {
+        "x": 242,
+        "y": 205
+      },
+      "size": {
+        "width": 44.424598693847656,
+        "height": 22
+      }
+    },
+    {
+      "id": "7df7a3cc-fa2d-4551-b084-e5da6b57aa32",
+      "type": "entity",
+      "name": "Laboratorio",
+      "position": {
+        "x": 212,
+        "y": 645
+      },
+      "size": {
+        "width": 89.4420166015625,
+        "height": 22
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "a45092d9-9379-4153-91f9-2d4e8cf7ea2c",
+      "type": "weakEntity",
+      "name": "Sala",
+      "position": {
+        "x": 241,
+        "y": 442
+      },
+      "size": {
+        "width": 31.401222229003906,
+        "height": 22
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [
+    {
+      "id": "6435d824-031f-475a-8a6a-1324653b7d33",
+      "type": "existenceDependentRelation",
+      "name": "tiene",
+      "cardinality": "-",
+      "dependencyLabel": "E",
+      "position": {
+        "x": 246,
+        "y": 305
+      },
+      "size": {
+        "width": 34.38069534301758,
+        "height": 48
+      }
+    }
+  ],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [
+    {
+      "id": "952f8d63-e30b-4c50-aee3-f28bf53a129c",
+      "type": "partialExclusiveSpecialization",
+      "name": "Partial Exclusive",
+      "position": {
+        "x": 191,
+        "y": 531
+      },
+      "size": {
+        "width": 134.78045654296875,
+        "height": 48
+      }
+    }
+  ],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "af3a4abd-776f-4651-a938-51f7affdea82",
+      "type": "attribute",
+      "name": "nombre: varchar(20)",
+      "position": {
+        "x": 279,
+        "y": 136
+      },
+      "size": {
+        "width": 106.58495330810547,
+        "height": 22
+      }
+    },
+    {
+      "id": "43eb6b0a-9ae5-4006-9e14-b48b9b24b4d7",
+      "type": "attribute",
+      "name": "capacidad: integer",
+      "position": {
+        "x": 329,
+        "y": 443
+      },
+      "size": {
+        "width": 98.33606719970703,
+        "height": 22
+      }
+    },
+    {
+      "id": "d134dbde-f6b2-4420-bd36-84c2be905e53",
+      "type": "attribute",
+      "name": "equipamiento: varchar(100)",
+      "position": {
+        "x": 352,
+        "y": 647
+      },
+      "size": {
+        "width": 140.36358642578125,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "814dee35-f7d5-40a1-a9b9-1753fdab7701",
+      "type": "keyAttribute",
+      "name": "id: integer",
+      "position": {
+        "x": 148,
+        "y": 142
+      },
+      "size": {
+        "width": 58.04832458496094,
+        "height": 22
+      }
+    },
+    {
+      "id": "49cdb2ca-4f8a-467c-aaf7-26194f5b1992",
+      "type": "keyAttribute",
+      "name": "numero: integer",
+      "position": {
+        "x": 111,
+        "y": 446
+      },
+      "size": {
+        "width": 85.88502502441406,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "39c00fce-52ca-49db-b752-2a384c7cbe7f",
+      "sourceTaskId": "814dee35-f7d5-40a1-a9b9-1753fdab7701",
+      "targetTaskId": "dda314e1-131e-4a36-b555-18b1670a8914"
+    },
+    {
+      "id": "742be0c0-08d3-4b43-aefd-a82ce759d33f",
+      "sourceTaskId": "af3a4abd-776f-4651-a938-51f7affdea82",
+      "targetTaskId": "dda314e1-131e-4a36-b555-18b1670a8914"
+    },
+    {
+      "id": "c21910a2-7312-4bd3-9774-100868452a5d",
+      "sourceTaskId": "43eb6b0a-9ae5-4006-9e14-b48b9b24b4d7",
+      "targetTaskId": "a45092d9-9379-4153-91f9-2d4e8cf7ea2c"
+    },
+    {
+      "id": "8be2457a-5d20-4470-9990-5199f4103d79",
+      "sourceTaskId": "49cdb2ca-4f8a-467c-aaf7-26194f5b1992",
+      "targetTaskId": "a45092d9-9379-4153-91f9-2d4e8cf7ea2c"
+    },
+    {
+      "id": "39bc5de2-86e7-4e82-a06e-e7a764418f80",
+      "sourceTaskId": "a45092d9-9379-4153-91f9-2d4e8cf7ea2c",
+      "targetTaskId": "952f8d63-e30b-4c50-aee3-f28bf53a129c"
+    },
+    {
+      "id": "609a72c4-9dd4-48b0-aa63-8af68e78e8d3",
+      "sourceTaskId": "952f8d63-e30b-4c50-aee3-f28bf53a129c",
+      "targetTaskId": "7df7a3cc-fa2d-4551-b084-e5da6b57aa32"
+    },
+    {
+      "id": "b3163a8f-d614-44d0-8832-61be8d8a3a75",
+      "sourceTaskId": "7df7a3cc-fa2d-4551-b084-e5da6b57aa32",
+      "targetTaskId": "d134dbde-f6b2-4420-bd36-84c2be905e53"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "25288864-f46e-4cd9-a5e5-11e717c8c545",
+      "type": "edge:weighted",
+      "sourceId": "dda314e1-131e-4a36-b555-18b1670a8914",
+      "targetId": "6435d824-031f-475a-8a6a-1324653b7d33",
+      "description": "(1..1)"
+    },
+    {
+      "id": "f8589eb6-7df6-407c-9967-4352abc5f952",
+      "type": "edge:weighted",
+      "sourceId": "6435d824-031f-475a-8a6a-1324653b7d33",
+      "targetId": "a45092d9-9379-4153-91f9-2d4e8cf7ea2c",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}
