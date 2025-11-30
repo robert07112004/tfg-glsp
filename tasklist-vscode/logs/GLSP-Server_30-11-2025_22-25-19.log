@@ -1,0 +1,75 @@
+22:25:19 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 58015 
+22:25:19 info -  [SocketServerLauncher] Starting GLSP server connection 
+22:25:19 info -  [DefaultGLSPServer] Initializing server with: applicationId: a1924491-a946-4ca8-b1b6-12d68f724d52, protocolVersion: 1.0.0 
+22:25:21 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+22:25:21 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+22:25:21 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+22:25:21 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_0] 
+22:25:21 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 
+22:25:37 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_0] 
+22:25:53 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_1', diagramType: 'tasklist-diagram' 
+22:25:53 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_1] 
+22:25:53 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_1] 
+22:25:53 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+22:25:53 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_1] 
+22:25:58 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_1] 
+22:26:11 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_1] 
+22:26:11 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+22:26:15 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_1] 
+22:26:15 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+22:26:17 info -  [DefaultGLSPServer] process [action=requestPopupModel, clientId=tasklist-diagram_1] 
+22:26:17 warn -  [RequestPopupModelActionHandler] Could not process `RequestPopupModelAction`. No `PopupModelFactory` is bound 
+22:26:23 info -  [DefaultGLSPServer] process [action=changeBounds, clientId=tasklist-diagram_1] 
+22:26:23 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+22:26:24 info -  [DefaultGLSPServer] process [action=compound, clientId=tasklist-diagram_1] 
+22:26:24 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_1] 
+22:26:58 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_2', diagramType: 'tasklist-diagram' 
+22:26:58 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_2] 
+22:26:58 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_2] 
+22:26:58 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_2] 
+22:26:58 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_2] 
+22:27:01 info -  [DefaultGLSPServer] process [action=saveModel, clientId=tasklist-diagram_1] 
+22:27:04 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_2] 
+22:28:19 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_3', diagramType: 'tasklist-diagram' 
+22:28:19 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_3] 
+22:28:19 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_3] 
+22:28:19 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_3] 
+22:28:19 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_3] 
+22:28:30 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_3] 
+22:29:13 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_4', diagramType: 'tasklist-diagram' 
+22:29:13 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_4] 
+22:29:13 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_4] 
+22:29:13 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_4] 
+22:29:13 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_4] 
+22:29:14 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_4] 
+22:29:37 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_5', diagramType: 'tasklist-diagram' 
+22:29:37 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_5] 
+22:29:37 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_5] 
+22:29:37 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_5] 
+22:29:37 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_5] 
+22:29:37 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_6', diagramType: 'tasklist-diagram' 
+22:29:37 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_6] 
+22:29:37 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_6] 
+22:29:38 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_6] 
+22:29:38 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_6] 
+22:29:40 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_5] 
+22:29:53 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_6] 
+22:30:15 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_7', diagramType: 'tasklist-diagram' 
+22:30:15 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_7] 
+22:30:15 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_7] 
+22:30:15 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_7] 
+22:30:15 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_7] 
+22:30:15 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_8', diagramType: 'tasklist-diagram' 
+22:30:15 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_8] 
+22:30:15 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_8] 
+22:30:15 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_8] 
+22:30:15 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_8] 
+22:30:19 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_7] 
+22:30:34 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_8] 
+22:31:08 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_8] 
+22:31:08 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_8] 
+22:31:09 info -  [DefaultGLSPServer] process [action=requestEditValidation, clientId=tasklist-diagram_8] 
+22:31:09 info -  [DefaultGLSPServer] process [action=applyLabelEdit, clientId=tasklist-diagram_8] 
+22:31:09 info -  [DefaultGLSPServer] process [action=computedBounds, clientId=tasklist-diagram_8] 
+22:31:11 info -  [DefaultGLSPServer] process [action=saveModel, clientId=tasklist-diagram_8] 
+22:31:13 info -  [DefaultGLSPServer] process [action=generateSql, clientId=tasklist-diagram_8] 

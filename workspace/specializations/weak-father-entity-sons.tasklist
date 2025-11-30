@@ -195,7 +195,7 @@
       "type": "edge:weighted",
       "sourceId": "dda314e1-131e-4a36-b555-18b1670a8914",
       "targetId": "6435d824-031f-475a-8a6a-1324653b7d33",
-      "description": "(1..1)"
+      "description": "(1..N)"
     },
     {
       "id": "f8589eb6-7df6-407c-9967-4352abc5f952",

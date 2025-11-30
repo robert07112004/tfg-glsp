@@ -1,8 +1,4 @@
-import {
-    GModelElement,
-    GModelIndex,
-    GNode
-} from '@eclipse-glsp/server';
+import { GModelElement, GModelIndex, GNode } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
 import { ENTITY_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
 import { isGNode, ModelUtils } from './model-utils';
@@ -10,7 +6,7 @@ import { SQLFormatter } from './sql-formatter';
 import { TableMapper } from './table-mapper';
 
 @injectable()
-export class SQLGenerator {
+export class SQLGeneratorV2 {
 
     public generate(root: GModelElement, index: GModelIndex): string {
         let sqlScript = "-- Script generado por GLSP-ER\n";

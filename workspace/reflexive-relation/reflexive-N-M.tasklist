@@ -23,8 +23,12 @@
       "name": "Es_parte_De",
       "cardinality": "-",
       "position": {
-        "x": 266,
-        "y": 391
+        "x": 202,
+        "y": 407
+      },
+      "size": {
+        "width": 149.27173614501953,
+        "height": 35
       }
     }
   ],
