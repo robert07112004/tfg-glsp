@@ -1,0 +1,738 @@
+{
+  "id": "bd21e016-84a3-49a5-86ce-248a5223c69e",
+  "tasks": [
+    {
+      "id": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2",
+      "type": "entity",
+      "name": "Vivienda",
+      "position": {
+        "x": 226.4201525451113,
+        "y": 147.38168385335842
+      },
+      "size": {
+        "width": 51.95680618286133,
+        "height": 22.5
+      }
+    },
+    {
+      "id": "ae75936a-0f5b-462a-bb0a-94a091cb74e8",
+      "type": "entity",
+      "name": "Propietario",
+      "position": {
+        "x": 704.5203499007264,
+        "y": 151.97590566416753
+      },
+      "size": {
+        "width": 61.668663024902344,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "ad086ab9-ef4c-4011-8d29-a09e478ff8ef",
+      "type": "entity",
+      "name": "Agencia",
+      "position": {
+        "x": 751.579042894673,
+        "y": 323.30609860329304
+      },
+      "size": {
+        "width": 49.781917572021484,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "type": "entity",
+      "name": "Alquiler",
+      "position": {
+        "x": 227.9939732727052,
+        "y": 433.8711831133421
+      },
+      "size": {
+        "width": 46.39763641357422,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "59d72d5d-514d-4cfb-aac3-67961866dc91",
+      "type": "entity",
+      "name": "Inquilino",
+      "position": {
+        "x": 758.8891311267423,
+        "y": 455.8014478095502
+      },
+      "size": {
+        "width": 49.82313537597656,
+        "height": 22.0616455078125
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "9b2019be-3018-44e0-89fd-89306e3a68b8",
+      "type": "relation",
+      "name": "Tiene",
+      "cardinality": "-",
+      "position": {
+        "x": 431.3058022271341,
+        "y": 139.1832512580461
+      },
+      "size": {
+        "width": 97.60110118723321,
+        "height": 35.123291015625
+      }
+    },
+    {
+      "id": "683552da-6c08-4d68-bd41-9e03f553cbd5",
+      "type": "relation",
+      "name": "Oferta",
+      "cardinality": "-",
+      "position": {
+        "x": 462.3736772134292,
+        "y": 303.20335596510233
+      },
+      "size": {
+        "width": 84.96346883326794,
+        "height": 35.123291015625
+      }
+    },
+    {
+      "id": "4e2b2b9b-01cc-4335-b23b-80a345e71183",
+      "type": "relation",
+      "name": "Participa",
+      "cardinality": "-",
+      "position": {
+        "x": 203.3224254894712,
+        "y": 295.893267733033
+      },
+      "size": {
+        "width": 100.93134477301112,
+        "height": 35.123291015625
+      }
+    },
+    {
+      "id": "ff137282-12ff-4e2f-b7df-df966746cc7b",
+      "type": "relation",
+      "name": "Realizado por",
+      "cardinality": "-",
+      "position": {
+        "x": 439.5296514882122,
+        "y": 437.9831077438811
+      },
+      "size": {
+        "width": 113.54962089052731,
+        "height": 35.123291015625
+      }
+    },
+    {
+      "id": "920dcb1a-358b-4009-ad88-6016a95ca7ee",
+      "type": "relation",
+      "name": "Renovacion",
+      "cardinality": "-",
+      "position": {
+        "x": 272.8442758400829,
+        "y": 501.9066237239946
+      },
+      "size": {
+        "width": 107.9009292185761,
+        "height": 35.123291015625
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "e4cd839f-141a-4afc-b486-e77701213c10",
+      "type": "attribute",
+      "name": "Calle: varchar(20)",
+      "position": {
+        "x": 202.72704181278678,
+        "y": 60.927010309644444
+      },
+      "size": {
+        "width": 95.15785217285156,
+        "height": 21.98786449432373
+      }
+    },
+    {
+      "id": "e57387f8-6909-4873-9fa6-1ca39140bf2c",
+      "type": "attribute",
+      "name": "Numero: integer",
+      "position": {
+        "x": 120.13910262957671,
+        "y": 182.07066112337648
+      },
+      "size": {
+        "width": 87.87097930908203,
+        "height": 21.98786449432373
+      }
+    },
+    {
+      "id": "e7ee4c47-86bb-46b7-8bb0-e0b63956ac8e",
+      "type": "attribute",
+      "name": "CP: integer",
+      "position": {
+        "x": 109.7909388200954,
+        "y": 129.11634532889806
+      },
+      "size": {
+        "width": 64.76737213134766,
+        "height": 21.98786449432373
+      }
+    },
+    {
+      "id": "56a61792-b06d-4865-8ec0-4e476a169ddb",
+      "type": "attribute",
+      "name": "Poblacion: varchar(20)",
+      "position": {
+        "x": 59.34962939642767,
+        "y": 100.1901181969719
+      },
+      "size": {
+        "width": 117.68376159667969,
+        "height": 21.98786449432373
+      }
+    },
+    {
+      "id": "d9d31415-b74a-45c8-a6f0-54e38d3476d7",
+      "type": "attribute",
+      "name": "Descripcion: varchar(500)",
+      "position": {
+        "x": 53.96141541445763,
+        "y": 156.9772265196428
+      },
+      "size": {
+        "width": 132.4806671142578,
+        "height": 22
+      }
+    },
+    {
+      "id": "8fc2b4c5-3e37-460d-8d63-0f7e3ef6af60",
+      "type": "attribute",
+      "name": "Piso: varchar(2)",
+      "position": {
+        "x": 124.03337943383269,
+        "y": 74.73448235288949
+      },
+      "size": {
+        "width": 85.67491912841797,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "fe4ddd65-b185-4c20-8fd7-5dbd184f9f23",
+      "type": "attribute",
+      "name": "Nombre: varchar(20)",
+      "position": {
+        "x": 776.0155019820622,
+        "y": 125.79599145086709
+      },
+      "size": {
+        "width": 108.37779998779297,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "83ea912e-9bd4-43be-801a-887510ea25c6",
+      "type": "attribute",
+      "name": "Apellidos: varchar(50)",
+      "position": {
+        "x": 790.6356784462013,
+        "y": 165.54459621274418
+      },
+      "size": {
+        "width": 114.27156066894531,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "6b755adc-e5e4-4b0e-a99d-d84db121fa1f",
+      "type": "attribute",
+      "name": "Telefono: integer",
+      "position": {
+        "x": 612.4522777895105,
+        "y": 187.01798039444793
+      },
+      "size": {
+        "width": 89.13372039794922,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "954c8189-06fa-44f0-8f3c-edc021554e60",
+      "type": "attribute",
+      "name": "Direccion: varchar(100)",
+      "position": {
+        "x": 650.3733604933702,
+        "y": 217.17209435173402
+      },
+      "size": {
+        "width": 120.82493591308594,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "cd18ad14-9ad0-40d9-9782-375db051ebe4",
+      "type": "attribute",
+      "name": "E-mail: varchar(50)",
+      "position": {
+        "x": 743.1201049377502,
+        "y": 193.41430759750867
+      },
+      "size": {
+        "width": 100.66793823242188,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "ebff58a5-7a15-4b5b-8a56-c3ce40abd7cd",
+      "type": "attribute",
+      "name": "Direccion: varchar(100)",
+      "position": {
+        "x": 737.7717008777155,
+        "y": 365.71871208407674
+      },
+      "size": {
+        "width": 120.85431671142578,
+        "height": 22.035584449768066
+      }
+    },
+    {
+      "id": "834f2b3b-a2b9-458f-9e57-42d9b9ab63cf",
+      "type": "attribute",
+      "name": "Fecha firma: date",
+      "position": {
+        "x": 138.38651840038486,
+        "y": 382.8814151897015
+      },
+      "size": {
+        "width": 93.0076904296875,
+        "height": 22.035584449768066
+      }
+    },
+    {
+      "id": "fc3c0b2b-a77e-4ee6-a566-28768de2b6b4",
+      "type": "attribute",
+      "name": "Fianza: float",
+      "position": {
+        "x": 110.75379589267536,
+        "y": 406.69263430159765
+      },
+      "size": {
+        "width": 69.09798049926758,
+        "height": 22.035584449768066
+      }
+    },
+    {
+      "id": "6290b2bf-07f7-4e72-8d5d-7905944f1c09",
+      "type": "attribute",
+      "name": "Fecha inicio: date",
+      "position": {
+        "x": 96.8820221441824,
+        "y": 458.3674340002426
+      },
+      "size": {
+        "width": 93.61143493652344,
+        "height": 22.035584449768066
+      }
+    },
+    {
+      "id": "66616a4b-24f1-4547-9647-af6314c3f4ab",
+      "type": "attribute",
+      "name": "Fecha fin: date",
+      "position": {
+        "x": 105.27725295304234,
+        "y": 486.43131424644076
+      },
+      "size": {
+        "width": 80.57889556884766,
+        "height": 22.035584449768066
+      }
+    },
+    {
+      "id": "ed71ec7d-488d-4633-909b-9ca429543acc",
+      "type": "attribute",
+      "name": "Importe mensual: float",
+      "position": {
+        "x": 107.73422466419126,
+        "y": 515.3980100192249
+      },
+      "size": {
+        "width": 116.49186706542969,
+        "height": 22.035584449768066
+      }
+    },
+    {
+      "id": "01d0f911-dd0c-4a8c-a967-145552d70a28",
+      "type": "attribute",
+      "name": "Nombre: varchar(20)",
+      "position": {
+        "x": 824.9813993368232,
+        "y": 433.9342136503634
+      },
+      "size": {
+        "width": 108.37779998779297,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "39132eb3-cd7e-4b50-8538-28ecc9b53767",
+      "type": "attribute",
+      "name": "Apellidos: varchar(50)",
+      "position": {
+        "x": 825.4382798513277,
+        "y": 462.26080554963227
+      },
+      "size": {
+        "width": 114.27156066894531,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "6569f68e-190b-4360-9b95-49647d9af0e4",
+      "type": "attribute",
+      "name": "Telefono: integer",
+      "position": {
+        "x": 808.9905813291714,
+        "y": 491.95803899241395
+      },
+      "size": {
+        "width": 89.13372039794922,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "3d5eee54-0f03-46fe-a4b5-f4ae5b64247d",
+      "type": "attribute",
+      "name": "Descripcion preferencias: varchar(500)",
+      "position": {
+        "x": 680.1502762389488,
+        "y": 516.6295867756482
+      },
+      "size": {
+        "width": 193.73451232910156,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "fbd1d3a3-cf4a-46da-ab8a-5df80491588a",
+      "type": "attribute",
+      "name": "Fecha nacimiento: date",
+      "position": {
+        "x": 629.8934196434722,
+        "y": 487.38923384737063
+      },
+      "size": {
+        "width": 120.94839477539062,
+        "height": 22.0616455078125
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "6609ae81-6814-4628-8d8d-ec0975bd732d",
+      "type": "keyAttribute",
+      "name": "Cod_vivienda: integer",
+      "position": {
+        "x": 270.8311819160517,
+        "y": 85.0692373303044
+      },
+      "size": {
+        "width": 114.55020904541016,
+        "height": 22.609902381896973
+      }
+    },
+    {
+      "id": "9c8cd840-4639-4e37-bf20-a0d9578f3742",
+      "type": "keyAttribute",
+      "name": "NIF: varchar(20)",
+      "position": {
+        "x": 679.1568329071433,
+        "y": 103.40884624015465
+      },
+      "size": {
+        "width": 87.62971496582031,
+        "height": 22.0616455078125
+      }
+    },
+    {
+      "id": "c5334537-87ec-4f0c-a195-7e5bba2a943a",
+      "type": "keyAttribute",
+      "name": "Cod_agencia: integer",
+      "position": {
+        "x": 722.9779618721301,
+        "y": 284.22777688381734
+      },
+      "size": {
+        "width": 111.76448822021484,
+        "height": 22.035584449768066
+      }
+    },
+    {
+      "id": "4f7e9007-a02a-4980-889e-407c608f7119",
+      "type": "keyAttribute",
+      "name": "Cod_alquiler: integer",
+      "position": {
+        "x": 75.12644189500455,
+        "y": 433.8338157611711
+      },
+      "size": {
+        "width": 109.80874633789062,
+        "height": 22.035584449768066
+      }
+    },
+    {
+      "id": "c73267f3-c4d0-4ebd-8268-c168bd84132c",
+      "type": "keyAttribute",
+      "name": "NIF: varchar(20)",
+      "position": {
+        "x": 708.933748652722,
+        "y": 414.288351526677
+      },
+      "size": {
+        "width": 134.16757202148438,
+        "height": 22.0616455078125
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "775b10cc-1d41-4d70-bb19-c4abfdd86f5d",
+      "type": "alternativeKeyAttribute",
+      "name": "CIF: varchar(20)",
+      "position": {
+        "x": 825.781910893996,
+        "y": 324.34639113625275
+      },
+      "size": {
+        "width": 87.64832305908203,
+        "height": 22.035584449768066
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "9728389f-4931-406a-a8cb-d522a93afacb",
+      "sourceTaskId": "6609ae81-6814-4628-8d8d-ec0975bd732d",
+      "targetTaskId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2"
+    },
+    {
+      "id": "23e3a979-37ea-4309-95b1-228e9f5c55e5",
+      "sourceTaskId": "e4cd839f-141a-4afc-b486-e77701213c10",
+      "targetTaskId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2"
+    },
+    {
+      "id": "6a5fbe3a-6a9f-48aa-8155-204ec76501be",
+      "sourceTaskId": "8fc2b4c5-3e37-460d-8d63-0f7e3ef6af60",
+      "targetTaskId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2"
+    },
+    {
+      "id": "736cc125-fa64-4cf5-b29c-99dffe170c8b",
+      "sourceTaskId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2",
+      "targetTaskId": "56a61792-b06d-4865-8ec0-4e476a169ddb"
+    },
+    {
+      "id": "b1a0d1cf-c429-4569-b67b-8cab3fc82b57",
+      "sourceTaskId": "e7ee4c47-86bb-46b7-8bb0-e0b63956ac8e",
+      "targetTaskId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2"
+    },
+    {
+      "id": "1a304dc3-a768-4db8-802a-949b785da61e",
+      "sourceTaskId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2",
+      "targetTaskId": "d9d31415-b74a-45c8-a6f0-54e38d3476d7"
+    },
+    {
+      "id": "15b6c61c-67aa-4935-b355-03ce3d1c5300",
+      "sourceTaskId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2",
+      "targetTaskId": "e57387f8-6909-4873-9fa6-1ca39140bf2c"
+    },
+    {
+      "id": "f38cdc62-c148-4059-8660-e52e87a1bab0",
+      "sourceTaskId": "9c8cd840-4639-4e37-bf20-a0d9578f3742",
+      "targetTaskId": "ae75936a-0f5b-462a-bb0a-94a091cb74e8"
+    },
+    {
+      "id": "16b3d4fb-58a6-45f3-b27b-e62922f3af3a",
+      "sourceTaskId": "fe4ddd65-b185-4c20-8fd7-5dbd184f9f23",
+      "targetTaskId": "ae75936a-0f5b-462a-bb0a-94a091cb74e8"
+    },
+    {
+      "id": "d0d17852-5bb0-44b6-8032-2cb45fde4b35",
+      "sourceTaskId": "83ea912e-9bd4-43be-801a-887510ea25c6",
+      "targetTaskId": "ae75936a-0f5b-462a-bb0a-94a091cb74e8"
+    },
+    {
+      "id": "23e99271-2f44-4cb6-a766-6839b4566ea6",
+      "sourceTaskId": "ae75936a-0f5b-462a-bb0a-94a091cb74e8",
+      "targetTaskId": "6b755adc-e5e4-4b0e-a99d-d84db121fa1f"
+    },
+    {
+      "id": "35a2f1c1-fc9b-41db-9ee7-c64544b00fc5",
+      "sourceTaskId": "ae75936a-0f5b-462a-bb0a-94a091cb74e8",
+      "targetTaskId": "954c8189-06fa-44f0-8f3c-edc021554e60"
+    },
+    {
+      "id": "2cd19666-878d-4998-b80e-d4cc678d6d2a",
+      "sourceTaskId": "c5334537-87ec-4f0c-a195-7e5bba2a943a",
+      "targetTaskId": "ad086ab9-ef4c-4011-8d29-a09e478ff8ef"
+    },
+    {
+      "id": "ce9ae1ce-556a-4d4e-883e-4d9b8e42fe27",
+      "sourceTaskId": "775b10cc-1d41-4d70-bb19-c4abfdd86f5d",
+      "targetTaskId": "ad086ab9-ef4c-4011-8d29-a09e478ff8ef"
+    },
+    {
+      "id": "90deaefe-fdce-4ba6-b40d-68b60818cf8a",
+      "sourceTaskId": "ebff58a5-7a15-4b5b-8a56-c3ce40abd7cd",
+      "targetTaskId": "ad086ab9-ef4c-4011-8d29-a09e478ff8ef"
+    },
+    {
+      "id": "9c5d2225-81a8-4a13-a384-9fe2217052dd",
+      "sourceTaskId": "834f2b3b-a2b9-458f-9e57-42d9b9ab63cf",
+      "targetTaskId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225"
+    },
+    {
+      "id": "abc2b3bd-7d33-45fc-a0a6-719cc79409a3",
+      "sourceTaskId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "targetTaskId": "fc3c0b2b-a77e-4ee6-a566-28768de2b6b4"
+    },
+    {
+      "id": "5c84d7c2-3e7e-45f4-b273-2dc726274698",
+      "sourceTaskId": "4f7e9007-a02a-4980-889e-407c608f7119",
+      "targetTaskId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225"
+    },
+    {
+      "id": "d9fd9b29-c20e-4b79-8ce9-bb5c2765f98b",
+      "sourceTaskId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "targetTaskId": "6290b2bf-07f7-4e72-8d5d-7905944f1c09"
+    },
+    {
+      "id": "595c8987-9690-4183-9235-27b686b064a2",
+      "sourceTaskId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "targetTaskId": "66616a4b-24f1-4547-9647-af6314c3f4ab"
+    },
+    {
+      "id": "6790937e-e374-4969-b606-8778d1b30dae",
+      "sourceTaskId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "targetTaskId": "ed71ec7d-488d-4633-909b-9ca429543acc"
+    },
+    {
+      "id": "d918d5de-61f9-4f50-b8bd-1583612368c7",
+      "sourceTaskId": "c73267f3-c4d0-4ebd-8268-c168bd84132c",
+      "targetTaskId": "59d72d5d-514d-4cfb-aac3-67961866dc91"
+    },
+    {
+      "id": "14c8f535-e9d1-4a9d-86c7-3e31e19436c9",
+      "sourceTaskId": "59d72d5d-514d-4cfb-aac3-67961866dc91",
+      "targetTaskId": "01d0f911-dd0c-4a8c-a967-145552d70a28"
+    },
+    {
+      "id": "229ca439-1c1d-45c2-a5f8-7e7bdb15c7c1",
+      "sourceTaskId": "39132eb3-cd7e-4b50-8538-28ecc9b53767",
+      "targetTaskId": "59d72d5d-514d-4cfb-aac3-67961866dc91"
+    },
+    {
+      "id": "310fe8c9-0bb6-4adc-aa6a-31b5a982a244",
+      "sourceTaskId": "59d72d5d-514d-4cfb-aac3-67961866dc91",
+      "targetTaskId": "6569f68e-190b-4360-9b95-49647d9af0e4"
+    },
+    {
+      "id": "5361ffc0-416f-40eb-9c7f-b333150be66b",
+      "sourceTaskId": "59d72d5d-514d-4cfb-aac3-67961866dc91",
+      "targetTaskId": "3d5eee54-0f03-46fe-a4b5-f4ae5b64247d"
+    },
+    {
+      "id": "17ecac94-c7bc-400b-ac83-b06a934af8f4",
+      "sourceTaskId": "fbd1d3a3-cf4a-46da-ab8a-5df80491588a",
+      "targetTaskId": "59d72d5d-514d-4cfb-aac3-67961866dc91"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "c87a03be-0ed0-46de-8c63-33466f1d32e8",
+      "type": "edge:weighted",
+      "sourceId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2",
+      "targetId": "9b2019be-3018-44e0-89fd-89306e3a68b8",
+      "description": "(1..N)"
+    },
+    {
+      "id": "e76b7449-c9f7-410f-a0b3-981c05e27af0",
+      "type": "edge:weighted",
+      "sourceId": "9b2019be-3018-44e0-89fd-89306e3a68b8",
+      "targetId": "ae75936a-0f5b-462a-bb0a-94a091cb74e8",
+      "description": "(1..1)"
+    },
+    {
+      "id": "d1ab8b02-abb1-4622-927f-2a426a82604c",
+      "type": "edge:weighted",
+      "sourceId": "683552da-6c08-4d68-bd41-9e03f553cbd5",
+      "targetId": "ad086ab9-ef4c-4011-8d29-a09e478ff8ef",
+      "description": "(1..1)"
+    },
+    {
+      "id": "2c9a0a77-1627-495d-bb29-748aee6455a4",
+      "type": "edge:weighted",
+      "sourceId": "683552da-6c08-4d68-bd41-9e03f553cbd5",
+      "targetId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2",
+      "description": "(0..N)"
+    },
+    {
+      "id": "97668455-0a73-4aa1-88d4-3eea8d81b801",
+      "type": "edge:weighted",
+      "sourceId": "6e3f25a0-9b3d-4a6b-ae48-9bdb1fec4ab2",
+      "targetId": "4e2b2b9b-01cc-4335-b23b-80a345e71183",
+      "description": "(1..1)"
+    },
+    {
+      "id": "1da8b1a8-8c6a-4456-ab7e-25ac65318b5d",
+      "type": "edge:weighted",
+      "sourceId": "4e2b2b9b-01cc-4335-b23b-80a345e71183",
+      "targetId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "description": "(0..N)"
+    },
+    {
+      "id": "41922c94-b568-44bf-b75b-7c80faf25e29",
+      "type": "edge:weighted",
+      "sourceId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "targetId": "920dcb1a-358b-4009-ad88-6016a95ca7ee",
+      "description": "(0..1)"
+    },
+    {
+      "id": "5390e65c-aaed-4eef-8b90-1f2fde2559c6",
+      "type": "edge:weighted",
+      "sourceId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "targetId": "920dcb1a-358b-4009-ad88-6016a95ca7ee",
+      "description": "(0..1)"
+    },
+    {
+      "id": "aa85d784-4b1f-47bc-83d8-150665e9c62b",
+      "type": "edge:weighted",
+      "sourceId": "a1a0d832-4af8-4dcf-a150-05c77e1c1225",
+      "targetId": "ff137282-12ff-4e2f-b7df-df966746cc7b",
+      "description": "(0..N)"
+    },
+    {
+      "id": "ea566af5-a33a-4f30-ad2a-c14007c67a6e",
+      "type": "edge:weighted",
+      "sourceId": "ff137282-12ff-4e2f-b7df-df966746cc7b",
+      "targetId": "59d72d5d-514d-4cfb-aac3-67961866dc91",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": [
+    {
+      "id": "d0257b82-0302-44e8-8116-785e82a1ef47",
+      "type": "edge:optional",
+      "sourceId": "ae75936a-0f5b-462a-bb0a-94a091cb74e8",
+      "targetId": "cd18ad14-9ad0-40d9-9782-375db051ebe4"
+    }
+  ]
+}

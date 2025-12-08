@@ -1,0 +1,1334 @@
+{
+  "id": "9eea79a3-3a38-49a8-8ad5-60e8984f02b7",
+  "tasks": [
+    {
+      "id": "9ef0ed27-ef5b-4d8c-965a-f4f037615cfc",
+      "type": "entity",
+      "name": "Administrador",
+      "position": {
+        "x": 630.794146527431,
+        "y": 191.50677668568096
+      },
+      "size": {
+        "width": 76.83456420898438,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "23277a21-d019-441b-ae84-1795b958fbab",
+      "type": "entity",
+      "name": "Comunidad De Vecinos",
+      "position": {
+        "x": 832.5696326516085,
+        "y": 296.0606953458109
+      },
+      "size": {
+        "width": 121.69540284920107,
+        "height": 21.917925771153765
+      }
+    },
+    {
+      "id": "01a5d788-7c45-45d8-b93f-4786a4809d9c",
+      "type": "entity",
+      "name": "Compañia",
+      "position": {
+        "x": 482.97662546068665,
+        "y": 294.4142604610815
+      },
+      "size": {
+        "width": 58.60070037841797,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "0f1424bf-408f-4680-b988-1e324330b29a",
+      "type": "entity",
+      "name": "Recibo Compañia",
+      "position": {
+        "x": 592.190139481086,
+        "y": 392.10273028837344
+      },
+      "size": {
+        "width": 94.76052856445312,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "99c732e5-8a9e-496c-8719-ee487f6d813f",
+      "type": "entity",
+      "name": "Banco",
+      "position": {
+        "x": 405.59418587839355,
+        "y": 512.2924768736367
+      },
+      "size": {
+        "width": 40.232662200927734,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "4c51962f-c9b8-436c-aed1-db945047d0be",
+      "type": "entity",
+      "name": "Recibo Cuota Comunidad",
+      "position": {
+        "x": 532.9184836308183,
+        "y": 673.6430955771416
+      },
+      "size": {
+        "width": 132.10372924804688,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "93e61004-8bd0-4dc2-a709-7f0958d88def",
+      "type": "entity",
+      "name": "Vivienda Particular",
+      "position": {
+        "x": 816.6540954325586,
+        "y": 790.5399723929456
+      },
+      "size": {
+        "width": 101.1021728515625,
+        "height": 22
+      }
+    },
+    {
+      "id": "2456ced0-9c00-4347-8d70-b9fe4376e031",
+      "type": "entity",
+      "name": "Oficina",
+      "position": {
+        "x": 993.3714397268727,
+        "y": 792.7352189059185
+      },
+      "size": {
+        "width": 43.18595504760742,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "37cffe20-7086-4a0b-8a29-ccd311a3bdef",
+      "type": "entity",
+      "name": "Local Comercial",
+      "position": {
+        "x": 1119.0493025945689,
+        "y": 793.8328421624049
+      },
+      "size": {
+        "width": 86.44602966308594,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "61dabf7c-1605-4a5a-8212-904263ce86cf",
+      "type": "weakEntity",
+      "name": "Cuenta",
+      "position": {
+        "x": 621.8259674062197,
+        "y": 515.585346643096
+      },
+      "size": {
+        "width": 44.38991165161133,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff",
+      "type": "weakEntity",
+      "name": "Propiedad",
+      "position": {
+        "x": 970.3213513406588,
+        "y": 568.8200745826879
+      },
+      "size": {
+        "width": 58.610992431640625,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "e44ee520-3daa-4a1c-884c-7c7c9012ea0b",
+      "type": "relation",
+      "name": "Gestiona",
+      "cardinality": "-",
+      "position": {
+        "x": 851.7780396401256,
+        "y": 186.84718132541173
+      },
+      "size": {
+        "width": 87.25895902585557,
+        "height": 34.70866394042969
+      }
+    },
+    {
+      "id": "fd26db92-09e5-4005-8a3b-e042328a0d44",
+      "type": "relation",
+      "name": "Contrata",
+      "cardinality": "-",
+      "position": {
+        "x": 640.4855627664889,
+        "y": 288.3773325504061
+      },
+      "size": {
+        "width": 84.92993880996585,
+        "height": 34.70866394042969
+      }
+    },
+    {
+      "id": "12539aac-a48c-451d-b85f-248980d4c29a",
+      "type": "relation",
+      "name": "Emite",
+      "cardinality": "-",
+      "position": {
+        "x": 481.330190575957,
+        "y": 383.32174423648195
+      },
+      "size": {
+        "width": 58.113630935742094,
+        "height": 34.70866394042969
+      }
+    },
+    {
+      "id": "d0139fde-741a-4537-bcb2-010f4c67a8e3",
+      "type": "relation",
+      "name": "Se carga",
+      "cardinality": "-",
+      "position": {
+        "x": 531.8208603743326,
+        "y": 455.76487916458615
+      },
+      "size": {
+        "width": 82.31965437166673,
+        "height": 34.70866394042969
+      }
+    },
+    {
+      "id": "4a1c96e8-19fb-4cd2-82cf-057a5bac6d53",
+      "type": "relation",
+      "name": "Controlada",
+      "cardinality": "-",
+      "position": {
+        "x": 686.0369279106754,
+        "y": 428.87310938066867
+      },
+      "size": {
+        "width": 94.54100362006045,
+        "height": 34.70866394042969
+      }
+    },
+    {
+      "id": "7bd0ec5a-4110-41c0-9f8d-9e3c74dbdac4",
+      "type": "relation",
+      "name": "Presidente",
+      "cardinality": "-",
+      "position": {
+        "x": 939.039088530796,
+        "y": 432.71479077837114
+      },
+      "size": {
+        "width": 91.16238079483173,
+        "height": 34.70866394042969
+      }
+    },
+    {
+      "id": "4fddbebc-aeec-4b18-82ec-1ba47a19a981",
+      "type": "relation",
+      "name": "Vocal",
+      "cardinality": "-",
+      "position": {
+        "x": 1063.619328142005,
+        "y": 431.61716752188465
+      },
+      "size": {
+        "width": 66.92891750747845,
+        "height": 34.70866394042969
+      }
+    },
+    {
+      "id": "5e572978-77a5-4516-a824-719931539726",
+      "type": "relation",
+      "name": "Corresponde",
+      "cardinality": "-",
+      "position": {
+        "x": 768.3586721471563,
+        "y": 663.7644862687636
+      },
+      "size": {
+        "width": 110.06551469113627,
+        "height": 35
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [
+    {
+      "id": "8018b057-8ec4-40cc-bb89-76941ec96753",
+      "type": "identifyingDependentRelation",
+      "name": "Tiene",
+      "cardinality": "-",
+      "dependencyLabel": "Id",
+      "position": {
+        "x": 523.5886859506844,
+        "y": 500.7674326805294
+      },
+      "size": {
+        "width": 36.28121757507324,
+        "height": 47.56299591064453
+      }
+    },
+    {
+      "id": "afc0a11d-7131-4863-9547-854b6be17893",
+      "type": "identifyingDependentRelation",
+      "name": "Consta",
+      "cardinality": "-",
+      "dependencyLabel": "Id",
+      "position": {
+        "x": 851.7780396401248,
+        "y": 427.22667449593894
+      },
+      "size": {
+        "width": 43.7930793762207,
+        "height": 47.56299591064453
+      }
+    }
+  ],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [
+    {
+      "id": "062fd12d-8014-4800-834b-332717fa4f7c",
+      "type": "totalExclusiveSpecialization",
+      "name": "Total Exclusive",
+      "position": {
+        "x": 931.3557257353903,
+        "y": 664.3132978970067
+      },
+      "size": {
+        "width": 138.98445575732399,
+        "height": 40.513927330484194
+      }
+    }
+  ],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "cfc57f92-ca82-48cd-a41d-768279fea046",
+      "type": "attribute",
+      "name": "Nombre: varchar(15)",
+      "position": {
+        "x": 681.0976232564866,
+        "y": 155.01610688730537
+      },
+      "size": {
+        "width": 108.7616195678711,
+        "height": 22
+      }
+    },
+    {
+      "id": "e560ce25-4112-4c46-a5d9-f278c49d7900",
+      "type": "attribute",
+      "name": "Honorarios: varchar(20)",
+      "position": {
+        "x": 834.2160675363431,
+        "y": 129.7707719881176
+      },
+      "size": {
+        "width": 122.99016571044922,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "259ce75e-5bc4-4d7d-bc78-8cefb057403c",
+      "type": "attribute",
+      "name": "Nombre: varchar(20)",
+      "position": {
+        "x": 1018.0679629978163,
+        "y": 264.2296209077046
+      },
+      "size": {
+        "width": 108.7616195678711,
+        "height": 22
+      }
+    },
+    {
+      "id": "dae95c0d-4b7d-4886-9521-0a3268e70e69",
+      "type": "attribute",
+      "name": "Calle: varchar(50)",
+      "position": {
+        "x": 1036.1787467298427,
+        "y": 288.92614417864917
+      },
+      "size": {
+        "width": 95.13697814941406,
+        "height": 22
+      }
+    },
+    {
+      "id": "50a6b321-5e57-4d31-a9be-77cfca9655d3",
+      "type": "attribute",
+      "name": "Cod postal: integer",
+      "position": {
+        "x": 1032.3370653321404,
+        "y": 314.72029070608016
+      },
+      "size": {
+        "width": 115.89412689208984,
+        "height": 22
+      }
+    },
+    {
+      "id": "508776dd-bdfa-4af8-a6c4-f713410f791a",
+      "type": "attribute",
+      "name": "Poblacion: varchar(15)",
+      "position": {
+        "x": 1012.5798467153838,
+        "y": 341.06324886175435
+      },
+      "size": {
+        "width": 117.66943359375,
+        "height": 22
+      }
+    },
+    {
+      "id": "9f13867b-4818-4d74-b83a-cbc91fbabe55",
+      "type": "attribute",
+      "name": "Direccion: varchar(50)",
+      "position": {
+        "x": 349.61539979758584,
+        "y": 263.1319976512184
+      },
+      "size": {
+        "width": 115.27976989746094,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "3e67034c-88a2-4c23-8b2c-82a32f866b3f",
+      "type": "attribute",
+      "name": "Nombre: varchar(20)",
+      "position": {
+        "x": 352.35945793880205,
+        "y": 318.5619721037828
+      },
+      "size": {
+        "width": 108.7616195678711,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "d5a3dde8-f67b-4ba4-a813-356bf3a074d9",
+      "type": "attribute",
+      "name": "Persona contacto: varchar(20)",
+      "position": {
+        "x": 373.7631114402873,
+        "y": 238.98428600851702
+      },
+      "size": {
+        "width": 153.82130432128906,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "21301e27-91c7-4b26-ade0-3f90b66fe8a5",
+      "type": "attribute",
+      "name": "Telefono: integer",
+      "position": {
+        "x": 530.7232371178462,
+        "y": 253.25338834284042
+      },
+      "size": {
+        "width": 89.23837280273438,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "9244d74e-c19b-4c2e-9a08-72f8877406ea",
+      "type": "attribute",
+      "name": "Fecha: date",
+      "position": {
+        "x": 692.622667449594,
+        "y": 346.00255351594353
+      },
+      "size": {
+        "width": 66.31836700439453,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "3cf39076-1890-486f-95f0-ea129020b90f",
+      "type": "attribute",
+      "name": "Importe: float",
+      "position": {
+        "x": 701.9524651297286,
+        "y": 375.63838144107694
+      },
+      "size": {
+        "width": 72.55508422851562,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "fe510944-e0fd-4a71-96b9-17097ba215a2",
+      "type": "attribute",
+      "name": "Nombre: varchar(20)",
+      "position": {
+        "x": 311.1985858205612,
+        "y": 485.40070708971973
+      },
+      "size": {
+        "width": 108.7616195678711,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "ed0c5554-41f2-4942-a864-2fa265a038db",
+      "type": "attribute",
+      "name": "Persona contacto: varchar(20)",
+      "position": {
+        "x": 311.19858582056094,
+        "y": 544.6723629399866
+      },
+      "size": {
+        "width": 153.82130432128906,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "23241d6b-ad8a-40d0-a066-e770b01de792",
+      "type": "attribute",
+      "name": "Saldo: float",
+      "position": {
+        "x": 681.0976232564865,
+        "y": 520.5246512972851
+      },
+      "size": {
+        "width": 63.67851257324219,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "8d6b3259-a2a3-4dfe-bd27-86513ac0293d",
+      "type": "attribute",
+      "name": "Num cuenta: integer",
+      "position": {
+        "x": 544.9923394521688,
+        "y": 580.8939304040385
+      },
+      "size": {
+        "width": 107.20740509033203,
+        "height": 22
+      }
+    },
+    {
+      "id": "bcc216df-3adf-43a1-9b8c-3cb6331b9f38",
+      "type": "attribute",
+      "name": "Sucursal: integer",
+      "position": {
+        "x": 465.9634649851465,
+        "y": 614.9202513551179
+      },
+      "size": {
+        "width": 90.40974426269531,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "29b89a21-7d2e-48b7-9d9f-e2602b2c447b",
+      "type": "attribute",
+      "name": "DC: integer",
+      "position": {
+        "x": 564.7495580689246,
+        "y": 617.6643094963337
+      },
+      "size": {
+        "width": 64.32667541503906,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "b7b02be4-b9ac-4927-b3f9-df38427cf7a7",
+      "type": "attribute",
+      "name": "Numero: integer",
+      "position": {
+        "x": 637.1926929970285,
+        "y": 616.5666862398474
+      },
+      "size": {
+        "width": 87.65408325195312,
+        "height": 22
+      }
+    },
+    {
+      "id": "da32a222-7e41-45a0-9fae-f57663967eed",
+      "type": "attribute",
+      "name": "Portal: integer",
+      "position": {
+        "x": 771.6515419166162,
+        "y": 488.1447652309357
+      },
+      "size": {
+        "width": 76.7799072265625,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "076f7c0e-57f8-4f2b-8aca-ac523e6c9073",
+      "type": "attribute",
+      "name": "Planta: integer",
+      "position": {
+        "x": 767.8098605189134,
+        "y": 512.2924768736369
+      },
+      "size": {
+        "width": 79.15914916992188,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "dfaad7cd-89c0-4f6e-a329-77b0877f9e73",
+      "type": "attribute",
+      "name": "Letra: varchar(1)",
+      "position": {
+        "x": 765.0658023776977,
+        "y": 537.5378117728249
+      },
+      "size": {
+        "width": 89.21231079101562,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "f63f6c8c-2815-40c5-94a3-7b0a0e2cbfce",
+      "type": "attribute",
+      "name": "Porcentaje: float",
+      "position": {
+        "x": 1089.4134746694358,
+        "y": 506.80436059120484
+      },
+      "size": {
+        "width": 87.38235473632812,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "acba465d-3c94-4318-84e0-f3ec6444ed0b",
+      "type": "attribute",
+      "name": "Telefono: integer",
+      "position": {
+        "x": 1302.9011980560458,
+        "y": 524.9151443232308
+      },
+      "size": {
+        "width": 91.24232482910156,
+        "height": 22
+      }
+    },
+    {
+      "id": "bdcb335e-9d8d-4325-b99c-1de8734d71fc",
+      "type": "attribute",
+      "name": "Nombre prop: varchar(20)",
+      "position": {
+        "x": 1262.289137566048,
+        "y": 495.8281280263405
+      },
+      "size": {
+        "width": 133.06417846679688,
+        "height": 22
+      }
+    },
+    {
+      "id": "3ba70579-c8ca-4f81-9125-be85cb7217fd",
+      "type": "attribute",
+      "name": "Direccion prop: varchar(50)",
+      "position": {
+        "x": 1311.1333724796937,
+        "y": 554.5509722483644
+      },
+      "size": {
+        "width": 139.58233642578125,
+        "height": 22
+      }
+    },
+    {
+      "id": "e4283b7a-3a49-44a2-8663-033eb55b7367",
+      "type": "attribute",
+      "name": "Datos propiedad: varchar(100)",
+      "position": {
+        "x": 1112.4635630556506,
+        "y": 564.4295815567423
+      },
+      "size": {
+        "width": 155.01353454589844,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "a5675e42-6320-4302-88c6-7942effcf089",
+      "type": "attribute",
+      "name": "Telefono: integer",
+      "position": {
+        "x": 1276.0094282721282,
+        "y": 618.7619327528203
+      },
+      "size": {
+        "width": 122.608642578125,
+        "height": 22
+      }
+    },
+    {
+      "id": "19c21090-3aeb-4155-b13f-7e6db9a10fc8",
+      "type": "attribute",
+      "name": "Nombre inquilino: varchar(20)",
+      "position": {
+        "x": 1308.3893143384782,
+        "y": 585.8332350582273
+      },
+      "size": {
+        "width": 150.84857177734375,
+        "height": 22
+      }
+    },
+    {
+      "id": "6aa2855d-e67a-49e9-8b30-f5a810389d56",
+      "type": "attribute",
+      "name": "Datos inquilino: varchar(100)",
+      "position": {
+        "x": 1116.305244453353,
+        "y": 594.6142211101188
+      },
+      "size": {
+        "width": 146.7096405029297,
+        "height": 22
+      }
+    },
+    {
+      "id": "cf6b8882-4a35-40c2-8843-070c313cea68",
+      "type": "attribute",
+      "name": "Numero cuenta: integer",
+      "position": {
+        "x": 1105.8778235167324,
+        "y": 533.6961303751224
+      },
+      "size": {
+        "width": 122.49727168745085,
+        "height": 21.97932418284174
+      }
+    },
+    {
+      "id": "d627351f-36e9-4b23-abaf-f04e7e7eaeb5",
+      "type": "attribute",
+      "name": "Importe: float",
+      "position": {
+        "x": 413.27754867379747,
+        "y": 694.4979374503836
+      },
+      "size": {
+        "width": 72.55508422851562,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "199e7429-148a-4f83-ba8a-faf5c9c201a6",
+      "type": "attribute",
+      "name": "Fecha: date",
+      "position": {
+        "x": 464.86584172865975,
+        "y": 724.6825770037603
+      },
+      "size": {
+        "width": 66.31836700439453,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "7d253d09-415a-4bc2-a6cd-45d0d6433a58",
+      "type": "attribute",
+      "name": "Estado: varchar(20)",
+      "position": {
+        "x": 537.3089766567638,
+        "y": 714.8039676953824
+      },
+      "size": {
+        "width": 121.8239974975586,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "da7f5c80-e4e0-41fa-96a5-ba488c66758f",
+      "type": "attribute",
+      "name": "Tipo comercio: varchar(20)",
+      "position": {
+        "x": 1175.5769003036198,
+        "y": 758.7088979548391
+      },
+      "size": {
+        "width": 137.40093231201172,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "54548d2d-7af7-46cd-b281-21849037e47a",
+      "type": "attribute",
+      "name": "Horario: date",
+      "position": {
+        "x": 1242.5319189492918,
+        "y": 793.8328421624046
+      },
+      "size": {
+        "width": 71.63840866088867,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "014d5838-599b-494c-9f76-96b09435d46d",
+      "type": "attribute",
+      "name": "Actividad: varchar(20)",
+      "position": {
+        "x": 952.2105676086321,
+        "y": 830.0544096264571
+      },
+      "size": {
+        "width": 114.7617416381836,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "65918c10-b64f-4204-8769-274819e1ff70",
+      "type": "attribute",
+      "name": "Num habitaciones: integer",
+      "position": {
+        "x": 703.0500883862135,
+        "y": 749.9279119029477
+      },
+      "size": {
+        "width": 134.27202606201172,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "3ca3aa08-3343-4f9f-8d01-f2c771eebc8c",
+      "type": "keyAttribute",
+      "name": "Num colegiado: integer",
+      "position": {
+        "x": 519.1981929247388,
+        "y": 155.01610688730543
+      },
+      "size": {
+        "width": 120.8343505859375,
+        "height": 22
+      }
+    },
+    {
+      "id": "14cc1097-b006-474d-aeb0-520b355ecc94",
+      "type": "keyAttribute",
+      "name": "Cod comunidad: integer",
+      "position": {
+        "x": 946.7224513261964,
+        "y": 238.4354743802736
+      },
+      "size": {
+        "width": 124.39329528808594,
+        "height": 22
+      }
+    },
+    {
+      "id": "aff471ef-9adb-4878-9e84-f40493718bbf",
+      "type": "keyAttribute",
+      "name": "CIF: varchar(20)",
+      "position": {
+        "x": 375.4095463250169,
+        "y": 293.3166372045951
+      },
+      "size": {
+        "width": 88.014892578125,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "5b02782c-c80a-4fad-90c1-dbee9e05c86f",
+      "type": "keyAttribute",
+      "name": "Num recibo: integer",
+      "position": {
+        "x": 577.3722255185194,
+        "y": 347.10017677242985
+      },
+      "size": {
+        "width": 103.44087982177734,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "f070c06a-222b-4943-82ad-9b20c5a75360",
+      "type": "keyAttribute",
+      "name": "Cod banco: integer",
+      "position": {
+        "x": 392.4227068005565,
+        "y": 462.899430331748
+      },
+      "size": {
+        "width": 100.4993896484375,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "b9058d6c-caf9-4d3d-a3ff-a99ab56b092b",
+      "type": "keyAttribute",
+      "name": "Id Cuenta: integer",
+      "position": {
+        "x": 666.8285209221625,
+        "y": 581.4427420322819
+      },
+      "size": {
+        "width": 95.16302490234375,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "f416e553-bcf8-4f51-bd28-f5ca9a591d99",
+      "type": "keyAttribute",
+      "name": "Id propiedad: integer",
+      "position": {
+        "x": 822.1422117149915,
+        "y": 570.4665094674175
+      },
+      "size": {
+        "width": 108.20977783203125,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "8e11ac76-5213-4e67-b2f4-ee3d165a80c8",
+      "type": "keyAttribute",
+      "name": "Num recibo: integer",
+      "position": {
+        "x": 401.7525044806905,
+        "y": 660.4716164993044
+      },
+      "size": {
+        "width": 103.44087982177734,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "0a02558a-c3d6-4bc5-9c28-f047b7701ab8",
+      "type": "alternativeKeyAttribute",
+      "name": "DNI: varchar(10)",
+      "position": {
+        "x": 620.17953252149,
+        "y": 131.4172068728473
+      },
+      "size": {
+        "width": 89.201904296875,
+        "height": 22
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "855c28c4-463e-4ac0-be24-416eaa93902d",
+      "sourceTaskId": "9ef0ed27-ef5b-4d8c-965a-f4f037615cfc",
+      "targetTaskId": "3ca3aa08-3343-4f9f-8d01-f2c771eebc8c"
+    },
+    {
+      "id": "1d9e4ebf-01eb-405b-a98a-b9cf5897684b",
+      "sourceTaskId": "0a02558a-c3d6-4bc5-9c28-f047b7701ab8",
+      "targetTaskId": "9ef0ed27-ef5b-4d8c-965a-f4f037615cfc"
+    },
+    {
+      "id": "db7fe20d-0ed5-454a-ac4d-202d37f20d4b",
+      "sourceTaskId": "9ef0ed27-ef5b-4d8c-965a-f4f037615cfc",
+      "targetTaskId": "cfc57f92-ca82-48cd-a41d-768279fea046"
+    },
+    {
+      "id": "9573e3f0-7605-44f4-8a10-90896556359d",
+      "sourceTaskId": "e44ee520-3daa-4a1c-884c-7c7c9012ea0b",
+      "targetTaskId": "e560ce25-4112-4c46-a5d9-f278c49d7900"
+    },
+    {
+      "id": "353113bf-007c-4d32-9f24-f6e931a6ef3e",
+      "sourceTaskId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "targetTaskId": "14cc1097-b006-474d-aeb0-520b355ecc94"
+    },
+    {
+      "id": "a09a0a73-676c-4eba-9c22-61cef88a3a0a",
+      "sourceTaskId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "targetTaskId": "259ce75e-5bc4-4d7d-bc78-8cefb057403c"
+    },
+    {
+      "id": "88e49a0a-84b8-4f10-9408-a87ae705bcbe",
+      "sourceTaskId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "targetTaskId": "dae95c0d-4b7d-4886-9521-0a3268e70e69"
+    },
+    {
+      "id": "0591c992-0765-4f6e-afeb-c3b341dccfe5",
+      "sourceTaskId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "targetTaskId": "50a6b321-5e57-4d31-a9be-77cfca9655d3"
+    },
+    {
+      "id": "05798200-44f9-4c10-bb2b-8d0adfc51ba3",
+      "sourceTaskId": "508776dd-bdfa-4af8-a6c4-f713410f791a",
+      "targetTaskId": "23277a21-d019-441b-ae84-1795b958fbab"
+    },
+    {
+      "id": "ee7c4373-a859-4ac7-b57a-fb1c15bb6b34",
+      "sourceTaskId": "01a5d788-7c45-45d8-b93f-4786a4809d9c",
+      "targetTaskId": "21301e27-91c7-4b26-ade0-3f90b66fe8a5"
+    },
+    {
+      "id": "f12fefe5-1f67-49a6-a6e9-75bc6d718013",
+      "sourceTaskId": "d5a3dde8-f67b-4ba4-a813-356bf3a074d9",
+      "targetTaskId": "01a5d788-7c45-45d8-b93f-4786a4809d9c"
+    },
+    {
+      "id": "5516952d-43b5-4765-9df5-8faaf030c60c",
+      "sourceTaskId": "01a5d788-7c45-45d8-b93f-4786a4809d9c",
+      "targetTaskId": "9f13867b-4818-4d74-b83a-cbc91fbabe55"
+    },
+    {
+      "id": "dbd327d8-5402-499b-ad27-bd6e7af37a8a",
+      "sourceTaskId": "01a5d788-7c45-45d8-b93f-4786a4809d9c",
+      "targetTaskId": "aff471ef-9adb-4878-9e84-f40493718bbf"
+    },
+    {
+      "id": "294ab996-2816-43dd-9b5e-512510f52699",
+      "sourceTaskId": "3e67034c-88a2-4c23-8b2c-82a32f866b3f",
+      "targetTaskId": "01a5d788-7c45-45d8-b93f-4786a4809d9c"
+    },
+    {
+      "id": "e7b9655a-00fd-4ae6-bed1-141f344ea1ab",
+      "sourceTaskId": "5b02782c-c80a-4fad-90c1-dbee9e05c86f",
+      "targetTaskId": "0f1424bf-408f-4680-b988-1e324330b29a"
+    },
+    {
+      "id": "03df533f-8fac-41b6-b3cd-e980bc10228b",
+      "sourceTaskId": "9244d74e-c19b-4c2e-9a08-72f8877406ea",
+      "targetTaskId": "0f1424bf-408f-4680-b988-1e324330b29a"
+    },
+    {
+      "id": "6e980131-a43d-4b52-a6df-f764c2be7980",
+      "sourceTaskId": "3cf39076-1890-486f-95f0-ea129020b90f",
+      "targetTaskId": "0f1424bf-408f-4680-b988-1e324330b29a"
+    },
+    {
+      "id": "737fbb44-3bdc-4e72-8e04-b3cb2da43f0d",
+      "sourceTaskId": "f070c06a-222b-4943-82ad-9b20c5a75360",
+      "targetTaskId": "99c732e5-8a9e-496c-8719-ee487f6d813f"
+    },
+    {
+      "id": "10a99512-5ad4-4092-9e3e-a6e4d90c7825",
+      "sourceTaskId": "fe510944-e0fd-4a71-96b9-17097ba215a2",
+      "targetTaskId": "99c732e5-8a9e-496c-8719-ee487f6d813f"
+    },
+    {
+      "id": "ac25bfcd-7a8c-4e1a-aa98-1c316581a882",
+      "sourceTaskId": "ed0c5554-41f2-4942-a864-2fa265a038db",
+      "targetTaskId": "99c732e5-8a9e-496c-8719-ee487f6d813f"
+    },
+    {
+      "id": "b356355b-b2b2-4eca-bc6b-8b5e55207396",
+      "sourceTaskId": "61dabf7c-1605-4a5a-8212-904263ce86cf",
+      "targetTaskId": "23241d6b-ad8a-40d0-a066-e770b01de792"
+    },
+    {
+      "id": "8b07abc9-7faf-4829-8105-55edd91f8ec4",
+      "sourceTaskId": "8018b057-8ec4-40cc-bb89-76941ec96753",
+      "targetTaskId": "b9058d6c-caf9-4d3d-a3ff-a99ab56b092b"
+    },
+    {
+      "id": "3db9d457-2e7e-4d4f-a04f-0d1ccb8dd9af",
+      "sourceTaskId": "b7b02be4-b9ac-4927-b3f9-df38427cf7a7",
+      "targetTaskId": "8d6b3259-a2a3-4dfe-bd27-86513ac0293d"
+    },
+    {
+      "id": "23177cde-1d93-4da6-a589-330a0a18d50c",
+      "sourceTaskId": "8d6b3259-a2a3-4dfe-bd27-86513ac0293d",
+      "targetTaskId": "bcc216df-3adf-43a1-9b8c-3cb6331b9f38"
+    },
+    {
+      "id": "184d0bb9-8ee9-4fc5-8636-eab3744f6b7f",
+      "sourceTaskId": "8d6b3259-a2a3-4dfe-bd27-86513ac0293d",
+      "targetTaskId": "29b89a21-7d2e-48b7-9d9f-e2602b2c447b"
+    },
+    {
+      "id": "c79647b5-f194-46ce-91aa-165318db417d",
+      "sourceTaskId": "8d6b3259-a2a3-4dfe-bd27-86513ac0293d",
+      "targetTaskId": "61dabf7c-1605-4a5a-8212-904263ce86cf"
+    },
+    {
+      "id": "6881b7dd-f83a-47ec-956f-a966543e71d5",
+      "sourceTaskId": "afc0a11d-7131-4863-9547-854b6be17893",
+      "targetTaskId": "f416e553-bcf8-4f51-bd28-f5ca9a591d99"
+    },
+    {
+      "id": "05f1f252-75a2-4cd1-b3f9-a2cf71770416",
+      "sourceTaskId": "da32a222-7e41-45a0-9fae-f57663967eed",
+      "targetTaskId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff"
+    },
+    {
+      "id": "2d28ef75-3979-45c8-aec8-f9bd47d77303",
+      "sourceTaskId": "076f7c0e-57f8-4f2b-8aca-ac523e6c9073",
+      "targetTaskId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff"
+    },
+    {
+      "id": "1e4a0200-002f-4614-a263-8204e149498a",
+      "sourceTaskId": "dfaad7cd-89c0-4f6e-a329-77b0877f9e73",
+      "targetTaskId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff"
+    },
+    {
+      "id": "dfafd59f-bb36-4dd5-abe1-d319345214ec",
+      "sourceTaskId": "f63f6c8c-2815-40c5-94a3-7b0a0e2cbfce",
+      "targetTaskId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff"
+    },
+    {
+      "id": "eabc7315-2e33-4dba-811d-42bc79aae803",
+      "sourceTaskId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff",
+      "targetTaskId": "cf6b8882-4a35-40c2-8843-070c313cea68"
+    },
+    {
+      "id": "c33f52d9-59ab-4b74-9d64-49fbfcf72324",
+      "sourceTaskId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff",
+      "targetTaskId": "e4283b7a-3a49-44a2-8663-033eb55b7367"
+    },
+    {
+      "id": "9581a8bb-5646-46fb-b97b-3b97bbb723e6",
+      "sourceTaskId": "6aa2855d-e67a-49e9-8b30-f5a810389d56",
+      "targetTaskId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff"
+    },
+    {
+      "id": "378c01ee-b1ea-4e3a-aa6c-f64b4d5f1df8",
+      "sourceTaskId": "bdcb335e-9d8d-4325-b99c-1de8734d71fc",
+      "targetTaskId": "e4283b7a-3a49-44a2-8663-033eb55b7367"
+    },
+    {
+      "id": "f7dbdcc6-95ac-4c47-9803-e88a168c16ed",
+      "sourceTaskId": "e4283b7a-3a49-44a2-8663-033eb55b7367",
+      "targetTaskId": "acba465d-3c94-4318-84e0-f3ec6444ed0b"
+    },
+    {
+      "id": "5b86ae18-af5b-4334-a648-a4e05e554978",
+      "sourceTaskId": "3ba70579-c8ca-4f81-9125-be85cb7217fd",
+      "targetTaskId": "e4283b7a-3a49-44a2-8663-033eb55b7367"
+    },
+    {
+      "id": "61fb0761-4012-4971-8e12-9142d41313ae",
+      "sourceTaskId": "19c21090-3aeb-4155-b13f-7e6db9a10fc8",
+      "targetTaskId": "6aa2855d-e67a-49e9-8b30-f5a810389d56"
+    },
+    {
+      "id": "9bb6952d-c0a3-46b1-a92e-26f2fb708f4c",
+      "sourceTaskId": "6aa2855d-e67a-49e9-8b30-f5a810389d56",
+      "targetTaskId": "a5675e42-6320-4302-88c6-7942effcf089"
+    },
+    {
+      "id": "5ff9961b-f48c-4972-89ca-07eeef7d9b95",
+      "sourceTaskId": "8e11ac76-5213-4e67-b2f4-ee3d165a80c8",
+      "targetTaskId": "4c51962f-c9b8-436c-aed1-db945047d0be"
+    },
+    {
+      "id": "741c7b9f-a9fd-4dd8-a926-10f096a80bd9",
+      "sourceTaskId": "d627351f-36e9-4b23-abaf-f04e7e7eaeb5",
+      "targetTaskId": "4c51962f-c9b8-436c-aed1-db945047d0be"
+    },
+    {
+      "id": "dc6ec086-a77e-4d2f-b71a-46711b8a424e",
+      "sourceTaskId": "199e7429-148a-4f83-ba8a-faf5c9c201a6",
+      "targetTaskId": "4c51962f-c9b8-436c-aed1-db945047d0be"
+    },
+    {
+      "id": "a20ba62b-6d95-4ed6-951f-d1fc6fa1b940",
+      "sourceTaskId": "7d253d09-415a-4bc2-a6cd-45d0d6433a58",
+      "targetTaskId": "4c51962f-c9b8-436c-aed1-db945047d0be"
+    },
+    {
+      "id": "c121d124-adfd-4880-886d-4bea89bc187a",
+      "sourceTaskId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff",
+      "targetTaskId": "062fd12d-8014-4800-834b-332717fa4f7c"
+    },
+    {
+      "id": "0b3a95ab-5d40-4816-9800-1703dfb21057",
+      "sourceTaskId": "062fd12d-8014-4800-834b-332717fa4f7c",
+      "targetTaskId": "93e61004-8bd0-4dc2-a709-7f0958d88def"
+    },
+    {
+      "id": "bb4158b7-ef5e-4f67-be4c-8a5ad21d1bf5",
+      "sourceTaskId": "062fd12d-8014-4800-834b-332717fa4f7c",
+      "targetTaskId": "2456ced0-9c00-4347-8d70-b9fe4376e031"
+    },
+    {
+      "id": "7d952f55-6636-4246-a801-73214d2ff75e",
+      "sourceTaskId": "062fd12d-8014-4800-834b-332717fa4f7c",
+      "targetTaskId": "37cffe20-7086-4a0b-8a29-ccd311a3bdef"
+    },
+    {
+      "id": "376767df-f920-4430-bdb3-b6738bf0cdc7",
+      "sourceTaskId": "37cffe20-7086-4a0b-8a29-ccd311a3bdef",
+      "targetTaskId": "da7f5c80-e4e0-41fa-96a5-ba488c66758f"
+    },
+    {
+      "id": "6dbdc9af-b010-4e45-90e7-1ffd5d8d3107",
+      "sourceTaskId": "37cffe20-7086-4a0b-8a29-ccd311a3bdef",
+      "targetTaskId": "54548d2d-7af7-46cd-b281-21849037e47a"
+    },
+    {
+      "id": "48bdd1b6-6f59-4191-853a-b785ede8f7e7",
+      "sourceTaskId": "014d5838-599b-494c-9f76-96b09435d46d",
+      "targetTaskId": "2456ced0-9c00-4347-8d70-b9fe4376e031"
+    },
+    {
+      "id": "5208d473-5b12-4f3d-94f1-92fd40a494d4",
+      "sourceTaskId": "65918c10-b64f-4204-8769-274819e1ff70",
+      "targetTaskId": "93e61004-8bd0-4dc2-a709-7f0958d88def"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "405dd9bb-0fff-4ba7-9c6a-0dca306e1335",
+      "type": "edge:weighted",
+      "sourceId": "9ef0ed27-ef5b-4d8c-965a-f4f037615cfc",
+      "targetId": "e44ee520-3daa-4a1c-884c-7c7c9012ea0b",
+      "description": "(1..1)"
+    },
+    {
+      "id": "4ebb4632-6096-43f2-88f5-b0b19abd5129",
+      "type": "edge:weighted",
+      "sourceId": "e44ee520-3daa-4a1c-884c-7c7c9012ea0b",
+      "targetId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "description": "(0..N)"
+    },
+    {
+      "id": "ca5849f3-a35a-45e0-aa7c-c8fcafeb08dd",
+      "type": "edge:weighted",
+      "sourceId": "01a5d788-7c45-45d8-b93f-4786a4809d9c",
+      "targetId": "fd26db92-09e5-4005-8a3b-e042328a0d44",
+      "description": "(0..N)"
+    },
+    {
+      "id": "cfc3e85d-12d1-45f2-8a8f-629d2a6ec45e",
+      "type": "edge:weighted",
+      "sourceId": "fd26db92-09e5-4005-8a3b-e042328a0d44",
+      "targetId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "description": "(1..N)"
+    },
+    {
+      "id": "6ee93c6f-d7d8-4efe-b7b9-d6893422a227",
+      "type": "edge:weighted",
+      "sourceId": "12539aac-a48c-451d-b85f-248980d4c29a",
+      "targetId": "01a5d788-7c45-45d8-b93f-4786a4809d9c",
+      "description": "(1..1)"
+    },
+    {
+      "id": "0b33464a-2dbc-41eb-b560-efc11a5b2161",
+      "type": "edge:weighted",
+      "sourceId": "12539aac-a48c-451d-b85f-248980d4c29a",
+      "targetId": "0f1424bf-408f-4680-b988-1e324330b29a",
+      "description": "(0..N)"
+    },
+    {
+      "id": "0e45b86c-b49f-4109-845c-8621bb2d2b7f",
+      "type": "edge:weighted",
+      "sourceId": "0f1424bf-408f-4680-b988-1e324330b29a",
+      "targetId": "d0139fde-741a-4537-bcb2-010f4c67a8e3",
+      "description": "(0..N)"
+    },
+    {
+      "id": "42600ac2-d46f-4329-8bd9-e12aee8f6a30",
+      "type": "edge:weighted",
+      "sourceId": "d0139fde-741a-4537-bcb2-010f4c67a8e3",
+      "targetId": "61dabf7c-1605-4a5a-8212-904263ce86cf",
+      "description": "(1..1)"
+    },
+    {
+      "id": "ff021323-197a-44ce-a095-20b5731c3099",
+      "type": "edge:weighted",
+      "sourceId": "4a1c96e8-19fb-4cd2-82cf-057a5bac6d53",
+      "targetId": "61dabf7c-1605-4a5a-8212-904263ce86cf",
+      "description": "(1..1)"
+    },
+    {
+      "id": "3bf6efa9-961c-4155-95f3-1b1fc08fa252",
+      "type": "edge:weighted",
+      "sourceId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "targetId": "4a1c96e8-19fb-4cd2-82cf-057a5bac6d53",
+      "description": "(1..1)"
+    },
+    {
+      "id": "18cac9f7-1e37-4d30-888b-b250e1dd910a",
+      "type": "edge:weighted",
+      "sourceId": "99c732e5-8a9e-496c-8719-ee487f6d813f",
+      "targetId": "8018b057-8ec4-40cc-bb89-76941ec96753",
+      "description": "(1..1)"
+    },
+    {
+      "id": "67bf11b3-6aa7-4cf3-813c-60d4a8c18843",
+      "type": "edge:weighted",
+      "sourceId": "8018b057-8ec4-40cc-bb89-76941ec96753",
+      "targetId": "61dabf7c-1605-4a5a-8212-904263ce86cf",
+      "description": "(1..N)"
+    },
+    {
+      "id": "e753d5e5-7db7-48ec-8855-0eb0678a36b3",
+      "type": "edge:weighted",
+      "sourceId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "targetId": "afc0a11d-7131-4863-9547-854b6be17893",
+      "description": "(1..1)"
+    },
+    {
+      "id": "6d906209-f2c6-44ec-8c92-3f9cd79defea",
+      "type": "edge:weighted",
+      "sourceId": "afc0a11d-7131-4863-9547-854b6be17893",
+      "targetId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff",
+      "description": "(1..N)"
+    },
+    {
+      "id": "0ee1cd7c-97a8-4ec1-a3fa-fca6611a37b8",
+      "type": "edge:weighted",
+      "sourceId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "targetId": "7bd0ec5a-4110-41c0-9f8d-9e3c74dbdac4",
+      "description": "(0..1)"
+    },
+    {
+      "id": "eb5386ef-898c-4d3a-9dd4-1106a4de5216",
+      "type": "edge:weighted",
+      "sourceId": "23277a21-d019-441b-ae84-1795b958fbab",
+      "targetId": "4fddbebc-aeec-4b18-82ec-1ba47a19a981",
+      "description": "(0..1)"
+    },
+    {
+      "id": "f1e3c9ac-3e76-41f1-9c69-0e216b5c18e8",
+      "type": "edge:weighted",
+      "sourceId": "7bd0ec5a-4110-41c0-9f8d-9e3c74dbdac4",
+      "targetId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff",
+      "description": "(1..1)"
+    },
+    {
+      "id": "df7cdb1e-d95d-4f69-a118-43004bf865a0",
+      "type": "edge:weighted",
+      "sourceId": "4fddbebc-aeec-4b18-82ec-1ba47a19a981",
+      "targetId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff",
+      "description": "(1..N)"
+    },
+    {
+      "id": "95769099-c0e8-438d-b4be-587a463bc413",
+      "type": "edge:weighted",
+      "sourceId": "4c51962f-c9b8-436c-aed1-db945047d0be",
+      "targetId": "5e572978-77a5-4516-a824-719931539726",
+      "description": "(1..N)"
+    },
+    {
+      "id": "2ec66a22-a4a0-4608-9626-020906e6735b",
+      "type": "edge:weighted",
+      "sourceId": "5e572978-77a5-4516-a824-719931539726",
+      "targetId": "f93a60b0-e85b-46f5-be0c-c3b27e2eefff",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": []
+}
