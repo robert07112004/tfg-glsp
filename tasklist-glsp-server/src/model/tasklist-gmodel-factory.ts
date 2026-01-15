@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -48,7 +48,9 @@ export class TaskListGModelFactory implements GModelFactory {
         const childEdges = [
             ...taskList.transitions.map(transition => this.createTransitionEdge(transition)),
             ...taskList.weightedEdges.map(weightedEdge => this.createWeightedEdge(weightedEdge)),
-            ...taskList.optionalAttributeEdges.map(optionalAttributeEdge => this.createOptionalAttributeEdge(optionalAttributeEdge))
+            ...taskList.optionalAttributeEdges.map(optionalAttributeEdge => this.createOptionalAttributeEdge(optionalAttributeEdge)),
+            ...(taskList.exclusionEdges || []).map(edge => this.createExclusionEdge(edge)),
+            ...taskList.inclusionEdges.map(inclusionEdge => this.createInclusionEdge(inclusionEdge))
         ]
 
         this.preprocessParallelEdges(childEdges, childNodes);
@@ -447,6 +449,38 @@ export class TaskListGModelFactory implements GModelFactory {
             .build();
     }
  
+    protected createExclusionEdge(exclusionEdge: ExclusionEdge): GEdge {
+        return GEdge.builder()
+            .id(exclusionEdge.id)
+            .type('edge:exclusion')
+            .addCssClass('exclusion-edge')
+            .sourceId(exclusionEdge.sourceId)
+            .targetId(exclusionEdge.targetId)
+            .add(GLabel.builder()
+                .id(`${exclusionEdge.id}_label`)
+                .type('label:static')
+                .text('Exclusion')
+                .addCssClass('exclusion-label')
+                .build())
+            .build();
+    }
+
+    protected createInclusionEdge(inclusionEdge: InclusionEdge): GEdge {
+        return GEdge.builder()
+            .id(inclusionEdge.id)
+            .type('edge:inclusion')
+            .addCssClass('inclusion-edge')
+            .sourceId(inclusionEdge.sourceId)
+            .targetId(inclusionEdge.targetId)
+            .add(GLabel.builder()
+                .id(`${inclusionEdge.id}_label`)
+                .type('label:static')
+                .text('Inclusion')
+                .addCssClass('inclusion-label')
+                .build())
+            .build();
+    }
+
     /**
      * Detecta aristas que conectan los mismos nodos (paralelas) y añade puntos de enrutamiento
      * para separarlas visualmente.

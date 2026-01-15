@@ -40,6 +40,8 @@ export interface TaskList {
     transitions: Transition[];
     weightedEdges: WeightedEdge[];
     optionalAttributeEdges: OptionalAttributeEdge[];
+    exclusionEdges: ExclusionEdge[];
+    inclusionEdges: InclusionEdge[];
 }
 
 export namespace TaskList {
@@ -395,6 +397,44 @@ export namespace OptionalAttributeEdge {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as OptionalAttributeEdge).type === 'edge:optional' &&
+            hasStringProp(object, 'sourceId') &&
+            hasStringProp(object, 'targetId')
+        );
+    }
+}
+
+export interface ExclusionEdge {
+    id: string;
+    type: 'edge:exclusion';
+    sourceId: string;
+    targetId: string;
+}
+
+export namespace ExclusionEdge {
+    export function is(object: any): object is ExclusionEdge {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as ExclusionEdge).type === 'edge:exclusion' &&
+            hasStringProp(object, 'sourceId') &&
+            hasStringProp(object, 'targetId')
+        );
+    }
+}
+
+export interface InclusionEdge {
+    id: string;
+    type: 'edge:inclusion';
+    sourceId: string;
+    targetId: string;
+}
+
+export namespace InclusionEdge {
+    export function is(object: any): object is InclusionEdge {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as InclusionEdge).type === 'edge:inclusion' && 
             hasStringProp(object, 'sourceId') &&
             hasStringProp(object, 'targetId')
         );

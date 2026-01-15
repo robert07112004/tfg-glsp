@@ -1,0 +1,9 @@
+22:05:19 info -  [SocketServerLauncher] The GLSP server is ready to accept new client requests on port: 55330 
+22:05:19 info -  [SocketServerLauncher] Starting GLSP server connection 
+22:05:19 info -  [DefaultGLSPServer] Initializing server with: applicationId: b646df62-388b-45b2-a12b-91cf003d24f0, protocolVersion: 1.0.0 
+22:05:21 info -  [DefaultGLSPServer] Initializing client session with: clientSessionId: 'tasklist-diagram_0', diagramType: 'tasklist-diagram' 
+22:05:21 info -  [DefaultGLSPServer] process [action=requestModel, clientId=tasklist-diagram_0] 
+22:05:21 error -  [DefaultGLSPServer] Could not process action: 'requestModel 
+22:05:21 error -  [DefaultGLSPServer] TypeError: taskList.exclusionEdges is not iterable 
+22:05:21 info -  [DefaultGLSPServer] process [action=requestTypeHints, clientId=tasklist-diagram_0] 
+22:05:21 info -  [DefaultGLSPServer] process [action=requestContextActions, clientId=tasklist-diagram_0] 

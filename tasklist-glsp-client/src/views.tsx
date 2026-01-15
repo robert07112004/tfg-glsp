@@ -5,6 +5,7 @@ import {
     GNode,
     IView,
     Point,
+    PolylineEdgeView,
     PolylineEdgeViewWithGapsOnIntersections,
     RenderingContext,
     svg,
@@ -17,10 +18,8 @@ import { VNode } from 'snabbdom';
 export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
     protected override renderAdditionals(edge: GEdge, segments: Point[], context: RenderingContext): VNode[] {
         const additionals = super.renderAdditionals(edge, segments, context);
-
         const p1 = segments[segments.length - 2];
         const p2 = segments[segments.length - 1];
-
         const arrow = (
             <path
                 class-sprotty-edge={true}
@@ -32,6 +31,27 @@ export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
     }
 }
 
+@injectable()
+export class InclusionEdgeView extends PolylineEdgeView {
+    protected override renderAdditionals(edge: GEdge, segments: Point[], context: RenderingContext): VNode[] {
+        const additionals = super.renderAdditionals(edge, segments, context);
+        const p1 = segments[segments.length - 2];
+        const p2 = segments[segments.length - 1];
+        if (p1 && p2) {
+            const angle = toDegrees(angleOfPoint(Point.subtract(p1, p2)));
+            const arrow = (
+                <path
+                    class-sprotty-edge={true}
+                    class-inclusion-arrow={true}
+                    d="M 0,0 L 10,-4 L 10,4 Z"
+                    transform={`rotate(${angle} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}
+                />
+            );
+            additionals.push(arrow);
+        }
+        return additionals;
+    }
+}
 
 @injectable()
 export class AttributeView implements IView {

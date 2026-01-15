@@ -25,7 +25,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
@@ -74,7 +74,8 @@ export class DeleteElementHandler extends JsonOperationHandler {
 
     private deleteModelElement(modelElement: Task | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization | 
                                              TotalExclusiveSpecialization | PartialOverlappedSpecialization | TotalOverlappedSpecialization | Attribute | MultiValuedAttribute | 
-                                             DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge | OptionalAttributeEdge | undefined): void {
+                                             DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge | OptionalAttributeEdge |
+                                             ExclusionEdge | InclusionEdge | undefined): void {
         if (Task.is(modelElement)) {
             remove(this.modelState.sourceModel.tasks, modelElement);
         } else if (WeakEntity.is(modelElement)) {
@@ -109,6 +110,10 @@ export class DeleteElementHandler extends JsonOperationHandler {
             remove(this.modelState.sourceModel.weightedEdges, modelElement);
         } else if (OptionalAttributeEdge.is(modelElement)) {
             remove(this.modelState.sourceModel.optionalAttributeEdges, modelElement)
+        } else if (ExclusionEdge.is(modelElement)) {
+            remove(this.modelState.sourceModel.exclusionEdges, modelElement);
+        } else if (InclusionEdge.is(modelElement)) {
+            remove(this.modelState.sourceModel.inclusionEdges, modelElement);
         }
     }
 }

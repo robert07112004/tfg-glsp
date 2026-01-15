@@ -30,6 +30,8 @@ import {
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
+import { CreateExclusionEdgeHandler } from '../handler/edge-handlers/create-exclusion-edge-handler';
+import { CreateInclusionEdgeHandler } from '../handler/edge-handlers/create-inclusion-edge-handler';
 import { CreateOptionalAttributeEdgeHandler } from '../handler/edge-handlers/create-optional-attribute-edge-handler';
 import { CreateTransitionHandler } from '../handler/edge-handlers/create-transition-handler';
 import { CreateWeightedEdgeHandler } from '../handler/edge-handlers/create-weighted-edge-handler';
@@ -115,6 +117,8 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateTransitionHandler);
         binding.add(CreateWeightedEdgeHandler);
         binding.add(CreateOptionalAttributeEdgeHandler);
+        binding.add(CreateExclusionEdgeHandler);
+        binding.add(CreateInclusionEdgeHandler);
         binding.add(TaskListChangeBoundsHandler);
         binding.add(TaskListApplyLabelEditHandler);
         binding.add(DeleteElementHandler);

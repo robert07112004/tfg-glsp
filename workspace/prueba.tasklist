@@ -1,0 +1,113 @@
+{
+  "id": "df230c46-68e1-4602-944a-33b7cfc79f8b",
+  "tasks": [
+    {
+      "id": "cc0d530c-58d9-41df-b485-fef6ef221b93",
+      "type": "entity",
+      "name": "NewEntityNode1",
+      "position": {
+        "x": 124,
+        "y": 207
+      },
+      "size": {
+        "width": 89.3687515258789,
+        "height": 22
+      }
+    },
+    {
+      "id": "1c74a0e5-a6ea-4a1f-8499-1273328a3814",
+      "type": "entity",
+      "name": "NewEntityNode2",
+      "position": {
+        "x": 367,
+        "y": 217
+      },
+      "size": {
+        "width": 89.4420166015625,
+        "height": 22
+      }
+    },
+    {
+      "id": "35c08a53-cc68-4719-9590-e05437f1ecec",
+      "type": "entity",
+      "name": "NewEntityNode3",
+      "position": {
+        "x": 167,
+        "y": 348
+      }
+    },
+    {
+      "id": "2dda00a9-d2e8-4483-bf79-ec53b6c22450",
+      "type": "entity",
+      "name": "NewEntityNode4",
+      "position": {
+        "x": 385,
+        "y": 357
+      }
+    },
+    {
+      "id": "ace56b32-0899-44be-bad1-6e230a9b6a07",
+      "type": "entity",
+      "name": "NewEntityNode5",
+      "position": {
+        "x": 373.93220962444525,
+        "y": 464.2607653242694
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "d4e7e392-fede-44cb-9cb2-e445616b9244",
+      "type": "relation",
+      "name": "NewRelationNode1",
+      "cardinality": "-",
+      "position": {
+        "x": 574.4572538175528,
+        "y": 541.5035467075137
+      },
+      "size": {
+        "width": 101.8710708618164,
+        "height": 35
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [],
+  "alternativeKeyAttributes": [],
+  "transitions": [],
+  "weightedEdges": [
+    {
+      "id": "c6fa1103-9b73-42ca-960d-82529ce23195",
+      "type": "edge:weighted",
+      "sourceId": "ace56b32-0899-44be-bad1-6e230a9b6a07",
+      "targetId": "d4e7e392-fede-44cb-9cb2-e445616b9244",
+      "description": "New Weighted Edge"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [
+    {
+      "id": "49ba1e88-c24b-46c8-b80c-d1306efafcc4",
+      "type": "edge:exclusion",
+      "sourceId": "cc0d530c-58d9-41df-b485-fef6ef221b93",
+      "targetId": "1c74a0e5-a6ea-4a1f-8499-1273328a3814"
+    }
+  ],
+  "inclusionEdges": [
+    {
+      "id": "444b12be-62dd-4212-a7c1-f3b02f5d7448",
+      "type": "edge:inclusion",
+      "sourceId": "35c08a53-cc68-4719-9590-e05437f1ecec",
+      "targetId": "2dda00a9-d2e8-4483-bf79-ec53b6c22450"
+    }
+  ]
+}

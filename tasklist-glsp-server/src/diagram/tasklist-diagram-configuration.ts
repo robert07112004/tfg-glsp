@@ -187,6 +187,22 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 routable: false,
                 sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
                 targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
+            },
+            {
+                elementTypeId: 'edge:exclusion',
+                deletable: true,
+                repositionable: false,
+                routable: false,
+                sourceElementTypeIds: [...entityTypes, ...relationTypes],
+                targetElementTypeIds: [...entityTypes, ...relationTypes]
+            },
+            {
+                elementTypeId: 'edge:inclusion',
+                deletable: true,
+                repositionable: false,
+                routable: false,
+                sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
+                targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
             }
         ];
     }

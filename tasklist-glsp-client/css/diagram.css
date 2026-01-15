@@ -179,3 +179,48 @@ svg {
 	stroke: #333;
 	stroke-width: 2px;
 }
+
+.exclusion-edge path {
+	stroke: white;
+	stroke-width: 2px;
+	stroke-dasharray: 5, 5;
+	fill: none;
+}
+
+.exclusion-edge.selected path {
+	stroke: #007bff;
+	stroke-width: 2px;
+	stroke-dasharray: 5, 5;
+}
+
+.exclusion-label {
+	font-weight: bold;
+	font-size: 0.8em;
+	fill: #000;
+}
+
+.inclusion-edge path {
+	stroke: white;
+	stroke-width: 2px;
+	stroke-dasharray: 5, 5;
+	fill: none;
+}
+
+.inclusion-arrow {
+	fill: white;
+	stroke: white;
+	stroke-width: 1px;
+	stroke-dasharray: none !important;
+}
+
+.inclusion-edge.selected path {
+	stroke: #007bff;
+	stroke-width: 2px;
+	stroke-dasharray: 5, 5;
+}
+
+.inclusion-label {
+	font-weight: bold;
+	font-size: 0.8em;
+	fill: #000;
+}
