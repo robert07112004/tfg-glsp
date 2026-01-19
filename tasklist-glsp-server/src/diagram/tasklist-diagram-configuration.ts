@@ -135,6 +135,13 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 reparentable: false,
                 repositionable: true,
                 resizable: true
+            },
+            {
+                elementTypeId: 'port:exclusivity',
+                deletable: false,
+                reparentable: false,
+                repositionable: false,
+                resizable: false
             }
         ];
     }
@@ -203,6 +210,14 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 routable: false,
                 sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
                 targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
+            },
+            {
+                elementTypeId: 'edge:exclusivity',
+                deletable: true,
+                repositionable: false,
+                routable: false,
+                sourceElementTypeIds: ['port:exclusivity'],
+                targetElementTypeIds: ['port:exclusivity']
             }
         ];
     }

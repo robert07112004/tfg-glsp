@@ -25,6 +25,16 @@ svg {
 	fill: inherit;
 }
 
+.entity-node {
+	width: 100px;
+	height: 40px;
+}
+
+.relation-node {
+	width: 60px;
+	height: 60px;
+}
+
 .entity-node>.sprotty-node {
 	fill: #f1bd6c;
 }
@@ -223,4 +233,15 @@ svg {
 	font-weight: bold;
 	font-size: 0.8em;
 	fill: #000;
+}
+
+.exclusivity-edge {
+	stroke: white;
+	stroke-width: 2px;
+	fill: none;
+}
+
+.exclusivity-port {
+	fill: black;
+	r: 3.5;
 }

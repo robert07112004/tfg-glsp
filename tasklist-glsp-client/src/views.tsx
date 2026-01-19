@@ -15,6 +15,21 @@ import { injectable } from 'inversify';
 import { VNode } from 'snabbdom';
 
 @injectable()
+export class ExclusivityPortView implements IView {
+    render(port: GNode, context: RenderingContext): VNode {
+        return <g>
+            <circle
+                class-exclusivity-port={true}
+                class-sprotty-node={true}
+                r={4}
+                cx={0}
+                cy={0}
+            />
+        </g>;
+    }
+}
+
+@injectable()
 export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
     protected override renderAdditionals(edge: GEdge, segments: Point[], context: RenderingContext): VNode[] {
         const additionals = super.renderAdditionals(edge, segments, context);
@@ -29,6 +44,46 @@ export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
         additionals.push(arrow);
         return additionals;
     }
+}
+
+@injectable()
+export class ExclusivityEdgeView extends PolylineEdgeView {
+    protected override renderLine(edge: GEdge, segments: Point[], context: RenderingContext): VNode {
+        if (segments.length < 2) {
+            return <g/>;
+        }
+        if (segments.length === 2) {
+            const p1 = segments[0];
+            const p2 = segments[1];
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            const offset = 20; 
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const nx = -(dy / length) * offset;
+            const ny = (dx / length) * offset;
+            const controlPoint = {
+                x: midX + nx,
+                y: midY + ny
+            };
+            const pathData = `M ${p1.x},${p1.y} Q ${controlPoint.x},${controlPoint.y} ${p2.x},${p2.y}`;
+            return <path
+                class-sprotty-edge={true}
+                class-exclusivity-edge={true}
+                d={pathData}
+                fill="none"
+            />;
+        }
+        return super.renderLine(edge, segments, context);
+    }
+    /*
+    protected override renderAdditionals(edge: GEdge, segments: Point[], context: RenderingContext): VNode[] {
+        const additionals = super.renderAdditionals(edge, segments, context);
+        // Aquí puedes añadir flechas o símbolos adicionales al final de la curva si lo necesitas
+        return additionals;
+    }
+    */
 }
 
 @injectable()

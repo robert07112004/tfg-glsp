@@ -14,9 +14,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
  ********************************************************************************/
-import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
+import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode, GPort } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExclusionEdge, ExclusivityEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -50,10 +50,12 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.weightedEdges.map(weightedEdge => this.createWeightedEdge(weightedEdge)),
             ...taskList.optionalAttributeEdges.map(optionalAttributeEdge => this.createOptionalAttributeEdge(optionalAttributeEdge)),
             ...(taskList.exclusionEdges || []).map(edge => this.createExclusionEdge(edge)),
-            ...taskList.inclusionEdges.map(inclusionEdge => this.createInclusionEdge(inclusionEdge))
+            ...taskList.inclusionEdges.map(inclusionEdge => this.createInclusionEdge(inclusionEdge)),
+            ...(taskList.exclusivityEdges || []).map(exclusivityEdge => this.createExclusivityEdge(exclusivityEdge))
         ]
 
         this.preprocessParallelEdges(childEdges, childNodes);
+        this.updatePortPositions(childEdges, childNodes);
 
         const newRoot = GGraph.builder()
             .id(taskList.id)
@@ -76,6 +78,8 @@ export class TaskListGModelFactory implements GModelFactory {
 
         if (task.size) {
             builder.addLayoutOptions({ prefWidth: task.size.width, prefHeight: task.size.height });
+        } else {
+            builder.addLayoutOptions({ prefWidth: 100, prefHeight: 40 });
         }
 
         return builder.build();
@@ -121,6 +125,8 @@ export class TaskListGModelFactory implements GModelFactory {
         
         if (relation.size) {
             builder.addLayoutOptions({ prefWidth: relation.size.width, prefHeight: relation.size.height });
+        } else {
+            builder.addLayoutOptions({ prefWidth: 60, prefHeight: 60 });
         }
 
         return builder.build();
@@ -436,7 +442,42 @@ export class TaskListGModelFactory implements GModelFactory {
                     .text(weightedEdge.description ?? '')
                     .build()
             )
+            .add(
+                GPort.builder()
+                    .id(`${weightedEdge.id}_port`)
+                    .type('port:exclusivity')
+                    .build()
+            )
             .build();
+    }
+
+    private updatePortPositions(edges: GEdge[], nodes: GNode[]): void {
+        const ENTITY_WIDTH = 100;
+        const ENTITY_HEIGHT = 40;
+        const RELATION_SIZE = 60;
+        const nodeMap = new Map<string, GNode>(nodes.map(n => [n.id, n]));
+        const t = 0.3;
+        edges.forEach(edge => {
+            if (edge.type === 'edge:weighted') {
+                const source = nodeMap.get(edge.sourceId);
+                const target = nodeMap.get(edge.targetId);
+                const port = edge.children?.find(c => c.type === 'port:exclusivity') as GPort;
+                if (source?.position && target?.position && port) {
+                    const sCenter = {
+                        x: source.position.x + (source.size?.width ?? ENTITY_WIDTH) / 2,
+                        y: source.position.y + (source.size?.height ?? ENTITY_HEIGHT) / 2
+                    };
+                    const tCenter = {
+                        x: target.position.x + (target.size?.width ?? RELATION_SIZE) / 2,
+                        y: target.position.y + (target.size?.height ?? RELATION_SIZE) / 2
+                    };
+                    port.position = {
+                        x: (1 - t) * sCenter.x + t * tCenter.x,
+                        y: (1 - t) * sCenter.y + t * tCenter.y
+                    };
+                }
+            }
+        });
     }
 
     protected createOptionalAttributeEdge(optionalAttributeEdge: OptionalAttributeEdge): GEdge {
@@ -481,62 +522,47 @@ export class TaskListGModelFactory implements GModelFactory {
             .build();
     }
 
-    /**
-     * Detecta aristas que conectan los mismos nodos (paralelas) y añade puntos de enrutamiento
-     * para separarlas visualmente.
-     */
+    protected createExclusivityEdge(exclusivityEdge: ExclusivityEdge): GEdge {
+        return GEdge.builder()
+            .id(exclusivityEdge.id)
+            .type('edge:exclusivity')
+            .addCssClass('exclusivity-edge')
+            .sourceId(exclusivityEdge.sourceId)
+            .targetId(exclusivityEdge.targetId)
+            .build();
+    }
+
     private preprocessParallelEdges(edges: GEdge[], nodes: GNode[]): void {
         const nodeMap = new Map<string, GNode>();
         nodes.forEach(n => nodeMap.set(n.id, n));
-
-        // 1. Agrupar aristas por par de nodos (A-B es lo mismo que B-A para colisiones visuales)
         const groups = new Map<string, GEdge[]>();
-        
         edges.forEach(edge => {
-            // Ordenamos los IDs para identificar el par de nodos sin importar la dirección
             const key = [edge.sourceId, edge.targetId].sort().join('-');
             if (!groups.has(key)) {
                 groups.set(key, []);
             }
             groups.get(key)!.push(edge);
         });
-
-        // 2. Procesar solo los grupos donde hay conflicto (>1 arista)
         groups.forEach((groupEdges, key) => {
             if (groupEdges.length > 1) {
                 const firstEdge = groupEdges[0];
                 const sourceNode = nodeMap.get(firstEdge.sourceId);
                 const targetNode = nodeMap.get(firstEdge.targetId);
-
-                // Solo podemos calcular si tenemos posiciones válidas y los nodos son distintos
                 if (sourceNode && targetNode && sourceNode.position && targetNode.position && sourceNode.id !== targetNode.id) {
                     const x1 = sourceNode.position.x;
                     const y1 = sourceNode.position.y;
                     const x2 = targetNode.position.x;
                     const y2 = targetNode.position.y;
-
-                    // Punto medio entre los dos nodos
                     const mx = (x1 + x2) / 2;
                     const my = (y1 + y2) / 2;
-
-                    // Vector dirección del nodo A al B
                     const dx = x2 - x1;
                     const dy = y2 - y1;
-                    
-                    // Calcular vector perpendicular normalizado para desplazar lateralmente
                     const length = Math.sqrt(dx * dx + dy * dy) || 1;
                     const px = -dy / length;
                     const py = dx / length;
-
-                    // Distancia de separación (puedes ajustar este 30 a tu gusto)
                     const amplitude = 30; 
-
                     groupEdges.forEach((edge, index) => {
-                        // Distribuimos las aristas:
-                        // Si hay 2: una a -15 y otra a +15 del centro.
                         const offset = (index - (groupEdges.length - 1) / 2) * amplitude;
-                        
-                        // Asignamos un punto de control que fuerza la curva
                         edge.routingPoints = [{
                             x: mx + px * offset,
                             y: my + py * offset
@@ -546,5 +572,4 @@ export class TaskListGModelFactory implements GModelFactory {
             }
         });
     }
-
 }

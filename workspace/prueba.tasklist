@@ -46,29 +46,56 @@
       }
     },
     {
-      "id": "ace56b32-0899-44be-bad1-6e230a9b6a07",
+      "id": "95641296-c364-4db0-bd48-3701f3dd1c6f",
       "type": "entity",
-      "name": "NewEntityNode5",
+      "name": "NewEntityNode6",
       "position": {
-        "x": 373.93220962444525,
-        "y": 464.2607653242694
+        "x": 76,
+        "y": 633
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "69373e91-3187-4212-bda0-af545b5a4491",
+      "type": "entity",
+      "name": "NewEntityNode6",
+      "position": {
+        "x": 720,
+        "y": 640
       }
     }
   ],
   "weakEntities": [],
   "relations": [
     {
-      "id": "d4e7e392-fede-44cb-9cb2-e445616b9244",
+      "id": "33b7046c-588e-427b-97fb-6501f891617c",
       "type": "relation",
-      "name": "NewRelationNode1",
+      "name": "fhrbf",
       "cardinality": "-",
       "position": {
-        "x": 574.4572538175528,
-        "y": 541.5035467075137
+        "x": 419,
+        "y": 496
       },
       "size": {
-        "width": 101.8710708618164,
-        "height": 35
+        "width": 101.88787841796875,
+        "height": 60
+      }
+    },
+    {
+      "id": "bb10ae1d-3af3-4727-86ef-ee57541836b4",
+      "type": "relation",
+      "name": "NewRelationNode4",
+      "cardinality": "-",
+      "position": {
+        "x": 411,
+        "y": 708
+      },
+      "size": {
+        "width": 101.88787841796875,
+        "height": 60
       }
     }
   ],
@@ -86,10 +113,31 @@
   "transitions": [],
   "weightedEdges": [
     {
-      "id": "c6fa1103-9b73-42ca-960d-82529ce23195",
+      "id": "2529f12f-6de9-42f4-8a04-96fbc9e8302e",
       "type": "edge:weighted",
-      "sourceId": "ace56b32-0899-44be-bad1-6e230a9b6a07",
-      "targetId": "d4e7e392-fede-44cb-9cb2-e445616b9244",
+      "sourceId": "95641296-c364-4db0-bd48-3701f3dd1c6f",
+      "targetId": "33b7046c-588e-427b-97fb-6501f891617c",
+      "description": "New Weighted Edge"
+    },
+    {
+      "id": "23584daa-5a26-4f66-a529-d701238be895",
+      "type": "edge:weighted",
+      "sourceId": "95641296-c364-4db0-bd48-3701f3dd1c6f",
+      "targetId": "bb10ae1d-3af3-4727-86ef-ee57541836b4",
+      "description": "New Weighted Edge"
+    },
+    {
+      "id": "42af4f3a-6d4e-436d-9638-5651313cb5dd",
+      "type": "edge:weighted",
+      "sourceId": "69373e91-3187-4212-bda0-af545b5a4491",
+      "targetId": "33b7046c-588e-427b-97fb-6501f891617c",
+      "description": "New Weighted Edge"
+    },
+    {
+      "id": "2b6f45c6-9ff0-46b1-8589-cb52e707dd41",
+      "type": "edge:weighted",
+      "sourceId": "69373e91-3187-4212-bda0-af545b5a4491",
+      "targetId": "bb10ae1d-3af3-4727-86ef-ee57541836b4",
       "description": "New Weighted Edge"
     }
   ],
@@ -108,6 +156,34 @@
       "type": "edge:inclusion",
       "sourceId": "35c08a53-cc68-4719-9590-e05437f1ecec",
       "targetId": "2dda00a9-d2e8-4483-bf79-ec53b6c22450"
+    }
+  ],
+  "exclusiveEdges": [
+    {
+      "id": "a2cf9ec2-e362-45ed-9b87-25b9b7f16125",
+      "type": "edge:exclusive",
+      "sourceId": "2529f12f-6de9-42f4-8a04-96fbc9e8302e_port",
+      "targetId": "23584daa-5a26-4f66-a529-d701238be895_port"
+    },
+    {
+      "id": "33b3c872-ece1-433e-b48e-8c3c9b5361b9",
+      "type": "edge:exclusive",
+      "sourceId": "2b6f45c6-9ff0-46b1-8589-cb52e707dd41_port",
+      "targetId": "42af4f3a-6d4e-436d-9638-5651313cb5dd_port"
+    }
+  ],
+  "exclusivityEdges": [
+    {
+      "id": "c7109828-b6b8-496c-b4eb-32483ff9561e",
+      "type": "edge:exclusivity",
+      "sourceId": "2529f12f-6de9-42f4-8a04-96fbc9e8302e_port",
+      "targetId": "23584daa-5a26-4f66-a529-d701238be895_port"
+    },
+    {
+      "id": "56b9463e-9cb9-4c4e-b381-b8cd6b454b4e",
+      "type": "edge:exclusivity",
+      "sourceId": "2b6f45c6-9ff0-46b1-8589-cb52e707dd41_port",
+      "targetId": "42af4f3a-6d4e-436d-9638-5651313cb5dd_port"
     }
   ]
 }

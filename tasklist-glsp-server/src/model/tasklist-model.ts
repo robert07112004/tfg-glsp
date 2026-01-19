@@ -42,6 +42,7 @@ export interface TaskList {
     optionalAttributeEdges: OptionalAttributeEdge[];
     exclusionEdges: ExclusionEdge[];
     inclusionEdges: InclusionEdge[];
+    exclusivityEdges: ExclusivityEdge[];
 }
 
 export namespace TaskList {
@@ -435,6 +436,25 @@ export namespace InclusionEdge {
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
             hasStringProp(object, 'type') && (object as InclusionEdge).type === 'edge:inclusion' && 
+            hasStringProp(object, 'sourceId') &&
+            hasStringProp(object, 'targetId')
+        );
+    }
+}
+
+export interface ExclusivityEdge {
+    id: string;
+    type: 'edge:exclusivity';
+    sourceId: string;
+    targetId: string;
+}
+
+export namespace ExclusivityEdge {
+    export function is(object: any): object is ExclusivityEdge {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as ExclusivityEdge).type === 'edge:exclusivity' &&
             hasStringProp(object, 'sourceId') &&
             hasStringProp(object, 'targetId')
         );
