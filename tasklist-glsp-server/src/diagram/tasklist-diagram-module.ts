@@ -30,10 +30,11 @@ import {
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
+import { CreateDisjointnessEdgeHandler } from '../handler/edge-handlers/create-disjointness-edge-handler';
 import { CreateExclusionEdgeHandler } from '../handler/edge-handlers/create-exclusion-edge-handler';
-import { CreateExclusivityEdgeHandler } from '../handler/edge-handlers/create-exclusivity-edge-handler';
 import { CreateInclusionEdgeHandler } from '../handler/edge-handlers/create-inclusion-edge-handler';
 import { CreateOptionalAttributeEdgeHandler } from '../handler/edge-handlers/create-optional-attribute-edge-handler';
+import { CreateOverlappingEdgeHandler } from '../handler/edge-handlers/create-overlapping-edge-handler';
 import { CreateTransitionHandler } from '../handler/edge-handlers/create-transition-handler';
 import { CreateWeightedEdgeHandler } from '../handler/edge-handlers/create-weighted-edge-handler';
 import { SQLGenerator } from '../handler/generator/sql-generator';
@@ -120,7 +121,8 @@ export class TaskListDiagramModule extends DiagramModule {
         binding.add(CreateOptionalAttributeEdgeHandler);
         binding.add(CreateExclusionEdgeHandler);
         binding.add(CreateInclusionEdgeHandler);
-        binding.add(CreateExclusivityEdgeHandler);
+        binding.add(CreateDisjointnessEdgeHandler);
+        binding.add(CreateOverlappingEdgeHandler);
         binding.add(TaskListChangeBoundsHandler);
         binding.add(TaskListApplyLabelEditHandler);
         binding.add(DeleteElementHandler);

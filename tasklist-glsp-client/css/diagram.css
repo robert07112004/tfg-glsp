@@ -35,6 +35,16 @@ svg {
 	height: 60px;
 }
 
+.weak-entity-node {
+	width: 100px;
+	height: 40px;
+}
+
+.existence-dependent-relation-node {
+	width: 60px;
+	height: 60px;
+}
+
 .entity-node>.sprotty-node {
 	fill: #f1bd6c;
 }
@@ -235,13 +245,24 @@ svg {
 	fill: #000;
 }
 
-.exclusivity-edge {
+.disjointness-edge {
 	stroke: white;
 	stroke-width: 2px;
 	fill: none;
 }
 
-.exclusivity-port {
+.constraint-port {
 	fill: black;
 	r: 3.5;
+}
+
+.overlapping-edge {
+	stroke: white;
+	stroke-width: 2px;
+	fill: none;
+}
+
+.overlapping-arrow {
+	fill: white;
+	stroke: none;
 }

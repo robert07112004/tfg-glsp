@@ -16,7 +16,7 @@
  ********************************************************************************/
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode, GPort } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExclusionEdge, ExclusivityEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, DisjointnessEdge, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, OverlappingEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 import { TaskListModelState } from './tasklist-model-state';
 
 @injectable()
@@ -51,7 +51,8 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.optionalAttributeEdges.map(optionalAttributeEdge => this.createOptionalAttributeEdge(optionalAttributeEdge)),
             ...(taskList.exclusionEdges || []).map(edge => this.createExclusionEdge(edge)),
             ...taskList.inclusionEdges.map(inclusionEdge => this.createInclusionEdge(inclusionEdge)),
-            ...(taskList.exclusivityEdges || []).map(exclusivityEdge => this.createExclusivityEdge(exclusivityEdge))
+            ...(taskList.disjointnessEdges || []).map(disjointnessEdge => this.createDisjointnessEdge(disjointnessEdge)),
+            ...(taskList.overlappingEdges || []).map(overlappingEdge => this.createOverlappingEdge(overlappingEdge))
         ]
 
         this.preprocessParallelEdges(childEdges, childNodes);
@@ -121,6 +122,10 @@ export class TaskListGModelFactory implements GModelFactory {
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'center')
+            .addLayoutOption('paddingTop', 15)      
+            .addLayoutOption('paddingBottom', 15)   
+            .addLayoutOption('paddingLeft', 20)  
+            .addLayoutOption('paddingRight', 20)
             .position(relation.position);
         
         if (relation.size) {
@@ -445,7 +450,7 @@ export class TaskListGModelFactory implements GModelFactory {
             .add(
                 GPort.builder()
                     .id(`${weightedEdge.id}_port`)
-                    .type('port:exclusivity')
+                    .type('port:constraint')
                     .build()
             )
             .build();
@@ -461,7 +466,7 @@ export class TaskListGModelFactory implements GModelFactory {
             if (edge.type === 'edge:weighted') {
                 const source = nodeMap.get(edge.sourceId);
                 const target = nodeMap.get(edge.targetId);
-                const port = edge.children?.find(c => c.type === 'port:exclusivity') as GPort;
+                const port = edge.children?.find(c => c.type === 'port:constraint') as GPort;
                 if (source?.position && target?.position && port) {
                     const sCenter = {
                         x: source.position.x + (source.size?.width ?? ENTITY_WIDTH) / 2,
@@ -522,13 +527,23 @@ export class TaskListGModelFactory implements GModelFactory {
             .build();
     }
 
-    protected createExclusivityEdge(exclusivityEdge: ExclusivityEdge): GEdge {
+    protected createDisjointnessEdge(disjointnessEdge: DisjointnessEdge): GEdge {
         return GEdge.builder()
-            .id(exclusivityEdge.id)
-            .type('edge:exclusivity')
-            .addCssClass('exclusivity-edge')
-            .sourceId(exclusivityEdge.sourceId)
-            .targetId(exclusivityEdge.targetId)
+            .id(disjointnessEdge.id)
+            .type('edge:disjointness')
+            .addCssClass('disjointness-edge')
+            .sourceId(disjointnessEdge.sourceId)
+            .targetId(disjointnessEdge.targetId)
+            .build();
+    }
+
+    protected createOverlappingEdge(overlappingEdge: OverlappingEdge): GEdge {
+        return GEdge.builder()
+            .id(overlappingEdge.id)
+            .type('edge:overlap')
+            .addCssClass('overlapping-edge')
+            .sourceId(overlappingEdge.sourceId)
+            .targetId(overlappingEdge.targetId)
             .build();
     }
 

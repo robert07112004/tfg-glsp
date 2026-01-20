@@ -137,7 +137,7 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 resizable: true
             },
             {
-                elementTypeId: 'port:exclusivity',
+                elementTypeId: 'port:constraint',
                 deletable: false,
                 reparentable: false,
                 repositionable: false,
@@ -212,12 +212,20 @@ export class TaskListDiagramConfiguration implements DiagramConfiguration {
                 targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
             },
             {
-                elementTypeId: 'edge:exclusivity',
+                elementTypeId: 'edge:disjointness',
                 deletable: true,
                 repositionable: false,
                 routable: false,
-                sourceElementTypeIds: ['port:exclusivity'],
-                targetElementTypeIds: ['port:exclusivity']
+                sourceElementTypeIds: ['port:constraint'],
+                targetElementTypeIds: ['port:constraint']
+            },
+            {
+                elementTypeId: 'edge:overlap',
+                deletable: true,
+                repositionable: false,
+                routable: false,
+                sourceElementTypeIds: ['port:constraint'],
+                targetElementTypeIds: ['port:constraint']
             }
         ];
     }

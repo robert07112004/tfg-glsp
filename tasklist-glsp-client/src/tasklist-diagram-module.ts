@@ -35,7 +35,7 @@ import {
 import 'balloon-css/balloon.min.css';
 import { Container, ContainerModule } from 'inversify';
 import '../css/diagram.css';
-import { AlternativeKeyAttributeView, AttributeView, DerivedAttributeView, ExclusivityEdgeView, ExclusivityPortView, InclusionEdgeView, KeyAttributeView, MultiValuedAttributeView, PartialExclusiveSpecializationView, PartialOverlappedSpecializationView, TotalExclusiveSpecializationView, TotalOverlappedSpecializationView, WeakEntityView, WeightedEdgeView } from './views';
+import { AlternativeKeyAttributeView, AttributeView, ConstraintPortView, DerivedAttributeView, DisjointnessEdgeView, InclusionEdgeView, KeyAttributeView, MultiValuedAttributeView, OverlappingEdgeView, PartialExclusiveSpecializationView, PartialOverlappedSpecializationView, TotalExclusiveSpecializationView, TotalOverlappedSpecializationView, WeakEntityView, WeightedEdgeView } from './views';
 
 const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
@@ -64,9 +64,11 @@ const taskListDiagramModule = new ContainerModule((bind, unbind, isBound, rebind
     configureModelElement(context, 'edge:optional', GEdge, PolylineEdgeView);
     configureModelElement(context, 'edge:exclusion', GEdge, PolylineEdgeView);
     configureModelElement(context, 'edge:inclusion', GEdge, InclusionEdgeView);
+    configureModelElement(context, 'edge:disjointness', GEdge, DisjointnessEdgeView);
+    configureModelElement(context, 'edge:overlap', GEdge, OverlappingEdgeView);
 
-    configureModelElement(context, 'edge:exclusivity', GEdge, ExclusivityEdgeView);
-    configureModelElement(context, 'port:exclusivity', GNode, ExclusivityPortView);
+    // Port
+    configureModelElement(context, 'port:constraint', GNode, ConstraintPortView);
 
     // Labels
     configureModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView, { enable: [editLabelFeature] });

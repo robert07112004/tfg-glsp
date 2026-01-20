@@ -25,7 +25,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExclusionEdge, ExclusivityEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, DisjointnessEdge, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, OverlappingEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/tasklist-model';
 import { TaskListModelState } from '../model/tasklist-model-state';
 
 @injectable()
@@ -75,7 +75,7 @@ export class DeleteElementHandler extends JsonOperationHandler {
     private deleteModelElement(modelElement: Task | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization | 
                                              TotalExclusiveSpecialization | PartialOverlappedSpecialization | TotalOverlappedSpecialization | Attribute | MultiValuedAttribute | 
                                              DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge | OptionalAttributeEdge |
-                                             ExclusionEdge | InclusionEdge | ExclusivityEdge | undefined): void {
+                                             ExclusionEdge | InclusionEdge | DisjointnessEdge | OverlappingEdge | undefined): void {
         if (Task.is(modelElement)) {
             remove(this.modelState.sourceModel.tasks, modelElement);
         } else if (WeakEntity.is(modelElement)) {
@@ -114,8 +114,10 @@ export class DeleteElementHandler extends JsonOperationHandler {
             remove(this.modelState.sourceModel.exclusionEdges, modelElement);
         } else if (InclusionEdge.is(modelElement)) {
             remove(this.modelState.sourceModel.inclusionEdges, modelElement);
-        } else if (ExclusivityEdge.is(modelElement)) {
-            remove(this.modelState.sourceModel.exclusivityEdges, modelElement);
+        } else if (DisjointnessEdge.is(modelElement)) {
+            remove(this.modelState.sourceModel.disjointnessEdges, modelElement);
+        } else if (OverlappingEdge.is(modelElement)) {
+            remove(this.modelState.sourceModel.overlappingEdges, modelElement);
         }
     }
 }

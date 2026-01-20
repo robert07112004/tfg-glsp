@@ -25,6 +25,6 @@ export class CreateInclusionEdgeHandler extends JsonCreateEdgeOperationHandler {
 
 
     get label(): string {
-        return 'Inclusion Link';
+        return 'Inclusion Constraint';
     }
 }

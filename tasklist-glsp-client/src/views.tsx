@@ -15,11 +15,11 @@ import { injectable } from 'inversify';
 import { VNode } from 'snabbdom';
 
 @injectable()
-export class ExclusivityPortView implements IView {
+export class ConstraintPortView implements IView {
     render(port: GNode, context: RenderingContext): VNode {
         return <g>
             <circle
-                class-exclusivity-port={true}
+                class-constraint-port={true}
                 class-sprotty-node={true}
                 r={4}
                 cx={0}
@@ -30,24 +30,7 @@ export class ExclusivityPortView implements IView {
 }
 
 @injectable()
-export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
-    protected override renderAdditionals(edge: GEdge, segments: Point[], context: RenderingContext): VNode[] {
-        const additionals = super.renderAdditionals(edge, segments, context);
-        const p1 = segments[segments.length - 2];
-        const p2 = segments[segments.length - 1];
-        const arrow = (
-            <path
-                class-sprotty-edge={true}
-                transform={`rotate(${toDegrees(angleOfPoint(Point.subtract(p1, p2)))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}
-            />
-        );
-        additionals.push(arrow);
-        return additionals;
-    }
-}
-
-@injectable()
-export class ExclusivityEdgeView extends PolylineEdgeView {
+export class DisjointnessEdgeView extends PolylineEdgeView {
     protected override renderLine(edge: GEdge, segments: Point[], context: RenderingContext): VNode {
         if (segments.length < 2) {
             return <g/>;
@@ -70,20 +53,72 @@ export class ExclusivityEdgeView extends PolylineEdgeView {
             const pathData = `M ${p1.x},${p1.y} Q ${controlPoint.x},${controlPoint.y} ${p2.x},${p2.y}`;
             return <path
                 class-sprotty-edge={true}
-                class-exclusivity-edge={true}
+                class-disjointness-edge={true}
                 d={pathData}
                 fill="none"
             />;
         }
         return super.renderLine(edge, segments, context);
     }
-    /*
+}
+
+@injectable()
+export class OverlappingEdgeView extends PolylineEdgeView {
+    protected override renderLine(edge: GEdge, segments: Point[], context: RenderingContext): VNode {
+        if (segments.length < 2) {
+            return <g/>;
+        }
+        if (segments.length === 2) {
+            const p1 = segments[0];
+            const p2 = segments[1];
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            const offset = 20; 
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const nx = -(dy / length) * offset;
+            const ny = (dx / length) * offset;
+            const controlPoint = {
+                x: midX + nx,
+                y: midY + ny
+            };
+            const pathData = `M ${p1.x},${p1.y} Q ${controlPoint.x},${controlPoint.y} ${p2.x},${p2.y}`;
+            return <path
+                class-sprotty-edge={true}
+                class-overlapping-edge={true}
+                d={pathData}
+                fill="none"
+            />;
+        }
+        return super.renderLine(edge, segments, context);
+    }
     protected override renderAdditionals(edge: GEdge, segments: Point[], context: RenderingContext): VNode[] {
         const additionals = super.renderAdditionals(edge, segments, context);
-        // Aquí puedes añadir flechas o símbolos adicionales al final de la curva si lo necesitas
+        const p1 = segments[segments.length - 2];
+        const p2 = segments[segments.length - 1];
+        if (p1 && p2) {
+            const offset = 20;
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const len = Math.sqrt(dx * dx + dy * dy) || 1;
+            const cp = { 
+                x: ((p1.x + p2.x) / 2) - (dy / len) * offset, 
+                y: ((p1.y + p2.y) / 2) + (dx / len) * offset 
+            };
+            const angle = toDegrees(angleOfPoint(Point.subtract(cp, p2)));
+            const arrow = (
+                <path
+                    class-sprotty-edge={true}
+                    class-overlapping-arrow={true}
+                    d="M 0,0 L 10,-4 L 10,4 Z" 
+                    transform={`translate(${p2.x} ${p2.y}) rotate(${angle})`}
+                />
+            );
+            additionals.push(arrow);
+        }
         return additionals;
     }
-    */
 }
 
 @injectable()
@@ -104,6 +139,23 @@ export class InclusionEdgeView extends PolylineEdgeView {
             );
             additionals.push(arrow);
         }
+        return additionals;
+    }
+}
+
+@injectable()
+export class WeightedEdgeView extends PolylineEdgeViewWithGapsOnIntersections {
+    protected override renderAdditionals(edge: GEdge, segments: Point[], context: RenderingContext): VNode[] {
+        const additionals = super.renderAdditionals(edge, segments, context);
+        const p1 = segments[segments.length - 2];
+        const p2 = segments[segments.length - 1];
+        const arrow = (
+            <path
+                class-sprotty-edge={true}
+                transform={`rotate(${toDegrees(angleOfPoint(Point.subtract(p1, p2)))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}
+            />
+        );
+        additionals.push(arrow);
         return additionals;
     }
 }

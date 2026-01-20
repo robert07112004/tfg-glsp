@@ -16,14 +16,14 @@
  ********************************************************************************/
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, ExclusionEdge, ExclusivityEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TaskList, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, DisjointnessEdge, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, OverlappingEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, Task, TaskList, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './tasklist-model';
 
 @injectable()
 export class TaskListModelIndex extends GModelIndex {
     protected idToTaskListElements = new Map<string, Task | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization | 
                                                      TotalExclusiveSpecialization |PartialOverlappedSpecialization |TotalOverlappedSpecialization | Attribute | 
                                                      MultiValuedAttribute | DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge |
-                                                     OptionalAttributeEdge | ExclusionEdge | InclusionEdge | ExclusivityEdge>();
+                                                     OptionalAttributeEdge | ExclusionEdge | InclusionEdge | DisjointnessEdge | OverlappingEdge>();
 
     indexTaskList(taskList: TaskList): void {
         this.idToTaskListElements.clear();
@@ -47,7 +47,8 @@ export class TaskListModelIndex extends GModelIndex {
             ...taskList.optionalAttributeEdges,
             ...(taskList.exclusionEdges || []),
             ...(taskList.inclusionEdges || []),
-            ...(taskList.exclusivityEdges || [])
+            ...(taskList.disjointnessEdges || []),
+            ...(taskList.overlappingEdges || [])
         ]) {
             this.idToTaskListElements.set(element.id, element);
         }
@@ -148,15 +149,20 @@ export class TaskListModelIndex extends GModelIndex {
         return InclusionEdge.is(element) ? element : undefined
     }
 
-    findExclusivityEdge(id: string): ExclusivityEdge | undefined {
+    findDisjointnessEdge(id: string): DisjointnessEdge | undefined {
         const element = this.findTaskOrTransition(id);
-        return ExclusivityEdge.is(element) ? element : undefined
+        return DisjointnessEdge.is(element) ? element : undefined
     }
 
-    findTaskOrTransition(id: string): Task | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization | 
+    findOverlappingEdge(id: string): OverlappingEdge | undefined {
+        const element = this.findTaskOrTransition(id);
+        return OverlappingEdge.is(element) ? element : undefined
+    }
+
+    findTaskOrTransition(id: string): Task | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization |
                                       TotalExclusiveSpecialization | PartialOverlappedSpecialization | TotalOverlappedSpecialization | Attribute | MultiValuedAttribute | 
                                       DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge | OptionalAttributeEdge | ExclusionEdge | 
-                                      InclusionEdge | ExclusivityEdge | undefined {
+                                      InclusionEdge | DisjointnessEdge | OverlappingEdge | undefined {
         return this.idToTaskListElements.get(id);
     }
     

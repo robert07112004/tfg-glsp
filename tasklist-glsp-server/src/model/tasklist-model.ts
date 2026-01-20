@@ -42,7 +42,8 @@ export interface TaskList {
     optionalAttributeEdges: OptionalAttributeEdge[];
     exclusionEdges: ExclusionEdge[];
     inclusionEdges: InclusionEdge[];
-    exclusivityEdges: ExclusivityEdge[];
+    disjointnessEdges: DisjointnessEdge[];
+    overlappingEdges: OverlappingEdge[];
 }
 
 export namespace TaskList {
@@ -442,19 +443,38 @@ export namespace InclusionEdge {
     }
 }
 
-export interface ExclusivityEdge {
+export interface DisjointnessEdge {
     id: string;
-    type: 'edge:exclusivity';
+    type: 'edge:disjointness';
     sourceId: string;
     targetId: string;
 }
 
-export namespace ExclusivityEdge {
-    export function is(object: any): object is ExclusivityEdge {
+export namespace DisjointnessEdge {
+    export function is(object: any): object is DisjointnessEdge {
         return (
             AnyObject.is(object) &&
             hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as ExclusivityEdge).type === 'edge:exclusivity' &&
+            hasStringProp(object, 'type') && (object as DisjointnessEdge).type === 'edge:disjointness' &&
+            hasStringProp(object, 'sourceId') &&
+            hasStringProp(object, 'targetId')
+        );
+    }
+}
+
+export interface OverlappingEdge {
+    id: string;
+    type: 'edge:overlap';
+    sourceId: string;
+    targetId: string;
+}
+
+export namespace OverlappingEdge {
+    export function is(object: any): object is OverlappingEdge {
+        return (
+            AnyObject.is(object) &&
+            hasStringProp(object, 'id') &&
+            hasStringProp(object, 'type') && (object as OverlappingEdge).type === 'edge:overlap' &&
             hasStringProp(object, 'sourceId') &&
             hasStringProp(object, 'targetId')
         );

@@ -1,32 +1,32 @@
 import { Command, CreateEdgeOperation, JsonCreateEdgeOperationHandler, MaybePromise } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import * as uuid from 'uuid';
-import { ExclusivityEdge } from '../../model/tasklist-model';
+import { OverlappingEdge } from '../../model/tasklist-model';
 import { TaskListModelState } from '../../model/tasklist-model-state';
 
 @injectable()
-export class CreateExclusivityEdgeHandler extends JsonCreateEdgeOperationHandler {
-    readonly elementTypeIds = ['edge:exclusivity'];
+export class CreateOverlappingEdgeHandler extends JsonCreateEdgeOperationHandler {
+    readonly elementTypeIds = ['edge:overlap'];
 
     @inject(TaskListModelState)
     protected override modelState: TaskListModelState;
 
     override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
-            if (!this.modelState.sourceModel.exclusivityEdges) {
-                this.modelState.sourceModel.exclusivityEdges = [];
+            if (!this.modelState.sourceModel.overlappingEdges) {
+                this.modelState.sourceModel.overlappingEdges = [];
             }
-            const exclusivityEdge: ExclusivityEdge = {
+            const overlappingEdge: OverlappingEdge = {
                 id: uuid.v4(),
-                type: 'edge:exclusivity',
+                type: 'edge:overlap',
                 sourceId: operation.sourceElementId,
                 targetId: operation.targetElementId
             };
-            this.modelState.sourceModel.exclusivityEdges.push(exclusivityEdge);
+            this.modelState.sourceModel.overlappingEdges.push(overlappingEdge);
         });
     }
 
     get label(): string {
-        return 'Exclusivity Link';
+        return 'Overlapping Constraint';
     }
 }
