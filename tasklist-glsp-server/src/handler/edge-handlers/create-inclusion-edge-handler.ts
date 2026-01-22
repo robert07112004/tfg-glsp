@@ -13,6 +13,9 @@ export class CreateInclusionEdgeHandler extends JsonCreateEdgeOperationHandler {
 
     override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
+            if (!this.modelState.sourceModel.inclusionEdges) {
+                this.modelState.sourceModel.inclusionEdges = [];
+            }
             const inclusionEdge: InclusionEdge = {
                 id: uuid.v4(),
                 type: 'edge:inclusion',
@@ -22,7 +25,6 @@ export class CreateInclusionEdgeHandler extends JsonCreateEdgeOperationHandler {
             this.modelState.sourceModel.inclusionEdges.push(inclusionEdge);
         });
     }
-
 
     get label(): string {
         return 'Inclusion Constraint';

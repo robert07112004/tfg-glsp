@@ -50,7 +50,7 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.weightedEdges.map(weightedEdge => this.createWeightedEdge(weightedEdge)),
             ...taskList.optionalAttributeEdges.map(optionalAttributeEdge => this.createOptionalAttributeEdge(optionalAttributeEdge)),
             ...(taskList.exclusionEdges || []).map(edge => this.createExclusionEdge(edge)),
-            ...taskList.inclusionEdges.map(inclusionEdge => this.createInclusionEdge(inclusionEdge)),
+            ...(taskList.inclusionEdges || []).map(inclusionEdge => this.createInclusionEdge(inclusionEdge)),
             ...(taskList.disjointnessEdges || []).map(disjointnessEdge => this.createDisjointnessEdge(disjointnessEdge)),
             ...(taskList.overlappingEdges || []).map(overlappingEdge => this.createOverlappingEdge(overlappingEdge))
         ]
@@ -99,6 +99,8 @@ export class TaskListGModelFactory implements GModelFactory {
 
         if (weakEntity.size) {
             builder.addLayoutOptions({ prefWidth: weakEntity.size.width, prefHeight: weakEntity.size.height });
+        } else {
+            builder.addLayoutOptions({ prefWidth: 100, prefHeight: 40 });
         }
 
         return builder.build();
@@ -167,6 +169,8 @@ export class TaskListGModelFactory implements GModelFactory {
         
         if (existenceDependentRelation.size) {
             builder.addLayoutOptions({ prefWidth: existenceDependentRelation.size.width, prefHeight: existenceDependentRelation.size.height });
+        } else {
+            builder.addLayoutOptions({ prefWidth: 60, prefHeight: 60 });
         }
 
         return builder.build();
@@ -177,7 +181,6 @@ export class TaskListGModelFactory implements GModelFactory {
             .id(identifyingDependentRelation.id)
             .type('node:identifyingDependentRelation')
             .addCssClass('existence-dependent-relation-node')
-
             .add(GLabel.builder()
                 .text('Id')
                 .id(`${identifyingDependentRelation.id}_identifying_label`)
@@ -202,6 +205,8 @@ export class TaskListGModelFactory implements GModelFactory {
         
         if (identifyingDependentRelation.size) {
             builder.addLayoutOptions({ prefWidth: identifyingDependentRelation.size.width, prefHeight: identifyingDependentRelation.size.height });
+        } else {
+            builder.addLayoutOptions({ prefWidth: 60, prefHeight: 60 });
         }
 
         return builder.build();
