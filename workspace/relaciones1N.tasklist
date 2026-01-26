@@ -1,0 +1,137 @@
+{
+  "id": "60beb992-92a3-4bfd-adf8-0f819ca967ed",
+  "tasks": [
+    {
+      "id": "52081514-858d-4ae8-a4a5-b611e6ce701f",
+      "type": "entity",
+      "name": "Profesor",
+      "position": {
+        "x": 532.5199990336438,
+        "y": 488.75128183447134
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "c01ced15-cbaa-46e5-ac23-b6f3d43d9ed5",
+      "type": "entity",
+      "name": "Departamento",
+      "position": {
+        "x": 1174.838975015601,
+        "y": 492.57794882325675
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "e30fc7bc-05b9-4d0f-a017-afb362ee697e",
+      "type": "relation",
+      "name": "Pertenece",
+      "cardinality": "-",
+      "position": {
+        "x": 855.5569231140908,
+        "y": 481.0210257091662
+      },
+      "size": {
+        "width": 131.8349151611328,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "38622778-dbf8-4ef2-b2f5-3b1df18ef921",
+      "type": "keyAttribute",
+      "name": "Cod_Profesor: integer",
+      "position": {
+        "x": 529.57828801957,
+        "y": 421.54098387492627
+      },
+      "size": {
+        "width": 114.96256256103516,
+        "height": 21.948896408081055
+      }
+    },
+    {
+      "id": "cfd6a1e2-dc42-4732-bca7-0c88a8a93cc2",
+      "type": "keyAttribute",
+      "name": "Cod_Dep: integer",
+      "position": {
+        "x": 1181.2909663407831,
+        "y": 427.017561003676
+      },
+      "size": {
+        "width": 94.22222137451172,
+        "height": 21.948896408081055
+      }
+    },
+    {
+      "id": "50299721-1a03-40f1-8ae9-73755d019bfa",
+      "type": "keyAttribute",
+      "name": "Fecha: date",
+      "position": {
+        "x": 890.0366372209131,
+        "y": 409.59208832129065
+      },
+      "size": {
+        "width": 66.36466598510742,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "5d5e55a0-82c0-401b-8340-bf9e3d3b6169",
+      "sourceTaskId": "cfd6a1e2-dc42-4732-bca7-0c88a8a93cc2",
+      "targetTaskId": "c01ced15-cbaa-46e5-ac23-b6f3d43d9ed5"
+    },
+    {
+      "id": "a73fd65e-aa8d-4b8b-950a-dd737e450b6e",
+      "sourceTaskId": "38622778-dbf8-4ef2-b2f5-3b1df18ef921",
+      "targetTaskId": "52081514-858d-4ae8-a4a5-b611e6ce701f"
+    },
+    {
+      "id": "63de0647-9752-434e-96a1-7961b1aa6658",
+      "sourceTaskId": "50299721-1a03-40f1-8ae9-73755d019bfa",
+      "targetTaskId": "e30fc7bc-05b9-4d0f-a017-afb362ee697e"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "fcbb3b55-d33d-41d9-8553-044b587d82b6",
+      "type": "edge:weighted",
+      "sourceId": "52081514-858d-4ae8-a4a5-b611e6ce701f",
+      "targetId": "e30fc7bc-05b9-4d0f-a017-afb362ee697e",
+      "description": "(1..N)"
+    },
+    {
+      "id": "7ff959a3-433e-4a00-9e83-da0409a45b8c",
+      "type": "edge:weighted",
+      "sourceId": "c01ced15-cbaa-46e5-ac23-b6f3d43d9ed5",
+      "targetId": "e30fc7bc-05b9-4d0f-a017-afb362ee697e",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

@@ -1,0 +1,211 @@
+{
+  "id": "fb90f59a-5a35-4b40-a72d-7e074866c94e",
+  "tasks": [
+    {
+      "id": "e4a9bc45-569f-442e-9b0c-ce500fb6d060",
+      "type": "entity",
+      "name": "Profesor",
+      "position": {
+        "x": 405.19524651297286,
+        "y": 431.2928697694593
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "0021b15e-e305-46f1-8b28-cfcf8f093734",
+      "type": "entity",
+      "name": "Curso",
+      "position": {
+        "x": 1094,
+        "y": 432
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
+      "type": "relation",
+      "name": "Imaprte",
+      "cardinality": "-",
+      "position": {
+        "x": 737,
+        "y": 423
+      },
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "bb73d212-d970-4132-960d-4fc9e1c8e655",
+      "type": "attribute",
+      "name": "Fecha_fin: date",
+      "position": {
+        "x": 690.5203300570433,
+        "y": 332.97917897663
+      },
+      "size": {
+        "width": 66.31836700439453,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "f8df6b9a-9b0d-4daa-bd77-9ab544ab4565",
+      "type": "attribute",
+      "name": "Nombre: varchar(20)",
+      "position": {
+        "x": 381.5393833561141,
+        "y": 515.1846395533767
+      },
+      "size": {
+        "width": 108.7616195678711,
+        "height": 22
+      }
+    },
+    {
+      "id": "86440722-d802-428c-ab3c-47764c1f1da4",
+      "type": "attribute",
+      "name": "Asignatura: varchar(20)",
+      "position": {
+        "x": 1090.0551954181021,
+        "y": 509.1477116427012
+      },
+      "size": {
+        "width": 115.89412689208984,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "f394bbba-9806-4491-baa8-e9e69ab31189",
+      "type": "keyAttribute",
+      "name": "Cod_profesor: integer",
+      "position": {
+        "x": 401.29660197286995,
+        "y": 370.8471813254116
+      },
+      "size": {
+        "width": 114.32007598876953,
+        "height": 22
+      }
+    },
+    {
+      "id": "6890a73a-c894-4da7-bc68-33df4eb955d7",
+      "type": "keyAttribute",
+      "name": "Cod_Curso: integer",
+      "position": {
+        "x": 1081.8230209944543,
+        "y": 364.81025341473617
+      },
+      "size": {
+        "width": 134.2668228149414,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "3d3ea559-5e8c-46da-8776-b7f91bcfa5d9",
+      "type": "keyAttribute",
+      "name": "Fecha_ini: date",
+      "position": {
+        "x": 833.2478884151317,
+        "y": 335.6226674495939
+      },
+      "size": {
+        "width": 82.91648864746094,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "1a845b8c-62fa-44bd-8f05-853df31fc87a",
+      "type": "alternativeKeyAttribute",
+      "name": "DNI: integer",
+      "position": {
+        "x": 306.35219028679404,
+        "y": 426.8259674062194
+      },
+      "size": {
+        "width": 67.28900146484375,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "9704364e-455e-4661-960e-aa4f37320aca",
+      "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
+      "targetTaskId": "bb73d212-d970-4132-960d-4fc9e1c8e655"
+    },
+    {
+      "id": "d0101d10-a323-45c8-b74e-4cf14abe4beb",
+      "sourceTaskId": "6890a73a-c894-4da7-bc68-33df4eb955d7",
+      "targetTaskId": "0021b15e-e305-46f1-8b28-cfcf8f093734"
+    },
+    {
+      "id": "5fa2ebd1-7022-46c5-97c7-5fe75e4d47df",
+      "sourceTaskId": "86440722-d802-428c-ab3c-47764c1f1da4",
+      "targetTaskId": "0021b15e-e305-46f1-8b28-cfcf8f093734"
+    },
+    {
+      "id": "3b21423d-ad4b-4b62-b3db-7026c314a5e1",
+      "sourceTaskId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060",
+      "targetTaskId": "f394bbba-9806-4491-baa8-e9e69ab31189"
+    },
+    {
+      "id": "d4e4384c-e41e-4649-a0f1-96739217f234",
+      "sourceTaskId": "1a845b8c-62fa-44bd-8f05-853df31fc87a",
+      "targetTaskId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060"
+    },
+    {
+      "id": "4de754c5-775e-4d2a-9783-4d616752446b",
+      "sourceTaskId": "f8df6b9a-9b0d-4daa-bd77-9ab544ab4565",
+      "targetTaskId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060"
+    },
+    {
+      "id": "d8521d6f-d72b-480a-8ae3-6731c2a6c9be",
+      "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
+      "targetTaskId": "3d3ea559-5e8c-46da-8776-b7f91bcfa5d9"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "7a002d46-689e-42b4-bfc6-cee088959af7",
+      "type": "edge:weighted",
+      "sourceId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060",
+      "targetId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
+      "description": "(1..N)"
+    },
+    {
+      "id": "d965e2ee-8e61-472e-816f-ff7c9452a4ed",
+      "type": "edge:weighted",
+      "sourceId": "0021b15e-e305-46f1-8b28-cfcf8f093734",
+      "targetId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
+      "description": "(0..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

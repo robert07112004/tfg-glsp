@@ -1,0 +1,232 @@
+{
+  "id": "83e6a0e2-80ce-4698-9598-0515776764c8",
+  "tasks": [
+    {
+      "id": "d8ec680b-5e92-4c04-8deb-903bd51a7999",
+      "type": "entity",
+      "name": "Persona",
+      "position": {
+        "x": 153,
+        "y": 367
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "85fe8933-df6b-4bff-9daf-9bb903e77931",
+      "type": "entity",
+      "name": "Estudiante",
+      "position": {
+        "x": 156,
+        "y": 693
+      }
+    },
+    {
+      "id": "6cce4038-4fc5-42b8-95d8-70f33e43e4f5",
+      "type": "entity",
+      "name": "Celula",
+      "position": {
+        "x": 133,
+        "y": 936
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "0bf6487e-74dd-4dd7-9a5f-2aed8a04f9e8",
+      "type": "relation",
+      "name": "Matrimonio",
+      "cardinality": "-",
+      "position": {
+        "x": 469,
+        "y": 371
+      }
+    },
+    {
+      "id": "9e0004ba-3b4f-40ba-b2a4-143f17b0dca5",
+      "type": "relation",
+      "name": "Asignado",
+      "cardinality": "-",
+      "position": {
+        "x": 414,
+        "y": 674
+      },
+      "size": {
+        "width": 85.70827102661133,
+        "height": 60
+      }
+    },
+    {
+      "id": "92948063-ed9d-48c3-996b-ba948b7394ea",
+      "type": "relation",
+      "name": "Divide",
+      "cardinality": "-",
+      "position": {
+        "x": 421,
+        "y": 930
+      },
+      "size": {
+        "width": 131.88787841796875,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "8bbd00cc-c049-456e-9904-de21be06d6e7",
+      "type": "keyAttribute",
+      "name": "Cod_Persona: integer",
+      "position": {
+        "x": 111,
+        "y": 323
+      }
+    },
+    {
+      "id": "3a61fdc8-aa4b-4db4-8dcc-f36a884c6f9e",
+      "type": "keyAttribute",
+      "name": "Licencia: varchar(200)",
+      "position": {
+        "x": 528,
+        "y": 314
+      },
+      "size": {
+        "width": 115.47705078125,
+        "height": 22
+      }
+    },
+    {
+      "id": "14d6cbe8-8c52-4e39-9b37-aa995077ced3",
+      "type": "keyAttribute",
+      "name": "Cod_estudiante: integer",
+      "position": {
+        "x": 90,
+        "y": 640
+      }
+    },
+    {
+      "id": "035cadb0-58a2-4b64-a0b4-ee15a5a2363d",
+      "type": "keyAttribute",
+      "name": "Fecha_inicio: date",
+      "position": {
+        "x": 431,
+        "y": 620
+      },
+      "size": {
+        "width": 96.55987548828125,
+        "height": 22
+      }
+    },
+    {
+      "id": "08678134-8f63-463e-8996-f3b62c4e9c5b",
+      "type": "keyAttribute",
+      "name": "Cod_Celula: integer",
+      "position": {
+        "x": 134,
+        "y": 858
+      }
+    },
+    {
+      "id": "5de49dcf-5db7-4dd0-b6b6-78594b2ef9cb",
+      "type": "keyAttribute",
+      "name": "Fecha: date",
+      "position": {
+        "x": 519,
+        "y": 880
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "d0714e46-e877-40eb-ba30-7ac77235f82e",
+      "sourceTaskId": "0bf6487e-74dd-4dd7-9a5f-2aed8a04f9e8",
+      "targetTaskId": "3a61fdc8-aa4b-4db4-8dcc-f36a884c6f9e"
+    },
+    {
+      "id": "f82a1f26-addb-4ab8-a60a-a16f1143c8cc",
+      "sourceTaskId": "d8ec680b-5e92-4c04-8deb-903bd51a7999",
+      "targetTaskId": "8bbd00cc-c049-456e-9904-de21be06d6e7"
+    },
+    {
+      "id": "1e49c48d-b5c3-49ba-a11e-3bf72ab356f3",
+      "sourceTaskId": "9e0004ba-3b4f-40ba-b2a4-143f17b0dca5",
+      "targetTaskId": "035cadb0-58a2-4b64-a0b4-ee15a5a2363d"
+    },
+    {
+      "id": "67b1670c-a4a8-436d-9071-c0e20a61f6af",
+      "sourceTaskId": "85fe8933-df6b-4bff-9daf-9bb903e77931",
+      "targetTaskId": "14d6cbe8-8c52-4e39-9b37-aa995077ced3"
+    },
+    {
+      "id": "3e12a1e6-12eb-4a73-b589-0bff15994452",
+      "sourceTaskId": "92948063-ed9d-48c3-996b-ba948b7394ea",
+      "targetTaskId": "5de49dcf-5db7-4dd0-b6b6-78594b2ef9cb"
+    },
+    {
+      "id": "7dace52a-bdfd-4277-bf35-0fd045dc2792",
+      "sourceTaskId": "6cce4038-4fc5-42b8-95d8-70f33e43e4f5",
+      "targetTaskId": "08678134-8f63-463e-8996-f3b62c4e9c5b"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "8c8c26f2-5033-435c-9d1e-9fa9b815e891",
+      "type": "edge:weighted",
+      "sourceId": "d8ec680b-5e92-4c04-8deb-903bd51a7999",
+      "targetId": "0bf6487e-74dd-4dd7-9a5f-2aed8a04f9e8",
+      "description": "(0..1)"
+    },
+    {
+      "id": "7ad3db4b-57f6-4e95-84fb-0a95c887c248",
+      "type": "edge:weighted",
+      "sourceId": "d8ec680b-5e92-4c04-8deb-903bd51a7999",
+      "targetId": "0bf6487e-74dd-4dd7-9a5f-2aed8a04f9e8",
+      "description": "(0..1)"
+    },
+    {
+      "id": "1cfdb495-582b-4c00-8cca-56ee7f574792",
+      "type": "edge:weighted",
+      "sourceId": "85fe8933-df6b-4bff-9daf-9bb903e77931",
+      "targetId": "9e0004ba-3b4f-40ba-b2a4-143f17b0dca5",
+      "description": "(1..1)"
+    },
+    {
+      "id": "1e566a57-f47c-4fc9-b901-a8c3396ad67b",
+      "type": "edge:weighted",
+      "sourceId": "85fe8933-df6b-4bff-9daf-9bb903e77931",
+      "targetId": "9e0004ba-3b4f-40ba-b2a4-143f17b0dca5",
+      "description": "(0..1)"
+    },
+    {
+      "id": "66275a90-6d69-4f6a-b7ab-c95941b7568a",
+      "type": "edge:weighted",
+      "sourceId": "6cce4038-4fc5-42b8-95d8-70f33e43e4f5",
+      "targetId": "92948063-ed9d-48c3-996b-ba948b7394ea",
+      "description": "(1..1)"
+    },
+    {
+      "id": "f58a567d-f334-4712-a693-9512af9bc3b4",
+      "type": "edge:weighted",
+      "sourceId": "6cce4038-4fc5-42b8-95d8-70f33e43e4f5",
+      "targetId": "92948063-ed9d-48c3-996b-ba948b7394ea",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

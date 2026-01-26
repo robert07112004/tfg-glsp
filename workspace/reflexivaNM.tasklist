@@ -1,0 +1,121 @@
+{
+  "id": "83e48dd0-9157-4127-b6a0-2eab90b36b7f",
+  "tasks": [
+    {
+      "id": "13aee309-c746-4728-8bc2-53ef322f429c",
+      "type": "entity",
+      "name": "Pieza",
+      "position": {
+        "x": 170,
+        "y": 346
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "b683a096-f92b-4d62-b79c-5408ddeb8866",
+      "type": "relation",
+      "name": "Composicion",
+      "cardinality": "-",
+      "position": {
+        "x": 412,
+        "y": 343
+      },
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "edc22600-7139-4797-b946-cbf2877b496b",
+      "type": "attribute",
+      "name": "Cantidad: integer",
+      "position": {
+        "x": 556,
+        "y": 333
+      },
+      "size": {
+        "width": 92.40972900390625,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "bd94b3b4-726f-458a-855b-9eb2d0a17ccc",
+      "type": "keyAttribute",
+      "name": "Cod_Pieza: integer",
+      "position": {
+        "x": 94,
+        "y": 263
+      }
+    },
+    {
+      "id": "b156cf4c-26b8-41f0-9106-bf9b52f821cd",
+      "type": "keyAttribute",
+      "name": "Fecha: date",
+      "position": {
+        "x": 496,
+        "y": 277
+      },
+      "size": {
+        "width": 66.35060119628906,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "e1eedba6-1198-4e06-ab6c-a55cfdcfbbe2",
+      "sourceTaskId": "bd94b3b4-726f-458a-855b-9eb2d0a17ccc",
+      "targetTaskId": "13aee309-c746-4728-8bc2-53ef322f429c"
+    },
+    {
+      "id": "1020ef2c-0fd8-4ee8-99aa-a67fd1635161",
+      "sourceTaskId": "b683a096-f92b-4d62-b79c-5408ddeb8866",
+      "targetTaskId": "b156cf4c-26b8-41f0-9106-bf9b52f821cd"
+    },
+    {
+      "id": "11bb1a5c-b2f6-4d26-b46b-600e490e3183",
+      "sourceTaskId": "b683a096-f92b-4d62-b79c-5408ddeb8866",
+      "targetTaskId": "edc22600-7139-4797-b946-cbf2877b496b"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "2b40d2cb-e3b4-47dc-b9f0-2b2dbd3df50f",
+      "type": "edge:weighted",
+      "sourceId": "13aee309-c746-4728-8bc2-53ef322f429c",
+      "targetId": "b683a096-f92b-4d62-b79c-5408ddeb8866",
+      "description": "(1..N)"
+    },
+    {
+      "id": "de373c31-59bf-4c98-a073-4527b3adaa9a",
+      "type": "edge:weighted",
+      "sourceId": "13aee309-c746-4728-8bc2-53ef322f429c",
+      "targetId": "b683a096-f92b-4d62-b79c-5408ddeb8866",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

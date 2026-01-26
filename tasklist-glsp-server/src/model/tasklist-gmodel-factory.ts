@@ -313,7 +313,6 @@ export class TaskListGModelFactory implements GModelFactory {
         const allConnectedEdges = allEdges.filter(
             e => e.targetId === relationId || e.sourceId === relationId
         );
-
         const manyEdgesCount = allConnectedEdges.filter(
             e => e.description.includes('..N')
         ).length;

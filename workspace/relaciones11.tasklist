@@ -1,0 +1,384 @@
+{
+  "id": "cf9deb41-3334-4bb5-a9c4-f8c6a9162084",
+  "tasks": [
+    {
+      "id": "870d1771-ba4f-4ab4-94ef-360dd2382efe",
+      "type": "entity",
+      "name": "Hombre",
+      "position": {
+        "x": 509,
+        "y": 415
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "2ffc14f2-72d6-41d6-992f-0db5c8555d2b",
+      "type": "entity",
+      "name": "Mujer",
+      "position": {
+        "x": 1011,
+        "y": 419
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "49e5033a-7700-40d3-ab37-334e0cac6a2f",
+      "type": "entity",
+      "name": "Profesor",
+      "position": {
+        "x": 517,
+        "y": 696
+      }
+    },
+    {
+      "id": "317f0896-0319-4644-b17d-39761014f25b",
+      "type": "entity",
+      "name": "Despacho",
+      "position": {
+        "x": 1025,
+        "y": 709
+      }
+    },
+    {
+      "id": "21179bd7-5713-47a5-bc81-509155893cc8",
+      "type": "entity",
+      "name": "Expediente",
+      "position": {
+        "x": 515,
+        "y": 1004
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "e2aee49f-972d-4380-ae53-ecbc215a3c0b",
+      "type": "entity",
+      "name": "Ciudadano",
+      "position": {
+        "x": 1077,
+        "y": 1001
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "b1e404e4-3931-4638-8133-439c52c7f364",
+      "type": "relation",
+      "name": "Matrimonio",
+      "cardinality": "-",
+      "position": {
+        "x": 762,
+        "y": 408
+      },
+      "size": {
+        "width": 92.77601623535156,
+        "height": 60
+      }
+    },
+    {
+      "id": "150a7a6c-af46-45bc-a150-8909a4319524",
+      "type": "relation",
+      "name": "Ocupa",
+      "cardinality": "-",
+      "position": {
+        "x": 760,
+        "y": 699
+      },
+      "size": {
+        "width": 131.88787841796875,
+        "height": 60
+      }
+    },
+    {
+      "id": "32dd9cf5-f8b4-4a63-925f-f32139c8c326",
+      "type": "relation",
+      "name": "Posee",
+      "cardinality": "-",
+      "position": {
+        "x": 809,
+        "y": 995
+      },
+      "size": {
+        "width": 70.28815460205078,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "e54f0e11-8f7c-460d-8e28-5dde13b996e6",
+      "type": "attribute",
+      "name": "Regimen: varchar(200)",
+      "position": {
+        "x": 836,
+        "y": 338
+      },
+      "size": {
+        "width": 119.02559661865234,
+        "height": 22
+      }
+    },
+    {
+      "id": "fade607a-986a-4f80-9722-f16eb6cb6f71",
+      "type": "attribute",
+      "name": "material: varchar(200)",
+      "position": {
+        "x": 862,
+        "y": 630
+      }
+    },
+    {
+      "id": "3e801b5a-cd8e-41d0-8567-5c58660a1d95",
+      "type": "attribute",
+      "name": "Fecha: Date",
+      "position": {
+        "x": 884,
+        "y": 932
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "af3cdc84-1410-41b5-afc3-7b91d890bc5f",
+      "type": "keyAttribute",
+      "name": "Cod_Hombre: integer",
+      "position": {
+        "x": 461,
+        "y": 345
+      }
+    },
+    {
+      "id": "ce8932f3-d48c-4da2-aa80-6c705a706720",
+      "type": "keyAttribute",
+      "name": "Cod_Mujer: integer",
+      "position": {
+        "x": 1066,
+        "y": 339
+      }
+    },
+    {
+      "id": "bb83a4c4-10d8-4ba2-b00f-3f8ef385a64d",
+      "type": "keyAttribute",
+      "name": "Num_Licencia: Integer",
+      "position": {
+        "x": 692,
+        "y": 339
+      },
+      "size": {
+        "width": 117.86856842041016,
+        "height": 22
+      }
+    },
+    {
+      "id": "b9be3b91-3bec-414f-b3a3-b1a703f06a0b",
+      "type": "keyAttribute",
+      "name": "id_prof: integer",
+      "position": {
+        "x": 519,
+        "y": 640
+      },
+      "size": {
+        "width": 82.33649444580078,
+        "height": 22
+      }
+    },
+    {
+      "id": "b41d634c-5789-4cd9-8afb-fe0d9a346083",
+      "type": "keyAttribute",
+      "name": "id_despacho: integer",
+      "position": {
+        "x": 1175,
+        "y": 711
+      },
+      "size": {
+        "width": 110.18878173828125,
+        "height": 22
+      }
+    },
+    {
+      "id": "896ff2b4-fc36-4712-9ed1-199ead88deac",
+      "type": "keyAttribute",
+      "name": "Fecha: date",
+      "position": {
+        "x": 713,
+        "y": 614
+      },
+      "size": {
+        "width": 66.35060119628906,
+        "height": 22
+      }
+    },
+    {
+      "id": "056b5326-03dd-48e1-aa2a-df33aa7bf891",
+      "type": "keyAttribute",
+      "name": "dni: varchar(10)",
+      "position": {
+        "x": 1217,
+        "y": 1004
+      },
+      "size": {
+        "width": 84.67460632324219,
+        "height": 22
+      }
+    },
+    {
+      "id": "d510cca6-8616-4ea0-b629-17c97e9fc1d5",
+      "type": "keyAttribute",
+      "name": "cod_exped: integer",
+      "position": {
+        "x": 510,
+        "y": 916
+      }
+    },
+    {
+      "id": "b7342787-921f-4a94-a178-38f643825799",
+      "type": "keyAttribute",
+      "name": "Cod_Validacion: varchar(20)",
+      "position": {
+        "x": 704,
+        "y": 928
+      },
+      "size": {
+        "width": 144.3075408935547,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "5ceb8d6e-9b14-4527-8220-2f26ab20568e",
+      "sourceTaskId": "2ffc14f2-72d6-41d6-992f-0db5c8555d2b",
+      "targetTaskId": "ce8932f3-d48c-4da2-aa80-6c705a706720"
+    },
+    {
+      "id": "3fa19b02-50e2-47d8-85d1-98fc8ba649bb",
+      "sourceTaskId": "870d1771-ba4f-4ab4-94ef-360dd2382efe",
+      "targetTaskId": "af3cdc84-1410-41b5-afc3-7b91d890bc5f"
+    },
+    {
+      "id": "a3dad602-a232-4cab-9556-385e17994454",
+      "sourceTaskId": "bb83a4c4-10d8-4ba2-b00f-3f8ef385a64d",
+      "targetTaskId": "b1e404e4-3931-4638-8133-439c52c7f364"
+    },
+    {
+      "id": "d1b70d23-4d6d-4038-939b-8e1b03904e7a",
+      "sourceTaskId": "e54f0e11-8f7c-460d-8e28-5dde13b996e6",
+      "targetTaskId": "b1e404e4-3931-4638-8133-439c52c7f364"
+    },
+    {
+      "id": "223fe259-2da4-449b-803e-ad1e93ccbf82",
+      "sourceTaskId": "b41d634c-5789-4cd9-8afb-fe0d9a346083",
+      "targetTaskId": "317f0896-0319-4644-b17d-39761014f25b"
+    },
+    {
+      "id": "c081c20a-9f83-4c52-ac2e-e09f16abb89f",
+      "sourceTaskId": "b9be3b91-3bec-414f-b3a3-b1a703f06a0b",
+      "targetTaskId": "49e5033a-7700-40d3-ab37-334e0cac6a2f"
+    },
+    {
+      "id": "b074fce3-9a02-4b3e-b510-49f4fbf0ad21",
+      "sourceTaskId": "896ff2b4-fc36-4712-9ed1-199ead88deac",
+      "targetTaskId": "150a7a6c-af46-45bc-a150-8909a4319524"
+    },
+    {
+      "id": "37dfb93c-8c4b-4fee-befc-31f23d58d6fe",
+      "sourceTaskId": "fade607a-986a-4f80-9722-f16eb6cb6f71",
+      "targetTaskId": "150a7a6c-af46-45bc-a150-8909a4319524"
+    },
+    {
+      "id": "6b7bef6a-c827-4915-98a9-f2a45fc63a2c",
+      "sourceTaskId": "056b5326-03dd-48e1-aa2a-df33aa7bf891",
+      "targetTaskId": "e2aee49f-972d-4380-ae53-ecbc215a3c0b"
+    },
+    {
+      "id": "52f9aae2-8b53-46eb-aa0a-5b71d5774a84",
+      "sourceTaskId": "32dd9cf5-f8b4-4a63-925f-f32139c8c326",
+      "targetTaskId": "3e801b5a-cd8e-41d0-8567-5c58660a1d95"
+    },
+    {
+      "id": "74314975-8144-4323-af44-9d20d8f018f7",
+      "sourceTaskId": "b7342787-921f-4a94-a178-38f643825799",
+      "targetTaskId": "32dd9cf5-f8b4-4a63-925f-f32139c8c326"
+    },
+    {
+      "id": "0bba9923-13fc-4e0b-a715-1344ca9790a8",
+      "sourceTaskId": "d510cca6-8616-4ea0-b629-17c97e9fc1d5",
+      "targetTaskId": "21179bd7-5713-47a5-bc81-509155893cc8"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "ce3ddddb-b88e-47a6-9064-53204471fa45",
+      "type": "edge:weighted",
+      "sourceId": "2ffc14f2-72d6-41d6-992f-0db5c8555d2b",
+      "targetId": "b1e404e4-3931-4638-8133-439c52c7f364",
+      "description": "(0..1)"
+    },
+    {
+      "id": "cce8d8ee-e722-4f7c-b8f1-b0a4eb969b72",
+      "type": "edge:weighted",
+      "sourceId": "870d1771-ba4f-4ab4-94ef-360dd2382efe",
+      "targetId": "b1e404e4-3931-4638-8133-439c52c7f364",
+      "description": "(0..1)"
+    },
+    {
+      "id": "9b7024e3-0b79-4911-9faf-f64f4184b9a2",
+      "type": "edge:weighted",
+      "sourceId": "49e5033a-7700-40d3-ab37-334e0cac6a2f",
+      "targetId": "150a7a6c-af46-45bc-a150-8909a4319524",
+      "description": "(1..1)"
+    },
+    {
+      "id": "7738b688-3eec-4e9a-8474-2bb837a8deb3",
+      "type": "edge:weighted",
+      "sourceId": "317f0896-0319-4644-b17d-39761014f25b",
+      "targetId": "150a7a6c-af46-45bc-a150-8909a4319524",
+      "description": "(0..1)"
+    },
+    {
+      "id": "9d5caf60-6b8f-40b1-89e3-d569dcc4ab1b",
+      "type": "edge:weighted",
+      "sourceId": "21179bd7-5713-47a5-bc81-509155893cc8",
+      "targetId": "32dd9cf5-f8b4-4a63-925f-f32139c8c326",
+      "description": "(1..1)"
+    },
+    {
+      "id": "b274d39b-927b-40f1-8768-3d323ff1c4f5",
+      "type": "edge:weighted",
+      "sourceId": "e2aee49f-972d-4380-ae53-ecbc215a3c0b",
+      "targetId": "32dd9cf5-f8b4-4a63-925f-f32139c8c326",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

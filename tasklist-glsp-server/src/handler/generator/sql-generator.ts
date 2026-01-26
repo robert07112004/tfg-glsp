@@ -1,116 +1,540 @@
 import {
+    GEdge,
+    GLabel,
     GModelElement,
     GModelIndex,
     GNode
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { ENTITY_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
-import { isGNode, ModelUtils } from './model-utils';
-import { SQLFormatter } from './sql-formatter';
-import { TableMapper } from './table-mapper';
+import {
+    ALTERNATIVE_KEY_ATTRIBUTE_TYPE,
+    ATTRIBUTE_TYPE,
+    DERIVED_ATTRIBUTE_TYPE,
+    ENTITY_TYPE,
+    KEY_ATTRIBUTE_TYPE,
+    MULTI_VALUED_ATTRIBUTE_TYPE,
+    OPTIONAL_EDGE_TYPE,
+    RELATION_TYPE,
+    WEAK_ENTITY_TYPE,
+    attributeTypes
+} from '../validation/utils/validation-constants';
 
 @injectable()
 export class SQLGenerator {
 
     public generate(root: GModelElement, index: GModelIndex): string {
-        let sqlScript = "-- Script generado por GLSP-ER\n";
+        let sqlScript = "-- Script generado por GLSP-ER (Consolidado)\n";
         sqlScript += "-- Fecha: " + new Date().toLocaleString() + "\n\n";
         
-        const nodes = root.children.filter(isGNode);
+        const nodes = root.children.filter((el): el is GNode => el instanceof GNode);
 
+        // 1. Procesar Entidades Fuertes
         nodes.filter(n => n.type === ENTITY_TYPE).forEach(entity => {
             sqlScript += this.processEntity(entity, root) + "\n";
         });
 
-        nodes.filter(n => n.type === WEAK_ENTITY_TYPE).forEach(weak => {
-            sqlScript += this.processWeakEntity(weak, root) + "\n";
+        // 2. Procesar Relaciones (N:M y Casos 1:1 que crean tabla)
+        nodes.filter(n => n.type === RELATION_TYPE).forEach(relation => {
+            const cardinality = this.getCardinality(relation);
+            if (cardinality === 'N:M') {
+                sqlScript += this.processManyToManyRelation(relation, root) + "\n";
+            } else if (cardinality === '1:1') {
+                const entities = this.findConnectedEntities(relation, root);
+                if (entities.length === 2) {
+                    const e1 = entities[0];
+                    const e2 = entities[1];
+                    const edge1 = this.findEdgeBetween(e1, relation, root);
+                    const edge2 = this.findEdgeBetween(e2, relation, root);
+                    if (edge1 && edge2) {
+                        const desc1 = this.getCardinality(edge1);
+                        const desc2 = this.getCardinality(edge2);
+                        if (desc1.includes('0..1') && desc2.includes('0..1')) {
+                            sqlScript += this.processOneToOneRelation(relation, e1, e2, root) + "\n";
+                        }
+                    }
+                }
+            }
         });
 
-        nodes.filter(n => n.type === RELATION_TYPE).forEach(rel => {
-            sqlScript += this.processManyToManyRelation(rel, root) + "\n";
-        });
+        // 2. Procesar Entidades Débiles
+        /*nodes.filter(n => n.type === WEAK_ENTITY_TYPE).forEach(weak => {
+            sqlScript += this.processWeakEntity(weak, root) + "\n";
+        });*/
 
         return sqlScript;
     }
 
+    // --- MÉTODOS DE PROCESAMIENTO PRINCIPAL ---
+
     private processEntity(entity: GNode, root: GModelElement): string {
-        const tableName = SQLFormatter.getSafeName(entity);
+        const tableName = this.getSafeName(entity);
         const allCols: string[] = [];
         const allFKs: string[] = [];
         const allPKs: string[] = [];
         let extraSql = "";
 
-        // SPECIALIZATION
-        const specInfo = TableMapper.getSpecializationInfo(entity, root);
-        if (specInfo.cols.length > 0) {
-            allCols.push(...specInfo.cols);
-            allFKs.push(...specInfo.fks);
-            allPKs.push(...specInfo.pks);
-        }
+        // Especialización (IS-A)
+        /*const specInfo = this.getSpecializationInfo(entity, root);
+        allCols.push(...specInfo.cols);
+        allFKs.push(...specInfo.fks);
+        allPKs.push(...specInfo.pks);*/
 
-        // ATTRIBUTES
-        const { cols, additionalSql } = TableMapper.getAttributeDefinitions(entity, root);
+        // Atributos directos
+        const { cols, pks, additionalSql } = this.getAttributeDefinitions(entity, root);
         allCols.push(...cols);
+        allPKs.push(...pks);
         extraSql += additionalSql;
 
-        // FOREIGN KEYS
-        const relInfo = TableMapper.getRelationForeignKeys(entity, root);
-        allCols.push(...relInfo.cols);
-        allFKs.push(...relInfo.fks);
+        // Interrelaciones 1:N
+        this.processOneToManyRelations(entity, root, allCols, allPKs, allFKs, extraSql);
+        
+        // Interrelaciones 1:1
+        this.processOneToOneKeyPropagation(entity, root, allCols, allPKs, allFKs, extraSql);
 
-        return SQLFormatter.buildCreateTable(tableName, allCols, allFKs, allPKs) + extraSql;
-    }
-
-    private processWeakEntity(entity: GNode, root: GModelElement): string {
-        const tableName = SQLFormatter.getSafeName(entity);
-        const allCols: string[] = [];
-        const allFKs: string[] = [];
-        const allPKs: string[] = [];
-        let extraSql = "";
-
-        // ATTRIBUTES
-        const { cols, additionalSql } = TableMapper.getAttributeDefinitions(entity, root);
-        allCols.push(...cols);
-        extraSql += additionalSql;
-
-        // FOREIGN KEYS
-        const identity = TableMapper.getWeakEntityIdentity(entity, root);
-        allCols.push(...identity.cols);
-        allFKs.push(...identity.fks);
-        allPKs.push(...identity.pks);
-
-        return SQLFormatter.buildCreateTable(tableName, allCols, allFKs, allPKs) + extraSql;
+        return this.buildCreateTable(tableName, allCols, allFKs, allPKs) + extraSql;
     }
 
     private processManyToManyRelation(relation: GNode, root: GModelElement): string {
-        const cardinality = ModelUtils.getCardinality(relation);
-        if (!cardinality.includes('N:M')) return "";
-
-        const tableName = SQLFormatter.getSafeName(relation);
+        const tableName = this.getSafeName(relation);
         const cols: string[] = [];
         const fks: string[] = [];
         const pks: string[] = [];
 
-        const entities = ModelUtils.findConnectedEntities(relation, root);
-        entities.forEach(ent => {
-            const pk = ModelUtils.findPrimaryKey(ent, root);
-            if(pk) {
-                const entName = SQLFormatter.getSafeName(ent);
-                const pkLabel = SQLFormatter.getSafeName(pk);
-                const pkInfo = SQLFormatter.splitLabelAttribute(pkLabel);
-                
-                const colName = `${entName}_${pkInfo.name}`;
-                
-                cols.push(`    ${colName} ${pkInfo.type} NOT NULL`);
-                pks.push(colName);
-                fks.push(`    FOREIGN KEY (${colName}) REFERENCES ${entName}(${pkInfo.name}) ON DELETE CASCADE`);
+        const { cols: attrCols, pks: relPks, additionalSql } = this.getAttributeDefinitions(relation, root);
+        cols.push(...attrCols);
+        pks.push(...relPks);
+
+        const entities = this.findConnectedEntities(relation, root);
+        const uniqueEntities = Array.from(new Set(entities.map(e => e.id)));
+        if (uniqueEntities.length > 1) {
+            entities.forEach(ent => {
+                const pk = this.findPrimaryKey(ent, root);
+                if (pk) {
+                    const entName = this.getSafeName(ent);
+                    const pkInfo = this.splitLabelAttribute(this.getSafeName(pk));
+                    cols.push(`    ${pkInfo.name} ${pkInfo.type} NOT NULL`);
+                    pks.push(`${pkInfo.name}`);
+                    fks.push(`    FOREIGN KEY (${pkInfo.name}) REFERENCES ${entName}(${pkInfo.name}) ON DELETE CASCADE`);
+                }
+            });
+        } else {
+            const pk = this.findPrimaryKey(entities[0], root);
+            if (pk) {
+                const relName = this.getSafeName(relation);
+                const prefix = relName.substring(0, 3);
+                const entName = this.getSafeName(entities[0]);
+                const pkInfo = this.splitLabelAttribute(this.getSafeName(pk));
+                cols.push(`    ${pkInfo.name} ${pkInfo.type} NOT NULL`);
+                cols.push(`    ${prefix}_${pkInfo.name} ${pkInfo.type} NOT NULL`);
+                pks.push(`${pkInfo.name}`);
+                pks.push(`${prefix}_${pkInfo.name}`);
+                fks.push(`    FOREIGN KEY (${pkInfo.name}) REFERENCES ${entName}(${pkInfo.name}) ON DELETE CASCADE`);
+                fks.push(`    FOREIGN KEY (${prefix}_${pkInfo.name}) REFERENCES ${entName}(${pkInfo.name}) ON DELETE CASCADE`);
+            }
+        }
+        
+        return this.buildCreateTable(tableName, cols, fks, pks) + additionalSql;
+    }
+
+    private processOneToManyRelations(entity: GNode, root: GModelElement, allCols: string[], allPKs: string[], allFKs: string[], extraSql: string): void {
+        const allRelations = this.findConnectedRelations(entity, root);
+        const uniqueRelations = Array.from(new Map(allRelations.map(r => [r.id, r])).values());
+        uniqueRelations.forEach(relation => {
+            const cardinality = this.getCardinality(relation);
+            if (cardinality === '1:N') {
+                const myEdge = this.findEdgeBetween(entity, relation, root);
+                if (myEdge && this.getCardinality(myEdge).includes('N')) {
+                    const connected = this.findConnectedEntities(relation, root);
+                    const other = connected.find(e => {
+                        const edge = this.findEdgeBetween(e, relation, root);
+                        return edge && this.getCardinality(edge).includes('1');
+                    });
+                    if (other) {
+                        const otherPK = this.findPrimaryKey(other, root);
+                        if (otherPK) {
+                            const { name, type } = this.splitLabelAttribute(this.getSafeName(otherPK));
+                            const otherEdge = this.findEdgeBetween(other, relation, root);
+                            if (otherEdge) {
+                                const isReflexive = entity.id === other.id;
+                                const relName = this.getSafeName(relation);
+                                const prefix = relName.substring(0, 3);
+                                const colName = isReflexive ? `${prefix}_${name}` : name;
+                                const isOptional = this.getCardinality(otherEdge).includes('0');
+                                const nullability = isOptional ? 'NULL' : 'NOT NULL';
+                                allCols.push(`    ${colName} ${type} ${nullability}`);
+                                const { cols: attrCols, pks: relPks, additionalSql } = this.getAttributeDefinitions(relation, root);
+                                allCols.push(...attrCols);
+                                allPKs.push(...relPks);
+                                extraSql += additionalSql;
+                                const otherTableName = this.getSafeName(other);
+                                allFKs.push(`    FOREIGN KEY (${colName}) REFERENCES ${otherTableName}(${name}) ON DELETE CASCADE ON UPDATE CASCADE`);
+                            }
+                        }
+                    }
+                }
             }
         });
+    }
 
-        const { cols: attrCols } = TableMapper.getAttributeDefinitions(relation, root);
-        cols.push(...attrCols);
+    private processOneToOneKeyPropagation(entity: GNode, root: GModelElement, allCols: string[], allPKs: string[], allFKs: string[], extraSql: string): void {
+        const allRelations = this.findConnectedRelations(entity, root);
+        const uniqueRelations = Array.from(new Map(allRelations.map(r => [r.id, r])).values());
+        uniqueRelations.forEach(relation => {
+            if (this.getCardinality(relation) !== '1:1') return;
+            const myEdges = this.getEdgesBetween(entity, relation, root);
+            myEdges.forEach(myEdge => {
+                const other = this.resolveOtherEntity(entity, relation, root);
+                if (!other) return;
 
-        return SQLFormatter.buildCreateTable(tableName, cols, fks, pks);
+                const otherEdge = this.resolveOtherEdge(entity, other, relation, myEdge, root);
+                if (!otherEdge) return;
+
+                const myCard = this.getCardinality(myEdge);
+                const otherCard = this.getCardinality(otherEdge);
+
+                if (myCard.includes('0') && otherCard.includes('1')) {
+                    extraSql += this.generateOneToOneFK(entity, other, relation, root, allCols, allFKs, allPKs);
+                } else if (myCard.includes('1..1') && otherCard.includes('1..1')) {
+                    const isReflexive = entity.id === other.id;
+                    if (isReflexive || entity.id > other.id) {
+                        extraSql += this.generateOneToOneFK(entity, other, relation, root, allCols, allFKs, allPKs);
+                    }
+                }
+            });
+        });
+    }
+
+    private processOneToOneRelation(relation: GNode, entity: GNode, otherEntity: GNode, root: GModelElement): String {
+        const tableName = this.getSafeName(relation);
+        const entityName = this.getSafeName(entity);
+        const otherEntityName = this.getSafeName(otherEntity);
+        const cols: string[] = [];
+        const fks: string[] = [];
+        const pks: string[] = [];
+        const entityPK = this.findPrimaryKey(entity, root);
+        const otherEntityPK = this.findPrimaryKey(otherEntity, root);
+        if (entityPK && otherEntityPK) {
+            const ePK = this.splitLabelAttribute(this.getSafeName(entityPK));
+            const oPK = this.splitLabelAttribute(this.getSafeName(otherEntityPK));
+            const isReflexive = entity.id === otherEntity.id;
+            const prefix = this.getSafeName(relation).substring(0, 3);
+            const colName1 = `${ePK.name}`;
+            const colName2 = isReflexive ? `${prefix}_${oPK.name}` : oPK.name;
+            cols.push(`    ${colName1} ${ePK.type} NOT NULL`);
+            pks.push(colName1);
+            cols.push(`    ${colName2} ${oPK.type} UNIQUE NOT NULL`);
+            const { cols: attrCols, pks: relPks, additionalSql } = this.getAttributeDefinitions(relation, root);
+            cols.push(...attrCols);
+            relPks.forEach(pkName => {
+                const index = cols.findIndex(c => c.trim().startsWith(pkName + " "));
+                if (index !== -1) cols[index] = cols[index].replace("NOT NULL", "UNIQUE NOT NULL");
+            });
+            fks.push(`    FOREIGN KEY (${colName1}) REFERENCES ${entityName}(${ePK.name}) ON DELETE CASCADE`);
+            fks.push(`    FOREIGN KEY (${colName2}) REFERENCES ${otherEntityName}(${oPK.name}) ON DELETE CASCADE`);
+            return this.buildCreateTable(tableName, cols, fks, pks) + additionalSql;
+        }
+        return "";
+    }
+
+    /*private processWeakEntity(entity: GNode, root: GModelElement): string {
+        const tableName = this.getSafeName(entity);
+        const allCols: string[] = [];
+        const allFKs: string[] = [];
+        const allPKs: string[] = [];
+        
+        const { cols, additionalSql } = this.getAttributeDefinitions(entity, root);
+        allCols.push(...cols);
+
+        const identity = this.getWeakEntityIdentity(entity, root);
+        allCols.push(...identity.cols);
+        allFKs.push(...identity.fks);
+        allPKs.push(...identity.pks);
+
+        return this.buildCreateTable(tableName, allCols, allFKs, allPKs) + additionalSql;
+    }*/
+
+    // --- LÓGICA INTEGRADA DE TABLE-MAPPER ---
+
+    private getAttributeDefinitions(node: GNode, root: GModelElement): { cols: string[], pks: string[], additionalSql: string } {
+        const cols: string[] = [];
+        const pks: string[] = [];
+        let additionalSql = "";
+        let attributes = this.findConnectedAttributes(node, root);
+        attributes = this.sortAttributes(attributes);
+        attributes.forEach(attr => {
+            const safeLabel = this.getSafeName(attr);
+            const { name, type } = this.splitLabelAttribute(safeLabel);
+            let colDef = "";
+            switch (attr.type) {
+                case KEY_ATTRIBUTE_TYPE:
+                    colDef = `    ${name} ${type} NOT NULL`;
+                    pks.push(name);
+                    break;
+                case ALTERNATIVE_KEY_ATTRIBUTE_TYPE:
+                    colDef = `    ${name} ${type} UNIQUE`;
+                    break;
+                case ATTRIBUTE_TYPE:
+                    const composite = this.findConnectedAttributes(attr, root);
+                    if (composite.length > 0) {
+                        composite.forEach(c => {
+                            const cInfo = this.splitLabelAttribute(this.getSafeName(c));
+                            cols.push(`    ${cInfo.name} ${cInfo.type} NOT NULL`);
+                        });
+                        return;
+                    } else {
+                        const edge = this.findEdgeBetween(node, attr, root);
+                        const isOptional = edge && edge.type === OPTIONAL_EDGE_TYPE;
+                        colDef = `    ${name} ${type} ${isOptional ? 'NULL' : 'NOT NULL'}`;
+                    }
+                    break;
+                case DERIVED_ATTRIBUTE_TYPE:
+                    const eq = this.getEquationFromDerivedAttribute(attr);
+                    if (eq) colDef = `    ${name} ${type} GENERATED ALWAYS AS (${eq}) STORED`;
+                    break;
+                case MULTI_VALUED_ATTRIBUTE_TYPE:
+                    additionalSql += "\n" + this.generateMultiValuedTable(node, attr, root);
+                    break;
+            }
+            if (colDef) cols.push(colDef);
+        });
+        return { cols, pks, additionalSql };
+    }
+
+    private generateMultiValuedTable(parent: GNode, attr: GNode, root: GModelElement): string {
+        const parentName = this.getSafeName(parent);
+        const { name: attrName, type: attrType } = this.splitLabelAttribute(this.getSafeName(attr));
+        const pkNode = this.findPrimaryKey(parent, root);
+        if (!pkNode) return `-- Error: No PK for multivalue ${attrName}`;
+        
+        const { name: pkName, type: pkType } = this.splitLabelAttribute(this.getSafeName(pkNode));
+        const tableName = `${attrName}_${parentName}`;
+        const cols = [`    ${pkName} ${pkType}`, `    ${attrName} ${attrType}`];
+        const fks = [`    FOREIGN KEY (${pkName}) REFERENCES ${parentName}(${pkName}) ON DELETE CASCADE`];
+        return this.buildCreateTable(tableName, cols, fks, [pkName, attrName]);
+    }
+
+    /*private getWeakEntityIdentity(weakEntity: GNode, root: GModelElement) {
+        const cols: string[] = [], fks: string[] = [], pks: string[] = [];
+        const dependenceRelations = this.findConnectedDependenceRelations(weakEntity, root);
+
+        dependenceRelations.forEach(rel => {
+            const other = this.findOtherEntity(rel, weakEntity, root);
+            const otherPK = other ? this.findPrimaryKey(other, root) : undefined;
+            if (!other || !otherPK) return;
+
+            const otherName = this.getSafeName(other);
+            const { name: pkName, type: pkType } = this.splitLabelAttribute(this.getSafeName(otherPK));
+            const fkCol = `${otherName}_${pkName}`;
+
+            cols.push(`    ${fkCol} ${pkType} NOT NULL`);
+            fks.push(`    FOREIGN KEY (${fkCol}) REFERENCES ${otherName}(${pkName}) ON DELETE CASCADE`);
+
+            const weakPK = this.findPrimaryKey(weakEntity, root);
+            if (weakPK) {
+                const { name: wPkName } = this.splitLabelAttribute(this.getSafeName(weakPK));
+                pks.push(`${wPkName}, ${fkCol}`);
+            }
+        });
+        return { cols, fks, pks };
+    }*/
+
+    /*private getSpecializationInfo(entity: GNode, root: GModelElement) {
+        const cols: string[] = [], fks: string[] = [], pks: string[] = [];
+        const parent = this.findParentFromSpecialization(entity, root);
+        if (parent) {
+            const identityCols = this.getIdentityColumns(parent, root);
+            const parentName = this.getSafeName(parent);
+            identityCols.forEach(col => {
+                cols.push(`    ${col.name} ${col.type} NOT NULL`);
+                fks.push(`    FOREIGN KEY (${col.name}) REFERENCES ${parentName}(${col.name}) ON DELETE CASCADE`);
+                pks.push(col.name);
+            });
+        }
+        return { cols, fks, pks };
+    }
+
+    private getRelationForeignKeys(entity: GNode, root: GModelElement) {
+        const cols: string[] = [], fks: string[] = [];
+        const relations = this.findConnectedRelations(entity, root);
+
+        relations.forEach(rel => {
+            const card = this.getCardinality(rel);
+            const other = this.findOtherEntity(rel, entity, root);
+            
+            if (other && card === '1:N') {
+                const myEdge = this.findEdgeBetween(entity, rel, root);
+                if (myEdge && this.getCardinality(myEdge).includes('..1')) {
+                    this.addFKToCols(cols, fks, other, root, false);
+                }
+            } else if (!other) { // Reflexiva
+                if (card === '1:N') this.addReflexiveFK(cols, fks, entity, rel, root, false);
+            }
+        });
+        return { cols, fks };
+    }*/
+
+    // --- MÉTODOS DE FORMATEO (Ex SQLFormatter) ---
+
+    private getSafeName(node: GNode): string {
+        const label = node.children.find((c): c is GLabel => c instanceof GLabel);
+        const text = label ? label.text : node.id;
+        return text.replace(/\s+/g, '');
+    }
+
+    private splitLabelAttribute(label: string) {
+        const [name, type] = label.split(':');
+        return { name: name.trim(), type: (type || 'VARCHAR(255)').trim().toUpperCase() };
+    }
+
+    private sortAttributes(attributes: GNode[]): GNode[] {
+        const priorities: Record<string, number> = { [KEY_ATTRIBUTE_TYPE]: 1, [ALTERNATIVE_KEY_ATTRIBUTE_TYPE]: 2 };
+        return attributes.sort((a, b) => (priorities[a.type] ?? 3) - (priorities[b.type] ?? 3));
+    }
+
+    private buildCreateTable(name: string, cols: string[], fks: string[], pks: string[]): string {
+        let sql = `CREATE TABLE ${name} (\n`;
+        let lines = [...cols];
+        if (pks.length > 0) {
+            lines.push(`    PRIMARY KEY (${pks.join(", ")})`);
+        }
+        fks.forEach(fk => lines.push(fk));
+        sql += lines.join(",\n") + "\n);\n";
+        return sql;
+    }
+
+    // --- MÉTODOS DE UTILIDAD (Ex ModelUtils) ---
+
+    private findPrimaryKey(node: GNode, root: GModelElement) {
+        return this.findConnectedAttributes(node, root).find(a => a.type === KEY_ATTRIBUTE_TYPE);
+    }
+
+    private findConnectedAttributes(node: GNode, root: GModelElement) {
+        return this.findConnectedNodes(node, root, attributeTypes);
+    }
+
+    private findConnectedRelations(node: GNode, root: GModelElement) {
+        return this.findConnectedNodes(node, root, [RELATION_TYPE]);
+    }
+
+    private findConnectedEntities(relation: GNode, root: GModelElement) {
+        const edges = root.children.filter((e): e is GEdge => e instanceof GEdge && (e.sourceId === relation.id || e.targetId === relation.id));
+        return edges.map(e => root.children.find(c => c.id === (e.sourceId === relation.id ? e.targetId : e.sourceId)))
+                    .filter((n): n is GNode => n instanceof GNode && (n.type === ENTITY_TYPE || n.type === WEAK_ENTITY_TYPE));
+    }
+
+    private findConnectedNodes(source: GNode, root: GModelElement, types: string[]) {
+        const edges = root.children.filter((e): e is GEdge => e instanceof GEdge && (e.sourceId === source.id || e.targetId === source.id));
+        return edges.map(e => root.children.find(c => c.id === (e.sourceId === source.id ? e.targetId : e.sourceId)))
+                    .filter((n): n is GNode => n instanceof GNode && types.some(t => n.type.includes(t)));
+    }
+
+    private findEdgeBetween(a: GNode, b: GNode, root: GModelElement) {
+        return root.children.find((e): e is GEdge => e instanceof GEdge && ((e.sourceId === a.id && e.targetId === b.id) || (e.sourceId === b.id && e.targetId === a.id)));
+    }
+
+    private getCardinality(node: GNode | GEdge): string {
+        const label = node.children.find((c): c is GLabel => c instanceof GLabel && (c.type.includes('cardinality') || c.type.includes('weighted')));
+        return label ? (label as GLabel).text : '';
+    }
+
+    /*private findOtherEntity(rel: GNode, current: GNode, root: GModelElement) {
+        return this.findConnectedEntities(rel, root).find(e => e.id !== current.id);
+    }*/
+
+    /*private findConnectedDependenceRelations(weak: GNode, root: GModelElement) {
+        const edges = root.children.filter((e): e is GEdge => e instanceof GEdge && e.targetId === weak.id);
+        return edges.map(e => root.children.find(c => c.id === e.sourceId))
+                    .filter((n): n is GNode => n instanceof GNode && (n.type === EXISTENCE_DEP_RELATION_TYPE || n.type === IDENTIFYING_DEP_RELATION_TYPE));
+    }
+
+    private findParentFromSpecialization(child: GNode, root: GModelElement) {
+        const edges = root.children.filter((e): e is GEdge => e instanceof GEdge);
+        const toSpec = edges.find(e => e.targetId === child.id && root.children.some(c => c.id === e.sourceId && specializationTypes.includes(c.type)));
+        if (toSpec) {
+            const fromParent = edges.find(e => e.targetId === toSpec.sourceId);
+            return fromParent ? root.children.find(c => c.id === fromParent.sourceId) as GNode : undefined;
+        }
+        return undefined;
+    }
+
+    private getIdentityColumns(entity: GNode, root: GModelElement): { name: string, type: string }[] {
+        const pk = this.findPrimaryKey(entity, root);
+        if (pk) {
+            const info = this.splitLabelAttribute(this.getSafeName(pk));
+            return [info];
+        }
+        return []; // Simplificado para la plantilla
+    }
+
+    private addFKToCols(cols: string[], fks: string[], target: GNode, root: GModelElement, unique: boolean) {
+        const pk = this.findPrimaryKey(target, root);
+        if (!pk) return;
+        const targetName = this.getSafeName(target);
+        const pkInfo = this.splitLabelAttribute(this.getSafeName(pk));
+        const colName = `${targetName}_${pkInfo.name}`;
+        cols.push(`    ${colName} ${pkInfo.type} ${unique ? 'UNIQUE' : ''}`);
+        fks.push(`    FOREIGN KEY (${colName}) REFERENCES ${targetName}(${pkInfo.name}) ON DELETE SET NULL`);
+    }*/
+
+    private getEquationFromDerivedAttribute(node: GNode): string | undefined {
+        const label = node.children.find(c => c instanceof GLabel && c.id.includes('equation')) as GLabel;
+        return label?.text;
+    }
+
+    private getEdgesBetween(entity: GNode, relation: GNode, root: GModelElement): GEdge[] {
+        return root.children.filter(child => {
+            const isEdge = child.type && child.type.includes('edge');
+            if (!isEdge) return false;
+            const e = child as GEdge;
+            return (e.sourceId === entity.id && e.targetId === relation.id) || 
+                (e.sourceId === relation.id && e.targetId === entity.id);
+        }) as GEdge[];
+    }
+
+    private resolveOtherEntity(entity: GNode, relation: GNode, root: GModelElement): GNode | undefined {
+        const connected = this.findConnectedEntities(relation, root);
+        let other = connected.find(e => e.id !== entity.id);
+        if (!other) {
+            const isReflexive = connected.length > 0 && connected.every(e => e.id === entity.id);
+            if (isReflexive) other = entity;
+        }
+        return other;
+    }
+
+    private resolveOtherEdge(entity: GNode, other: GNode, relation: GNode, currentEdge: GEdge, root: GModelElement): GEdge | undefined {
+        if (entity.id === other.id) {
+            return root.children.find(child => {
+                const isEdge = child.type && child.type.includes('edge'); 
+                if (!isEdge) return false;
+                const e = child as GEdge;
+                const connects = (e.sourceId === entity.id && e.targetId === relation.id) || 
+                                 (e.sourceId === relation.id && e.targetId === entity.id);
+                return connects && e.id !== currentEdge.id;
+            }) as GEdge | undefined;
+        } else return this.findEdgeBetween(other, relation, root);
+    }
+
+    private generateOneToOneFK(entity: GNode, other: GNode, relation: GNode, root: GModelElement, allCols: string[], allFKs: string[], allPKs: string[]): string {
+        const otherPK = this.findPrimaryKey(other, root);
+        if (!otherPK) return "";
+
+        const { name, type } = this.splitLabelAttribute(this.getSafeName(otherPK));
+        const isReflexive = entity.id === other.id;
+        const relName = this.getSafeName(relation);
+        const prefix = relName.substring(0, 3);
+        
+        const colName = isReflexive ? `${prefix}_${name}` : name;
+        const otherTableName = this.getSafeName(other);
+
+        if (allCols.some(c => c.includes(colName))) return "";
+        allCols.push(`    ${colName} ${type} UNIQUE NOT NULL`);
+
+        const { cols: attrCols, pks: relPks, additionalSql } = this.getAttributeDefinitions(relation, root);
+        allCols.push(...attrCols);
+        allPKs.push(...relPks);
+
+        allFKs.push(`    FOREIGN KEY (${colName}) REFERENCES ${otherTableName}(${name}) ON DELETE CASCADE ON UPDATE CASCADE`);
+        return additionalSql;
     }
 
 }
