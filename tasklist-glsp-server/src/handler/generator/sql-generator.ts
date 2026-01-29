@@ -91,6 +91,22 @@ export class SQLGenerator {
         // Interrelaciones 1:1
         this.processOneToOneKeyPropagation(entity, root, allCols, allPKs, allFKs, extraSql);
 
+        // Restriccion de exclusion
+        const exclusionConstraints = this.processExclusionConstraints(entity, root);
+        allFKs.push(...exclusionConstraints);
+
+        // Restriccion de inclusion
+        const inclusionConstraints = this.processInclusionConstraints(entity, root);
+        allFKs.push(...inclusionConstraints);
+
+        // Restriccion de disyunción
+        const disjointnessConstraints = this.processDisjointnessConstraints(entity, root);
+        allFKs.push(...disjointnessConstraints);
+
+        // Restriccion de solapamiento
+        const overlappingConstraints = this.processOverlappingConstraints(entity, root);
+        allFKs.push(...overlappingConstraints);
+
         return this.buildCreateTable(tableName, allCols, allFKs, allPKs) + extraSql;
     }
 
@@ -313,6 +329,87 @@ export class SQLGenerator {
         return this.buildCreateTable(tableName, cols, fks, [pkName, attrName]);
     }
 
+    private processExclusionConstraints(entity: GNode, root: GModelElement): string[] {
+        const checks: string[] = [];
+        const connectedRelations = this.findConnectedRelations(entity, root);
+        const exclusionEdges = this.findConstraintEdges('edge:exclusion', root);
+        exclusionEdges.forEach(edge => {
+            const relA = connectedRelations.find(r => r.id === edge.sourceId);
+            const relB = connectedRelations.find(r => r.id === edge.targetId);
+            if (relA && relB) {
+                const colA = this.getFKColumnName(entity, relA, root);
+                const colB = this.getFKColumnName(entity, relB, root);
+                if (colA && colB) {
+                    const constraintName = `CHK_Exc_${this.getSafeName(entity)}_${this.getSafeName(relA)}_${this.getSafeName(relB)}`;
+                    checks.push(`    CONSTRAINT ${constraintName} CHECK (${colA} IS NULL OR ${colB} IS NULL OR ${colA} <> ${colB})`);
+                }
+            }
+        });
+        return checks;
+    }
+
+    private processInclusionConstraints(entity: GNode, root: GModelElement): string[] {
+        const checks: string[] = [];
+        const connectedRelations = this.findConnectedRelations(entity, root);
+        const exclusionEdges = this.findConstraintEdges('edge:inclusion', root);
+        exclusionEdges.forEach(edge => {
+            const relA = connectedRelations.find(r => r.id === edge.sourceId);
+            const relB = connectedRelations.find(r => r.id === edge.targetId);
+            if (relA && relB) {
+                const colA = this.getFKColumnName(entity, relA, root);
+                const colB = this.getFKColumnName(entity, relB, root);
+                if (colA && colB) {
+                    const constraintName = `CHK_Incl_${this.getSafeName(entity)}_${this.getSafeName(relA)}_${this.getSafeName(relB)}`;
+                    checks.push(`    CONSTRAINT ${constraintName} CHECK (${colA} IS NULL OR ${colA} = ${colB})`);
+                }
+            }
+        });
+        return checks;
+    }
+
+    private processDisjointnessConstraints(entity: GNode, root: GModelElement): string[] {
+        const checks: string[] = [];
+        const disjointnessEdges = this.findConstraintEdges('edge:disjointness', root);
+        disjointnessEdges.forEach(edge => {
+            const relA = this.resolveRelationFromPort(edge.sourceId, entity, root);
+            const relB = this.resolveRelationFromPort(edge.targetId, entity, root);
+            if (relA && relB) {
+                const colA = this.getFKColumnName(entity, relA, root);
+                const colB = this.getFKColumnName(entity, relB, root);
+                if (colA && colB) {
+                    const constraintName = `CHK_Disj_${this.getSafeName(relA)}_${this.getSafeName(relB)}`;
+                    checks.push(`    CONSTRAINT ${constraintName} CHECK (${colA} IS NULL OR ${colB} IS NULL)`);
+                }
+            }
+        });
+        return checks;
+    }
+
+    private processOverlappingConstraints(entity: GNode, root: GModelElement): string[] {
+        const checks: string[] = [];
+        const overlappingEdges = this.findConstraintEdges('edge:overlap', root);
+        overlappingEdges.forEach(edge => {
+            const relA = this.resolveRelationFromPort(edge.sourceId, entity, root);
+            const relB = this.resolveRelationFromPort(edge.targetId, entity, root);
+            if (relA && relB) {
+                const colA = this.getFKColumnName(entity, relA, root);
+                const colB = this.getFKColumnName(entity, relB, root);
+                if (colA && colB) {
+                    const constraintName = `CHK_Overl_${this.getSafeName(relA)}_${this.getSafeName(relB)}`;
+                    checks.push(`    CONSTRAINT ${constraintName} CHECK (${colA} IS NOT NULL OR ${colB} IS NOT NULL)`);
+                }
+            }
+        });
+        return checks;
+    }
+
+    private resolveRelationFromPort(portId: string, entity: GNode, root: GModelElement): GNode | undefined {
+        const weightedEdge = root.children.find(child => child instanceof GEdge && child.children.some(c => c.id === portId)) as GEdge | undefined;
+        if (!weightedEdge) return undefined;
+        const relationId = (weightedEdge.sourceId === entity.id) ? weightedEdge.targetId : weightedEdge.sourceId;
+        return root.children.find(child => child.id === relationId) as GNode | undefined;
+    }
+
     /*private getWeakEntityIdentity(weakEntity: GNode, root: GModelElement) {
         const cols: string[] = [], fks: string[] = [], pks: string[] = [];
         const dependenceRelations = this.findConnectedDependenceRelations(weakEntity, root);
@@ -351,26 +448,6 @@ export class SQLGenerator {
             });
         }
         return { cols, fks, pks };
-    }
-
-    private getRelationForeignKeys(entity: GNode, root: GModelElement) {
-        const cols: string[] = [], fks: string[] = [];
-        const relations = this.findConnectedRelations(entity, root);
-
-        relations.forEach(rel => {
-            const card = this.getCardinality(rel);
-            const other = this.findOtherEntity(rel, entity, root);
-            
-            if (other && card === '1:N') {
-                const myEdge = this.findEdgeBetween(entity, rel, root);
-                if (myEdge && this.getCardinality(myEdge).includes('..1')) {
-                    this.addFKToCols(cols, fks, other, root, false);
-                }
-            } else if (!other) { // Reflexiva
-                if (card === '1:N') this.addReflexiveFK(cols, fks, entity, rel, root, false);
-            }
-        });
-        return { cols, fks };
     }*/
 
     // --- MÉTODOS DE FORMATEO (Ex SQLFormatter) ---
@@ -432,6 +509,10 @@ export class SQLGenerator {
         return root.children.find((e): e is GEdge => e instanceof GEdge && ((e.sourceId === a.id && e.targetId === b.id) || (e.sourceId === b.id && e.targetId === a.id)));
     }
 
+    private findConstraintEdges(type: string, root: GModelElement): GEdge[] {
+        return root.children.filter(child => child instanceof GEdge && child.type === type) as GEdge[];
+    }
+
     private getCardinality(node: GNode | GEdge): string {
         const label = node.children.find((c): c is GLabel => c instanceof GLabel && (c.type.includes('cardinality') || c.type.includes('weighted')));
         return label ? (label as GLabel).text : '';
@@ -455,26 +536,49 @@ export class SQLGenerator {
             return fromParent ? root.children.find(c => c.id === fromParent.sourceId) as GNode : undefined;
         }
         return undefined;
-    }
-
-    private getIdentityColumns(entity: GNode, root: GModelElement): { name: string, type: string }[] {
-        const pk = this.findPrimaryKey(entity, root);
-        if (pk) {
-            const info = this.splitLabelAttribute(this.getSafeName(pk));
-            return [info];
-        }
-        return []; // Simplificado para la plantilla
-    }
-
-    private addFKToCols(cols: string[], fks: string[], target: GNode, root: GModelElement, unique: boolean) {
-        const pk = this.findPrimaryKey(target, root);
-        if (!pk) return;
-        const targetName = this.getSafeName(target);
-        const pkInfo = this.splitLabelAttribute(this.getSafeName(pk));
-        const colName = `${targetName}_${pkInfo.name}`;
-        cols.push(`    ${colName} ${pkInfo.type} ${unique ? 'UNIQUE' : ''}`);
-        fks.push(`    FOREIGN KEY (${colName}) REFERENCES ${targetName}(${pkInfo.name}) ON DELETE SET NULL`);
     }*/
+
+    private getFKColumnName(entity: GNode, relation: GNode, root: GModelElement): string | undefined {
+        const card = this.getCardinality(relation);
+        const myEdges = this.getEdgesBetween(entity, relation, root);
+        if (myEdges.length === 0) return undefined;
+
+        const other = this.resolveOtherEntity(entity, relation, root);
+        if (!other) return undefined;
+
+        const otherPK = this.findPrimaryKey(other, root);
+        if (!otherPK) return undefined;
+        
+        const { name: pkName } = this.splitLabelAttribute(this.getSafeName(otherPK));
+        const isReflexive = entity.id === other.id;
+        const relName = this.getSafeName(relation);
+        const prefix = relName.substring(0, 3);
+        const colName = isReflexive ? `${prefix}_${pkName}` : pkName;
+
+        if (card === '1:N') {
+            for (const edge of myEdges) {
+                if (this.getCardinality(edge).includes('N')) {
+                    return colName;
+                }
+            }
+        } else if (card === '1:1') {
+            for (const myEdge of myEdges) {
+                const otherEdge = this.resolveOtherEdge(entity, other, relation, myEdge, root);
+                if (!otherEdge) continue;
+
+                const myCard = this.getCardinality(myEdge);
+                const otherCard = this.getCardinality(otherEdge);
+
+                if (myCard.includes('0') && otherCard.includes('1')) return colName;
+                else if (myCard.includes('1..1') && otherCard.includes('1..1')) {
+                    if (isReflexive || entity.id > other.id) {
+                        return colName;
+                    }
+                }
+            }
+        }
+        return undefined;
+    }
 
     private getEquationFromDerivedAttribute(node: GNode): string | undefined {
         const label = node.children.find(c => c instanceof GLabel && c.id.includes('equation')) as GLabel;

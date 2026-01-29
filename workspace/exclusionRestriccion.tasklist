@@ -1,0 +1,154 @@
+{
+  "id": "7145765c-4fd4-4c7d-93bf-94e6f66e3fd1",
+  "tasks": [
+    {
+      "id": "8e4cbdb7-99b1-4185-92bc-b4898b3129b0",
+      "type": "entity",
+      "name": "Profesor",
+      "position": {
+        "x": 114,
+        "y": 386
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "c669b500-deb2-41a3-8fae-c3f639a794ee",
+      "type": "entity",
+      "name": "Curso",
+      "position": {
+        "x": 525,
+        "y": 368
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "5b4224f3-08d2-4052-a1ac-76b0ce4b2cbc",
+      "type": "relation",
+      "name": "Imparte",
+      "cardinality": "-",
+      "position": {
+        "x": 301,
+        "y": 242
+      },
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    },
+    {
+      "id": "510cc0ba-25db-4fcb-a97b-057610857e58",
+      "type": "relation",
+      "name": "Recibe",
+      "cardinality": "-",
+      "position": {
+        "x": 304,
+        "y": 495
+      },
+      "size": {
+        "width": 131.88787841796875,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "51ccc2c6-9fe6-4f03-80e7-b22fc5137a63",
+      "type": "keyAttribute",
+      "name": "Cod_Profesor: integer",
+      "position": {
+        "x": 75,
+        "y": 293
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "b79c6cb2-00c0-4e0e-8ceb-08c4124b50e9",
+      "type": "keyAttribute",
+      "name": "Cod_Curso: integer",
+      "position": {
+        "x": 575,
+        "y": 287
+      },
+      "size": {
+        "width": 117.85816955566406,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "605ac019-a3e7-4058-ae1f-9c0c72e70d9e",
+      "sourceTaskId": "c669b500-deb2-41a3-8fae-c3f639a794ee",
+      "targetTaskId": "b79c6cb2-00c0-4e0e-8ceb-08c4124b50e9"
+    },
+    {
+      "id": "ad93f8eb-5a25-4676-ab9c-a5d0512ad9a1",
+      "sourceTaskId": "51ccc2c6-9fe6-4f03-80e7-b22fc5137a63",
+      "targetTaskId": "8e4cbdb7-99b1-4185-92bc-b4898b3129b0"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "f0e37e44-ad0e-448e-9cc9-0187467a545d",
+      "type": "edge:weighted",
+      "sourceId": "8e4cbdb7-99b1-4185-92bc-b4898b3129b0",
+      "targetId": "5b4224f3-08d2-4052-a1ac-76b0ce4b2cbc",
+      "description": "(0..N)"
+    },
+    {
+      "id": "2fb6595d-82a6-4fef-8945-6ba44be040f6",
+      "type": "edge:weighted",
+      "sourceId": "8e4cbdb7-99b1-4185-92bc-b4898b3129b0",
+      "targetId": "510cc0ba-25db-4fcb-a97b-057610857e58",
+      "description": "(0..N)"
+    },
+    {
+      "id": "3d096b70-c33f-48c9-9a3b-3a81efff2778",
+      "type": "edge:weighted",
+      "sourceId": "c669b500-deb2-41a3-8fae-c3f639a794ee",
+      "targetId": "5b4224f3-08d2-4052-a1ac-76b0ce4b2cbc",
+      "description": "(1..1)"
+    },
+    {
+      "id": "ae15a76b-8750-4ba4-82b9-f493b2e7c934",
+      "type": "edge:weighted",
+      "sourceId": "c669b500-deb2-41a3-8fae-c3f639a794ee",
+      "targetId": "510cc0ba-25db-4fcb-a97b-057610857e58",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [
+    {
+      "id": "579ebd6d-85bc-4b46-abe6-4a6e3e83d031",
+      "type": "edge:exclusion",
+      "sourceId": "5b4224f3-08d2-4052-a1ac-76b0ce4b2cbc",
+      "targetId": "510cc0ba-25db-4fcb-a97b-057610857e58"
+    }
+  ],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

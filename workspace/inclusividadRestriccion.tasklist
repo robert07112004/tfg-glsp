@@ -1,0 +1,146 @@
+{
+  "id": "d68f99c3-5337-4228-8338-44a2169d44bd",
+  "tasks": [
+    {
+      "id": "7e288afc-2aa7-40ac-b5bf-1a697548aed5",
+      "type": "entity",
+      "name": "Profesor",
+      "position": {
+        "x": 92,
+        "y": 408
+      }
+    },
+    {
+      "id": "ac49a2ae-aa02-4116-8de4-9d5704846223",
+      "type": "entity",
+      "name": "Curso",
+      "position": {
+        "x": 558,
+        "y": 409
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "971442fe-ecc0-4334-9abc-97011a70bd04",
+      "type": "relation",
+      "name": "Imparte",
+      "cardinality": "-",
+      "position": {
+        "x": 302,
+        "y": 278
+      },
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    },
+    {
+      "id": "77b6c7f4-91ab-4df3-a5dd-66b10c624db5",
+      "type": "relation",
+      "name": "Recibe",
+      "cardinality": "-",
+      "position": {
+        "x": 301,
+        "y": 496
+      },
+      "size": {
+        "width": 131.88787841796875,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "d9463fa2-9a24-43f5-8d8f-b60c1016f3f6",
+      "type": "keyAttribute",
+      "name": "Cod_Profesro: integer",
+      "position": {
+        "x": 49,
+        "y": 314
+      },
+      "size": {
+        "width": 115.50118255615234,
+        "height": 22
+      }
+    },
+    {
+      "id": "23659ed2-6ffd-480a-8ddd-156724837888",
+      "type": "keyAttribute",
+      "name": "Cod_Curso: integer",
+      "position": {
+        "x": 572,
+        "y": 311
+      },
+      "size": {
+        "width": 103.65367126464844,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "aa90005a-e3a2-4a58-82c5-fef368bc2eb6",
+      "sourceTaskId": "23659ed2-6ffd-480a-8ddd-156724837888",
+      "targetTaskId": "ac49a2ae-aa02-4116-8de4-9d5704846223"
+    },
+    {
+      "id": "674d10f1-7d3e-450c-a92c-5a4076ac373b",
+      "sourceTaskId": "d9463fa2-9a24-43f5-8d8f-b60c1016f3f6",
+      "targetTaskId": "7e288afc-2aa7-40ac-b5bf-1a697548aed5"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "9a548406-d962-4b06-b4c2-55cd5184452f",
+      "type": "edge:weighted",
+      "sourceId": "7e288afc-2aa7-40ac-b5bf-1a697548aed5",
+      "targetId": "971442fe-ecc0-4334-9abc-97011a70bd04",
+      "description": "(1..N)"
+    },
+    {
+      "id": "171457bf-d4cb-465b-bf0d-e7570ec3a6e4",
+      "type": "edge:weighted",
+      "sourceId": "7e288afc-2aa7-40ac-b5bf-1a697548aed5",
+      "targetId": "77b6c7f4-91ab-4df3-a5dd-66b10c624db5",
+      "description": "(1..N)"
+    },
+    {
+      "id": "59222749-8056-44bb-84c5-5223eccacd74",
+      "type": "edge:weighted",
+      "sourceId": "ac49a2ae-aa02-4116-8de4-9d5704846223",
+      "targetId": "77b6c7f4-91ab-4df3-a5dd-66b10c624db5",
+      "description": "(0..1)"
+    },
+    {
+      "id": "4bd4debd-1ed6-4365-b76e-949dd28934aa",
+      "type": "edge:weighted",
+      "sourceId": "ac49a2ae-aa02-4116-8de4-9d5704846223",
+      "targetId": "971442fe-ecc0-4334-9abc-97011a70bd04",
+      "description": "(0..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": [
+    {
+      "id": "a36ddd11-f566-4910-b3b8-4842ffd9c610",
+      "type": "edge:overlap",
+      "sourceId": "9a548406-d962-4b06-b4c2-55cd5184452f_port",
+      "targetId": "171457bf-d4cb-465b-bf0d-e7570ec3a6e4_port"
+    }
+  ]
+}
