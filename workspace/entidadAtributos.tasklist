@@ -1,0 +1,552 @@
+{
+  "id": "6b6a365f-c433-4cf3-867e-8048a63c23dd",
+  "tasks": [
+    {
+      "id": "dc3bcb28-07b2-43f2-9018-d563d288606e",
+      "type": "entity",
+      "name": "Persona",
+      "position": {
+        "x": 223,
+        "y": 189
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "a9f3ffdf-f686-4b58-80cd-41feb74f2778",
+      "type": "entity",
+      "name": "Coche",
+      "position": {
+        "x": 310,
+        "y": 410
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "0e7d8e2b-957c-4373-afb8-cc84e2bb6367",
+      "type": "entity",
+      "name": "Perro",
+      "position": {
+        "x": 278.2567742884753,
+        "y": 755.7660133501394
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "8416731d-f429-4a75-ac16-17871014c593",
+      "type": "entity",
+      "name": "Pelota",
+      "position": {
+        "x": 805.6129006255048,
+        "y": 187.80247005185328
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "167a386d-2416-4ecb-9114-29df97505525",
+      "type": "entity",
+      "name": "NewEntityNode5",
+      "position": {
+        "x": 898,
+        "y": 556
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "3a54a186-9822-41aa-87b4-18f09e5cda77",
+      "type": "attribute",
+      "name": "correo:integer",
+      "position": {
+        "x": 242.97728612992717,
+        "y": 691.549153069545
+      }
+    },
+    {
+      "id": "2c519ee4-954a-457d-8b6e-d1344d88bd22",
+      "type": "attribute",
+      "name": "direccion: integer",
+      "position": {
+        "x": 383.886922100701,
+        "y": 763.3038754458064
+      },
+      "size": {
+        "width": 116.32050323486328,
+        "height": 21.855128288269043
+      }
+    },
+    {
+      "id": "839ddd86-3810-4112-89a7-e6404c508a1b",
+      "type": "attribute",
+      "name": "calle: varchar(199)",
+      "position": {
+        "x": 462.92110906585833,
+        "y": 723.2668202068779
+      },
+      "size": {
+        "width": 116.32050323486328,
+        "height": 21.855128288269043
+      }
+    },
+    {
+      "id": "8c417c0b-62d2-4eba-a9bb-568ced8ac474",
+      "type": "attribute",
+      "name": "numero: integer",
+      "position": {
+        "x": 520.636864020677,
+        "y": 798.1413131212374
+      },
+      "size": {
+        "width": 116.32050323486328,
+        "height": 21.855128288269043
+      }
+    },
+    {
+      "id": "069642c6-7f0f-41ec-a6d9-0c851a0a941c",
+      "type": "attribute",
+      "name": "hola: integer",
+      "position": {
+        "x": 141.58474364173216,
+        "y": 772.6631870601011
+      }
+    },
+    {
+      "id": "b28098ce-6206-48ee-b03d-f5b830d80df8",
+      "type": "attribute",
+      "name": "NewAttribute6: integer",
+      "position": {
+        "x": 759.641337912816,
+        "y": 97.69820713498434
+      }
+    },
+    {
+      "id": "cf7047d0-6f9c-4772-bb26-0f4aba0dd0b4",
+      "type": "attribute",
+      "name": "NewAttribute7: integer",
+      "position": {
+        "x": 952.7219013061067,
+        "y": 200.674507611406
+      }
+    },
+    {
+      "id": "80a5c5d8-d408-4469-80f0-3e4dc7377d47",
+      "type": "attribute",
+      "name": "NewAttribute8: integer",
+      "position": {
+        "x": 1029.0346954091692,
+        "y": 137.23375106789626
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22.136493682861328
+      }
+    },
+    {
+      "id": "1111ab0b-1f36-4ba2-90e7-5813ee66e6b1",
+      "type": "attribute",
+      "name": "NewAttribute9: integer",
+      "position": {
+        "x": 1031.7929891719307,
+        "y": 267.79298917193086
+      },
+      "size": {
+        "width": 116.31504821777344,
+        "height": 22.136493682861328
+      }
+    },
+    {
+      "id": "9df32014-3c81-465a-ade6-3fe6d4fcfd92",
+      "type": "attribute",
+      "name": "NewAttribute10: integer",
+      "position": {
+        "x": 1103,
+        "y": 652
+      },
+      "size": {
+        "width": 122.608642578125,
+        "height": 22
+      }
+    },
+    {
+      "id": "1eddece6-cbe0-4212-ae5b-dfba94a92726",
+      "type": "attribute",
+      "name": "NewAttribute11: integer",
+      "position": {
+        "x": 1017,
+        "y": 692
+      },
+      "size": {
+        "width": 121.8177719116211,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [
+    {
+      "id": "45b665dc-8941-43dd-9812-3d286b7c3e1a",
+      "type": "multiValuedAttribute",
+      "name": "telefono: integer",
+      "position": {
+        "x": 1011,
+        "y": 500
+      },
+      "size": {
+        "width": 88.8749008178711,
+        "height": 22
+      }
+    },
+    {
+      "id": "14d240c5-a5fc-4364-9b91-654082c2f43d",
+      "type": "multiValuedAttribute",
+      "name": "idiomas: integer",
+      "position": {
+        "x": 986,
+        "y": 631
+      },
+      "size": {
+        "width": 86.47293853759766,
+        "height": 22
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "46294897-9401-42aa-8439-a91ac3af0dc2",
+      "type": "keyAttribute",
+      "name": "Cod_persona: integer",
+      "position": {
+        "x": 358,
+        "y": 147
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "34ce0ffe-f17c-4617-94ec-72c3194cf2d4",
+      "type": "keyAttribute",
+      "name": "Cod: integer",
+      "position": {
+        "x": 156,
+        "y": 109
+      }
+    },
+    {
+      "id": "61acd6be-cec8-4c62-b271-de211175f8bf",
+      "type": "keyAttribute",
+      "name": "Codigo: varchar(100)",
+      "position": {
+        "x": 409.6639988396318,
+        "y": 193.65110971437153
+      },
+      "size": {
+        "width": 110.18388366699219,
+        "height": 22.23786735534668
+      }
+    },
+    {
+      "id": "846306e0-a0f2-4e90-96bd-59fb147f6380",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute4: integer",
+      "position": {
+        "x": 801,
+        "y": 480
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "b59c299c-3680-4d76-a91c-ed57979297d0",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute5: integer",
+      "position": {
+        "x": 715,
+        "y": 521
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "14a6d530-e799-4e19-8452-6d397eee25a4",
+      "type": "alternativeKeyAttribute",
+      "name": "Coche_id: integer",
+      "position": {
+        "x": 175,
+        "y": 345
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 22
+      }
+    },
+    {
+      "id": "4935febf-2ade-4417-9d0f-1bf4f1b28bd6",
+      "type": "alternativeKeyAttribute",
+      "name": "cod: integer",
+      "position": {
+        "x": 73,
+        "y": 293
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 22
+      }
+    },
+    {
+      "id": "d6c6b62f-7c8f-4e48-b1a8-b72d49d824a9",
+      "type": "alternativeKeyAttribute",
+      "name": "hola: integer",
+      "position": {
+        "x": 17,
+        "y": 390
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 22
+      }
+    },
+    {
+      "id": "11181bcf-7227-471c-b3ab-3de757616548",
+      "type": "alternativeKeyAttribute",
+      "name": "dni: integer",
+      "position": {
+        "x": 401.57881046696446,
+        "y": 364.021106932053
+      },
+      "size": {
+        "width": 185.3721923828125,
+        "height": 21.138240814208984
+      }
+    },
+    {
+      "id": "9addd27d-8430-4974-9a4f-875aff68b7b2",
+      "type": "alternativeKeyAttribute",
+      "name": "pasaporte: integer",
+      "position": {
+        "x": 461.91094912564665,
+        "y": 411.20393331897105
+      },
+      "size": {
+        "width": 185.3721923828125,
+        "height": 21.138240814208984
+      }
+    },
+    {
+      "id": "a676c168-f177-4fa1-9bd8-3be9e384852d",
+      "type": "alternativeKeyAttribute",
+      "name": "correo: varchar(199)",
+      "position": {
+        "x": 266.99173192067383,
+        "y": 474.63002780630336
+      },
+      "size": {
+        "width": 185.3721923828125,
+        "height": 21.138240814208984
+      }
+    },
+    {
+      "id": "86d5e64d-7f63-4395-9b2b-f28e69edec7b",
+      "type": "alternativeKeyAttribute",
+      "name": "nombre: varchar(100)",
+      "position": {
+        "x": 145.55396564614728,
+        "y": 526.4537879361969
+      },
+      "size": {
+        "width": 185.3721923828125,
+        "height": 21.138240814208984
+      }
+    },
+    {
+      "id": "c19950c8-4404-403f-bdf4-b8324bf457d4",
+      "type": "alternativeKeyAttribute",
+      "name": "numero: integer",
+      "position": {
+        "x": 389.9764761095255,
+        "y": 527.2272768933595
+      },
+      "size": {
+        "width": 185.3721923828125,
+        "height": 21.138240814208984
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "375a61b3-68d7-4d77-85dd-f858fa785155",
+      "sourceTaskId": "dc3bcb28-07b2-43f2-9018-d563d288606e",
+      "targetTaskId": "46294897-9401-42aa-8439-a91ac3af0dc2"
+    },
+    {
+      "id": "76c9db33-e562-48e0-906b-0ff899d43729",
+      "sourceTaskId": "dc3bcb28-07b2-43f2-9018-d563d288606e",
+      "targetTaskId": "34ce0ffe-f17c-4617-94ec-72c3194cf2d4"
+    },
+    {
+      "id": "b8e07c1c-08f5-4ddd-8e14-f6e9b32d4b57",
+      "sourceTaskId": "dc3bcb28-07b2-43f2-9018-d563d288606e",
+      "targetTaskId": "61acd6be-cec8-4c62-b271-de211175f8bf"
+    },
+    {
+      "id": "2a506710-c623-43cd-aeeb-a01622d16825",
+      "sourceTaskId": "14a6d530-e799-4e19-8452-6d397eee25a4",
+      "targetTaskId": "4935febf-2ade-4417-9d0f-1bf4f1b28bd6"
+    },
+    {
+      "id": "399f64cd-9902-410b-a089-903ea09d8c5e",
+      "sourceTaskId": "14a6d530-e799-4e19-8452-6d397eee25a4",
+      "targetTaskId": "d6c6b62f-7c8f-4e48-b1a8-b72d49d824a9"
+    },
+    {
+      "id": "69baa979-62fd-4aab-b103-231cd10a75f1",
+      "sourceTaskId": "a9f3ffdf-f686-4b58-80cd-41feb74f2778",
+      "targetTaskId": "11181bcf-7227-471c-b3ab-3de757616548"
+    },
+    {
+      "id": "4db79943-c529-4f5c-b713-337332309910",
+      "sourceTaskId": "a9f3ffdf-f686-4b58-80cd-41feb74f2778",
+      "targetTaskId": "a676c168-f177-4fa1-9bd8-3be9e384852d"
+    },
+    {
+      "id": "5c74e86a-b59a-4b3a-ad53-90e1f375ab7f",
+      "sourceTaskId": "a676c168-f177-4fa1-9bd8-3be9e384852d",
+      "targetTaskId": "c19950c8-4404-403f-bdf4-b8324bf457d4"
+    },
+    {
+      "id": "d9c51dbb-b639-491a-af23-f34460f34ca3",
+      "sourceTaskId": "0e7d8e2b-957c-4373-afb8-cc84e2bb6367",
+      "targetTaskId": "3a54a186-9822-41aa-87b4-18f09e5cda77"
+    },
+    {
+      "id": "ca149a97-4d37-465e-8b12-2fdd67ffa772",
+      "sourceTaskId": "0e7d8e2b-957c-4373-afb8-cc84e2bb6367",
+      "targetTaskId": "069642c6-7f0f-41ec-a6d9-0c851a0a941c"
+    },
+    {
+      "id": "2d1d1f5d-8c43-448c-92d4-a15305a74901",
+      "sourceTaskId": "0e7d8e2b-957c-4373-afb8-cc84e2bb6367",
+      "targetTaskId": "2c519ee4-954a-457d-8b6e-d1344d88bd22"
+    },
+    {
+      "id": "3ec4a1c5-a669-4536-93bb-98131155a33d",
+      "sourceTaskId": "2c519ee4-954a-457d-8b6e-d1344d88bd22",
+      "targetTaskId": "839ddd86-3810-4112-89a7-e6404c508a1b"
+    },
+    {
+      "id": "4d4aae57-00bf-482a-ad67-18696d4f27e8",
+      "sourceTaskId": "cf7047d0-6f9c-4772-bb26-0f4aba0dd0b4",
+      "targetTaskId": "80a5c5d8-d408-4469-80f0-3e4dc7377d47"
+    },
+    {
+      "id": "a8281ff5-3d8f-45d6-9e85-d86b7fe72679",
+      "sourceTaskId": "167a386d-2416-4ecb-9114-29df97505525",
+      "targetTaskId": "846306e0-a0f2-4e90-96bd-59fb147f6380"
+    },
+    {
+      "id": "1deef343-1be9-4718-baa4-b0ca14f2a93d",
+      "sourceTaskId": "167a386d-2416-4ecb-9114-29df97505525",
+      "targetTaskId": "b59c299c-3680-4d76-a91c-ed57979297d0"
+    },
+    {
+      "id": "f539ef71-9aea-4e2b-9e2e-db8d0069649f",
+      "sourceTaskId": "167a386d-2416-4ecb-9114-29df97505525",
+      "targetTaskId": "45b665dc-8941-43dd-9812-3d286b7c3e1a"
+    },
+    {
+      "id": "8913328c-ea07-48a6-bdcb-43bcbb1bce75",
+      "sourceTaskId": "167a386d-2416-4ecb-9114-29df97505525",
+      "targetTaskId": "14d240c5-a5fc-4364-9b91-654082c2f43d"
+    },
+    {
+      "id": "5da3697c-8a8d-432a-9893-f46e80de7935",
+      "sourceTaskId": "14d240c5-a5fc-4364-9b91-654082c2f43d",
+      "targetTaskId": "1eddece6-cbe0-4212-ae5b-dfba94a92726"
+    }
+  ],
+  "weightedEdges": [],
+  "optionalAttributeEdges": [
+    {
+      "id": "e96f777b-f9dd-46e7-b042-5a525a77acbf",
+      "type": "edge:optional",
+      "sourceId": "a9f3ffdf-f686-4b58-80cd-41feb74f2778",
+      "targetId": "14a6d530-e799-4e19-8452-6d397eee25a4"
+    },
+    {
+      "id": "8f4a8963-eedb-4838-98c9-40b15a3eb60a",
+      "type": "edge:optional",
+      "sourceId": "a9f3ffdf-f686-4b58-80cd-41feb74f2778",
+      "targetId": "9addd27d-8430-4974-9a4f-875aff68b7b2"
+    },
+    {
+      "id": "eab2b8fb-ed8e-44a6-aa41-6d3ed5c51378",
+      "type": "edge:optional",
+      "sourceId": "a676c168-f177-4fa1-9bd8-3be9e384852d",
+      "targetId": "86d5e64d-7f63-4395-9b2b-f28e69edec7b"
+    },
+    {
+      "id": "f9646285-11aa-4279-a9fe-31894551c3d6",
+      "type": "edge:optional",
+      "sourceId": "2c519ee4-954a-457d-8b6e-d1344d88bd22",
+      "targetId": "8c417c0b-62d2-4eba-a9bb-568ced8ac474"
+    },
+    {
+      "id": "28e7ad11-ae15-495d-913d-b08c485fa2de",
+      "type": "edge:optional",
+      "sourceId": "8416731d-f429-4a75-ac16-17871014c593",
+      "targetId": "b28098ce-6206-48ee-b03d-f5b830d80df8"
+    },
+    {
+      "id": "5c01eba0-3e91-4dfd-9433-6033eeed229d",
+      "type": "edge:optional",
+      "sourceId": "8416731d-f429-4a75-ac16-17871014c593",
+      "targetId": "cf7047d0-6f9c-4772-bb26-0f4aba0dd0b4"
+    },
+    {
+      "id": "78840feb-e287-49d5-93b1-d4326b9ac165",
+      "type": "edge:optional",
+      "sourceId": "cf7047d0-6f9c-4772-bb26-0f4aba0dd0b4",
+      "targetId": "1111ab0b-1f36-4ba2-90e7-5813ee66e6b1"
+    },
+    {
+      "id": "4e30b149-785a-4830-8f3e-43240e7be840",
+      "type": "edge:optional",
+      "sourceId": "14d240c5-a5fc-4364-9b91-654082c2f43d",
+      "targetId": "9df32014-3c81-465a-ade6-3fe6d4fcfd92"
+    }
+  ],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}
