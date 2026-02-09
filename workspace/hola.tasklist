@@ -1,0 +1,140 @@
+{
+  "id": "a0249f6c-e891-47cc-8ea0-ce8e4dfddcb4",
+  "tasks": [
+    {
+      "id": "8f015075-6222-463a-8520-2cc462f9e222",
+      "type": "entity",
+      "name": "Coche",
+      "position": {
+        "x": 81,
+        "y": 328
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "b9e7cfee-68ef-4fd4-9f6d-903772a0b637",
+      "type": "entity",
+      "name": "Plaza",
+      "position": {
+        "x": 613,
+        "y": 332
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "b9be3cad-878d-4536-a4cc-53e817f535fb",
+      "type": "relation",
+      "name": "Asignado",
+      "cardinality": "-",
+      "position": {
+        "x": 322,
+        "y": 320
+      },
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [
+    {
+      "id": "e09883e9-acf1-4605-adf3-51fc22146836",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 373,
+        "y": 461
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "a6231262-301e-4470-8ab5-029563b53572",
+      "type": "keyAttribute",
+      "name": "marca: integer",
+      "position": {
+        "x": 111,
+        "y": 259
+      }
+    },
+    {
+      "id": "24390772-b794-4f9c-afbd-028bcdff15a2",
+      "type": "keyAttribute",
+      "name": "num_Plaza: integer",
+      "position": {
+        "x": 608,
+        "y": 281
+      }
+    },
+    {
+      "id": "b4059ef5-9114-4970-968d-40085f9eeece",
+      "type": "keyAttribute",
+      "name": "fecha: integer",
+      "position": {
+        "x": 356,
+        "y": 248
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "bf92c4de-7b6f-4c4c-817c-0acb76d37671",
+      "sourceTaskId": "b9e7cfee-68ef-4fd4-9f6d-903772a0b637",
+      "targetTaskId": "24390772-b794-4f9c-afbd-028bcdff15a2"
+    },
+    {
+      "id": "41906c3e-9550-4c37-9f4b-014681cab6e8",
+      "sourceTaskId": "8f015075-6222-463a-8520-2cc462f9e222",
+      "targetTaskId": "a6231262-301e-4470-8ab5-029563b53572"
+    },
+    {
+      "id": "239c930d-a085-4fc0-b53a-0ab5c26d1e25",
+      "sourceTaskId": "b9be3cad-878d-4536-a4cc-53e817f535fb",
+      "targetTaskId": "b4059ef5-9114-4970-968d-40085f9eeece"
+    },
+    {
+      "id": "efba904e-a7cd-4c74-bed9-6c88f3dd4aa2",
+      "sourceTaskId": "b9be3cad-878d-4536-a4cc-53e817f535fb",
+      "targetTaskId": "e09883e9-acf1-4605-adf3-51fc22146836"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "d5df0b8c-9b33-4185-97b9-5a0bf6da6ae6",
+      "type": "edge:weighted",
+      "sourceId": "8f015075-6222-463a-8520-2cc462f9e222",
+      "targetId": "b9be3cad-878d-4536-a4cc-53e817f535fb",
+      "description": "(0..1)"
+    },
+    {
+      "id": "c37b5227-54b9-4bbd-b6f4-ad79e40f700c",
+      "type": "edge:weighted",
+      "sourceId": "b9e7cfee-68ef-4fd4-9f6d-903772a0b637",
+      "targetId": "b9be3cad-878d-4536-a4cc-53e817f535fb",
+      "description": "(0..0)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

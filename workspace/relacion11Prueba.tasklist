@@ -1,0 +1,191 @@
+{
+  "id": "9dfc5f76-88a6-4b43-ac32-b375c6665fdd",
+  "tasks": [
+    {
+      "id": "2def5743-9db6-4322-a6bf-d66b213ae102",
+      "type": "entity",
+      "name": "Ciudadano",
+      "position": {
+        "x": 119,
+        "y": 414
+      }
+    },
+    {
+      "id": "e583b746-657a-436a-aa8f-880f09aa1f30",
+      "type": "entity",
+      "name": "Expediente",
+      "position": {
+        "x": 610,
+        "y": 415
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "da6247a3-f0b4-44d8-8d62-343a00c0c213",
+      "type": "relation",
+      "name": "Tiene",
+      "cardinality": "-",
+      "position": {
+        "x": 392,
+        "y": 403
+      },
+      "size": {
+        "width": 67.5337905883789,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "6078609d-e067-48a2-af6a-9fe6e683dc8b",
+      "type": "attribute",
+      "name": "Nombre: varchar(100)",
+      "position": {
+        "x": 45,
+        "y": 528
+      },
+      "size": {
+        "width": 114.28036499023438,
+        "height": 22
+      }
+    },
+    {
+      "id": "5fc1aaf7-7aec-4ab2-b983-f5325483a2d6",
+      "type": "attribute",
+      "name": "fecha: date",
+      "position": {
+        "x": 695,
+        "y": 498
+      }
+    },
+    {
+      "id": "0bd8a07c-3460-4589-b592-b528b5555f29",
+      "type": "attribute",
+      "name": "gradoPrivacidad: integer",
+      "position": {
+        "x": 354,
+        "y": 308
+      },
+      "size": {
+        "width": 126.76070404052734,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [
+    {
+      "id": "72533ca0-1c7c-4a33-9333-aba42979698a",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 414,
+        "y": 535
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "2c5ce457-bee7-4039-9cbc-b137a18c1905",
+      "type": "keyAttribute",
+      "name": "DNI: varchar(10)",
+      "position": {
+        "x": 73,
+        "y": 322
+      }
+    },
+    {
+      "id": "1d8d1af7-da2e-4e6c-8d78-33689c9e302a",
+      "type": "keyAttribute",
+      "name": "num_expediente: integer",
+      "position": {
+        "x": 671,
+        "y": 327
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "f1bc37f7-d698-4473-b99e-7c68a65172f6",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute3: integer",
+      "position": {
+        "x": 615,
+        "y": 299
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "530ffecf-e9b2-4169-ac20-c507146b6a06",
+      "sourceTaskId": "2def5743-9db6-4322-a6bf-d66b213ae102",
+      "targetTaskId": "6078609d-e067-48a2-af6a-9fe6e683dc8b"
+    },
+    {
+      "id": "00dcc56e-249c-4dc7-8ea6-aed40f5f3f13",
+      "sourceTaskId": "2def5743-9db6-4322-a6bf-d66b213ae102",
+      "targetTaskId": "2c5ce457-bee7-4039-9cbc-b137a18c1905"
+    },
+    {
+      "id": "c685de5f-2ac5-4133-bc65-a42dc23a6e52",
+      "sourceTaskId": "e583b746-657a-436a-aa8f-880f09aa1f30",
+      "targetTaskId": "1d8d1af7-da2e-4e6c-8d78-33689c9e302a"
+    },
+    {
+      "id": "825a95bc-9e80-4350-8ad7-f7a53c16e4d1",
+      "sourceTaskId": "e583b746-657a-436a-aa8f-880f09aa1f30",
+      "targetTaskId": "5fc1aaf7-7aec-4ab2-b983-f5325483a2d6"
+    },
+    {
+      "id": "1ef5c3e4-1c6a-423e-8af1-66f6048dd1fe",
+      "sourceTaskId": "da6247a3-f0b4-44d8-8d62-343a00c0c213",
+      "targetTaskId": "0bd8a07c-3460-4589-b592-b528b5555f29"
+    },
+    {
+      "id": "8ca41688-b04c-4dbe-8d43-cf874b2fda52",
+      "sourceTaskId": "e583b746-657a-436a-aa8f-880f09aa1f30",
+      "targetTaskId": "f1bc37f7-d698-4473-b99e-7c68a65172f6"
+    },
+    {
+      "id": "5d48d747-548f-4efe-bb1a-e807a01e7e66",
+      "sourceTaskId": "da6247a3-f0b4-44d8-8d62-343a00c0c213",
+      "targetTaskId": "72533ca0-1c7c-4a33-9333-aba42979698a"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "733e8636-5ca2-409d-8ab9-fcc450ea01e9",
+      "type": "edge:weighted",
+      "sourceId": "e583b746-657a-436a-aa8f-880f09aa1f30",
+      "targetId": "da6247a3-f0b4-44d8-8d62-343a00c0c213",
+      "description": "(1..1)"
+    },
+    {
+      "id": "9a0191a6-50bf-41c7-8336-7c3b81bd2ee5",
+      "type": "edge:weighted",
+      "sourceId": "2def5743-9db6-4322-a6bf-d66b213ae102",
+      "targetId": "da6247a3-f0b4-44d8-8d62-343a00c0c213",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

@@ -9,6 +9,7 @@ import { TaskListModelValidator } from '../validation/diagram-validator';
 export interface GenerateSqlAction extends Action {
     kind: typeof GenerateSqlAction.KIND;
 }
+
 export namespace GenerateSqlAction {
     export const KIND = 'generateSql';
     export function create(): GenerateSqlAction {
@@ -36,7 +37,7 @@ export class GenerateSqlActionHandler implements ActionHandler {
         }
 
         console.log("Validación correcta. Generando SQL...");
-        const sql = this.sqlGenerator.generate(root, this.modelState.index);
+        const sql = this.sqlGenerator.generate(root);
 
         try {
             const fileName = 'script_generado.sql';

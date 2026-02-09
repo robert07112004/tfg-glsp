@@ -52,7 +52,17 @@
   "partialOverlappedSpecializations": [],
   "totalOverlappedSpecializations": [],
   "attributes": [],
-  "multiValuedAttributes": [],
+  "multiValuedAttributes": [
+    {
+      "id": "4ecbd171-8bb4-46e8-b016-2afef1828bae",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 755,
+        "y": 389
+      }
+    }
+  ],
   "derivedAttributes": [],
   "keyAttributes": [
     {
@@ -80,37 +90,24 @@
         "width": 94.22222137451172,
         "height": 21.948896408081055
       }
-    },
-    {
-      "id": "50299721-1a03-40f1-8ae9-73755d019bfa",
-      "type": "keyAttribute",
-      "name": "Fecha: date",
-      "position": {
-        "x": 890.0366372209131,
-        "y": 409.59208832129065
-      },
-      "size": {
-        "width": 66.36466598510742,
-        "height": 22
-      }
     }
   ],
   "alternativeKeyAttributes": [],
   "transitions": [
     {
-      "id": "5d5e55a0-82c0-401b-8340-bf9e3d3b6169",
-      "sourceTaskId": "cfd6a1e2-dc42-4732-bca7-0c88a8a93cc2",
-      "targetTaskId": "c01ced15-cbaa-46e5-ac23-b6f3d43d9ed5"
+      "id": "76f3122a-2d7b-4799-970b-3ddf9f489fc3",
+      "sourceTaskId": "52081514-858d-4ae8-a4a5-b611e6ce701f",
+      "targetTaskId": "38622778-dbf8-4ef2-b2f5-3b1df18ef921"
     },
     {
-      "id": "a73fd65e-aa8d-4b8b-950a-dd737e450b6e",
-      "sourceTaskId": "38622778-dbf8-4ef2-b2f5-3b1df18ef921",
-      "targetTaskId": "52081514-858d-4ae8-a4a5-b611e6ce701f"
+      "id": "0ef27b21-af8d-42ab-9e9b-ec1bddc63c09",
+      "sourceTaskId": "c01ced15-cbaa-46e5-ac23-b6f3d43d9ed5",
+      "targetTaskId": "cfd6a1e2-dc42-4732-bca7-0c88a8a93cc2"
     },
     {
-      "id": "63de0647-9752-434e-96a1-7961b1aa6658",
-      "sourceTaskId": "50299721-1a03-40f1-8ae9-73755d019bfa",
-      "targetTaskId": "e30fc7bc-05b9-4d0f-a017-afb362ee697e"
+      "id": "e0059057-7bf9-4704-84e9-4770f2bb61b5",
+      "sourceTaskId": "e30fc7bc-05b9-4d0f-a017-afb362ee697e",
+      "targetTaskId": "4ecbd171-8bb4-46e8-b016-2afef1828bae"
     }
   ],
   "weightedEdges": [

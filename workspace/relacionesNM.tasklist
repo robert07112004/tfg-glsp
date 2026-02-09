@@ -33,7 +33,7 @@
     {
       "id": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
       "type": "relation",
-      "name": "Imaprte",
+      "name": "Imparte",
       "cardinality": "-",
       "position": {
         "x": 737,
@@ -55,7 +55,7 @@
     {
       "id": "bb73d212-d970-4132-960d-4fc9e1c8e655",
       "type": "attribute",
-      "name": "Fecha_fin: date",
+      "name": "Fecha: date",
       "position": {
         "x": 690.5203300570433,
         "y": 332.97917897663
@@ -92,7 +92,17 @@
       }
     }
   ],
-  "multiValuedAttributes": [],
+  "multiValuedAttributes": [
+    {
+      "id": "fd251f6d-b4c8-4a05-a20b-7eceabe48c64",
+      "type": "multiValuedAttribute",
+      "name": "idiomas: varchar(100)",
+      "position": {
+        "x": 745,
+        "y": 549
+      }
+    }
+  ],
   "derivedAttributes": [],
   "keyAttributes": [
     {
@@ -120,19 +130,6 @@
         "width": 134.2668228149414,
         "height": 21.854331970214844
       }
-    },
-    {
-      "id": "3d3ea559-5e8c-46da-8776-b7f91bcfa5d9",
-      "type": "keyAttribute",
-      "name": "Fecha_ini: date",
-      "position": {
-        "x": 833.2478884151317,
-        "y": 335.6226674495939
-      },
-      "size": {
-        "width": 82.91648864746094,
-        "height": 21.854331970214844
-      }
     }
   ],
   "alternativeKeyAttributes": [
@@ -152,39 +149,39 @@
   ],
   "transitions": [
     {
-      "id": "9704364e-455e-4661-960e-aa4f37320aca",
-      "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
-      "targetTaskId": "bb73d212-d970-4132-960d-4fc9e1c8e655"
-    },
-    {
-      "id": "d0101d10-a323-45c8-b74e-4cf14abe4beb",
-      "sourceTaskId": "6890a73a-c894-4da7-bc68-33df4eb955d7",
-      "targetTaskId": "0021b15e-e305-46f1-8b28-cfcf8f093734"
-    },
-    {
-      "id": "5fa2ebd1-7022-46c5-97c7-5fe75e4d47df",
-      "sourceTaskId": "86440722-d802-428c-ab3c-47764c1f1da4",
-      "targetTaskId": "0021b15e-e305-46f1-8b28-cfcf8f093734"
-    },
-    {
-      "id": "3b21423d-ad4b-4b62-b3db-7026c314a5e1",
+      "id": "3c7cba5d-5087-441d-91e5-f596bce26775",
       "sourceTaskId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060",
       "targetTaskId": "f394bbba-9806-4491-baa8-e9e69ab31189"
     },
     {
-      "id": "d4e4384c-e41e-4649-a0f1-96739217f234",
-      "sourceTaskId": "1a845b8c-62fa-44bd-8f05-853df31fc87a",
-      "targetTaskId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060"
+      "id": "b05d307e-0d9e-4ac1-9f64-f936203ed5aa",
+      "sourceTaskId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060",
+      "targetTaskId": "1a845b8c-62fa-44bd-8f05-853df31fc87a"
     },
     {
-      "id": "4de754c5-775e-4d2a-9783-4d616752446b",
-      "sourceTaskId": "f8df6b9a-9b0d-4daa-bd77-9ab544ab4565",
-      "targetTaskId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060"
+      "id": "b7257883-87b8-49ac-a343-3c9c4f3b3833",
+      "sourceTaskId": "e4a9bc45-569f-442e-9b0c-ce500fb6d060",
+      "targetTaskId": "f8df6b9a-9b0d-4daa-bd77-9ab544ab4565"
     },
     {
-      "id": "d8521d6f-d72b-480a-8ae3-6731c2a6c9be",
+      "id": "1aa26016-f2ae-4262-8687-8c6b393ca6a7",
+      "sourceTaskId": "0021b15e-e305-46f1-8b28-cfcf8f093734",
+      "targetTaskId": "6890a73a-c894-4da7-bc68-33df4eb955d7"
+    },
+    {
+      "id": "2b63e4a2-6ed1-4f7e-b510-209503ec185e",
+      "sourceTaskId": "0021b15e-e305-46f1-8b28-cfcf8f093734",
+      "targetTaskId": "86440722-d802-428c-ab3c-47764c1f1da4"
+    },
+    {
+      "id": "a8c8739a-4f5a-42d6-b99c-fbdd86bb20c2",
       "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
-      "targetTaskId": "3d3ea559-5e8c-46da-8776-b7f91bcfa5d9"
+      "targetTaskId": "bb73d212-d970-4132-960d-4fc9e1c8e655"
+    },
+    {
+      "id": "f8496f6c-80d8-4492-9dec-98c211d7e6e5",
+      "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
+      "targetTaskId": "fd251f6d-b4c8-4a05-a20b-7eceabe48c64"
     }
   ],
   "weightedEdges": [
@@ -196,7 +193,7 @@
       "description": "(1..N)"
     },
     {
-      "id": "d965e2ee-8e61-472e-816f-ff7c9452a4ed",
+      "id": "478ab291-d0bb-420e-a65a-bc8af7f12b71",
       "type": "edge:weighted",
       "sourceId": "0021b15e-e305-46f1-8b28-cfcf8f093734",
       "targetId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",

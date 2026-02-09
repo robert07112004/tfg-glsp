@@ -1,3 +1,64 @@
+/*private transformMultivalued(nodeData: NodeData, root: GModelElement): string {
+        return nodeData.attributes.multiValued.map(mv => {
+            const columns: string[] = [];
+            const pkTotal: string[] = [];
+            const foreignKeys: string[] = [];
+
+            const hasOwnPK = nodeData.attributes.pk.length > 0;
+            if (nodeData.type === RELATION_TYPE && !hasOwnPK) {
+                const connectedEdges = root.children.filter(e => e instanceof GEdge && e.targetId === nodeData.node.id) as GEdge[];
+
+                const edgeMany = connectedEdges.find(e => this.getCardinality(e).includes("N"));
+                const edgeOne = connectedEdges.find(e => !this.getCardinality(e).includes("N"));
+
+                if (edgeMany && edgeOne && !this.getCardinality(nodeData.node).includes("N:M")) {
+                    const entityMany = this.nodeRegistry.get(edgeMany.sourceId === nodeData.node.id ? edgeMany.targetId : edgeMany.sourceId);
+                    if (entityMany) {
+                        entityMany.attributes.pk.flat().forEach(pkNode => {
+                            const { name, type } = this.getNameAndType(pkNode);
+                            const columnName = `${entityMany.name}_${name}`;
+                            columns.push(`    ${columnName} ${type} NOT NULL`);
+                            pkTotal.push(columnName);
+                            foreignKeys.push(`FOREIGN KEY (${columnName}) REFERENCES ${entityMany.name}(${name}) ON DELETE CASCADE`);
+                        });
+                    }
+                } else {
+                    const connectedEntities = connectedEdges.map(edge => this.nodeRegistry.get(edge.sourceId)) as NodeData[];
+                    connectedEntities.forEach(entity => {
+                        entity.attributes.pk.flat().forEach(pkNode => {
+                            const { name, type } = this.getNameAndType(pkNode);
+                            const columnName = `${entity.name}_${name}`;
+                            columns.push(`    ${columnName} ${type} NOT NULL`);
+                            pkTotal.push(columnName);
+                            foreignKeys.push(`FOREIGN KEY (${columnName}) REFERENCES ${entity.name}(${name}) ON DELETE CASCADE`);
+                        });
+                    });
+                }
+            } else {
+                nodeData.attributes.pk.flat().forEach(pkNode => {
+                    const { name, type } = this.getNameAndType(pkNode);
+                    columns.push(`    ${name} ${type} NOT NULL`);
+                    pkTotal.push(name);
+                    foreignKeys.push(`FOREIGN KEY (${name}) REFERENCES ${nodeData.name}(${name}) ON DELETE CASCADE`);
+                });
+            }
+
+            mv.nodes.forEach(node => {
+                const { name, type } = this.getNameAndType(node);
+                const nullability = this.getNullability(node, root, false);
+                columns.push(`    ${name} ${type} ${nullability}`);
+                pkTotal.push(name);
+            });
+
+            const constraints = [`PRIMARY KEY (${pkTotal.join(", ")})`, ...foreignKeys];
+
+            return this.buildTable(`${nodeData.name}_${mv.name}`, columns, constraints);
+        }).join("");
+    }*/
+
+
+
+
 public generate(root: GModelElement, index: GModelIndex): string {
         let sqlScript = "-- Script generado por GLSP-ER (Consolidado)\n";
         sqlScript += "-- Fecha: " + new Date().toLocaleString() + "\n\n";
