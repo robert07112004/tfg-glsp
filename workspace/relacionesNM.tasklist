@@ -19,8 +19,8 @@
       "type": "entity",
       "name": "Curso",
       "position": {
-        "x": 1094,
-        "y": 432
+        "x": 834,
+        "y": 439
       },
       "size": {
         "width": 100,
@@ -36,7 +36,7 @@
       "name": "Imparte",
       "cardinality": "-",
       "position": {
-        "x": 737,
+        "x": 606,
         "y": 423
       },
       "size": {
@@ -57,12 +57,12 @@
       "type": "attribute",
       "name": "Fecha: date",
       "position": {
-        "x": 690.5203300570433,
-        "y": 332.97917897663
+        "x": 631.5203300570433,
+        "y": 337.97917897663
       },
       "size": {
-        "width": 66.31836700439453,
-        "height": 21.854331970214844
+        "width": 66.35060119628906,
+        "height": 22
       }
     },
     {
@@ -83,12 +83,12 @@
       "type": "attribute",
       "name": "Asignatura: varchar(20)",
       "position": {
-        "x": 1090.0551954181021,
-        "y": 509.1477116427012
+        "x": 854.0551954181021,
+        "y": 530.1477116427012
       },
       "size": {
-        "width": 115.89412689208984,
-        "height": 21.854331970214844
+        "width": 122.59822082519531,
+        "height": 22
       }
     }
   ],
@@ -98,8 +98,12 @@
       "type": "multiValuedAttribute",
       "name": "idiomas: varchar(100)",
       "position": {
-        "x": 745,
-        "y": 549
+        "x": 606,
+        "y": 533
+      },
+      "size": {
+        "width": 113.0992202758789,
+        "height": 22
       }
     }
   ],
@@ -123,12 +127,21 @@
       "type": "keyAttribute",
       "name": "Cod_Curso: integer",
       "position": {
-        "x": 1081.8230209944543,
-        "y": 364.81025341473617
+        "x": 795.8230209944543,
+        "y": 354.81025341473617
       },
       "size": {
         "width": 134.2668228149414,
-        "height": 21.854331970214844
+        "height": 22
+      }
+    },
+    {
+      "id": "bca2c3bd-7879-476f-ab4e-9d5a677f9958",
+      "type": "keyAttribute",
+      "name": "key: integer",
+      "position": {
+        "x": 559,
+        "y": 282
       }
     }
   ],
@@ -179,9 +192,14 @@
       "targetTaskId": "bb73d212-d970-4132-960d-4fc9e1c8e655"
     },
     {
-      "id": "f8496f6c-80d8-4492-9dec-98c211d7e6e5",
+      "id": "a584890a-dea8-43a9-a811-58a7507c698e",
       "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
       "targetTaskId": "fd251f6d-b4c8-4a05-a20b-7eceabe48c64"
+    },
+    {
+      "id": "ff6ebcb8-f33a-4ffb-86f9-11bddadbf3bb",
+      "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
+      "targetTaskId": "bca2c3bd-7879-476f-ab4e-9d5a677f9958"
     }
   ],
   "weightedEdges": [

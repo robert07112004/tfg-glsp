@@ -44,8 +44,8 @@
       "type": "attribute",
       "name": "Cantidad: integer",
       "position": {
-        "x": 556,
-        "y": 333
+        "x": 581,
+        "y": 325
       },
       "size": {
         "width": 92.40972900390625,
@@ -53,7 +53,17 @@
       }
     }
   ],
-  "multiValuedAttributes": [],
+  "multiValuedAttributes": [
+    {
+      "id": "ec0ab7ea-94ce-4d4d-9cd2-e3e7ed864096",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 479,
+        "y": 469
+      }
+    }
+  ],
   "derivedAttributes": [],
   "keyAttributes": [
     {
@@ -64,35 +74,22 @@
         "x": 94,
         "y": 263
       }
-    },
-    {
-      "id": "b156cf4c-26b8-41f0-9106-bf9b52f821cd",
-      "type": "keyAttribute",
-      "name": "Fecha: date",
-      "position": {
-        "x": 496,
-        "y": 277
-      },
-      "size": {
-        "width": 66.35060119628906,
-        "height": 22
-      }
     }
   ],
   "alternativeKeyAttributes": [],
   "transitions": [
     {
-      "id": "e1eedba6-1198-4e06-ab6c-a55cfdcfbbe2",
-      "sourceTaskId": "bd94b3b4-726f-458a-855b-9eb2d0a17ccc",
-      "targetTaskId": "13aee309-c746-4728-8bc2-53ef322f429c"
+      "id": "d8ec1774-f90a-4748-831b-b8f0187afdf7",
+      "sourceTaskId": "13aee309-c746-4728-8bc2-53ef322f429c",
+      "targetTaskId": "bd94b3b4-726f-458a-855b-9eb2d0a17ccc"
     },
     {
-      "id": "1020ef2c-0fd8-4ee8-99aa-a67fd1635161",
+      "id": "106743a1-ee5a-48f0-b7e0-321f546e6dfe",
       "sourceTaskId": "b683a096-f92b-4d62-b79c-5408ddeb8866",
-      "targetTaskId": "b156cf4c-26b8-41f0-9106-bf9b52f821cd"
+      "targetTaskId": "ec0ab7ea-94ce-4d4d-9cd2-e3e7ed864096"
     },
     {
-      "id": "11bb1a5c-b2f6-4d26-b46b-600e490e3183",
+      "id": "85802e24-8686-4c33-a618-f28e4fa5fe31",
       "sourceTaskId": "b683a096-f92b-4d62-b79c-5408ddeb8866",
       "targetTaskId": "edc22600-7139-4797-b946-cbf2877b496b"
     }

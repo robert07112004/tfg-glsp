@@ -1,35 +1,33 @@
 import { GModelElement } from "@eclipse-glsp/server";
 import { AttributeTransformer } from "./sql-attribute-transformer";
-import { NodeData, NodeRegistry } from "./sql-interfaces";
-import { RelationsTransformer } from "./sql-relations-transformer";
-import { SQLUtils } from "./sql-utils";
+import { Entity } from "./sql-interfaces";
 
 export class EntitiesTransformer {
     
-    static processEntity(entityData: NodeData, root: GModelElement, nodeRegistry: NodeRegistry) {
-        let columns: string[] = [];
-        let compositePK: string[] = [];
-        let compositeUnique: string[] = [];
-        let tableConstraints: string[] = [];
-            
-        AttributeTransformer.transformPKs(entityData, columns, compositePK);
-        AttributeTransformer.transformUnique(entityData, columns, compositeUnique, root);
-        AttributeTransformer.transformSimple(entityData, columns, root);
-        AttributeTransformer.transformOptionals(entityData, columns);
-
-        const multivaluedRelation1N = RelationsTransformer.transform1Nrelation(entityData, columns, compositeUnique, tableConstraints, root, nodeRegistry);
-        const multivaluedRelation11 = RelationsTransformer.processBinary11Relation(entityData, columns, compositeUnique, tableConstraints, root, nodeRegistry);
-
-        if (compositePK.length > 0) tableConstraints.push(`PRIMARY KEY (${compositePK.join(", ")})`);
-        tableConstraints.push(...compositeUnique);
-
-        let sql = SQLUtils.buildTable(entityData.name, columns, tableConstraints);
+    static processEntity(entity: Entity, root: GModelElement): string {
+        let sql = `CREATE TABLE ${entity.name} (\n`;
         
-        entityData.attributes.multiValued.forEach(mv => {
-            sql += AttributeTransformer.processMultivalued(entityData.name, entityData.attributes.pk.flat(), mv, root);
-        });
+        const { columnPKs, restriction: restrictionPks } = AttributeTransformer.processPK(entity.attributes.pk);
+        const { columns: uniqueColumns, restriction: restrictionUnique } = AttributeTransformer.processUnique(entity.attributes.unique);
+        const simpleAttributes = AttributeTransformer.processSimpleAttributes(entity.attributes.simple);
+        const optionalAttributes = AttributeTransformer.processOptionalAttributes(entity.attributes.optional);
+        
+        const tableBody: string[] = [
+            ...columnPKs,
+            ...uniqueColumns,
+            ...simpleAttributes,
+            ...optionalAttributes,
+            ...(restrictionPks || []),
+            ...(restrictionUnique || [])
+        ];
 
-        return sql + multivaluedRelation1N + multivaluedRelation11;
+        sql += tableBody.join(",\n");
+        sql += "\n);\n\n";
+
+        const multivalued = AttributeTransformer.processMultivaluedAttributes(entity.attributes.multiValued, entity.node, root);
+        sql += multivalued.join("\n");
+
+        return sql;
     }
-
+    
 }

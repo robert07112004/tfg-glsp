@@ -1,117 +1,281 @@
 import { GEdge, GModelElement, GNode } from '@eclipse-glsp/server';
-import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE } from '../validation/utils/validation-constants';
-import { allAttributes, NodeData } from './sql-interfaces';
+import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, ENTITY_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE } from '../validation/utils/validation-constants';
+import { AllAttributes, Multivalued } from './sql-interfaces';
+import { RelationsTransformer } from './sql-relations-transformer';
 import { SQLUtils } from './sql-utils';
 
 export class AttributeTransformer {
-    static discoverNodeAttributes(node: GNode, root: GModelElement): allAttributes {
-        const attrs: allAttributes = { pk: [], unique: [], simple: [], optional: [], multiValued: [], derived: []};
-        const outcomingEdges = SQLUtils.getEdgesFromSource(node.id, root);
-        for (const edge of outcomingEdges) {
-            const attributeNode = SQLUtils.findById(edge.targetId, root);
-            if (attributeNode instanceof GNode) this.categorizeAttribute(attributeNode, edge, attrs, root);
+
+    static processPK(pks: GNode[]): { columnPKs: string[], restriction: string[] } {
+        let columnPKs: string[] = [];
+        let restriction: string[] = [];
+
+        if (pks.length === 1) {
+            const {name, type} = SQLUtils.getNameAndType(pks[0]);
+            columnPKs = [`    ${name} ${type} NOT NULL PRIMARY KEY`];
+        } else if (pks.length > 1) {
+            const names: string[] = []
+            for (const pk of pks) {
+                const {name, type} = SQLUtils.getNameAndType(pk);
+                columnPKs.push(`    ${name} ${type} NOT NULL`);
+                names.push(name);
+            }
+            restriction = [`    PRIMARY KEY (${names.join(', ')})`];
         }
-        return attrs;
+        return { columnPKs, restriction };
     }
 
-    static categorizeAttribute(attribute: GNode, incomingEdge: GEdge, attrs: allAttributes, root: GModelElement) {
-        const subEdges = SQLUtils.getEdgesFromSource(attribute.id, root);
-        const subAttributes = subEdges
-            .map(edge => SQLUtils.findById(edge.targetId, root))
-            .filter((node): node is GNode => node instanceof GNode);
-
-        const isComposite = subAttributes.length >= 2;
-        const targetNodes = isComposite ? subAttributes : [attribute];
-        const isOptionalEdge = incomingEdge.type === OPTIONAL_EDGE_TYPE;
-
-        if (isOptionalEdge && attribute.type === ATTRIBUTE_TYPE) {
-            attrs.optional.push(...targetNodes);
-            return;
+    static processUnique(uniques: { isNullable: boolean, nodes: GNode[] }[]): { columns: string[], restriction: string[] } {
+        let columns: string[] = [];
+        let restriction: string[] = [];
+        for (const unique of uniques) {
+            if (unique.nodes.length === 1) {
+                const {name, type} = SQLUtils.getNameAndType(unique.nodes[0]);
+                const nullability = unique.isNullable ? "NULL" : "NOT NULL";
+                columns.push(`    ${name} ${type} ${nullability} UNIQUE`);
+            } else if (unique.nodes.length > 1) {
+                const names: string[] = [];
+                for (const node of unique.nodes) {
+                    const { name, type } = SQLUtils.getNameAndType(node);
+                    const nullability = unique.isNullable ? "NULL" : "NOT NULL";
+                    columns.push(`    ${name} ${type} ${nullability}`);
+                    names.push(name);
+                }
+                restriction.push(`    UNIQUE (${names.join(', ')})`);
+            }
         }
-
-        switch (attribute.type) {
-            case KEY_ATTRIBUTE_TYPE: attrs.pk.push(...targetNodes); break;
-            case ALTERNATIVE_KEY_ATTRIBUTE_TYPE:
-                attrs.unique.push({
-                    isNullable: isOptionalEdge,
-                    nodes: targetNodes
-                });
-                break;
-            case MULTI_VALUED_ATTRIBUTE_TYPE:
-                const { name } = SQLUtils.getNameAndType(attribute);
-                attrs.multiValued.push({
-                    name: name,
-                    nodes: targetNodes
-                });
-                break;
-            default: attrs.simple.push(...targetNodes); break;
-        }
-    }
-    
-    static transformPKs(entityData: NodeData, columns: string[], compositePK: string[]) {
-        entityData.attributes.pk.flat().forEach(pkNode => {
-            const { name, type } = SQLUtils.getNameAndType(pkNode);
-            const isSimplePK = entityData.attributes.pk.length === 1;
-            columns.push(`    ${name} ${type} NOT NULL ${isSimplePK ? "PRIMARY KEY" : ""}`);
-            if (!isSimplePK) compositePK.push(name);
-        });
+        return { columns, restriction };
     }
 
-    static processMultivalued(parentTableName: string, parentPKNodes: GNode[], mvAttr: { name: string, nodes: GNode[] }, root: GModelElement): string {
-        const columns: string[] = [];
-        const tableConstraints: string[] = [];
-        const fkColumns: string[] = [];
-        const attrColumns: string[] = [];
-
-        parentPKNodes.forEach(pk => {
-            const { name, type } = SQLUtils.getNameAndType(pk);
-            const columnName = `${parentTableName}_${name}`; 
-            columns.push(`    ${columnName} ${type} NOT NULL`);
-            fkColumns.push(columnName);
-        });
-
-        mvAttr.nodes.forEach(node => {
-            const { name, type } = SQLUtils.getNameAndType(node);
+    static processSimpleAttributes(attributes: GNode[]): string[] {
+        let columns: string[] = [];
+        for (const attribute of attributes) {
+            const {name, type} = SQLUtils.getNameAndType(attribute);
             columns.push(`    ${name} ${type} NOT NULL`);
-            attrColumns.push(name);
-        });
-
-        tableConstraints.push(`PRIMARY KEY (${[...fkColumns, ...attrColumns].join(", ")})`);
-        const parentPKNames = parentPKNodes.map(pk => SQLUtils.getNameAndType(pk).name);
-        tableConstraints.push(`FOREIGN KEY (${fkColumns.join(", ")}) REFERENCES ${parentTableName}(${parentPKNames.join(", ")}) ON DELETE CASCADE`);
-
-        return SQLUtils.buildTable(`${parentTableName}_${mvAttr.name}`, columns, tableConstraints);
+        }
+        return columns;
     }
 
-    static transformUnique(entityData: NodeData, columns: string[], compositeUnique: string[], root: GModelElement) {
-        entityData.attributes.unique.forEach(u => {
-            const compositeNames: string[] = [];
-            const isComp = u.nodes.length > 1;
+    static processOptionalAttributes(optionalAttributes: GNode[]): string[] {
+        let columns: string[] = [];
+        for (const optionalAttribute of optionalAttributes) {
+            const {name, type} = SQLUtils.getNameAndType(optionalAttribute);
+            columns.push(`    ${name} ${type} NULL`);
+        }
+        return columns;
+    }
 
-            u.nodes.forEach(node => {
-                const { name, type } = SQLUtils.getNameAndType(node);
-                const nullability = SQLUtils.getNullability(node, root, u.isNullable);
-                columns.push(`    ${name} ${type} ${nullability} ${!isComp ? "UNIQUE" : ""}`);
-                compositeNames.push(name);
+    static processMultivaluedAttributes(multivaluedAttributes: Multivalued[], parentNode: GNode, root: GModelElement): string[] {
+        let resultString: string[] = [];
+        if (!multivaluedAttributes) return [];
+        for (const multivalued of multivaluedAttributes) {
+            let tableLines: string[] = [];
+            let pks: string[] = [];
+            let tableName = `${multivalued.parentName}_${multivalued.name}`;
+            let sql = `CREATE TABLE ${tableName} (\n`;
+
+            multivalued.parentPKs.forEach(pkData => {
+                console.log(pkData.colName);
+                const {name: _, type: type} = SQLUtils.getNameAndType(pkData.node);
+                tableLines.push(`    ${pkData.colName} ${type} NOT NULL`);
+                pks.push(pkData.colName);
+                console.log(tableLines);
+                console.log(pks);
             });
 
-            if (isComp) compositeUnique.push(`UNIQUE (${compositeNames.join(", ")})`);
-        });
+            multivalued.selfNode.forEach(mv => {
+                const { name, type } = SQLUtils.getNameAndType(mv);
+                tableLines.push(`    ${name} ${type} NOT NULL`);
+                pks.push(name);
+            });
+
+            tableLines.push(`    PRIMARY KEY (${pks.join(', ')})`);
+
+            multivalued.parentPKs.forEach(pkData => {
+                if (RelationsTransformer.isReflexive(parentNode, root)) {
+                    const newColName = pkData.colName.slice(0, -2);
+                    tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${newColName}) ON DELETE CASCADE`);
+                } else tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${pkData.colName}) ON DELETE CASCADE`);
+            });
+
+            sql += tableLines.join(",\n");
+            sql += "\n);\n";
+            
+            resultString.push(sql);
+        }
+        
+        return resultString;
     }
 
-    static transformSimple(entityData: NodeData, columns: string[], root: GModelElement) {
-        entityData.attributes.simple.flat().forEach(node => {
-            const { name, type } = SQLUtils.getNameAndType(node);
-            const nullability = SQLUtils.getNullability(node, root, false);
-            columns.push(`    ${name} ${type} ${nullability}`);
+    static getAllAttributes(entity: GNode, root: GModelElement): AllAttributes {
+        const processedIds = new Set<string>();
+
+        const pk = this.transformPKs(entity, root);
+        pk.forEach(n => processedIds.add(n.id));
+
+        const unique = this.transformUnique(entity, root);
+        unique.forEach(group => {
+            group.nodes.forEach(n => processedIds.add(n.id));
         });
+
+        const simple = this.transformSimple(entity, root)
+            .filter(n => !processedIds.has(n.id));
+        simple.forEach(n => processedIds.add(n.id));
+
+        const optional = this.transformOptionals(entity, root)
+            .filter(n => !processedIds.has(n.id));
+
+        return { 
+            pk, 
+            unique, 
+            simple, 
+            optional, 
+            multiValued: this.transformMultivalued(entity, root) 
+        };
     }
 
-    static transformOptionals(entityData: NodeData, columns: string[]) {
-        entityData.attributes.optional.flat().forEach(node => {
-            const { name, type } = SQLUtils.getNameAndType(node);
-            columns.push(`    ${name} ${type} NULL`);
-        });
+    static transformPKs(entity: GNode, root: GModelElement): GNode[] {
+        const pks: GNode[] = [];
+        const edges = root.children.filter(child => child instanceof GEdge && child.sourceId === entity.id) as GEdge[];
+        for (const edge of edges) {
+            const node = SQLUtils.findById(edge.targetId, root) as GNode;
+            if (node.type === KEY_ATTRIBUTE_TYPE) {
+                const compositePKEdges: GEdge[] = root.children.filter(child => child instanceof GEdge && child.sourceId === node.id) as GEdge[];
+                if (compositePKEdges.length !== 0) {
+                    for (const compositePKEdge of compositePKEdges) {
+                        const nodeCompositePK: GNode = SQLUtils.findById(compositePKEdge.targetId, root) as GNode;
+                        pks.push(nodeCompositePK);
+                    }
+                } else pks.push(node);
+            }
+        }
+        return pks;
+    }
+
+    static transformUnique(entity: GNode, root: GModelElement): { isNullable: boolean, nodes: GNode[] }[] {
+        const uniques: { isNullable: boolean, nodes: GNode[] }[] = [];
+        const edges = root.children.filter(child => child instanceof GEdge && child.sourceId === entity.id) as GEdge[];
+        for (const edge of edges) {
+            const node = SQLUtils.findById(edge.targetId, root) as GNode;
+            if (node.type === ALTERNATIVE_KEY_ATTRIBUTE_TYPE) {
+                const compositeUniques: GNode[] = [];
+                const isOptional: boolean = edge.type === OPTIONAL_EDGE_TYPE;
+                const compositeUniquesEdges: GEdge[] = root.children.filter(child => child instanceof GEdge && child.sourceId === node.id) as GEdge[];
+                if (compositeUniquesEdges.length !== 0) {
+                    for (const compositeUniqueEdge of compositeUniquesEdges) {
+                        const nodeComposite: GNode = SQLUtils.findById(compositeUniqueEdge.targetId, root) as GNode;
+                        compositeUniques.push(nodeComposite);
+                    }
+                    uniques.push({ isNullable: isOptional, nodes: compositeUniques });
+                } else uniques.push({ isNullable: isOptional, nodes: [node] });
+            }
+        }
+        return uniques;
+    }
+
+    static transformSimple(entity: GNode, root: GModelElement): GNode[] {
+        const attributes: GNode[] = [];
+        const edges: GEdge[] = root.children.filter(child => child instanceof GEdge && child.sourceId === entity.id && child.type !== OPTIONAL_EDGE_TYPE) as GEdge[];
+        for (const edge of edges) {
+            const node: GNode = SQLUtils.findById(edge.targetId, root) as GNode;
+            if (node.type === ATTRIBUTE_TYPE) {
+                const compositeAttributeEdges: GEdge[] = root.children.filter(child => child instanceof GEdge && child.sourceId === node.id) as GEdge[];
+                if (compositeAttributeEdges.length !== 0) {
+                    for (const compositeAttributeEdge of compositeAttributeEdges) {
+                        const compositeAttribute: GNode = SQLUtils.findById(compositeAttributeEdge.targetId, root) as GNode;
+                        attributes.push(compositeAttribute);
+                    }
+                } else attributes.push(node);
+            } 
+        }
+        return attributes;
+    }
+
+    static transformOptionals(entity: GNode, root: GModelElement): GNode[] {
+        const optionalAttributes: GNode[] = [];
+        const edges: GEdge[] = root.children.filter(child => child instanceof GEdge && child.sourceId === entity.id && child.type === OPTIONAL_EDGE_TYPE) as GEdge[];
+        for (const edge of edges) {
+            const node: GNode = SQLUtils.findById(edge.targetId, root) as GNode;
+            const compositeAttributeEdges: GEdge[] = root.children.filter(child => child instanceof GEdge && child.sourceId === node.id) as GEdge[];
+            if (compositeAttributeEdges.length !== 0) {
+                for (const compositeAttributeEdge of compositeAttributeEdges) {
+                    const compositeAttribute: GNode = SQLUtils.findById(compositeAttributeEdge.targetId, root) as GNode;
+                    optionalAttributes.push(compositeAttribute);
+                }
+            } else optionalAttributes.push(node);
+        }
+        return optionalAttributes;
+    }
+
+    static transformMultivalued(node: GNode, root: GModelElement): Multivalued[] {
+        const multivalued: Multivalued[] = [];
+        const edges = root.children.filter(child => child instanceof GEdge && child.sourceId === node.id) as GEdge[];
+        let parentPKs: { node: GNode, tableName: string, colName: string }[] = [];
+
+        if (node.type === ENTITY_TYPE) parentPKs = AttributeTransformer.transformPKs(node, root).map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(node), colName: SQLUtils.getNameAndType(pk).name }));
+        else if (node.type === RELATION_TYPE) {
+            const cardinality = SQLUtils.getCardinality(node);
+            if (cardinality.includes("N:M")) {
+                const relPKs = AttributeTransformer.transformPKs(node, root);
+                if (relPKs.length > 0) {
+                    parentPKs = relPKs.map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(node), colName: SQLUtils.getNameAndType(pk).name }));
+                } else {
+                    const connectedEdges = root.children.filter(child => child instanceof GEdge && child.targetId === node.id) as GEdge[];
+                    for (const edge of connectedEdges) {
+                        const entity = SQLUtils.findById(edge.sourceId, root) as GNode;
+                        if (entity && entity.type === ENTITY_TYPE) {
+                            const entityPKs = AttributeTransformer.transformPKs(entity, root).map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(entity), colName: SQLUtils.getNameAndType(pk).name }));
+                            parentPKs = [...parentPKs, ...entityPKs];
+                        }
+                    }
+                }
+            } else if (cardinality.includes("1:N")) {
+                const edgeN = root.children.find(child => child instanceof GEdge && child.targetId === node.id && SQLUtils.getCardinality(child).includes("N")) as GEdge;
+                const entity = SQLUtils.findById(edgeN.sourceId, root) as GNode;
+                parentPKs = AttributeTransformer.transformPKs(entity, root).map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(entity), colName: SQLUtils.getNameAndType(pk).name} ));
+            } else if (cardinality.includes("1:1")) {
+                const connectedEdges: GEdge[] = root.children.filter(child => child instanceof GEdge && child.targetId === node.id) as GEdge[];
+                if (connectedEdges.length === 2) {
+                    const leftEdge = connectedEdges[0];
+                    const rightEdge = connectedEdges[1];
+                    
+                    const leftEntity = SQLUtils.findById(leftEdge.sourceId, root) as GNode;
+                    const rightEntity = SQLUtils.findById(rightEdge.sourceId, root) as GNode;
+
+                    const leftIsOptional = leftEdge.type === OPTIONAL_EDGE_TYPE;
+                    const rightIsOptional = rightEdge.type === OPTIONAL_EDGE_TYPE;
+
+                    let selectedEntity: GNode;
+
+                    if (!leftIsOptional && rightIsOptional) selectedEntity = leftEntity;
+                    else if (leftIsOptional && !rightIsOptional) selectedEntity = rightEntity;
+                    else selectedEntity = leftEntity.id < rightEntity.id ? leftEntity : rightEntity;
+
+                    parentPKs = AttributeTransformer.transformPKs(selectedEntity, root).map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(selectedEntity), colName: SQLUtils.getNameAndType(pk).name }));
+                }
+            }
+        }
+
+        for (const edge of edges) {
+            const mvNode = SQLUtils.findById(edge.targetId, root) as GNode;    
+            if (mvNode && mvNode.type === MULTI_VALUED_ATTRIBUTE_TYPE) {
+                const selfNodes = this.getCompositeNodes(mvNode, root);
+                multivalued.push({
+                    name: SQLUtils.getNameAndType(mvNode).name,
+                    parentName: SQLUtils.cleanNames(node),
+                    parentPKs: parentPKs,
+                    selfNode: selfNodes
+                });
+            }
+        }
+
+        return multivalued;
+    }
+
+    private static getCompositeNodes(attrNode: GNode, root: GModelElement): GNode[] {
+        const childEdges = root.children.filter(c => c instanceof GEdge && c.sourceId === attrNode.id) as GEdge[];
+        if (childEdges.length > 0) return childEdges.map(edge => SQLUtils.findById(edge.targetId, root) as GNode);
+        return [attrNode];
     }
 
 }

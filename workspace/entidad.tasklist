@@ -1,0 +1,50 @@
+{
+  "id": "1cd9fc40-ad99-4a8c-bbdc-926a53b823a6",
+  "tasks": [
+    {
+      "id": "203f456d-d2c8-4ec9-9323-a350b8e1155a",
+      "type": "entity",
+      "name": "Persona",
+      "position": {
+        "x": 168,
+        "y": 316
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "3c0e8059-772c-48b3-b633-c40832387fc1",
+      "type": "keyAttribute",
+      "name": "Cod_Persona: integer",
+      "position": {
+        "x": 246,
+        "y": 243
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "aeef1f92-deb8-40f8-bdd2-f6335a274937",
+      "sourceTaskId": "203f456d-d2c8-4ec9-9323-a350b8e1155a",
+      "targetTaskId": "3c0e8059-772c-48b3-b633-c40832387fc1"
+    }
+  ],
+  "weightedEdges": [],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}
