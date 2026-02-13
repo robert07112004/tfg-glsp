@@ -1,23 +1,18 @@
--- Fecha: 13/2/2026, 18:26:23
+-- Fecha: 14/2/2026, 0:18:15
 
-CREATE TABLE Pieza (
-    Cod_Pieza INTEGER NOT NULL PRIMARY KEY
+CREATE TABLE Empleado (
+    Cod_Empleado INTEGER NOT NULL PRIMARY KEY,
+    Supervisa_Cod_Empleado INTEGER NOT NULL ,
+    Fecha DATE NOT NULL UNIQUE,
+    NewAlternativeKeyAttribute3 INTEGER NOT NULL UNIQUE,
+    NewAlternativeKeyAttribute3 INTEGER NOT NULL UNIQUE,
+    FOREIGN KEY (Supervisa_Cod_Empleado) REFERENCES Empleado(Cod_Empleado) ON DELETE CASCADE
 );
 
-CREATE TABLE Composicion (
-    Cod_Pieza_1 INTEGER NOT NULL,
-    Cod_Pieza_2 INTEGER NOT NULL,
-    Cantidad INTEGER NOT NULL,
-    PRIMARY KEY (Cod_Pieza_1, Cod_Pieza_2),
-    FOREIGN KEY (Cod_Pieza_1) REFERENCES Pieza(Cod_Pieza),
-    FOREIGN KEY (Cod_Pieza_2) REFERENCES Pieza(Cod_Pieza)
-);
-
-CREATE TABLE Composicion_NewMultiValuedAttribute1 (
-    Cod_Pieza_1 INTEGER NOT NULL,
-    Cod_Pieza_2 INTEGER NOT NULL,
+CREATE TABLE Supervisa_NewMultiValuedAttribute1 (
+    Cod_Empleado INTEGER NOT NULL,
     NewMultiValuedAttribute1 INTEGER NOT NULL,
-    PRIMARY KEY (Cod_Pieza_1, Cod_Pieza_2, NewMultiValuedAttribute1),
-    FOREIGN KEY (Cod_Pieza_1) REFERENCES Pieza(Cod_Pieza) ON DELETE CASCADE,
-    FOREIGN KEY (Cod_Pieza_2) REFERENCES Pieza(Cod_Pieza) ON DELETE CASCADE
+    PRIMARY KEY (Cod_Empleado, NewMultiValuedAttribute1),
+    FOREIGN KEY (Cod_Empleado) REFERENCES Empleado(Cod_Empleado) ON DELETE CASCADE
 );
+

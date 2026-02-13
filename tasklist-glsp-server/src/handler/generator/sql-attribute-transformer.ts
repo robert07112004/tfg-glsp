@@ -91,15 +91,17 @@ export class AttributeTransformer {
 
             tableLines.push(`    PRIMARY KEY (${pks.join(', ')})`);
 
+            console.log(multivalued);
             multivalued.parentPKs.forEach(pkData => {
                 if (RelationsTransformer.isReflexive(parentNode, root)) {
-                    const newColName = pkData.colName.slice(0, -2);
+                    let newColName = pkData.colName;
+                    if (pkData.colName[pkData.colName.length - 1].includes("1") || pkData.colName[pkData.colName.length - 1].includes("2")) newColName = pkData.colName.slice(0, -2); 
                     tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${newColName}) ON DELETE CASCADE`);
                 } else tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${pkData.colName}) ON DELETE CASCADE`);
             });
 
             sql += tableLines.join(",\n");
-            sql += "\n);\n";
+            sql += "\n);\n\n";
             
             resultString.push(sql);
         }

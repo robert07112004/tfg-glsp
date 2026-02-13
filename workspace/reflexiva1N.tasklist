@@ -23,8 +23,12 @@
       "name": "Supervisa",
       "cardinality": "-",
       "position": {
-        "x": 431,
+        "x": 386,
         "y": 301
+      },
+      "size": {
+        "width": 87.45843124389648,
+        "height": 60
       }
     }
   ],
@@ -35,7 +39,21 @@
   "partialOverlappedSpecializations": [],
   "totalOverlappedSpecializations": [],
   "attributes": [],
-  "multiValuedAttributes": [],
+  "multiValuedAttributes": [
+    {
+      "id": "a1b6bc4b-18d5-4210-8164-6b9a8523dc66",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 365,
+        "y": 415
+      },
+      "size": {
+        "width": 171.56996154785156,
+        "height": 22
+      }
+    }
+  ],
   "derivedAttributes": [],
   "keyAttributes": [
     {
@@ -56,8 +74,8 @@
       "type": "keyAttribute",
       "name": "Fecha: date",
       "position": {
-        "x": 512,
-        "y": 244
+        "x": 420,
+        "y": 231
       },
       "size": {
         "width": 66.35060119628906,
@@ -65,7 +83,26 @@
       }
     }
   ],
-  "alternativeKeyAttributes": [],
+  "alternativeKeyAttributes": [
+    {
+      "id": "2be662b7-6338-41da-a968-cb75aff551fa",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 503,
+        "y": 266
+      }
+    },
+    {
+      "id": "9af22427-900c-4535-a490-43945d2a6acb",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 499,
+        "y": 349
+      }
+    }
+  ],
   "transitions": [
     {
       "id": "cefbd448-ab11-42a7-968c-9c24fc54fdfd",
@@ -76,6 +113,21 @@
       "id": "1b0b8b17-4d3f-49d0-b211-06622f17640a",
       "sourceTaskId": "8921e1a6-683f-4cc7-92e8-6b3bec6118cb",
       "targetTaskId": "95cba8b2-ae09-475e-8e90-b46b05fdbc18"
+    },
+    {
+      "id": "78668920-edaf-468e-ba7a-3fb8a57ee7c0",
+      "sourceTaskId": "8921e1a6-683f-4cc7-92e8-6b3bec6118cb",
+      "targetTaskId": "a1b6bc4b-18d5-4210-8164-6b9a8523dc66"
+    },
+    {
+      "id": "bf009e6c-d019-4a57-9a8b-314bc7b26f33",
+      "sourceTaskId": "8921e1a6-683f-4cc7-92e8-6b3bec6118cb",
+      "targetTaskId": "2be662b7-6338-41da-a968-cb75aff551fa"
+    },
+    {
+      "id": "14200c93-8057-466d-bbcc-59e26f6f00ef",
+      "sourceTaskId": "8921e1a6-683f-4cc7-92e8-6b3bec6118cb",
+      "targetTaskId": "9af22427-900c-4535-a490-43945d2a6acb"
     }
   ],
   "weightedEdges": [

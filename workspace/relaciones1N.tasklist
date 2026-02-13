@@ -6,8 +6,8 @@
       "type": "entity",
       "name": "Profesor",
       "position": {
-        "x": 532.5199990336438,
-        "y": 488.75128183447134
+        "x": 662.5199990336438,
+        "y": 489.75128183447134
       },
       "size": {
         "width": 100,
@@ -19,8 +19,8 @@
       "type": "entity",
       "name": "Departamento",
       "position": {
-        "x": 1174.838975015601,
-        "y": 492.57794882325675
+        "x": 998.8389750156009,
+        "y": 495.57794882325675
       },
       "size": {
         "width": 100,
@@ -36,8 +36,8 @@
       "name": "Pertenece",
       "cardinality": "-",
       "position": {
-        "x": 855.5569231140908,
-        "y": 481.0210257091662
+        "x": 813.5569231140908,
+        "y": 484.0210257091662
       },
       "size": {
         "width": 131.8349151611328,
@@ -58,8 +58,12 @@
       "type": "multiValuedAttribute",
       "name": "NewMultiValuedAttribute1: integer",
       "position": {
-        "x": 755,
-        "y": 389
+        "x": 752,
+        "y": 422
+      },
+      "size": {
+        "width": 171.56996154785156,
+        "height": 22
       }
     }
   ],
@@ -70,12 +74,12 @@
       "type": "keyAttribute",
       "name": "Cod_Profesor: integer",
       "position": {
-        "x": 529.57828801957,
-        "y": 421.54098387492627
+        "x": 609.57828801957,
+        "y": 447.54098387492627
       },
       "size": {
-        "width": 114.96256256103516,
-        "height": 21.948896408081055
+        "width": 115.50118255615234,
+        "height": 22
       }
     },
     {
@@ -83,16 +87,35 @@
       "type": "keyAttribute",
       "name": "Cod_Dep: integer",
       "position": {
-        "x": 1181.2909663407831,
-        "y": 427.017561003676
+        "x": 1005.2909663407831,
+        "y": 430.017561003676
       },
       "size": {
-        "width": 94.22222137451172,
-        "height": 21.948896408081055
+        "width": 94.77716064453125,
+        "height": 22
+      }
+    },
+    {
+      "id": "6d84d243-bb81-4e44-9501-ea79db03150d",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute3: integer",
+      "position": {
+        "x": 780,
+        "y": 619
       }
     }
   ],
-  "alternativeKeyAttributes": [],
+  "alternativeKeyAttributes": [
+    {
+      "id": "34fe37af-1cb1-4ed2-89d6-6d280a685412",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 905,
+        "y": 592
+      }
+    }
+  ],
   "transitions": [
     {
       "id": "76f3122a-2d7b-4799-970b-3ddf9f489fc3",
@@ -108,6 +131,16 @@
       "id": "e0059057-7bf9-4704-84e9-4770f2bb61b5",
       "sourceTaskId": "e30fc7bc-05b9-4d0f-a017-afb362ee697e",
       "targetTaskId": "4ecbd171-8bb4-46e8-b016-2afef1828bae"
+    },
+    {
+      "id": "43e518fe-01ee-482d-b156-ee76d480d456",
+      "sourceTaskId": "e30fc7bc-05b9-4d0f-a017-afb362ee697e",
+      "targetTaskId": "34fe37af-1cb1-4ed2-89d6-6d280a685412"
+    },
+    {
+      "id": "3053e014-edf4-46ee-9c41-2bb162425317",
+      "sourceTaskId": "e30fc7bc-05b9-4d0f-a017-afb362ee697e",
+      "targetTaskId": "6d84d243-bb81-4e44-9501-ea79db03150d"
     }
   ],
   "weightedEdges": [

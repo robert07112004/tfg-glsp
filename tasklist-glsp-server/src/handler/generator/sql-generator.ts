@@ -45,7 +45,7 @@ export class SQLGenerator {
         let sql = "-- Fecha: " + new Date().toLocaleString() + "\n\n";
 
         this.entityNodes.forEach(entity => {
-            sql += EntitiesTransformer.processEntity(entity, root);
+            sql += EntitiesTransformer.processEntity(entity, this.relationNodes, root);
         });
 
         this.relationNodes.forEach(relation => {

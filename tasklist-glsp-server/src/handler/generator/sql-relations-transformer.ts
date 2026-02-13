@@ -1,71 +1,10 @@
 import { GEdge, GModelElement, GNode } from "@eclipse-glsp/server";
+import { OPTIONAL_EDGE_TYPE } from "../validation/utils/validation-constants";
 import { AttributeTransformer } from "./sql-attribute-transformer";
-import { Relation } from "./sql-interfaces";
+import { Entity, Relation, RelationNodes } from "./sql-interfaces";
 import { SQLUtils } from "./sql-utils";
 
 export class RelationsTransformer {
-
-    /*static processRelationNM(relation: Relation, root: GModelElement): string {
-        let sql = `CREATE TABLE ${relation.name} (\n`;
-        let tableLines: string[] = [];
-        let pkColumns: string[] = [];
-        let fkColumns: string[] = [];
-        // Esta lista la usaremos para los multievaluados
-        let parentPkInfo: { node: GNode, tableName: string, colName: string }[] = [];
-
-        const { columnPKs, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
-        const { columns: uniqueColumns, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
-
-        // 1. Columnas base de la relación
-        tableLines.push(...columnPKs, ...uniqueColumns);
-
-        // 2. Procesar Entidades Conectadas
-        relation.connectedEntities.forEach((conn, index) => {
-            const entityName = SQLUtils.cleanNames(conn.entity);
-            const entityPkNodes = AttributeTransformer.transformPKs(conn.entity, root);
-
-            entityPkNodes.forEach(pkNode => {
-                const { name, type } = SQLUtils.getNameAndType(pkNode);
-                
-                // SI ES REFLEXIVA, cambiamos el nombre de la columna para evitar colisión
-                const colName = relation.isReflexive ? `${name}_${index + 1}` : name;
-
-                tableLines.push(`    ${colName} ${type} NOT NULL`);
-                
-                // Si el rombo no tiene PK, estas columnas forman la PK compuesta
-                if (columnPKs.length === 0) pkColumns.push(colName);
-
-                fkColumns.push(`    FOREIGN KEY (${colName}) REFERENCES ${entityName}(${name})`);
-                
-                // Guardamos info para que el multievaluado sepa cómo se llama su "padre"
-                parentPkInfo.push({ node: pkNode, tableName: entityName, colName: colName });
-            });
-        });
-
-        // 3. Atributos simples y opcionales
-        tableLines.push(...AttributeTransformer.processSimpleAttributes(relation.attributes.simple));
-        tableLines.push(...AttributeTransformer.processOptionalAttributes(relation.attributes.optional));
-
-        // 4. Restricciones de PK y UNIQUE
-        if (columnPKs.length === 0 && pkColumns.length > 0) {
-            tableLines.push(`    PRIMARY KEY (${pkColumns.join(', ')})`);
-        } else if (relPkRest.length > 0) {
-            tableLines.push(...relPkRest);
-        }
-        
-        if (relUniqueRest.length > 0) tableLines.push(...relUniqueRest);
-        tableLines.push(...fkColumns);
-
-        sql += tableLines.join(",\n");
-        sql += "\n);\n\n";
-
-        // 5. Multievaluados (Pasamos la info con los nombres de columna ya corregidos)
-        // Nota: Necesitarás ajustar processMultivaluedAttributes para aceptar 'colName'
-        const multivalued = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued);
-        sql += multivalued.join("\n");
-
-        return sql;
-    }*/
 
     static processRelationNM(relation: Relation, root: GModelElement): string {
         let sql = `CREATE TABLE ${relation.name} (\n`;
@@ -90,7 +29,6 @@ export class RelationsTransformer {
         relation.connectedEntities.forEach((conn, index) => {
             const entityName = SQLUtils.cleanNames(conn.entity);
             const entityPkNodes = AttributeTransformer.transformPKs(conn.entity, root);
-
             entityPkNodes.forEach(pkNode => {
                 const { name, type } = SQLUtils.getNameAndType(pkNode);
                 const colName = isReflexive ? `${name}_${index + 1}` : name;
@@ -103,21 +41,21 @@ export class RelationsTransformer {
             });
         });
 
-        tableLines.push(...uniqueColumns, ...AttributeTransformer.processSimpleAttributes(relation.attributes.simple), ...AttributeTransformer.processOptionalAttributes(relation.attributes.optional));
+        tableLines.push(...uniqueColumns, ...AttributeTransformer.processSimpleAttributes(relation.attributes.simple), ...AttributeTransformer.processOptionalAttributes(relation.attributes.optional));    
         
         if (relation.attributes.pk.length === 0 && pkColumns.length > 0) tableLines.push(`    PRIMARY KEY (${pkColumns.join(', ')})`);
         else if (relPkRest.length > 0) tableLines.push(...relPkRest);
-        
+    
         if (relUniqueRest.length > 0) tableLines.push(...relUniqueRest);
+        
         tableLines.push(...fkColumns);
-
         sql += tableLines.join(",\n") + "\n);\n\n";
-
+        
         relation.attributes.multiValued.forEach(mv => {
             mv.parentPKs = colNameMapping;
             mv.parentName = relation.name; 
         });
-
+        
         const multivalued = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root);
         return sql + multivalued.join("\n");
     }
@@ -137,6 +75,96 @@ export class RelationsTransformer {
             connectedEntities.push(object);
         }
         return connectedEntities;
+    }
+
+    static process1NRelation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+        for (const relation of relationNodes.values()) {
+            const is1N = relation.cardinality.includes("1:N");    
+            if (is1N) {
+                const sideN = relation.connectedEntities.find(ce => ce.cardinalityText.toUpperCase().includes("N"));
+                const side1 = relation.connectedEntities.find(ce => ce.cardinalityText.includes("1") && !ce.cardinalityText.toUpperCase().includes("N"));
+
+                if (sideN && sideN.entity.id === entity.node.id && side1) {
+                    this.absorbRelation(relation, side1.entity, sideN.cardinalityText, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
+                }
+            }
+        }
+    }
+
+    static process11Relation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+        for (const relation of relationNodes.values()) {
+            const is11 = relation.cardinality.includes("1:1");    
+            if (is11) {
+                const edges = root.children.filter(child => child instanceof GEdge && child.targetId === relation.node.id) as GEdge[];
+                if (edges.length === 2) {
+                    const edgeA = edges[0];
+                    const edgeB = edges[1];
+                    const entityA = SQLUtils.findById(edgeA.sourceId, root) as GNode;
+                    const entityB = SQLUtils.findById(edgeB.sourceId, root) as GNode;
+
+                    const isAOptional = edgeA.type === OPTIONAL_EDGE_TYPE;
+                    const isBOptional = edgeB.type === OPTIONAL_EDGE_TYPE;
+
+                    let selectedEntity: GNode;
+                    let otherEntity: GNode;
+                    let participationOfSelected: string;
+
+                    if (!isAOptional && isBOptional) {
+                        selectedEntity = entityA;
+                        otherEntity = entityB;
+                        participationOfSelected = SQLUtils.getCardinality(edgeA);
+                    } else if (isAOptional && !isBOptional) {
+                        selectedEntity = entityB;
+                        otherEntity = entityA;
+                        participationOfSelected = SQLUtils.getCardinality(edgeB);
+                    } else {
+                        if (entityA.id < entityB.id) {
+                            selectedEntity = entityA;
+                            otherEntity = entityB;
+                            participationOfSelected = SQLUtils.getCardinality(edgeA);
+                        } else {
+                            selectedEntity = entityB;
+                            otherEntity = entityA;
+                            participationOfSelected = SQLUtils.getCardinality(edgeB);
+                        }
+                    }
+
+                    if (selectedEntity.id === entity.node.id) {
+                        this.absorbRelation(relation, otherEntity, participationOfSelected, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
+                    }
+                }
+            }
+        }
+    }
+
+    private static absorbRelation(relation: Relation, sourceEntity: GNode, participation: string, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+        const sourceName = SQLUtils.cleanNames(sourceEntity);
+        const fkNodes = AttributeTransformer.transformPKs(sourceEntity, root);
+        
+        fkNodes.forEach(pkNode => {
+            const { name, type } = SQLUtils.getNameAndType(pkNode);
+            const colName = relation.isReflexive ? `${relation.name}_${name}` : name;
+            
+            const uniqueConstraint = !relation.cardinality.includes("N") ? "UNIQUE" : "";
+            const nullability = participation.includes("0") ? "NULL" : "NOT NULL";
+
+            foreignColumns.push(`    ${colName} ${type} ${nullability} ${uniqueConstraint}`);
+            foreignKeys.push(`    FOREIGN KEY (${colName}) REFERENCES ${sourceName}(${name}) ON DELETE CASCADE`);
+        });
+
+        const relSimple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
+        const relOptional = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
+        const { columns: relUniqueCols, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
+        const { columnPKs: relPkCols, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
+
+        const cleanedRelPkCols = relPkCols.map(col => col.replace(" PRIMARY KEY", " UNIQUE"));
+        const cleanedRelPkRest = relPkRest.map(rel => rel.replace("PRIMARY KEY", "UNIQUE"));
+
+        relationAttributes.push(...cleanedRelPkCols, ...relUniqueCols, ...relSimple, ...relOptional);
+        if (cleanedRelPkRest) relationRestrictions.push(...cleanedRelPkRest);
+        if (relUniqueRest) relationRestrictions.push(...relUniqueRest);
+
+        relationMultivalued.push(...AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root));
     }
 
 }
