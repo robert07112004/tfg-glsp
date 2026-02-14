@@ -1,11 +1,12 @@
 import { GEdge, GModelElement, GNode } from "@eclipse-glsp/server";
-import { OPTIONAL_EDGE_TYPE } from "../validation/utils/validation-constants";
+import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from "../validation/utils/validation-constants";
 import { AttributeTransformer } from "./sql-attribute-transformer";
 import { Entity, Relation, RelationNodes } from "./sql-interfaces";
 import { SQLUtils } from "./sql-utils";
 
 export class RelationsTransformer {
 
+    // FKs se suelen poner como UNIQUE
     static processRelationNM(relation: Relation, root: GModelElement): string {
         let sql = `CREATE TABLE ${relation.name} (\n`;
         let tableLines: string[] = [];
@@ -37,7 +38,8 @@ export class RelationsTransformer {
                     pkColumns.push(colName);
                     colNameMapping.push({ node: pkNode, tableName: SQLUtils.cleanNames(conn.entity), colName: colName });
                 }
-                fkColumns.push(`    FOREIGN KEY (${colName}) REFERENCES ${entityName}(${name})`);
+                if (relation.type === RELATION_TYPE) fkColumns.push(`    FOREIGN KEY (${colName}) REFERENCES ${entityName}(${name})`);
+                else if (relation.type === EXISTENCE_DEP_RELATION_TYPE) fkColumns.push(`    FOREIGN KEY (${colName}) REFERENCES ${entityName}(${name}) ON DELETE CASCADE`);
             });
         });
 
@@ -79,7 +81,7 @@ export class RelationsTransformer {
 
     static process1NRelation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
         for (const relation of relationNodes.values()) {
-            const is1N = relation.cardinality.includes("1:N");    
+            const is1N = relation.cardinality.includes("1:N") && relation.type === RELATION_TYPE;    
             if (is1N) {
                 const sideN = relation.connectedEntities.find(ce => ce.cardinalityText.toUpperCase().includes("N"));
                 const side1 = relation.connectedEntities.find(ce => ce.cardinalityText.includes("1") && !ce.cardinalityText.toUpperCase().includes("N"));
@@ -93,45 +95,65 @@ export class RelationsTransformer {
 
     static process11Relation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
         for (const relation of relationNodes.values()) {
-            const is11 = relation.cardinality.includes("1:1");    
+            const is11 = relation.cardinality.includes("1:1") && relation.type === RELATION_TYPE;    
             if (is11) {
-                const edges = root.children.filter(child => child instanceof GEdge && child.targetId === relation.node.id) as GEdge[];
-                if (edges.length === 2) {
-                    const edgeA = edges[0];
-                    const edgeB = edges[1];
-                    const entityA = SQLUtils.findById(edgeA.sourceId, root) as GNode;
-                    const entityB = SQLUtils.findById(edgeB.sourceId, root) as GNode;
+                const edgeA = relation.connectedEntities[0].cardinalityText;
+                const edgeB = relation.connectedEntities[1].cardinalityText;
 
-                    const isAOptional = edgeA.type === OPTIONAL_EDGE_TYPE;
-                    const isBOptional = edgeB.type === OPTIONAL_EDGE_TYPE;
+                const entityA = relation.connectedEntities[0].entity;
+                const entityB = relation.connectedEntities[1].entity;
 
-                    let selectedEntity: GNode;
-                    let otherEntity: GNode;
-                    let participationOfSelected: string;
+                const isAOptional = relation.connectedEntities[0].cardinalityText.includes("0");
+                const isBOptional = relation.connectedEntities[1].cardinalityText.includes("0");
 
-                    if (!isAOptional && isBOptional) {
+                let selectedEntity: GNode;
+                let otherEntity: GNode;
+                let participationOfSelected: string;
+
+                if (!isAOptional && isBOptional) {
+                    selectedEntity = entityA;
+                    otherEntity = entityB;
+                    participationOfSelected = edgeA;
+                } else if (isAOptional && !isBOptional) {
+                    selectedEntity = entityB;
+                    otherEntity = entityA;
+                    participationOfSelected = edgeB;
+                } else {
+                    if (entityA.id < entityB.id) {
                         selectedEntity = entityA;
                         otherEntity = entityB;
-                        participationOfSelected = SQLUtils.getCardinality(edgeA);
-                    } else if (isAOptional && !isBOptional) {
+                        participationOfSelected = edgeA;
+                    } else {
                         selectedEntity = entityB;
                         otherEntity = entityA;
-                        participationOfSelected = SQLUtils.getCardinality(edgeB);
-                    } else {
-                        if (entityA.id < entityB.id) {
-                            selectedEntity = entityA;
-                            otherEntity = entityB;
-                            participationOfSelected = SQLUtils.getCardinality(edgeA);
-                        } else {
-                            selectedEntity = entityB;
-                            otherEntity = entityA;
-                            participationOfSelected = SQLUtils.getCardinality(edgeB);
-                        }
+                        participationOfSelected = edgeB;
                     }
+                }
 
-                    if (selectedEntity.id === entity.node.id) {
-                        this.absorbRelation(relation, otherEntity, participationOfSelected, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
-                    }
+                if (selectedEntity.id === entity.node.id) {
+                    this.absorbRelation(relation, otherEntity, participationOfSelected, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
+                }
+            }
+        }
+    }
+
+    static processExistenceDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+        for (const relation of relationNodes.values()) {
+            const isExistence = relation.cardinality.includes(cardinality) && relation.type === EXISTENCE_DEP_RELATION_TYPE;    
+            if (isExistence) {
+                let sideNormal: { cardinalityText: string, entity: GNode } | undefined;
+                let sideWeak: { cardinalityText: string, entity: GNode } | undefined;
+
+                if (relation.isReflexive) {
+                    sideNormal = relation.connectedEntities[0];
+                    sideWeak = relation.connectedEntities[1];
+                } else {
+                    sideNormal = relation.connectedEntities.find(ce => ce.entity.type === ENTITY_TYPE);
+                    sideWeak = relation.connectedEntities.find(ce => ce.entity.type === WEAK_ENTITY_TYPE);
+                }
+                
+                if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
+                    this.absorbRelation(relation, sideNormal.entity, sideNormal.cardinalityText, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
                 }
             }
         }
@@ -146,10 +168,13 @@ export class RelationsTransformer {
             const colName = relation.isReflexive ? `${relation.name}_${name}` : name;
             
             const uniqueConstraint = !relation.cardinality.includes("N") ? "UNIQUE" : "";
-            const nullability = participation.includes("0") ? "NULL" : "NOT NULL";
+            let nullability = "";
+            if (relation.type === EXISTENCE_DEP_RELATION_TYPE) nullability = "NOT NULL";
+            else nullability =  participation.includes("0") ? "NULL" : "NOT NULL";
 
             foreignColumns.push(`    ${colName} ${type} ${nullability} ${uniqueConstraint}`);
-            foreignKeys.push(`    FOREIGN KEY (${colName}) REFERENCES ${sourceName}(${name}) ON DELETE CASCADE`);
+            if (relation.type === RELATION_TYPE) foreignKeys.push(`    FOREIGN KEY (${colName}) REFERENCES ${sourceName}(${name})`);
+            else if (relation.type === EXISTENCE_DEP_RELATION_TYPE) foreignKeys.push(`    FOREIGN KEY (${colName}) REFERENCES ${sourceName}(${name}) ON DELETE CASCADE`);
         });
 
         const relSimple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);

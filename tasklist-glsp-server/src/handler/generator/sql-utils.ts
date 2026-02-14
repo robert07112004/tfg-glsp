@@ -7,8 +7,15 @@ export class SQLUtils {
     }
 
     static cleanNames(node: GNode): string {
-        const label = node.children.find((c): c is GLabel => c instanceof GLabel);
-        const text = label ? label.text : node.id;
+        const labels = node.children.filter((c): c is GLabel => c instanceof GLabel);
+
+        const nameLabel = labels.find(l => 
+            !l.id.includes('_existence_label') && 
+            !l.id.includes('_identifying_label') &&
+            !l.id.includes('_cardinality_label')
+        ) || labels[0];
+
+        const text = nameLabel ? nameLabel.text : node.id;
         return text.replace(/\s+/g, '');
     }
 

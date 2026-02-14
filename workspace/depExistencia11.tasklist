@@ -1,0 +1,134 @@
+{
+  "id": "3142f6b9-9fe4-468a-aa1d-d596aeb85bbe",
+  "tasks": [
+    {
+      "id": "f70956b0-aaf4-4abc-b8d2-441c771f1c73",
+      "type": "entity",
+      "name": "Vehiculo",
+      "position": {
+        "x": 64,
+        "y": 331
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "8c33f674-cd9e-4f79-b8b3-42cb2a6baf4f",
+      "type": "weakEntity",
+      "name": "Motor",
+      "position": {
+        "x": 444,
+        "y": 330
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [
+    {
+      "id": "558324cf-9ad3-432a-af78-b55afec2cb17",
+      "type": "existenceDependentRelation",
+      "name": "Tiene",
+      "cardinality": "-",
+      "dependencyLabel": "E",
+      "position": {
+        "x": 268,
+        "y": 311
+      }
+    }
+  ],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "cf1b327d-b290-43dc-b7c1-41c056c4a497",
+      "type": "keyAttribute",
+      "name": "vehiculo_id: integer",
+      "position": {
+        "x": 91,
+        "y": 239
+      }
+    },
+    {
+      "id": "e22cc900-4df1-4c77-a33c-af3c41406d14",
+      "type": "keyAttribute",
+      "name": "motor_id: integer",
+      "position": {
+        "x": 441,
+        "y": 237
+      }
+    },
+    {
+      "id": "7c2e1451-d2a0-4e4d-b5a8-ace995851d54",
+      "type": "keyAttribute",
+      "name": "cod: integer",
+      "position": {
+        "x": 270,
+        "y": 239
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "0761891d-6d30-42eb-9964-0b866e39210f",
+      "type": "alternativeKeyAttribute",
+      "name": "bastidor: varchar(10)",
+      "position": {
+        "x": 72,
+        "y": 444
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "d33f6603-e204-458e-bdd1-ad66627bddbf",
+      "sourceTaskId": "f70956b0-aaf4-4abc-b8d2-441c771f1c73",
+      "targetTaskId": "cf1b327d-b290-43dc-b7c1-41c056c4a497"
+    },
+    {
+      "id": "c80cdbd7-e412-45f9-bc44-e1a93b6b4ee2",
+      "sourceTaskId": "f70956b0-aaf4-4abc-b8d2-441c771f1c73",
+      "targetTaskId": "0761891d-6d30-42eb-9964-0b866e39210f"
+    },
+    {
+      "id": "a78efa27-1ef6-44db-8d04-377c203e1278",
+      "sourceTaskId": "558324cf-9ad3-432a-af78-b55afec2cb17",
+      "targetTaskId": "7c2e1451-d2a0-4e4d-b5a8-ace995851d54"
+    },
+    {
+      "id": "a5749a7b-7f12-4125-b403-3734e365d389",
+      "sourceTaskId": "8c33f674-cd9e-4f79-b8b3-42cb2a6baf4f",
+      "targetTaskId": "e22cc900-4df1-4c77-a33c-af3c41406d14"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "60202668-403b-4f23-9723-70f1d279b6b5",
+      "type": "edge:weighted",
+      "sourceId": "f70956b0-aaf4-4abc-b8d2-441c771f1c73",
+      "targetId": "558324cf-9ad3-432a-af78-b55afec2cb17",
+      "description": "(1..1)"
+    },
+    {
+      "id": "6f890a16-9fde-483f-b232-b9c68bb80cfc",
+      "type": "edge:weighted",
+      "sourceId": "8c33f674-cd9e-4f79-b8b3-42cb2a6baf4f",
+      "targetId": "558324cf-9ad3-432a-af78-b55afec2cb17",
+      "description": "(0..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

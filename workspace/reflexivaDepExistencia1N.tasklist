@@ -1,0 +1,104 @@
+{
+  "id": "21e02ea5-2b72-4d28-9e51-7e55ad92df82",
+  "tasks": [
+    {
+      "id": "fc2f0065-53d8-495d-87c0-0056d2b9abc5",
+      "type": "entity",
+      "name": "Tarea",
+      "position": {
+        "x": 118,
+        "y": 277
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [],
+  "existenceDependentRelations": [
+    {
+      "id": "27f3a775-90e5-4832-8fd9-c26dd3cc91c6",
+      "type": "existenceDependentRelation",
+      "name": "Flujo",
+      "cardinality": "-",
+      "dependencyLabel": "E",
+      "position": {
+        "x": 350,
+        "y": 270
+      },
+      "size": {
+        "width": 60,
+        "height": 60
+      }
+    }
+  ],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [
+    {
+      "id": "542594cf-c3e1-4f65-bc60-fe187922cbe7",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 300,
+        "y": 384
+      },
+      "size": {
+        "width": 171.56996154785156,
+        "height": 22
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "23c78529-6cef-4c7a-a8a0-f2c3bd8633f1",
+      "type": "keyAttribute",
+      "name": "id_tarea: integer",
+      "position": {
+        "x": 85,
+        "y": 206
+      },
+      "size": {
+        "width": 88.26284790039062,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "68c7d90e-ff26-4d6f-a3fc-443d361ad678",
+      "sourceTaskId": "fc2f0065-53d8-495d-87c0-0056d2b9abc5",
+      "targetTaskId": "23c78529-6cef-4c7a-a8a0-f2c3bd8633f1"
+    },
+    {
+      "id": "f0a38c79-7ada-4b80-ba75-b8cc2df1fd57",
+      "sourceTaskId": "27f3a775-90e5-4832-8fd9-c26dd3cc91c6",
+      "targetTaskId": "542594cf-c3e1-4f65-bc60-fe187922cbe7"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "07d5985f-231f-48cc-9350-7c3339ba7d4b",
+      "type": "edge:weighted",
+      "sourceId": "fc2f0065-53d8-495d-87c0-0056d2b9abc5",
+      "targetId": "27f3a775-90e5-4832-8fd9-c26dd3cc91c6",
+      "description": "(1..1)"
+    },
+    {
+      "id": "0b509821-bd2c-479b-a118-ce5d852373ad",
+      "type": "edge:weighted",
+      "sourceId": "fc2f0065-53d8-495d-87c0-0056d2b9abc5",
+      "targetId": "27f3a775-90e5-4832-8fd9-c26dd3cc91c6",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

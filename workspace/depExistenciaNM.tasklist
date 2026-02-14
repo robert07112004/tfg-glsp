@@ -1,0 +1,128 @@
+{
+  "id": "fd645071-0158-4211-bbe2-8859e8408d22",
+  "tasks": [
+    {
+      "id": "d59f4032-ae80-4603-969f-c2c8a20fef89",
+      "type": "entity",
+      "name": "Proyecto",
+      "position": {
+        "x": 56,
+        "y": 275
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "d09d1298-2152-4329-a03f-521e14a95687",
+      "type": "weakEntity",
+      "name": "Especialista",
+      "position": {
+        "x": 432,
+        "y": 272
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [
+    {
+      "id": "6533dfb7-11bb-4eee-8cf6-6fd0e7c6d221",
+      "type": "existenceDependentRelation",
+      "name": "Tiene",
+      "cardinality": "-",
+      "dependencyLabel": "E",
+      "position": {
+        "x": 253,
+        "y": 265
+      },
+      "size": {
+        "width": 60,
+        "height": 60
+      }
+    }
+  ],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [
+    {
+      "id": "c715ba59-b641-416d-afdc-e6f23961789b",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 247,
+        "y": 191
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "3feefbcb-6d8f-452c-991b-cdc0e6525d51",
+      "type": "keyAttribute",
+      "name": "proyecto_id: integer",
+      "position": {
+        "x": 68,
+        "y": 199
+      }
+    },
+    {
+      "id": "e0af60fd-db27-46b9-a375-bc770bdf884c",
+      "type": "keyAttribute",
+      "name": "especialista_id: integer",
+      "position": {
+        "x": 446,
+        "y": 211
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "e813859d-bd1b-4895-8761-d87dcfb21161",
+      "sourceTaskId": "d09d1298-2152-4329-a03f-521e14a95687",
+      "targetTaskId": "e0af60fd-db27-46b9-a375-bc770bdf884c"
+    },
+    {
+      "id": "d48817e2-e3a0-41a9-92e0-8c616d193df6",
+      "sourceTaskId": "d59f4032-ae80-4603-969f-c2c8a20fef89",
+      "targetTaskId": "3feefbcb-6d8f-452c-991b-cdc0e6525d51"
+    },
+    {
+      "id": "c1cddec1-295b-450e-87fd-02d25e34350c",
+      "sourceTaskId": "6533dfb7-11bb-4eee-8cf6-6fd0e7c6d221",
+      "targetTaskId": "c715ba59-b641-416d-afdc-e6f23961789b"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "80e7e886-4778-4039-a363-7b6c7daf0752",
+      "type": "edge:weighted",
+      "sourceId": "d59f4032-ae80-4603-969f-c2c8a20fef89",
+      "targetId": "6533dfb7-11bb-4eee-8cf6-6fd0e7c6d221",
+      "description": "(1..N)"
+    },
+    {
+      "id": "ca460445-99a8-4b96-aa3e-b8f9a6b5ef87",
+      "type": "edge:weighted",
+      "sourceId": "d09d1298-2152-4329-a03f-521e14a95687",
+      "targetId": "6533dfb7-11bb-4eee-8cf6-6fd0e7c6d221",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

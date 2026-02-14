@@ -1,6 +1,6 @@
 import { GModelElement, GNode } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { ENTITY_TYPE, RELATION_TYPE } from '../validation/utils/validation-constants';
+import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
 import { AttributeTransformer } from './sql-attribute-transformer';
 import { EntitiesTransformer } from './sql-entities-transformer';
 import { EntityNodes, RelationNodes } from './sql-interfaces';
@@ -18,7 +18,7 @@ export class SQLGenerator {
         this.relationNodes.clear();
 
         // 1.- Collect all entities
-        const entities = root.children.filter(child => child.type === ENTITY_TYPE) as GNode[];
+        const entities = root.children.filter(child => child.type === ENTITY_TYPE || child.type === WEAK_ENTITY_TYPE) as GNode[];
         for (const entity of entities) {
             this.entityNodes.set(entity.id, {
                 name: SQLUtils.cleanNames(entity),
@@ -29,7 +29,7 @@ export class SQLGenerator {
         }
 
         // 2.- Collect relations
-        const relations = root.children.filter(child => child.type === RELATION_TYPE) as GNode[];
+        const relations = root.children.filter(child => child.type === RELATION_TYPE || child.type === EXISTENCE_DEP_RELATION_TYPE) as GNode[];
         for (const relation of relations) {
             this.relationNodes.set(relation.id, {
                 name: SQLUtils.cleanNames(relation),

@@ -1,0 +1,172 @@
+{
+  "id": "8919e50f-8f89-46b3-804f-3ec0d2645081",
+  "tasks": [
+    {
+      "id": "fe387272-aa28-4a7b-b1c4-6e6532de5f19",
+      "type": "entity",
+      "name": "Habitacion",
+      "position": {
+        "x": 52,
+        "y": 451
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "8a9f8b60-a43c-472b-bf8e-d4b117f2be18",
+      "type": "weakEntity",
+      "name": "Cama",
+      "position": {
+        "x": 415,
+        "y": 445
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [
+    {
+      "id": "9332c45a-dbd4-4b53-b0f9-bd3eaadcc491",
+      "type": "existenceDependentRelation",
+      "name": "tiene",
+      "cardinality": "-",
+      "dependencyLabel": "E",
+      "position": {
+        "x": 244,
+        "y": 428
+      },
+      "size": {
+        "width": 95.89375305175781,
+        "height": 60
+      }
+    }
+  ],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "8e2f4f14-f4a0-4a8c-8669-9ef2f1753940",
+      "type": "attribute",
+      "name": "planta: integer",
+      "position": {
+        "x": 37,
+        "y": 558
+      },
+      "size": {
+        "width": 112.51130676269531,
+        "height": 22
+      }
+    },
+    {
+      "id": "3a847f0c-d93f-40e7-9d91-6197f2ca8632",
+      "type": "attribute",
+      "name": "modelo: varchar(100)",
+      "position": {
+        "x": 453,
+        "y": 551
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "c2fdd681-d11c-4fe8-a770-8c38437a3091",
+      "type": "keyAttribute",
+      "name": "id_Habitacon: integer",
+      "position": {
+        "x": 40,
+        "y": 377
+      },
+      "size": {
+        "width": 97.15496826171875,
+        "height": 22
+      }
+    },
+    {
+      "id": "8497c2f3-e292-4b19-a0d5-d020e208d24e",
+      "type": "keyAttribute",
+      "name": "id_lcama: integer",
+      "position": {
+        "x": 401,
+        "y": 389
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "bf344902-5109-4657-a63a-1f45f21ae8d5",
+      "type": "keyAttribute",
+      "name": "cod: integer",
+      "position": {
+        "x": 248,
+        "y": 355
+      },
+      "size": {
+        "width": 66.93525695800781,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "5cbe5139-a951-4292-bd18-7d522740f122",
+      "sourceTaskId": "fe387272-aa28-4a7b-b1c4-6e6532de5f19",
+      "targetTaskId": "c2fdd681-d11c-4fe8-a770-8c38437a3091"
+    },
+    {
+      "id": "ab488146-75d8-4f35-bc2d-1b45c7907958",
+      "sourceTaskId": "fe387272-aa28-4a7b-b1c4-6e6532de5f19",
+      "targetTaskId": "8e2f4f14-f4a0-4a8c-8669-9ef2f1753940"
+    },
+    {
+      "id": "8c4353ce-6aa7-4a0c-a78f-504d3a1725eb",
+      "sourceTaskId": "8a9f8b60-a43c-472b-bf8e-d4b117f2be18",
+      "targetTaskId": "8497c2f3-e292-4b19-a0d5-d020e208d24e"
+    },
+    {
+      "id": "5593953c-4b5c-40a1-9650-b8fefe42ea7c",
+      "sourceTaskId": "8a9f8b60-a43c-472b-bf8e-d4b117f2be18",
+      "targetTaskId": "3a847f0c-d93f-40e7-9d91-6197f2ca8632"
+    },
+    {
+      "id": "4c4b66ad-f54a-4152-89f3-0fb150201688",
+      "sourceTaskId": "9332c45a-dbd4-4b53-b0f9-bd3eaadcc491",
+      "targetTaskId": "bf344902-5109-4657-a63a-1f45f21ae8d5"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "fb1be96d-c40b-4cec-a712-003f68ef0e74",
+      "type": "edge:weighted",
+      "sourceId": "fe387272-aa28-4a7b-b1c4-6e6532de5f19",
+      "targetId": "9332c45a-dbd4-4b53-b0f9-bd3eaadcc491",
+      "description": "(1..N)"
+    },
+    {
+      "id": "59b19240-3ea2-4a6c-885b-54604227877c",
+      "type": "edge:weighted",
+      "sourceId": "8a9f8b60-a43c-472b-bf8e-d4b117f2be18",
+      "targetId": "9332c45a-dbd4-4b53-b0f9-bd3eaadcc491",
+      "description": "(1..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}
