@@ -77,7 +77,21 @@
       }
     }
   ],
-  "multiValuedAttributes": [],
+  "multiValuedAttributes": [
+    {
+      "id": "ab0009b4-fd7a-4fea-b66c-c6c9b84fa3da",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 221,
+        "y": 566
+      },
+      "size": {
+        "width": 171.56996154785156,
+        "height": 22
+      }
+    }
+  ],
   "derivedAttributes": [],
   "keyAttributes": [
     {
@@ -146,6 +160,11 @@
       "id": "4c4b66ad-f54a-4152-89f3-0fb150201688",
       "sourceTaskId": "9332c45a-dbd4-4b53-b0f9-bd3eaadcc491",
       "targetTaskId": "bf344902-5109-4657-a63a-1f45f21ae8d5"
+    },
+    {
+      "id": "67420f45-9305-4f9a-89e0-5a804e2936f8",
+      "sourceTaskId": "9332c45a-dbd4-4b53-b0f9-bd3eaadcc491",
+      "targetTaskId": "ab0009b4-fd7a-4fea-b66c-c6c9b84fa3da"
     }
   ],
   "weightedEdges": [

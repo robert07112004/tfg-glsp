@@ -1,5 +1,5 @@
 import { GEdge, GModelElement, GNode } from "@eclipse-glsp/server";
-import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from "../validation/utils/validation-constants";
+import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from "../validation/utils/validation-constants";
 import { AttributeTransformer } from "./sql-attribute-transformer";
 import { Entity, Relation, RelationNodes } from "./sql-interfaces";
 import { SQLUtils } from "./sql-utils";
@@ -158,6 +158,75 @@ export class RelationsTransformer {
             }
         }
     }
+
+    static processIdentifyingDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], pks: string[], relationAttributes: string[], relationRestrictions: string[], foreignKeys: string[], relationMultivalued: string[], root: GModelElement) {
+        for (const relation of relationNodes.values()) {
+            const isIdentifying = relation.cardinality.includes(cardinality) && relation.type === IDENTIFYING_DEP_RELATION_TYPE;    
+            if (isIdentifying) {
+                let sideNormal: { cardinalityText: string, entity: GNode } | undefined;
+                let sideWeak: { cardinalityText: string, entity: GNode } | undefined;
+
+                if (relation.isReflexive) {
+                    sideNormal = relation.connectedEntities[0];
+                    sideWeak = relation.connectedEntities[1];
+                } else {
+                    sideNormal = relation.connectedEntities.find(ce => ce.entity.type === ENTITY_TYPE);
+                    sideWeak = relation.connectedEntities.find(ce => ce.entity.type === WEAK_ENTITY_TYPE);
+                }
+                
+                if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
+
+                    // Añadir pk del padre
+                    const sideNormalPK = AttributeTransformer.transformPKs(sideNormal.entity, root);
+                    sideNormalPK.forEach(pk => {
+                        const {name, type} = SQLUtils.getNameAndType(pk);
+                        foreignColumns.push(`    ${name} ${type} NOT NULL`);
+                        pks.push(name);
+                        foreignKeys.push(`    FOREIGN KEY (${name}) REFERENCES ${SQLUtils.cleanNames(sideNormal.entity)}(${name}) ON DELETE CASCADE`);
+                    });
+
+                    // Procesamos atributos de las relaciones
+                    const relSimple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
+                    const relOptional = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
+                    const { columns: relUniqueCols, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
+                    const { columnPKs: relPkCols, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
+
+                    const cleanedRelPkCols = relPkCols.map(col => col.replace(" PRIMARY KEY", " UNIQUE"));
+                    const cleanedRelPkRest = relPkRest.map(rel => rel.replace("PRIMARY KEY", "UNIQUE"));
+
+                    relationAttributes.push(...cleanedRelPkCols, ...relUniqueCols, ...relSimple, ...relOptional);
+                    if (cleanedRelPkRest) relationRestrictions.push(...cleanedRelPkRest);
+                    if (relUniqueRest) relationRestrictions.push(...relUniqueRest);
+
+                    let newColName = "";
+                    let newNode: GNode;
+                    AttributeTransformer.transformSimple(entity.node, root).forEach(simple => {
+                        const name = SQLUtils.getNameAndType(simple).name;
+                        if (name.includes("_disc")) {
+                            newColName = name;
+                            newNode = simple;
+                        }
+                    });
+
+                    relation.attributes.multiValued.forEach(mv => {
+                        //mv.parentPKs[mv.parentPKs.length - 1].tableName = entity.name;
+                        //mv.parentPKs[mv.parentPKs.length - 1].tableName = newColName;
+                        //mv.parentPKs.forEach(parentPK => {
+                        //    parentPK.tableName = entity.name;
+                        //    parentPK.colName = newColName;
+                        //});
+                        mv.parentPKs.push({ node: newNode, tableName: entity.name, colName: newColName});
+                    });
+
+                    relationMultivalued.push(...AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Problemas con multivalued
 
     private static absorbRelation(relation: Relation, sourceEntity: GNode, participation: string, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
         const sourceName = SQLUtils.cleanNames(sourceEntity);

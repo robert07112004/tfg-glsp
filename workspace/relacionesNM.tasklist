@@ -134,15 +134,6 @@
         "width": 134.2668228149414,
         "height": 22
       }
-    },
-    {
-      "id": "bca2c3bd-7879-476f-ab4e-9d5a677f9958",
-      "type": "keyAttribute",
-      "name": "key: integer",
-      "position": {
-        "x": 559,
-        "y": 282
-      }
     }
   ],
   "alternativeKeyAttributes": [
@@ -195,11 +186,6 @@
       "id": "a584890a-dea8-43a9-a811-58a7507c698e",
       "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
       "targetTaskId": "fd251f6d-b4c8-4a05-a20b-7eceabe48c64"
-    },
-    {
-      "id": "ff6ebcb8-f33a-4ffb-86f9-11bddadbf3bb",
-      "sourceTaskId": "59ffb658-cf5c-4a3b-85b3-353e6aba66fe",
-      "targetTaskId": "bca2c3bd-7879-476f-ab4e-9d5a677f9958"
     }
   ],
   "weightedEdges": [

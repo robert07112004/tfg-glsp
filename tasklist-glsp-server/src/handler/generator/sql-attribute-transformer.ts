@@ -1,5 +1,5 @@
 import { GEdge, GModelElement, GNode } from '@eclipse-glsp/server';
-import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE } from '../validation/utils/validation-constants';
+import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, KEY_ATTRIBUTE_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, RELATION_TYPE } from '../validation/utils/validation-constants';
 import { AllAttributes, Multivalued } from './sql-interfaces';
 import { RelationsTransformer } from './sql-relations-transformer';
 import { SQLUtils } from './sql-utils';
@@ -75,7 +75,6 @@ export class AttributeTransformer {
             let sql = `CREATE TABLE ${tableName} (\n`;
 
             multivalued.parentPKs.forEach(pkData => {
-                console.log(pkData);
                 const {name: _, type: type} = SQLUtils.getNameAndType(pkData.node);
                 tableLines.push(`    ${pkData.colName} ${type} NOT NULL`);
                 pks.push(pkData.colName);
@@ -89,15 +88,21 @@ export class AttributeTransformer {
 
             tableLines.push(`    PRIMARY KEY (${pks.join(', ')})`);
 
-            console.log(multivalued);
-            multivalued.parentPKs.forEach(pkData => {
-                console.log(pkData);
-                if (RelationsTransformer.isReflexive(parentNode, root)) {
-                    let newColName = pkData.colName;
-                    if (pkData.colName[pkData.colName.length - 1].includes("1") || pkData.colName[pkData.colName.length - 1].includes("2")) newColName = pkData.colName.slice(0, -2); 
-                    tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${newColName}) ON DELETE CASCADE`);
-                } else tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${pkData.colName}) ON DELETE CASCADE`);
-            });
+            if (parentNode.type === IDENTIFYING_DEP_RELATION_TYPE) {
+                const cols = multivalued.parentPKs.map(p => p.colName).join(', ');
+                const parentName = multivalued.parentPKs[multivalued.parentPKs.length - 1].tableName;
+                tableLines.push(`    FOREIGN KEY (${cols}) REFERENCES ${parentName}(${cols}) ON DELETE CASCADE`)
+            } else { 
+                multivalued.parentPKs.forEach(pkData => {
+                    if (RelationsTransformer.isReflexive(parentNode, root)) {
+                        let newColName = pkData.colName;
+                        if (pkData.colName[pkData.colName.length - 1].includes("1") || pkData.colName[pkData.colName.length - 1].includes("2")) newColName = pkData.colName.slice(0, -2); 
+                        tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${newColName}) ON DELETE CASCADE`);
+                    } else {
+                        tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${pkData.colName}) ON DELETE CASCADE`);
+                    }
+                });
+            }
 
             sql += tableLines.join(",\n");
             sql += "\n);\n\n";
@@ -214,7 +219,7 @@ export class AttributeTransformer {
         let parentPKs: { node: GNode, tableName: string, colName: string }[] = [];
 
         if (node.type === ENTITY_TYPE) parentPKs = AttributeTransformer.transformPKs(node, root).map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(node), colName: SQLUtils.getNameAndType(pk).name }));
-        else if (node.type === RELATION_TYPE || node.type === EXISTENCE_DEP_RELATION_TYPE) {
+        else if (node.type === RELATION_TYPE || node.type === EXISTENCE_DEP_RELATION_TYPE || node.type === IDENTIFYING_DEP_RELATION_TYPE) {
             const cardinality = SQLUtils.getCardinality(node);
             if (cardinality.includes("N:M")) {
                 const relPKs = AttributeTransformer.transformPKs(node, root);
