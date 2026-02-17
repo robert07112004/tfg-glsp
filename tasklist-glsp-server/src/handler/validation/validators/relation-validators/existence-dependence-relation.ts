@@ -1,19 +1,16 @@
-import { GLabel, GNode, Marker } from '@eclipse-glsp/server';
+import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { DEFAULT_EDGE_TYPE, ENTITY_TYPE, OPTIONAL_EDGE_TYPE, WEAK_ENTITY_TYPE } from '../../utils/validation-constants';
+import { attributeTypes, ENTITY_TYPE, WEAK_ENTITY_TYPE } from '../../utils/validation-constants';
 import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
 
 /* Existence dependence relation rules:
  * 1. Existence dependence relation not connected to anything.
- * 2. Prohibited connections:
- *    - Transitions and optional links aren't allowed.
- * 3. Valid connections:
+ * 2. Valid connections:
  *    - Entities (Strong/Weak).
- * 4. Existence dependence relation can't be connected to attributes, relations, other dependencies and specializations.
- * 5. Existence dependence relation must be connected to an entity and a weak entity.
- * 6. Cardinality of existende dependence relations can't be N..M 
+ * 3. Existence dependence relation can't be connected to relations, dependencies and specializations.
+ * 4. Existence dependence relation must be connected to an entity and a weak entity. 
  */
 
 @injectable()
@@ -37,32 +34,23 @@ export class ExistenceDependenceRelationValidator {
         let entityCount = 0;
         let weakEntityCount = 0;
 
-        for (const { otherNode, edge } of neighbors) {
+        for (const { otherNode } of neighbors) {
             const nodeType = otherNode.type;
-            const edgeType = edge.type;
             
-            // Rule 2: Prohibited connections.
-            if (edgeType === DEFAULT_EDGE_TYPE || edgeType === OPTIONAL_EDGE_TYPE) {
-                return createMarker(
-                    'error',
-                    'Una dependencia en existencia no puede estar conectada con nada que no sea mediante aristas ponderadas.',
-                    node.id,
-                    'ERR: existenceDependence-weighted-edge'
-                );
-            }
-
-            // Rule 3: Valid connections.
+            // Rule 2: Valid connections.
             if (nodeType === ENTITY_TYPE) {
                 validConnection = true;
                 entityCount++;
             } else if (nodeType === WEAK_ENTITY_TYPE) {
                 validConnection = true;
                 weakEntityCount++;
+            } else if (attributeTypes.includes(nodeType)) {
+                validConnection = true;
             }
 
         }
 
-        // Rule 4: Existence dependence relation can't be connected to attributes, relations, other dependencies and specializations.
+        // Rule 3: Existence dependence relation can't be connected to relations, dependencies and specializations.
         if (!validConnection) {
             return createMarker(
                 'error',
@@ -72,26 +60,13 @@ export class ExistenceDependenceRelationValidator {
             );
         }
 
-        // Rule 5: Existence dependence relation must be connected to an entity and a weak entity.
+        // Rule 4: Existence dependence relation must be connected to an entity and a weak entity.
         if (entityCount != 1 || weakEntityCount != 1) {
             return createMarker(
                 'error',
                 'Dependencia en existencia debe estar conectada a una entidad y a una entidad debil.',
                 node.id,
                 'ERR: existenceDependence-entities'
-            );
-        }
-        
-        // Rule 6: Cardinality of existende dependence relations can't be N..M
-        const cardinalityLabel = node.children.find(
-            child => child instanceof GLabel && child.type === 'label:cardinality'
-        ) as GLabel | undefined;
-        if (cardinalityLabel && cardinalityLabel.text === 'N:M') {
-            return createMarker(
-                'error',
-                'Una relación de dependencia en existencia no puede ser N:M (Muchos a Muchos).',
-                node.id,
-                'ERR: existenceDependence-cardinality-nm'
             );
         }
 

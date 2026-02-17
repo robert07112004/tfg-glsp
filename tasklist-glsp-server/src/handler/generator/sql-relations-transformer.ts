@@ -176,7 +176,6 @@ export class RelationsTransformer {
                 
                 if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
 
-                    // Añadir pk del padre
                     const sideNormalPK = AttributeTransformer.transformPKs(sideNormal.entity, root);
                     sideNormalPK.forEach(pk => {
                         const {name, type} = SQLUtils.getNameAndType(pk);
@@ -185,7 +184,6 @@ export class RelationsTransformer {
                         foreignKeys.push(`    FOREIGN KEY (${name}) REFERENCES ${SQLUtils.cleanNames(sideNormal.entity)}(${name}) ON DELETE CASCADE`);
                     });
 
-                    // Procesamos atributos de las relaciones
                     const relSimple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
                     const relOptional = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
                     const { columns: relUniqueCols, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
@@ -226,8 +224,6 @@ export class RelationsTransformer {
         return false;
     }
 
-    // Problemas con multivalued
-
     private static absorbRelation(relation: Relation, sourceEntity: GNode, participation: string, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
         const sourceName = SQLUtils.cleanNames(sourceEntity);
         const fkNodes = AttributeTransformer.transformPKs(sourceEntity, root);
@@ -236,12 +232,12 @@ export class RelationsTransformer {
             const { name, type } = SQLUtils.getNameAndType(pkNode);
             const colName = relation.isReflexive ? `${relation.name}_${name}` : name;
             
-            const uniqueConstraint = !relation.cardinality.includes("N") ? "UNIQUE" : "";
+            const uniqueConstraint = !relation.cardinality.includes("N") ? " UNIQUE" : "";
             let nullability = "";
             if (relation.type === EXISTENCE_DEP_RELATION_TYPE) nullability = "NOT NULL";
             else nullability =  participation.includes("0") ? "NULL" : "NOT NULL";
 
-            foreignColumns.push(`    ${colName} ${type} ${nullability} ${uniqueConstraint}`);
+            foreignColumns.push(`    ${colName} ${type} ${nullability}${uniqueConstraint}`);
             if (relation.type === RELATION_TYPE) foreignKeys.push(`    FOREIGN KEY (${colName}) REFERENCES ${sourceName}(${name})`);
             else if (relation.type === EXISTENCE_DEP_RELATION_TYPE) foreignKeys.push(`    FOREIGN KEY (${colName}) REFERENCES ${sourceName}(${name}) ON DELETE CASCADE`);
         });

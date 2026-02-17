@@ -1,29 +1,5 @@
 import { GNode } from '@eclipse-glsp/server';
 
-/*export interface allAttributes {
-    pk: GNode[];
-    unique: { isNullable: boolean, nodes: GNode[] }[];
-    simple: GNode[];
-    optional: GNode[];
-    multiValued: { name: string, nodes: GNode[] }[];
-    derived: GNode[];
-}
-
-export interface NodeData {
-    node: GNode;
-    name: string;
-    type: string;
-    attributes: allAttributes;
-}
-
-export type NodeRegistry = Map<string, NodeData>;
-
-export interface TableContext {
-    columns: string[];
-    tableConstraints: { primaryKeys: string[], compositeUnique: string[], pksFromDiamond: string[], foreignKeys: string[]};
-    pksForMultivalued: { node: GNode, prefix: string }[];
-}*/
-
 export interface Multivalued {
     name: string,
     parentName: string,
@@ -57,5 +33,15 @@ export interface Relation {
     attributes: AllAttributes,
 }
 
-export type EntityNodes = Map<string, Entity>
-export type RelationNodes = Map<string, Relation>
+export interface Specialization {
+    node: GNode,
+    type: string,
+    father: Entity,
+    children: Entity[],
+    enum: string,
+    discriminator: string
+}
+
+export type EntityNodes = Map<string, Entity>;
+export type RelationNodes = Map<string, Relation>;
+export type SpecializationNodes = Map<string, Specialization>;

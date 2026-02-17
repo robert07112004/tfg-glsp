@@ -7,14 +7,13 @@ import { createMarker, getConnectedNeighbors } from '../../utils/validation-util
 
 /* Identifying dependence relation rules:
  * 1. Identifying dependence relation not connected to anything.
- * 2. Prohibited connections:
- *    - Optional links aren't allowed.
+ * 2. Prohibited connections.
  * 3. Valid connections:
  *    - Entities (Strong/Weak).
  *    - Key attributes.
  * 4. Identifying dependence relation can't be connected to relations, other dependencies and specializations.
- * 5. Identifying dependence relation must be connected to an entity, a weak entity and a key attribute. 
- * 6. Cardinality of existende dependence relations can't be N..M
+ * 5. Identifying dependence relation must be connected to an entity, a weak entity. 
+ * 6. Cardinality of existende dependence relations can't be N..M or 1..1
  */
 
 @injectable()

@@ -1,0 +1,168 @@
+{
+  "id": "b037a9a6-1d95-49e1-b1c9-704ca9579a7d",
+  "tasks": [
+    {
+      "id": "31aa765f-b38c-46d1-83ae-4497e290123b",
+      "type": "entity",
+      "name": "Empleado",
+      "position": {
+        "x": 262,
+        "y": 255
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "a63762aa-7969-4961-b480-3a86b2d84209",
+      "type": "entity",
+      "name": "Comercial",
+      "position": {
+        "x": 196,
+        "y": 441
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "fd29cb5a-89c7-4b75-b690-c73df0851e3a",
+      "type": "entity",
+      "name": "Tecnico",
+      "position": {
+        "x": 321,
+        "y": 439
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [
+    {
+      "id": "9907e178-1728-47c6-83aa-1152ff3d0733",
+      "type": "partialExclusiveSpecialization",
+      "name": "Partial Exclusive",
+      "position": {
+        "x": 231,
+        "y": 342
+      },
+      "size": {
+        "width": 169.78045654296875,
+        "height": 44
+      }
+    }
+  ],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "95dd7b20-c4eb-4315-860d-350a9c784968",
+      "type": "attribute",
+      "name": "nombre: varchar(100)",
+      "position": {
+        "x": 335,
+        "y": 199
+      },
+      "size": {
+        "width": 112.51130676269531,
+        "height": 22
+      }
+    },
+    {
+      "id": "fd655bc9-692a-4c06-82bf-fc87825ed8ef",
+      "type": "attribute",
+      "name": "comision: decimal(10, 2)",
+      "position": {
+        "x": 137.00000000000003,
+        "y": 525
+      },
+      "size": {
+        "width": 125.5346450805664,
+        "height": 22
+      }
+    },
+    {
+      "id": "2d1c991e-ae69-49dc-9cf1-47f8c4ce4e8e",
+      "type": "attribute",
+      "name": "tecnicista: integer",
+      "position": {
+        "x": 378.97367904892087,
+        "y": 518.3166372045949
+      },
+      "size": {
+        "width": 95.37355041503906,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "b39ba7bf-6a8c-44bf-86b1-b8a5c4fb9111",
+      "type": "keyAttribute",
+      "name": "empleado_id: integer",
+      "position": {
+        "x": 153,
+        "y": 197
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "20b5c16a-ff02-42c3-b5cc-4b171ef6e9fa",
+      "sourceTaskId": "31aa765f-b38c-46d1-83ae-4497e290123b",
+      "targetTaskId": "95dd7b20-c4eb-4315-860d-350a9c784968"
+    },
+    {
+      "id": "0a34b58a-d3fb-49c1-882e-1c9d28e42a8e",
+      "sourceTaskId": "31aa765f-b38c-46d1-83ae-4497e290123b",
+      "targetTaskId": "b39ba7bf-6a8c-44bf-86b1-b8a5c4fb9111"
+    },
+    {
+      "id": "e8bf4a2c-fd62-43b2-bdc4-a5d8582cce94",
+      "sourceTaskId": "a63762aa-7969-4961-b480-3a86b2d84209",
+      "targetTaskId": "fd655bc9-692a-4c06-82bf-fc87825ed8ef"
+    },
+    {
+      "id": "a57d7d38-19d1-4d37-8809-c90743e1b0e9",
+      "sourceTaskId": "fd29cb5a-89c7-4b75-b690-c73df0851e3a",
+      "targetTaskId": "2d1c991e-ae69-49dc-9cf1-47f8c4ce4e8e"
+    },
+    {
+      "id": "d1151960-e3e8-476b-9f48-11e30496c2fa",
+      "sourceTaskId": "31aa765f-b38c-46d1-83ae-4497e290123b",
+      "targetTaskId": "9907e178-1728-47c6-83aa-1152ff3d0733"
+    },
+    {
+      "id": "8c6b73f9-442b-4d45-9474-4d0d879d4ad4",
+      "sourceTaskId": "9907e178-1728-47c6-83aa-1152ff3d0733",
+      "targetTaskId": "a63762aa-7969-4961-b480-3a86b2d84209"
+    },
+    {
+      "id": "b89ce2f5-079f-48d5-bb54-9099646b2e69",
+      "sourceTaskId": "9907e178-1728-47c6-83aa-1152ff3d0733",
+      "targetTaskId": "fd29cb5a-89c7-4b75-b690-c73df0851e3a"
+    }
+  ],
+  "weightedEdges": [],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

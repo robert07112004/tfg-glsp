@@ -9,6 +9,32 @@
         "x": 56,
         "y": 275
       }
+    },
+    {
+      "id": "0f3bd26c-fad2-4447-8acd-23b8eeed81d5",
+      "type": "entity",
+      "name": "NewEntityNode2",
+      "position": {
+        "x": 307,
+        "y": 492
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "4c1600dd-b75d-43ab-9ffd-de6fa80bbdb5",
+      "type": "entity",
+      "name": "NewEntityNode3",
+      "position": {
+        "x": 460,
+        "y": 487
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
     }
   ],
   "weakEntities": [
@@ -45,7 +71,21 @@
     }
   ],
   "identifyingDependentRelations": [],
-  "partialExclusiveSpecializations": [],
+  "partialExclusiveSpecializations": [
+    {
+      "id": "4fcdf5f4-54c0-42c1-af33-b5ffb998197a",
+      "type": "partialExclusiveSpecialization",
+      "name": "Partial Exclusive",
+      "position": {
+        "x": 380,
+        "y": 403
+      },
+      "size": {
+        "width": 94.78045654296875,
+        "height": 22
+      }
+    }
+  ],
   "totalExclusiveSpecializations": [],
   "partialOverlappedSpecializations": [],
   "totalOverlappedSpecializations": [],
@@ -102,6 +142,21 @@
       "id": "c1cddec1-295b-450e-87fd-02d25e34350c",
       "sourceTaskId": "6533dfb7-11bb-4eee-8cf6-6fd0e7c6d221",
       "targetTaskId": "c715ba59-b641-416d-afdc-e6f23961789b"
+    },
+    {
+      "id": "a4dc722d-4ee5-466d-ad35-385253f4cb4d",
+      "sourceTaskId": "d09d1298-2152-4329-a03f-521e14a95687",
+      "targetTaskId": "4fcdf5f4-54c0-42c1-af33-b5ffb998197a"
+    },
+    {
+      "id": "e0d4496e-7c95-4d41-a994-582c14a6dea0",
+      "sourceTaskId": "4fcdf5f4-54c0-42c1-af33-b5ffb998197a",
+      "targetTaskId": "0f3bd26c-fad2-4447-8acd-23b8eeed81d5"
+    },
+    {
+      "id": "65473a30-3028-4bae-a71a-e6333218cd3e",
+      "sourceTaskId": "4fcdf5f4-54c0-42c1-af33-b5ffb998197a",
+      "targetTaskId": "4c1600dd-b75d-43ab-9ffd-de6fa80bbdb5"
     }
   ],
   "weightedEdges": [

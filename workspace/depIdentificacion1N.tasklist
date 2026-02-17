@@ -13,6 +13,32 @@
         "width": 100,
         "height": 40
       }
+    },
+    {
+      "id": "be9ecd90-747e-4ee4-b41f-73f348371bb4",
+      "type": "entity",
+      "name": "NewEntityNode2",
+      "position": {
+        "x": 492,
+        "y": 670
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "7fd36152-4022-42bb-950b-ed6a610f0742",
+      "type": "entity",
+      "name": "NewEntityNode3",
+      "position": {
+        "x": 636,
+        "y": 665
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
     }
   ],
   "weakEntities": [
@@ -49,7 +75,17 @@
       }
     }
   ],
-  "partialExclusiveSpecializations": [],
+  "partialExclusiveSpecializations": [
+    {
+      "id": "ee347f0f-70f7-4bb9-8ba3-b986202fa32e",
+      "type": "partialExclusiveSpecialization",
+      "name": "Partial Exclusive",
+      "position": {
+        "x": 557,
+        "y": 609
+      }
+    }
+  ],
   "totalExclusiveSpecializations": [],
   "partialOverlappedSpecializations": [],
   "totalOverlappedSpecializations": [],
@@ -91,6 +127,15 @@
       "size": {
         "width": 90.63025665283203,
         "height": 22
+      }
+    },
+    {
+      "id": "c698e7ac-4fbe-4f9a-b281-9fac41a45176",
+      "type": "attribute",
+      "name": "NewAttribute4: integer",
+      "position": {
+        "x": 428,
+        "y": 780
       }
     }
   ],
@@ -161,6 +206,26 @@
       "id": "7fa9223f-15b8-487a-8eef-cc8e147557e2",
       "sourceTaskId": "e6bb6bc5-369c-4d99-a3b0-ef227d93199d",
       "targetTaskId": "57bd629e-62fa-468d-90bf-46598cc3e266"
+    },
+    {
+      "id": "a17c5f35-f3ee-41d9-908c-643192a89313",
+      "sourceTaskId": "da79049f-89a3-40a6-8e63-a1a5aa17b5e1",
+      "targetTaskId": "ee347f0f-70f7-4bb9-8ba3-b986202fa32e"
+    },
+    {
+      "id": "1937eb0f-4666-4c7f-a5ef-0fc8f037ad92",
+      "sourceTaskId": "ee347f0f-70f7-4bb9-8ba3-b986202fa32e",
+      "targetTaskId": "be9ecd90-747e-4ee4-b41f-73f348371bb4"
+    },
+    {
+      "id": "c6977f52-7db6-4ce2-9f22-720d66c2d386",
+      "sourceTaskId": "ee347f0f-70f7-4bb9-8ba3-b986202fa32e",
+      "targetTaskId": "7fd36152-4022-42bb-950b-ed6a610f0742"
+    },
+    {
+      "id": "8cd60cb1-7f98-44e7-85cc-6278139e8956",
+      "sourceTaskId": "be9ecd90-747e-4ee4-b41f-73f348371bb4",
+      "targetTaskId": "c698e7ac-4fbe-4f9a-b281-9fac41a45176"
     }
   ],
   "weightedEdges": [

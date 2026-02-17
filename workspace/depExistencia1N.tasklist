@@ -13,6 +13,32 @@
         "width": 100,
         "height": 40
       }
+    },
+    {
+      "id": "7552a25d-eace-4f66-b658-5f5fcf07c4a8",
+      "type": "entity",
+      "name": "NewEntityNode2",
+      "position": {
+        "x": 418,
+        "y": 689
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "c6f58d95-0a17-4872-ac29-600040d9664c",
+      "type": "entity",
+      "name": "NewEntityNode3",
+      "position": {
+        "x": 548,
+        "y": 679
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
     }
   ],
   "weakEntities": [
@@ -49,7 +75,17 @@
     }
   ],
   "identifyingDependentRelations": [],
-  "partialExclusiveSpecializations": [],
+  "partialExclusiveSpecializations": [
+    {
+      "id": "385daecb-c64e-44fe-8040-e3ac68e96b2d",
+      "type": "partialExclusiveSpecialization",
+      "name": "Partial Exclusive",
+      "position": {
+        "x": 444,
+        "y": 625
+      }
+    }
+  ],
   "totalExclusiveSpecializations": [],
   "partialOverlappedSpecializations": [],
   "totalOverlappedSpecializations": [],
@@ -72,8 +108,12 @@
       "type": "attribute",
       "name": "modelo: varchar(100)",
       "position": {
-        "x": 453,
-        "y": 551
+        "x": 333,
+        "y": 280
+      },
+      "size": {
+        "width": 111.33018493652344,
+        "height": 22
       }
     }
   ],
@@ -165,6 +205,21 @@
       "id": "67420f45-9305-4f9a-89e0-5a804e2936f8",
       "sourceTaskId": "9332c45a-dbd4-4b53-b0f9-bd3eaadcc491",
       "targetTaskId": "ab0009b4-fd7a-4fea-b66c-c6c9b84fa3da"
+    },
+    {
+      "id": "4a2fc72e-4a59-4372-855d-fcfd995fe8da",
+      "sourceTaskId": "8a9f8b60-a43c-472b-bf8e-d4b117f2be18",
+      "targetTaskId": "385daecb-c64e-44fe-8040-e3ac68e96b2d"
+    },
+    {
+      "id": "5ef20f4a-47bc-4aa6-a26a-cff1c666ba6b",
+      "sourceTaskId": "385daecb-c64e-44fe-8040-e3ac68e96b2d",
+      "targetTaskId": "7552a25d-eace-4f66-b658-5f5fcf07c4a8"
+    },
+    {
+      "id": "eee5b08a-7f20-48bb-88f2-ab70923ca433",
+      "sourceTaskId": "385daecb-c64e-44fe-8040-e3ac68e96b2d",
+      "targetTaskId": "c6f58d95-0a17-4872-ac29-600040d9664c"
     }
   ],
   "weightedEdges": [

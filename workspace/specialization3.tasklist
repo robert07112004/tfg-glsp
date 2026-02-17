@@ -1,0 +1,142 @@
+{
+  "id": "97ab7852-7656-4a2b-8429-f3a92e8083b9",
+  "tasks": [
+    {
+      "id": "edb070f5-103e-4ee5-9b0b-56d82702315a",
+      "type": "entity",
+      "name": "Personas",
+      "position": {
+        "x": 301,
+        "y": 225
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "cddb029d-f45b-481d-a37f-2604ac4c56f3",
+      "type": "entity",
+      "name": "Alumnos",
+      "position": {
+        "x": 213,
+        "y": 469
+      }
+    },
+    {
+      "id": "f29b67f6-b935-4dd6-b540-72ba1016c38b",
+      "type": "entity",
+      "name": "NewEntityNode3",
+      "position": {
+        "x": 428,
+        "y": 468
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [
+    {
+      "id": "2c18b7b5-74f1-4c4d-a070-b11128ca590c",
+      "type": "partialOverlappedSpecialization",
+      "name": "Partial Overlapped",
+      "position": {
+        "x": 280,
+        "y": 315
+      },
+      "size": {
+        "width": 138.89639282226562,
+        "height": 63
+      }
+    }
+  ],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "2d04e370-e594-402c-9d07-9950194468ae",
+      "type": "attribute",
+      "name": "nombre: varchar(100)",
+      "position": {
+        "x": 364,
+        "y": 168
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    },
+    {
+      "id": "f925dce8-3aca-4d53-8c3c-c13d9119b864",
+      "type": "attribute",
+      "name": "nota_media: integer",
+      "position": {
+        "x": 201,
+        "y": 546
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "7da4de77-d12b-4f57-8a21-755c0f912579",
+      "type": "keyAttribute",
+      "name": "persona_id: integer",
+      "position": {
+        "x": 192,
+        "y": 172
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "d88dac74-3ac7-46d3-9dac-00ba91ed460f",
+      "sourceTaskId": "2c18b7b5-74f1-4c4d-a070-b11128ca590c",
+      "targetTaskId": "cddb029d-f45b-481d-a37f-2604ac4c56f3"
+    },
+    {
+      "id": "0b40b68e-0fc9-4dab-867c-a60b843a70c1",
+      "sourceTaskId": "2c18b7b5-74f1-4c4d-a070-b11128ca590c",
+      "targetTaskId": "f29b67f6-b935-4dd6-b540-72ba1016c38b"
+    },
+    {
+      "id": "83293806-0e75-4283-9035-ea6867f93a3b",
+      "sourceTaskId": "edb070f5-103e-4ee5-9b0b-56d82702315a",
+      "targetTaskId": "2c18b7b5-74f1-4c4d-a070-b11128ca590c"
+    },
+    {
+      "id": "13bfed2f-171d-4008-a398-d77af98906ee",
+      "sourceTaskId": "edb070f5-103e-4ee5-9b0b-56d82702315a",
+      "targetTaskId": "7da4de77-d12b-4f57-8a21-755c0f912579"
+    },
+    {
+      "id": "a65a2a42-24af-42a7-856b-dd328ec40e3e",
+      "sourceTaskId": "edb070f5-103e-4ee5-9b0b-56d82702315a",
+      "targetTaskId": "2d04e370-e594-402c-9d07-9950194468ae"
+    },
+    {
+      "id": "7d3801fc-fb35-4a44-98cc-61e1bf6be5ae",
+      "sourceTaskId": "cddb029d-f45b-481d-a37f-2604ac4c56f3",
+      "targetTaskId": "f925dce8-3aca-4d53-8c3c-c13d9119b864"
+    }
+  ],
+  "weightedEdges": [],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

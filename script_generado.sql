@@ -1,11 +1,27 @@
--- Fecha: 16/2/2026, 15:46:48
+-- Fecha: 17/2/2026, 17:53:05
 
 CREATE TABLE Proyecto (
     proyecto_id INTEGER NOT NULL PRIMARY KEY
 );
 
+CREATE TABLE NewEntityNode2 (
+    especialista_id INTEGER NOT NULL PRIMARY KEY,
+    tipo_NewEntityNode2 VARCHAR(100) DEFAULT 'NewEntityNode2' NOT NULL,
+    CHECK (tipo_NewEntityNode2 = 'NewEntityNode2'),
+    FOREIGN KEY (especialista_id, tipo_NewEntityNode2) REFERENCES Especialista(especialista_id, tipo_Especialista) ON DELETE CASCADE
+);
+
+CREATE TABLE NewEntityNode3 (
+    especialista_id INTEGER NOT NULL PRIMARY KEY,
+    tipo_NewEntityNode3 VARCHAR(100) DEFAULT 'NewEntityNode3' NOT NULL,
+    CHECK (tipo_NewEntityNode3 = 'NewEntityNode3'),
+    FOREIGN KEY (especialista_id, tipo_NewEntityNode3) REFERENCES Especialista(especialista_id, tipo_Especialista) ON DELETE CASCADE
+);
+
 CREATE TABLE Especialista (
-    especialista_id INTEGER NOT NULL PRIMARY KEY
+    especialista_id INTEGER NOT NULL PRIMARY KEY,
+    tipo_Especialista VARCHAR(100) ENUM('NewEntityNode2', 'NewEntityNode3', "Otro"),
+    UNIQUE (especialista_id, tipo_Especialista)
 );
 
 CREATE TABLE Tiene (

@@ -7,11 +7,10 @@ import { createMarker, getConnectedNeighbors } from '../../utils/validation-util
 
 /* Relation rules:
  * 1. Relation not connected to anything.
- * 2. Prohibited connections:
- *    - Optional links aren't allowed.
+ * 2. Prohibited connections.
  * 3. Valid connections:
  *    - Entities (Strong).
- *    - Attributes (Normal/Derived).
+ *    - Attributes.
  * 4. Relations must be connected with at least one entities.
  * 5. Relations can't be connected with specializations, dependencies and other relations.
  */
@@ -44,18 +43,9 @@ export class RelationValidator {
             if (edgeType === DEFAULT_EDGE_TYPE && nodeType === ENTITY_TYPE) {
                 return createMarker(
                     'error',
-                    'Una relación no puede estar conectada a un atributo sin una arista ponderada.',
+                    'Una relación no puede estar conectada a una entidad sin una arista ponderada.',
                     node.id,
                     'ERR: relation-weighted-edge'
-                );
-            }
-
-            if (edgeType === OPTIONAL_EDGE_TYPE) {
-                return createMarker(
-                    'error',
-                    'Una relación no puede estar conectada mediante aristas opcionales',
-                    node.id,
-                    'ERR: relation-optional-edge'
                 );
             }
 

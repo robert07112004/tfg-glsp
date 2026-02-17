@@ -1,10 +1,11 @@
 import { GModelElement, GNode } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
+import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, specializationTypes, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
 import { AttributeTransformer } from './sql-attribute-transformer';
 import { EntitiesTransformer } from './sql-entities-transformer';
-import { EntityNodes, RelationNodes } from './sql-interfaces';
+import { EntityNodes, RelationNodes, SpecializationNodes } from './sql-interfaces';
 import { RelationsTransformer } from './sql-relations-transformer';
+import { SpecializationsTransformer } from './sql-specializations-transformer';
 import { SQLUtils } from './sql-utils';
 
 @injectable()
@@ -12,12 +13,14 @@ export class SQLGenerator {
     
     private entityNodes: EntityNodes = new Map();
     private relationNodes: RelationNodes = new Map();
+    private specializationNodes: SpecializationNodes = new Map();
 
     public generate(root: GModelElement): string {
         this.entityNodes.clear();
         this.relationNodes.clear();
+        this.specializationNodes.clear();
 
-        // 1.- Collect all entities
+        // 1.- Collect entity nodes
         const entities = root.children.filter(child => child.type === ENTITY_TYPE || child.type === WEAK_ENTITY_TYPE) as GNode[];
         for (const entity of entities) {
             this.entityNodes.set(entity.id, {
@@ -28,7 +31,7 @@ export class SQLGenerator {
             });
         }
 
-        // 2.- Collect relations
+        // 2.- Collect relation nodes
         const relations = root.children.filter(child => child.type === RELATION_TYPE || child.type === EXISTENCE_DEP_RELATION_TYPE || child.type === IDENTIFYING_DEP_RELATION_TYPE) as GNode[];
         for (const relation of relations) {
             this.relationNodes.set(relation.id, {
@@ -42,10 +45,23 @@ export class SQLGenerator {
             });
         }
 
+        // 3.- Collect specialization nodes
+        const specializations = root.children.filter(child => specializationTypes.includes(child.type)) as GNode[];
+        for (const specialization of specializations) {
+            this.specializationNodes.set(specialization.id, {
+                node: specialization,
+                type: specialization.type,
+                father: SpecializationsTransformer.findFather(specialization, root),
+                children: SpecializationsTransformer.findChildren(specialization, root),
+                enum: SpecializationsTransformer.getEnum(specialization, root),
+                discriminator: SpecializationsTransformer.getDiscriminator(specialization, root)
+            });
+        }
+
         let sql = "-- Fecha: " + new Date().toLocaleString() + "\n\n";
 
         this.entityNodes.forEach(entity => {
-            sql += EntitiesTransformer.processEntity(entity, this.relationNodes, root);
+            sql += EntitiesTransformer.processEntity(entity, this.relationNodes, this.specializationNodes, root);
         });
 
         this.relationNodes.forEach(relation => {

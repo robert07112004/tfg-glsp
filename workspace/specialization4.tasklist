@@ -1,0 +1,150 @@
+{
+  "id": "7432b91a-1c67-4bfa-b185-cb81e72bfd90",
+  "tasks": [
+    {
+      "id": "0753fb23-1370-4c9f-ac6b-cb7ddcd54b74",
+      "type": "entity",
+      "name": "Usuarios",
+      "position": {
+        "x": 243,
+        "y": 265
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "a0eb5afb-35a8-4d79-8383-a484352592ee",
+      "type": "entity",
+      "name": "Autores",
+      "position": {
+        "x": 171,
+        "y": 457
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "a300f781-25b9-4d8c-8988-e336e928b7ee",
+      "type": "entity",
+      "name": "NewEntityNode3",
+      "position": {
+        "x": 326,
+        "y": 459
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [
+    {
+      "id": "c6facd13-fe0a-48b8-9384-e50ffd9bc0f5",
+      "type": "totalOverlappedSpecialization",
+      "name": "Total Overlapped",
+      "position": {
+        "x": 230,
+        "y": 355
+      },
+      "size": {
+        "width": 125.14303588867188,
+        "height": 52
+      }
+    }
+  ],
+  "attributes": [
+    {
+      "id": "8276e78b-b4cb-4fbe-85ea-85ad6ead26c8",
+      "type": "attribute",
+      "name": "email: varchar(100)",
+      "position": {
+        "x": 164,
+        "y": 208
+      },
+      "size": {
+        "width": 101.84487915039062,
+        "height": 22
+      }
+    },
+    {
+      "id": "c984dec7-50eb-4f9e-b854-85e220a61036",
+      "type": "attribute",
+      "name": "pseudonimo: varchar(100)",
+      "position": {
+        "x": 149,
+        "y": 534
+      },
+      "size": {
+        "width": 134.4372329711914,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "dbfa21e2-f814-4cd9-9fc9-53472c94387c",
+      "type": "keyAttribute",
+      "name": "usuario_id: integer",
+      "position": {
+        "x": 290,
+        "y": 209
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "170daf35-eaf8-44a7-8593-464e1e58c915",
+      "sourceTaskId": "0753fb23-1370-4c9f-ac6b-cb7ddcd54b74",
+      "targetTaskId": "c6facd13-fe0a-48b8-9384-e50ffd9bc0f5"
+    },
+    {
+      "id": "36997e65-b09c-48fa-a0d2-15f332f2e46e",
+      "sourceTaskId": "c6facd13-fe0a-48b8-9384-e50ffd9bc0f5",
+      "targetTaskId": "a0eb5afb-35a8-4d79-8383-a484352592ee"
+    },
+    {
+      "id": "d06b10db-b48f-45ea-ac2a-bb9063159e12",
+      "sourceTaskId": "c6facd13-fe0a-48b8-9384-e50ffd9bc0f5",
+      "targetTaskId": "a300f781-25b9-4d8c-8988-e336e928b7ee"
+    },
+    {
+      "id": "f9c08c22-a1f2-4d9e-9d45-a2bd30addaf6",
+      "sourceTaskId": "0753fb23-1370-4c9f-ac6b-cb7ddcd54b74",
+      "targetTaskId": "dbfa21e2-f814-4cd9-9fc9-53472c94387c"
+    },
+    {
+      "id": "b9afff61-77f6-43fe-ba04-95cb538bfb03",
+      "sourceTaskId": "0753fb23-1370-4c9f-ac6b-cb7ddcd54b74",
+      "targetTaskId": "8276e78b-b4cb-4fbe-85ea-85ad6ead26c8"
+    },
+    {
+      "id": "3a08b0c2-5492-45d8-81aa-1c7d56db6fcc",
+      "sourceTaskId": "a0eb5afb-35a8-4d79-8383-a484352592ee",
+      "targetTaskId": "c984dec7-50eb-4f9e-b854-85e220a61036"
+    }
+  ],
+  "weightedEdges": [],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}
