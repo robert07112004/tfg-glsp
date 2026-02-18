@@ -5,31 +5,27 @@ import { TaskListModelState } from '../../../../model/tasklist-model-state';
 import {
     attributeTypes,
     DEFAULT_EDGE_TYPE,
-    entityTypes,
     EXISTENCE_DEP_RELATION_TYPE,
     IDENTIFYING_DEP_RELATION_TYPE,
     KEY_ATTRIBUTE_TYPE,
     OPTIONAL_EDGE_TYPE,
-    relationTypes,
+    RELATION_TYPE,
     specializationTypes,
     WEIGHTED_EDGE_TYPE
 } from '../../utils/validation-constants';
-import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
+import { createMarker } from '../../utils/validation-utils';
 
 /* Weak Entity Rules:
  * 1. Weak entity not connected to anything.
- * 2. Must be connected to an existence dependent relation OR an identifying dependent relation.
+ * 2. Must be connected to an existence dependent relation OR an identifying dependent relation with weighted edges.
  * 3. Logic for Keys vs Relation types:
  *    - Existence Dependent -> Must have a Primary Key.
  *    - Identifying Dependent -> Cannot have a Primary Key.
  * 4. Specializations:
  *    - Cannot be a child (Subclass) of a specialization.
- *    - Can be a parent (Superclass) of a specialization.
  *    - Must be connected with transitions (DEFAULT_EDGE_TYPE).
  * 5. Attributes:
  *    - Must be connected with transitions or optional links.
- * 6. Relations:
- *    - Must be connected with weighted edges.
  */
 
 @injectable()
@@ -42,112 +38,73 @@ export class WeakEntityValidator {
     }
 
     validate(node: GNode): Marker | undefined {
-        const neighbors = getConnectedNeighbors(node, this.index);
+        const getOutgoingEdges = this.index.getOutgoingEdges(node);
+        const getIncomingEdges = this.index.getIncomingEdges(node);
 
         // Rule 1: Weak entity not connected to anything.
-        if (neighbors.length === 0) {
-            return createMarker('error', 'Entidad débil aislada', node.id, 'ERR: debil-sinConexion');
+        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+            return createMarker('error', 
+                                'Entidad debil aislada', 
+                                node.id, 
+                                'ERR: entidad-debil-sinConexion'
+            );
         }
 
-        let hasIdentifyingRelation = false;
-        let hasExistenceRelation = false;
-        let hasKeyAttribute = false;
+        // Rule 5: Attributes
+        let hasPK = false;
+        for (const edge of getOutgoingEdges) {
+            if (edge.type === DEFAULT_EDGE_TYPE) {
+                const getNode = this.index.get(edge.targetId);
+                if (getNode.type === KEY_ATTRIBUTE_TYPE) hasPK = true;
+            }
 
-        for (const { otherNode, edge } of neighbors) {
-            const otherType = otherNode.type;
-            const edgeType = edge.type;
+            const getNode = this.index.get(edge.targetId);
+            if (attributeTypes.includes(getNode.type) && (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE)) {
+                return createMarker('error',
+                                    'Una entidad debil tiene que estar conectada a sus atributos por aristas normales u opcionales',
+                                    node.id,
+                                    'ERR: weak-entity-edges'
+                );
+            }
+        }
 
-            // Entity rules: Can't be connected with other entities.
-            if (entityTypes.includes(otherType)) {
-                return createMarker(
-                    'error', 
-                    'Una entidad débil no puede conectarse directamente a otra entidad', 
-                    node.id, 
-                    'ERR: debil-entidad-directa'
+        // Rule 2: Must be connected to an existence dependent relation OR an identifying dependent relation with weighted edges.
+        for (const edge of getOutgoingEdges) {
+            const getNode = this.index.get(edge.targetId);
+            if (getNode.type === RELATION_TYPE || (edge.type !== WEIGHTED_EDGE_TYPE && (edge.targetId === EXISTENCE_DEP_RELATION_TYPE || edge.targetId === IDENTIFYING_DEP_RELATION_TYPE))) {
+                return createMarker('error',
+                                    'La entidad debil debe conectarse a una dependencia y siempre con una arista ponderada',
+                                    node.id,
+                                    'ERR: weak-entity-connection'
                 );
             }
 
-            if (specializationTypes.includes(otherType)) {
-                // Rule 4a: Cannot be a child (Subclass) of a specialization.
-                if (edge.sourceId === otherNode.id && edge.targetId === node.id) {
-                    return createMarker(
-                        'error', 
-                        'Una Entidad Débil NO puede ser una subclase (hija) en una especialización.', 
-                        node.id, 
-                        'ERR: debil-como-hija-prohibido'
-                    );
-                }
-
-                // Rule 4c: Must be connected with transitions (DEFAULT_EDGE_TYPE).
-                if (edgeType !== DEFAULT_EDGE_TYPE) {
-                    return createMarker(
-                        'error', 
-                        'Las especializaciones deben conectarse mediante transiciones (línea simple)', 
-                        node.id, 
-                        'ERR: debil-especializacion-arista'
-                    );
-                }
-            } else if (relationTypes.includes(otherType)) {
-                if (otherType === IDENTIFYING_DEP_RELATION_TYPE) {
-                    hasIdentifyingRelation = true;
-                } else if (otherType === EXISTENCE_DEP_RELATION_TYPE) {
-                    hasExistenceRelation = true;
-                }
-
-                // Rule 6: Must be connected with weighted edges.
-                if (edgeType !== WEIGHTED_EDGE_TYPE) {
-                    return createMarker(
-                        'error', 
-                        'Las relaciones deben conectarse mediante aristas ponderadas (línea gruesa)', 
-                        node.id, 
-                        'ERR: debil-relacion-arista'
-                    );
-                }
-            } else if (attributeTypes.includes(otherType)) {
-                if (otherType === KEY_ATTRIBUTE_TYPE) {
-                    hasKeyAttribute = true;
-                }
-
-                // Rule 5: Must be connected with transitions or optional links.
-                if (edgeType !== DEFAULT_EDGE_TYPE && edgeType !== OPTIONAL_EDGE_TYPE) {
-                    return createMarker(
-                        'error', 
-                        'Los atributos deben conectarse mediante transiciones o enlaces opcionales', 
-                        node.id, 
-                        'ERR: debil-atributo-arista'
-                    );
-                }
+            // Rule 3: Logic for Keys vs Relation types:
+            if (getNode.type === EXISTENCE_DEP_RELATION_TYPE && !hasPK) {
+                return createMarker('error',
+                                    'La entidad debil conectada a una dependencia en existencia debe tener clave primaria',
+                                    node.id,
+                                    'ERR: weak-entity-pk'
+                )
+            } else if (getNode.type === IDENTIFYING_DEP_RELATION_TYPE && hasPK) {
+                return createMarker('error',
+                                    'La entidad debil conectada a una dependencia en identificacion no debe tener una clave primaria',
+                                    node.id,
+                                    'ERR: weak-entity-pk'
+                )
             }
         }
 
-        // Rule 2: Must be connected to an existence dependent relation OR an identifying dependent relation.
-        if (!hasIdentifyingRelation && !hasExistenceRelation) {
-            return createMarker(
-                'error', 
-                'La entidad débil debe estar conectada a una Relación de Dependencia (Identificación o Existencia)', 
-                node.id, 
-                'ERR: debil-sin-dependencia'
-            );
-        }
-
-        // Rule 3a: Existence Dependent -> Must have a Primary Key.
-        if (hasExistenceRelation && !hasKeyAttribute) {
-            return createMarker(
-                'error', 
-                'Una entidad con dependencia de existencia DEBE tener una Clave Primaria', 
-                node.id, 
-                'ERR: debil-existencia-sinPK'
-            );
-        }
-
-        // Rule 3b: Identifying Dependent -> Cannot have a Primary Key.
-        if (hasIdentifyingRelation && hasKeyAttribute) {
-            return createMarker(
-                'error', 
-                'Una entidad con dependencia de identificación NO puede tener Clave Primaria', 
-                node.id, 
-                'ERR: debil-identificacion-conPK'
-            );
+        // Rule 4: Specializations
+        for (const edge of getIncomingEdges) {
+            const getNode = this.index.get(edge.sourceId);
+            if (specializationTypes.includes(getNode.type) || edge.type === DEFAULT_EDGE_TYPE) {
+                return createMarker('error',
+                                    'Una entidad debil no puede ser hija en una especializacion o que le entren aristas normales',
+                                    node.id,
+                                    'ERR: weak-entity-specialization'
+                )
+            }
         }
 
         return undefined;

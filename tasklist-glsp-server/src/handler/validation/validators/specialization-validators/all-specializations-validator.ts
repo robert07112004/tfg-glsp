@@ -2,17 +2,14 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { ENTITY_TYPE, OPTIONAL_EDGE_TYPE, WEAK_ENTITY_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
-import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
+import { DEFAULT_EDGE_TYPE, ENTITY_TYPE, entityTypes } from '../../utils/validation-constants';
+import { createMarker } from '../../utils/validation-utils';
 
 /* Specializations rules:
  * 1. Specializations not connected to anything.
- * 2. Prohibited connections:
- *    - NO weighted edges and optional links allowed.
- * 3. Valid connections:
- *    - Entities (Strong/Weak).
- * 4. Specializations must be connected to at leats 2 entities.
- * 5. Weak entities can't be subclass of a specialization.
+ * 2. NO weighted edges and optional links allowed.
+ * 3. Outcoming edges at least 2 entities
+ * 4. One incoming edge from an entity.
  */
 
 @injectable()
@@ -25,60 +22,62 @@ export class AllSpecializationsValidator {
     }
 
     validate(node: GNode): Marker | undefined {
-        const neighbors = getConnectedNeighbors(node, this.index);
+        const getOutgoingEdges = this.index.getOutgoingEdges(node);
+        const getIncomingEdges = this.index.getIncomingEdges(node);
 
-        // Rule 1: Specializations not connected to anything.
-        if (neighbors.length === 0) {
-            return createMarker('error', 'Especialización aislada', node.id, 'ERR: sin conectar al modelo');
+        // Rule 1: Specialization not connected to anything.
+        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+            return createMarker('error', 
+                                'Especializacion aislada', 
+                                node.id, 
+                                'ERR: especializacion-sinConexion'
+            );
         }
 
-        let entityCount = 0;
-
-        for (const { otherNode, edge } of neighbors) {
-            const nodeType = otherNode.type;
-            const edgeType = edge.type;
-
-            // Rule 2: Prohibited connections.
-            if (edgeType === WEIGHTED_EDGE_TYPE || edgeType === OPTIONAL_EDGE_TYPE) {
-                return createMarker(
-                    'error', 
-                    'Una especialización no puede tener aristas ponderadas (cardinalidad).', 
-                    node.id, 
-                    'ERR: spec-weighted'
+        // Rule 2: NO weighted edges and optional links allowed.
+        for (const edge of getIncomingEdges) {
+            if (edge.type !== DEFAULT_EDGE_TYPE) {
+                return createMarker('error',
+                                    'Una especializacion no puede estar conectada con algo que no sea una arista normal',
+                                    node.id,
+                                    'ERR: spec-connection'
                 );
             }
-
-            // Rule 4: Specializations must be connected to at leats 2 entities.
-            if (nodeType === ENTITY_TYPE || nodeType === WEAK_ENTITY_TYPE) {
-                entityCount++;
-            } else {
-                // Rule 3: Valid connections.
-                return createMarker(
-                    'error', 
-                    'Una especialización no puede estar conectada a algo que no sea una entidad.',
-                    node.id, 
-                    'ERR: spec-invalid-connection'
-                );
-            }
-
-            // Rule 5: Weak entities can't be the subclass of a specialization.
-            if (edge.sourceId === node.id && otherNode.type === WEAK_ENTITY_TYPE) {
-                return createMarker(
-                    'error', 
-                    'Una entidad débil no puede ser subclase (hija) en una especialización.', 
-                    node.id, 
-                    'ERR: weak-entity-subclass'
-                );
-            }
-
+        }
+        // Rule 4: One incoming edge from an entity.
+        if (getIncomingEdges.length > 1 && !entityTypes.includes(getIncomingEdges[0].sourceId)) {
+            return createMarker('error',
+                                'Una especializacion solo puede tener una entidad como padre',
+                                node.id,
+                                'ERR: spec-connection'
+            );
         }
 
-        if (entityCount < 2) {
-            return createMarker(
-                'error', 
-                'La especialización debe conectar al menos 2 entidades (1 Superclase y 1 Subclase).', 
-                node.id, 
-                'ERR: spec-min-entities'
+        for (const edge of getOutgoingEdges) {
+            if (edge.type !== DEFAULT_EDGE_TYPE) {
+                return createMarker('error',
+                                    'Una especializacion no puede estar conectada con algo que no sea una arista normal',
+                                    node.id,
+                                    'ERR: spec-connection'
+                );
+            }
+
+            // Rule 3: Outcoming edges at least 2 entities
+            const getNode = this.index.get(edge.targetId);
+            if (getNode.type !== ENTITY_TYPE) {
+                return createMarker('error',
+                                    'Una especializacion no puede tener como hijos algo que no sea una entidad',
+                                    node.id,
+                                    'ERR: spec-connection'
+                );
+            } 
+        }
+
+        if (getOutgoingEdges.length < 2) {
+            return createMarker('error',
+                                    'Una especializacion no puede tener menos de dos hijos',
+                                    node.id,
+                                    'ERR: spec-connection'
             );
         }
 

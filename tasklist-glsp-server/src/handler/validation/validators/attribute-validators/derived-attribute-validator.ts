@@ -2,19 +2,14 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { attributeTypes, entityTypes, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
-import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
+import { DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
+import { createMarker } from '../../utils/validation-utils';
 
 /* Derived attribute rules:
  * 1. Derived attribute not connected to anything.
- * 2. Prohibited connections:
- *    - NO weighted edges allowed.
- * 3. Valid connections:
- *    - Entities (Strong/Weak).
- *    - Relations.
+ * 2. Edges: Only Transitions (Default) or Optional Links. NEVER Weighted edges.
+ * 3. Can't be connected to specializations
  * 4. Derived attributes can't have child attributes.
- * 5. Derived attributes can't be connected to dependencies.
- * 6. Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
  */
 
 @injectable()
@@ -27,59 +22,49 @@ export class DerivedAttributeValidator {
     }
 
     validate(node: GNode): Marker | undefined {
-        const neighbors = getConnectedNeighbors(node, this.index);
+        const getOutgoingEdges = this.index.getOutgoingEdges(node);
+        const getIncomingEdges = this.index.getIncomingEdges(node);
 
-        // Rule 1: Derived attribute not connected to anything.
-        if (neighbors.length === 0) {
-            return createMarker('error', 'Atributo derivado aislado', node.id, 'ERR: sin conectar al modelo');
-        }
-
-        let ownerCount = 0;
-        let isOwner = false;
-
-        for (const { otherNode, edge } of neighbors) {
-            const nodeType = otherNode.type;
-            const edgeType = edge.type;
-            
-            // Rule 2: Prohibited connections.
-            if (edgeType === WEIGHTED_EDGE_TYPE) {
-                return createMarker('error', 'Atributo derivado no puede estar conectado a nada mediante una arista ponderada.', node.id, 'ERR: Atributo-aristaPonderada');
-            }
-
-            // Rule 4: Derived attributes can't have child attributes. 
-            if (attributeTypes.includes(nodeType)) {
-                return createMarker('error', 'Un atributo derivado debe ser un nodo final (no puede tener otros atributos conectados).', node.id, 'ERR: derived-child-attribute');
-            }
-
-            // Rule 5: Derived attributes can't be connected to dependencies.
-            if (nodeType === EXISTENCE_DEP_RELATION_TYPE || nodeType === IDENTIFYING_DEP_RELATION_TYPE) {
-                return createMarker('error', 'Atributo derivado no puede estar conectado a una dependencia.', node.id, 'ERR: atrbutoDerivado-dependencia');
-            }
-
-            isOwner = entityTypes.includes(nodeType) || nodeType === RELATION_TYPE;
-            if (isOwner) {
-                ownerCount++;
-            }
-
-        }
-
-        // Rule 3: Valid connections:
-        if (!isOwner) {
-            return createMarker(
-                'error',
-                'El atributo derivado tiene que estar conectado a una entidad, relacion o especializacion',
-                node.id,
-                'ERR: derived-entities-relations-specializations'
+        // Rule 1: Attribute not connected to anything.
+        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+            return createMarker('error', 
+                                'Atributo aislado', 
+                                node.id, 
+                                'ERR: atributo-sinConexion'
             );
         }
 
-        // Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B"
-        if (ownerCount > 1) {
-            return createMarker('error', 'El atributo derivado conecta múltiples elementos (Entidades/Relaciones). Solo debe pertenecer a uno.', node.id, 'ERR: derived-ambiguity');
+        // Rule 2: Can only be connected with transitions or optional edges.
+        for (const edge of getIncomingEdges) {
+            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                return createMarker('error', 
+                                    'No se pueden conectar aristas que no sean transiciones o aristas opcionales',
+                                    node.id, 
+                                    'ERR: transition-edge'
+                );
+            }
+
+            // Rule 3: Can't be connected to specializations
+            const getNode = this.index.get(edge.sourceId) as GNode;
+            if (specializationTypes.includes(getNode.type)) {
+                return createMarker('error',
+                                    'Los atributos derivados no pueden estar conectados a especializaciones',
+                                    node.id,
+                                    'ERR: connection-pk'
+                );
+            }
+        }
+
+        // Rule 4: Derived attributes can't have child attributes.
+        if (getOutgoingEdges.length > 0) {
+            return createMarker('error',
+                                'Los atributos derivados no pueden tener hijos',
+                                node.id,
+                                'ERR: connection-derived-attribute'
+            );
         }
 
         return undefined;
-
     }
 
 }

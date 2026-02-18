@@ -2,18 +2,14 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { attributeTypes, entityTypes, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
-import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
+import { attributeTypes, DEFAULT_EDGE_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
+import { createMarker } from '../../utils/validation-utils';
 
 /* 
  * 1. Multi-valued attribute not connected to anything.
- * 2. Prohibited connections:
- *    - NO weighted edges allowed.
- * 3. Valid connections:
- *    - Entities (Strong/Weak).
- * 4. Multi-valued attributes can't have child attributes.
- * 5. Multi-valued attributes can't be connected to dependencies.
- * 6. Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
+ * 2. Edges: Only Transitions (Default) or Optional Links. NEVER Weighted edges.
+ * 3. Can't be connected to specializations or dependence relations
+ * 4. Can't connect to attributes that aren't the same type
  */
 
 @injectable()
@@ -26,59 +22,60 @@ export class MultiValuedAttributeValidator {
     }
 
     validate(node: GNode): Marker | undefined {
-        const neighbors = getConnectedNeighbors(node, this.index);
+        const getOutgoingEdges = this.index.getOutgoingEdges(node);
+        const getIncomingEdges = this.index.getIncomingEdges(node);
 
-        // Rule 1: Multi valued attribute not connected to anything.
-        if (neighbors.length === 0) {
-            return createMarker('error', 'Atributo multivaluado aislado', node.id, 'ERR: sin conectar al modelo');
-        }
-
-        let ownerCount = 0;
-        let isOwner = false;
-
-        for (const { otherNode, edge } of neighbors) {
-            const nodeType = otherNode.type;
-            const edgeType = edge.type;
-            
-            // Rule 2: Prohibited connections.
-            if (edgeType === WEIGHTED_EDGE_TYPE) {
-                return createMarker('error', 'Atributo multivaluado no puede estar conectado a nada mediante una arista ponderada.', node.id, 'ERR: Atributo-aristaPonderada');
-            }
-
-            // Rule 4: Multi valued attributes can't have child attributes. 
-            if (attributeTypes.includes(nodeType)) {
-                return createMarker('error', 'Un atributo multivaluado debe ser un nodo final (no puede tener otros atributos conectados).', node.id, 'ERR: multi-valued-child-attribute');
-            }
-
-            // Rule 5: Multi valued attributes can't be connected to dependencies.
-            if (nodeType === EXISTENCE_DEP_RELATION_TYPE || nodeType === IDENTIFYING_DEP_RELATION_TYPE) {
-                return createMarker('error', 'Atributo multivaluado no puede estar conectado a una dependencia.', node.id, 'ERR: multi-valued-dependencies');
-            }
-
-            isOwner = entityTypes.includes(nodeType);
-            if (isOwner) {
-                ownerCount++;
-            }
-
-        }
-
-        // Rule 3: Valid connections:
-        if (!isOwner) {
-            return createMarker(
-                'error',
-                'El atributo multivaluado tiene que estar conectado a una entidad, relacion o especializacion',
-                node.id,
-                'ERR: multi-valued-entities-relations-specializations'
+        // Rule 1: Attribute not connected to anything.
+        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+            return createMarker('error', 
+                                'Atributo aislado', 
+                                node.id, 
+                                'ERR: atributo-sinConexion'
             );
         }
 
-        // Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B"
-        if (ownerCount > 1) {
-            return createMarker('error', 'El atributo multivaluado conecta múltiples elementos (Entidades/Relaciones). Solo debe pertenecer a uno.', node.id, 'ERR: multi-valued-ambiguity');
+        // Rule 2: Can only be connected with transitions or optional edges.
+        for (const edge of getIncomingEdges) {
+            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                return createMarker('error', 
+                                    'No se pueden conectar aristas que no sean transiciones o aristas opcionales',
+                                    node.id, 
+                                    'ERR: transition-edge'
+                );
+            }
+
+            // Rule 3: Can't be connected to specializations or dependence relations
+            const getNode = this.index.get(edge.sourceId) as GNode;
+            if (specializationTypes.includes(getNode.type) || getNode.type === IDENTIFYING_DEP_RELATION_TYPE || getNode.type === EXISTENCE_DEP_RELATION_TYPE) {
+                return createMarker('error',
+                                    'Los atributos multivaluados no pueden estar conectados a especializaciones o dependencias',
+                                    node.id,
+                                    'ERR: connection-mv'
+                );
+            }
+        }
+
+        // Rule 4: Can't connect to attributes that aren't the same type
+        for (const edge of getOutgoingEdges) {
+            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                return createMarker('error', 
+                                    'No se pueden conectar aristas que no sean transiciones o aristas opcionales',
+                                    node.id, 
+                                    'ERR: transition-edge'
+                );
+            }
+
+            const getNode = this.index.get(edge.targetId) as GNode;
+            if (attributeTypes.includes(getNode.type) && getNode.type !== MULTI_VALUED_ATTRIBUTE_TYPE) {
+                return createMarker('error',
+                                    'Los atributos multivaluados no pueden estar conectados a otros atributos que no sean del mismo tipo',
+                                    node.id,
+                                    'ERR: connection-mv'
+                );
+            }
         }
 
         return undefined;
-
     }
 
 }

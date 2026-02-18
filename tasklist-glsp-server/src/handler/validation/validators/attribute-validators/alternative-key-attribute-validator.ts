@@ -2,17 +2,14 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { attributeTypes, entityTypes, OPTIONAL_EDGE_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
-import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
+import { ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
+import { createMarker } from '../../utils/validation-utils';
 
 /* Key attribute rules:
  * 1. Alternative key attribute not connected to anything.
- * 2. Prohibited connections:
- *    - NO weighted edges and optional links allowed.
- * 4. Valid connections:
- *    - Entities (Strong/Weak).
- * 5. Alternative key attributes can't have children (NO composite attributes).
- * 6. Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B".
+ * 2. Edges: Only Transitions (Default) or Optional Links. NEVER Weighted edges.
+ * 3. Can't be connected to specializations
+ * 4. Can't connect to attributes that aren't the same type
  */
 
 @injectable()
@@ -25,68 +22,60 @@ export class AlternativeKeyAttributeValidator {
     }
 
     validate(node: GNode): Marker | undefined {
-        const neighbors = getConnectedNeighbors(node, this.index);
+        const getOutgoingEdges = this.index.getOutgoingEdges(node);
+        const getIncomingEdges = this.index.getIncomingEdges(node);
 
-        // Rule 1: Alternative key attribute not connected to anything.
-        if (neighbors.length === 0) {
-            return createMarker('error', 'Atributo clave alternativa aislado', node.id, 'ERR: sin conectar al modelo');
+        // Rule 1: Attribute not connected to anything.
+        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+            return createMarker('error', 
+                                'Atributo aislado', 
+                                node.id, 
+                                'ERR: atributo-sinConexion'
+            );
         }
 
-        let isValidConnection = false;
-        let rootOwnerCount = 0; 
-
-        for (const { otherNode, edge } of neighbors) {
-            const nodeType = otherNode.type;
-            const edgeType = edge.type;
-
-            // Rule 2: Prohibited connections.
-            if (edgeType === WEIGHTED_EDGE_TYPE || edgeType === OPTIONAL_EDGE_TYPE) {
-                return createMarker(
-                    'error', 
-                    'Atributo de clave alternativa no puede estar conectado a nada mediante una arista ponderada o una arista opcional.', 
-                    node.id, 
-                    'ERR: Atributo-aristaPonderada-aristaOpcional'
+        // Rule 2: Can only be connected with transitions or optional edges.
+        for (const edge of getIncomingEdges) {
+            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                return createMarker('error', 
+                                    'No se pueden conectar aristas que no sean transiciones u aristas opcionales a la clave alternativa',
+                                    node.id, 
+                                    'ERR: transition-edge'
                 );
             }
 
-            // Rule 3a Valid connections: Entities (Strong/Weak). 
-            if (entityTypes.includes(nodeType)) {
-                isValidConnection = true;
-                rootOwnerCount++;
-            }
-
-            // Rule 4: Alternative key attributes can't have children (NO composite attributes).
-            if (attributeTypes.includes(nodeType)) {
-                return createMarker(
-                    'error', 'Un atributo de clave alternativa no puede ser un atributo compuesto (no puede conectarse a otros atributos).',
-                    node.id,
-                    'ERR: atributoClaveAñternativa-atributoCompuesto'
-                );            
+            // Rule 3: Can't be connected to specializations
+            const getNode = this.index.get(edge.sourceId) as GNode;
+            if (specializationTypes.includes(getNode.type)) {
+                return createMarker('error',
+                                    'Las claves alternativas no pueden estar conectados a especializaciones',
+                                    node.id,
+                                    'ERR: connection-pk'
+                );
             }
         }
 
-        // Rule 3: Valid connections:
-        if (!isValidConnection) {
-            return createMarker(
-                'error',
-                'Un atributo de clave alternativa tiene que estar conectado a una entidad fuerte o débil.',
-                node.id,
-                'ERR: atributoClaveAlternativa-entities'
-            );
-        }
+        // Rule 4: Can't connect to attributes that aren't the same type
+        for (const edge of getOutgoingEdges) {
+            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                return createMarker('error', 
+                                    'No se pueden conectar aristas que no sean transiciones u aristas opcionales a la clave alternativa',
+                                    node.id, 
+                                    'ERR: transition-edge'
+                );
+            }
 
-        // Ambiguity: Prevents an attribute from connecting "Entity A --(attribute)-- Entity B"
-        if (rootOwnerCount > 1) {
-            return createMarker(
-                'error', 
-                'Un atributo no puede pertenecer a múltiples elementos raíz (Entidades/Relaciones/Especializaciones) a la vez.', 
-                node.id, 
-                'ERR: atributo-ambiguo'
-            );
+            const getNode = this.index.get(edge.targetId) as GNode;
+            if ((attributeTypes.includes(getNode.type) && getNode.type !== ATTRIBUTE_TYPE)) {
+                return createMarker('error',
+                                    'Las claves alternativas no pueden estar conectadas a otros atributos que no sean del mismo tipo',
+                                    node.id,
+                                    'ERR: connection-pk'
+                );
+            }
         }
 
         return undefined;
-
     }
 
 }

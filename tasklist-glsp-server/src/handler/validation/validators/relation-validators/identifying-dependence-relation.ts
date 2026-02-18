@@ -1,19 +1,16 @@
-import { GLabel, GNode, Marker } from '@eclipse-glsp/server';
+import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { ENTITY_TYPE, KEY_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, WEAK_ENTITY_TYPE } from '../../utils/validation-constants';
-import { createMarker, getConnectedNeighbors } from '../../utils/validation-utils';
+import { SQLUtils } from '../../../generator/sql-utils';
+import { relationTypes } from '../../utils/validation-constants';
+import { createMarker } from '../../utils/validation-utils';
 
 /* Identifying dependence relation rules:
  * 1. Identifying dependence relation not connected to anything.
- * 2. Prohibited connections.
- * 3. Valid connections:
- *    - Entities (Strong/Weak).
- *    - Key attributes.
- * 4. Identifying dependence relation can't be connected to relations, other dependencies and specializations.
- * 5. Identifying dependence relation must be connected to an entity, a weak entity. 
- * 6. Cardinality of existende dependence relations can't be N..M or 1..1
+ * 2. Identifying dependence relation can't be connected to relations, other dependencies
+ * 3. Identifying dependence relation must be connected to an entity, a weak entity with weighted edges. 
+ * 4. Cardinality of existende dependence relations can't be N..M or 1..1
  */
 
 @injectable()
@@ -26,77 +23,36 @@ export class IdentifyingDependenceRelationValidator {
     }
 
     validate(node: GNode): Marker | undefined {
-        const neighbors = getConnectedNeighbors(node, this.index);
+        const getOutgoingEdges = this.index.getOutgoingEdges(node);
+        const getIncomingEdges = this.index.getIncomingEdges(node);
 
-        // Rule 1: Identifying dependence relation not connected to anything.
-        if (neighbors.length === 0) {
-            return createMarker('error', 'Dependencia en identificación aislada', node.id, 'ERR: sin conectar al modelo');
+        // Rule 1: Identifying dependence not connected to anything.
+        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+            return createMarker('error', 
+                                'Dependencia en identificación no conectada a nada', 
+                                node.id, 
+                                'ERR: identificación-sinConexion'
+            );
         }
 
-        let validConnection = false;
-        let entityCount = 0;
-        let weakEntityCount = 0;
-        let keyAttributeCount = 0;
+        // Rule 4: Cardinality of existende dependence relations can't be N..M or 1..1
+        if (!SQLUtils.getCardinality(node).includes("1..N")) {
+            return createMarker('error',
+                                'Una dependencia en identificacion no puede ser N:M o 1:1',
+                                node.id,
+                                'ERR: IdentifyingDependenceRelationValidator'
+            );
+        }
 
-        for (const { otherNode, edge } of neighbors) {
-            const nodeType = otherNode.type;
-            const edgeType = edge.type;
-            
-            // Rule 2: Prohibited connections.
-            if (edgeType === OPTIONAL_EDGE_TYPE) {
-                return createMarker(
-                    'error',
-                    'Una dependencia en identificación no puede estar conectada mediante aristas opcionales.',
-                    node.id,
-                    'ERR: IdentifyingDependence-optional-edge'
+        // Rule 2: Identifying dependence relation can't be connected to relations, other dependencies
+        for (const edge of getIncomingEdges) {
+            if (relationTypes.includes(edge.sourceId)) {
+                return createMarker('error',
+                                    'Una dependencia en identificación no se puede conectar a relaciones',
+                                    node.id,
+                                    'ERR: IdentifyingDependenceRelationValidator'
                 );
             }
-
-            // Rule 3: Valid connections.
-            if (nodeType === ENTITY_TYPE) {
-                validConnection = true;
-                entityCount++;
-            } else if (nodeType === WEAK_ENTITY_TYPE) {
-                validConnection = true;
-                weakEntityCount++;
-            } else if (nodeType === KEY_ATTRIBUTE_TYPE) {
-                validConnection = true;
-                keyAttributeCount++;
-            }
-
-        }
-
-        // Rule 4: Identifying dependence relation can't be connected to relations, other dependencies and specializations.
-        if (!validConnection) {
-            return createMarker(
-                'error',
-                'Dependencia en identificación no puede conectarse con especializaciones, dependencias u otras relaciones.',
-                node.id,
-                'ERR: IdentifyingDependence-specializations-dependencies'
-            );
-        }
-
-        // Rule 5: Identifying dependence relation must be connected to an entity and a weak entity.
-        if (entityCount != 1 || weakEntityCount != 1 || keyAttributeCount != 1) {
-            return createMarker(
-                'error',
-                'Dependencia en identificación debe estar conectada a una entidad, a una entidad debil y a un atributo de clave primaria.',
-                node.id,
-                'ERR: IdentifyingDependence-entities-keyAttribute'
-            );
-        }
-
-        // Rule 6: Cardinality of existende dependence relations can't be N..M
-        const cardinalityLabel = node.children.find(
-            child => child instanceof GLabel && child.type === 'label:cardinality'
-        ) as GLabel | undefined;
-        if (cardinalityLabel && cardinalityLabel.text === 'N:M') {
-            return createMarker(
-                'error',
-                'Una relación de dependencia en existencia no puede ser N:M (Muchos a Muchos).',
-                node.id,
-                'ERR: existenceDependence-cardinality-nm'
-            );
         }
         
         return undefined;
