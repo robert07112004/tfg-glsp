@@ -2,7 +2,7 @@ import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { TaskListModelIndex } from '../../../../model/tasklist-model-index';
 import { TaskListModelState } from '../../../../model/tasklist-model-state';
-import { DEFAULT_EDGE_TYPE, KEY_ATTRIBUTE_TYPE, relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
+import { DEFAULT_EDGE_TYPE, KEY_ATTRIBUTE_TYPE, relationTypes, specializationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
 /* Entity rules:
@@ -33,7 +33,16 @@ export class EntityValidator {
             );
         }
 
-        // Rule 2: Entity must have a pk.
+        // Rule 2: Entity must have a pk unless its a children of a specialization.
+        let isChildrenOfSpecialization = false;
+        for (const edge of getIncomingEdges) {
+            if (edge.type === DEFAULT_EDGE_TYPE) {
+                const nodeType = this.index.get(edge.sourceId);
+                if (specializationTypes.includes(nodeType.type)) {
+                    isChildrenOfSpecialization = true;
+                }
+            }
+        }
         let hasPK = false;
         for (const edge of getOutgoingEdges) {
             if (edge.type === DEFAULT_EDGE_TYPE) {
@@ -51,7 +60,7 @@ export class EntityValidator {
             }
         }
 
-        if (!hasPK) {
+        if (!hasPK && !isChildrenOfSpecialization) {
             return createMarker('error',
                                 'Entity has no key attribute',
                                 node.id,

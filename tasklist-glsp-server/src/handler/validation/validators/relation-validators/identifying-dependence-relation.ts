@@ -36,7 +36,7 @@ export class IdentifyingDependenceRelationValidator {
         }
 
         // Rule 4: Cardinality of existende dependence relations can't be N..M or 1..1
-        if (!SQLUtils.getCardinality(node).includes("1..N")) {
+        if (!SQLUtils.getCardinality(node).includes("1:N")) {
             return createMarker('error',
                                 'Una dependencia en identificacion no puede ser N:M o 1:1',
                                 node.id,
