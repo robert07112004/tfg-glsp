@@ -7,15 +7,16 @@ import { SQLUtils } from "./sql-utils";
 
 export class SpecializationsTransformer {
 
-    static processSpecialization(entity: Entity, specializationNodes: SpecializationNodes, foreignColumns: string[], foreignKeys: string[], inheritedPKNames: string[], specializationRestrictions: string[], root: GModelElement): boolean {
-        let isSubclass = false;
+    static processSpecialization(entity: Entity, specializationNodes: SpecializationNodes, foreignColumns: string[], foreignKeys: string[], inheritedPKNames: string[], specializationRestrictions: string[], root: GModelElement) {
+        const dependencies = new Set<string>();
 
         for (const spec of specializationNodes.values()) {
             const asChild = spec.children.find(child => child.node.id === entity.node.id);
             if (asChild) {
-                isSubclass = true;
                 const father = spec.father.node;
                 let fatherPKs: GNode[] = [];
+
+                dependencies.add(SQLUtils.cleanNames(father));
 
                 let isWeakEntityFromIdentifyingDependence = false;
                 AttributeTransformer.transformSimple(father, root).forEach(simple => {
@@ -54,7 +55,7 @@ export class SpecializationsTransformer {
                 }
             }
         }
-        return isSubclass;
+        return dependencies;
     }
 
     static findFather(node: GNode, root: GModelElement): Entity {

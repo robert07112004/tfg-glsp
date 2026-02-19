@@ -1,13 +1,15 @@
 import { GEdge, GModelElement, GNode } from "@eclipse-glsp/server";
 import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, WEAK_ENTITY_TYPE } from "../validation/utils/validation-constants";
 import { AttributeTransformer } from "./sql-attribute-transformer";
-import { Entity, Relation, RelationNodes } from "./sql-interfaces";
+import { EntitiesTransformer } from "./sql-entities-transformer";
+import { Entity, GeneratedTable, Relation, RelationNodes } from "./sql-interfaces";
 import { SQLUtils } from "./sql-utils";
 
 export class RelationsTransformer {
 
-    // FKs se suelen poner como UNIQUE
-    static processRelationNM(relation: Relation, root: GModelElement): string {
+    static processRelationNM(relation: Relation, root: GModelElement): GeneratedTable {
+        const dependencies = new Set<string>();
+
         let sql = `CREATE TABLE ${relation.name} (\n`;
         let tableLines: string[] = [];
         let pkColumns: string[] = [];
@@ -29,6 +31,7 @@ export class RelationsTransformer {
         
         relation.connectedEntities.forEach((conn, index) => {
             const entityName = SQLUtils.cleanNames(conn.entity);
+            dependencies.add(entityName);
             const entityPkNodes = AttributeTransformer.transformPKs(conn.entity, root);
             entityPkNodes.forEach(pkNode => {
                 const { name, type } = SQLUtils.getNameAndType(pkNode);
@@ -59,7 +62,16 @@ export class RelationsTransformer {
         });
         
         const multivalued = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root);
-        return sql + multivalued.join("\n");
+
+        sql += multivalued.join("\n");
+        
+        const results: GeneratedTable = {
+            name: relation.name,
+            sql: sql,
+            dependencies: Array.from(dependencies)
+        };
+
+        return results;
     }
        
     static isReflexive(relation: GNode, root: GModelElement): boolean {
@@ -80,6 +92,7 @@ export class RelationsTransformer {
     }
 
     static process1NRelation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+        const dependencies = new Set<string>();
         for (const relation of relationNodes.values()) {
             const is1N = relation.cardinality.includes("1:N") && relation.type === RELATION_TYPE;    
             if (is1N) {
@@ -87,13 +100,16 @@ export class RelationsTransformer {
                 const side1 = relation.connectedEntities.find(ce => ce.cardinalityText.includes("1") && !ce.cardinalityText.toUpperCase().includes("N"));
 
                 if (sideN && sideN.entity.id === entity.node.id && side1) {
+                    dependencies.add(SQLUtils.cleanNames(side1.entity));
                     this.absorbRelation(relation, side1.entity, sideN.cardinalityText, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
                 }
             }
         }
+        return dependencies;
     }
 
     static process11Relation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+        const dependencies = new Set<string>();
         for (const relation of relationNodes.values()) {
             const is11 = relation.cardinality.includes("1:1") && relation.type === RELATION_TYPE;    
             if (is11) {
@@ -131,13 +147,16 @@ export class RelationsTransformer {
                 }
 
                 if (selectedEntity.id === entity.node.id) {
+                    dependencies.add(SQLUtils.cleanNames(otherEntity));
                     this.absorbRelation(relation, otherEntity, participationOfSelected, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
                 }
             }
         }
+        return dependencies;
     }
 
     static processExistenceDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+        const dependencies = new Set<string>();
         for (const relation of relationNodes.values()) {
             const isExistence = relation.cardinality.includes(cardinality) && relation.type === EXISTENCE_DEP_RELATION_TYPE;    
             if (isExistence) {
@@ -153,13 +172,16 @@ export class RelationsTransformer {
                 }
                 
                 if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
+                    dependencies.add(SQLUtils.cleanNames(sideNormal.entity));
                     this.absorbRelation(relation, sideNormal.entity, sideNormal.cardinalityText, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
                 }
             }
         }
+        return dependencies;
     }
 
     static processIdentifyingDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], pks: string[], relationAttributes: string[], relationRestrictions: string[], foreignKeys: string[], relationMultivalued: string[], root: GModelElement) {
+        const dependencies = new Set<string>();
         for (const relation of relationNodes.values()) {
             const isIdentifying = relation.cardinality.includes(cardinality) && relation.type === IDENTIFYING_DEP_RELATION_TYPE;    
             if (isIdentifying) {
@@ -175,13 +197,14 @@ export class RelationsTransformer {
                 }
                 
                 if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
+                    dependencies.add(SQLUtils.cleanNames(sideNormal.entity));
 
                     const sideNormalPK = AttributeTransformer.transformPKs(sideNormal.entity, root);
                     sideNormalPK.forEach(pk => {
                         const {name, type} = SQLUtils.getNameAndType(pk);
-                        foreignColumns.push(`    ${name} ${type} NOT NULL`);
-                        pks.push(name);
-                        foreignKeys.push(`    FOREIGN KEY (${name}) REFERENCES ${SQLUtils.cleanNames(sideNormal.entity)}(${name}) ON DELETE CASCADE`);
+                        foreignColumns.push(`    ${relation.name}_${name} ${type} NOT NULL`);
+                        pks.push(`${relation.name}_${name}`);
+                        foreignKeys.push(`    FOREIGN KEY (${relation.name}_${name}) REFERENCES ${SQLUtils.cleanNames(sideNormal.entity)}(${name}) ON DELETE CASCADE`);
                     });
 
                     const relSimple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
@@ -203,34 +226,37 @@ export class RelationsTransformer {
                         if (name.includes("_disc")) {
                             newColName = name;
                             newNode = simple;
+                            pks.push(name);
                         }
                     });
 
                     relation.attributes.multiValued.forEach(mv => {
-                        //mv.parentPKs[mv.parentPKs.length - 1].tableName = entity.name;
-                        //mv.parentPKs[mv.parentPKs.length - 1].tableName = newColName;
-                        //mv.parentPKs.forEach(parentPK => {
-                        //    parentPK.tableName = entity.name;
-                        //    parentPK.colName = newColName;
-                        //});
                         mv.parentPKs.push({ node: newNode, tableName: entity.name, colName: newColName});
                     });
 
                     relationMultivalued.push(...AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root));
-                    return true;
                 }
             }
         }
-        return false;
+        return dependencies;
     }
 
     private static absorbRelation(relation: Relation, sourceEntity: GNode, participation: string, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
         const sourceName = SQLUtils.cleanNames(sourceEntity);
-        const fkNodes = AttributeTransformer.transformPKs(sourceEntity, root);
+        let fkNodes = AttributeTransformer.transformPKs(sourceEntity, root);
         
+        let fkWeakEntityNodes: GNode[] = [];
+        if (sourceEntity.type === WEAK_ENTITY_TYPE) { 
+            fkWeakEntityNodes = EntitiesTransformer.getFatherPKsFromWeakEntity(sourceEntity, root);
+            AttributeTransformer.transformSimple(sourceEntity, root).forEach(simple => {
+                const {name} = SQLUtils.getNameAndType(simple);
+                if (name.includes("_disc")) fkWeakEntityNodes.push(simple);
+            });
+        }
+
         fkNodes.forEach(pkNode => {
             const { name, type } = SQLUtils.getNameAndType(pkNode);
-            const colName = relation.isReflexive ? `${relation.name}_${name}` : name;
+            const colName = /*relation.isReflexive ?*/ `${relation.name}_${name}` /*: name*/;
             
             const uniqueConstraint = !relation.cardinality.includes("N") ? " UNIQUE" : "";
             let nullability = "";
@@ -242,6 +268,19 @@ export class RelationsTransformer {
             else if (relation.type === EXISTENCE_DEP_RELATION_TYPE) foreignKeys.push(`    FOREIGN KEY (${colName}) REFERENCES ${sourceName}(${name}) ON DELETE CASCADE`);
         });
 
+        if (fkWeakEntityNodes.length > 0) {
+            fkWeakEntityNodes.forEach(fkWeakNode => {
+                const { name, type } = SQLUtils.getNameAndType(fkWeakNode);
+                const uniqueConstraint = !relation.cardinality.includes("N") ? " UNIQUE" : "";
+
+                const nullability =  participation.includes("0") ? "NULL" : "NOT NULL";
+                foreignColumns.push(`    ${relation.name}_${name} ${type} ${nullability}${uniqueConstraint}`);
+            });
+            const cols = fkWeakEntityNodes.map(p => relation.name + "_" + SQLUtils.getNameAndType(p).name).join(', ');
+            const cols2 = fkWeakEntityNodes.map(p => SQLUtils.getNameAndType(p).name).join(', ');
+            foreignKeys.push(`    FOREIGN KEY (${cols}) REFERENCES ${sourceName}(${cols2}) ON DELETE CASCADE`);
+        }
+        
         const relSimple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
         const relOptional = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
         const { columns: relUniqueCols, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);

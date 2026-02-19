@@ -3,7 +3,7 @@ import { injectable } from 'inversify';
 import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, specializationTypes, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
 import { AttributeTransformer } from './sql-attribute-transformer';
 import { EntitiesTransformer } from './sql-entities-transformer';
-import { EntityNodes, RelationNodes, SpecializationNodes } from './sql-interfaces';
+import { EntityNodes, GeneratedTable, RelationNodes, SpecializationNodes } from './sql-interfaces';
 import { RelationsTransformer } from './sql-relations-transformer';
 import { SpecializationsTransformer } from './sql-specializations-transformer';
 import { SQLUtils } from './sql-utils';
@@ -60,15 +60,50 @@ export class SQLGenerator {
 
         let sql = "-- Fecha: " + new Date().toLocaleString() + "\n\n";
 
+        const allTables: GeneratedTable[] = [];
+
         this.entityNodes.forEach(entity => {
-            sql += EntitiesTransformer.processEntity(entity, this.relationNodes, this.specializationNodes, root);
+            allTables.push(EntitiesTransformer.processEntity(entity, this.relationNodes, this.specializationNodes, root));
         });
 
         this.relationNodes.forEach(relation => {
-            if (relation.cardinality.includes("N:M")) sql += RelationsTransformer.processRelationNM(relation, root);
+            if (relation.cardinality.includes("N:M")) allTables.push(RelationsTransformer.processRelationNM(relation, root));
         });
+
+        sql += this.sortTables(allTables);
         
         return sql;
+    }
+
+    private sortTables(tables: GeneratedTable[]): string {
+        const sorted: string[] = [];
+        const createdTableNames = new Set<string>();
+        let remaining = [...tables];
+
+        while (remaining.length > 0) {
+            const initialLength = remaining.length;
+            
+            remaining = remaining.filter(table => {
+                const canCreate = table.dependencies.every(dep => 
+                    createdTableNames.has(dep) || dep === table.name
+                );
+
+                if (canCreate) {
+                    sorted.push(table.sql);
+                    createdTableNames.add(table.name);
+                    return false;
+                }
+                return true;
+            });
+
+            // Evitar bucle infinito si hay dependencias circulares
+            if (remaining.length === initialLength && remaining.length > 0) {
+                const forced = remaining.shift()!;
+                sorted.push(forced.sql);
+                createdTableNames.add(forced.name);
+            }
+        }
+        return sorted.join("");
     }
 
 }

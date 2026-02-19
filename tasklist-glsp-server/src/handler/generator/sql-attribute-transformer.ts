@@ -71,6 +71,7 @@ export class AttributeTransformer {
         for (const multivalued of multivaluedAttributes) {
             let tableLines: string[] = [];
             let pks: string[] = [];
+            let onlyParentPKs: string[] = [];
             let tableName = `${multivalued.parentName}_${multivalued.name}`;
             let sql = `CREATE TABLE ${tableName} (\n`;
 
@@ -78,6 +79,7 @@ export class AttributeTransformer {
                 const {name: _, type: type} = SQLUtils.getNameAndType(pkData.node);
                 tableLines.push(`    ${pkData.colName} ${type} NOT NULL`);
                 pks.push(pkData.colName);
+                onlyParentPKs.push(pkData.colName);
             });
 
             multivalued.selfNode.forEach(mv => {
@@ -98,11 +100,15 @@ export class AttributeTransformer {
                         let newColName = pkData.colName;
                         if (pkData.colName[pkData.colName.length - 1].includes("1") || pkData.colName[pkData.colName.length - 1].includes("2")) newColName = pkData.colName.slice(0, -2); 
                         tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${newColName}) ON DELETE CASCADE`);
-                    } else {
+                    } /*else {
                         tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${pkData.colName}) ON DELETE CASCADE`);
-                    }
+                    }*/
                 });
             }
+
+            const cols = multivalued.parentPKs.map(p => p.colName).join(', ');
+            const parentName = multivalued.parentPKs[multivalued.parentPKs.length - 1].tableName;
+            tableLines.push(`    FOREIGN KEY (${cols}) REFERENCES ${parentName}(${cols}) ON DELETE CASCADE`)
 
             sql += tableLines.join(",\n");
             sql += "\n);\n\n";

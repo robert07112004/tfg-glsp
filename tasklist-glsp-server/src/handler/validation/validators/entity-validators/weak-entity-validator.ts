@@ -9,15 +9,14 @@ import {
     IDENTIFYING_DEP_RELATION_TYPE,
     KEY_ATTRIBUTE_TYPE,
     OPTIONAL_EDGE_TYPE,
-    RELATION_TYPE,
-    specializationTypes,
-    WEIGHTED_EDGE_TYPE
+    relationTypes,
+    specializationTypes
 } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
 /* Weak Entity Rules:
  * 1. Weak entity not connected to anything.
- * 2. Must be connected to an existence dependent relation OR an identifying dependent relation with weighted edges.
+ * 2. Must be connected to a relation with weighted edges.
  * 3. Logic for Keys vs Relation types:
  *    - Existence Dependent -> Must have a Primary Key.
  *    - Identifying Dependent -> Cannot have a Primary Key.
@@ -68,12 +67,12 @@ export class WeakEntityValidator {
             }
         }
 
-        // Rule 2: Must be connected to an existence dependent relation OR an identifying dependent relation with weighted edges.
+        // Rule 2: Must be connected to a relation with weighted edges.
         for (const edge of getOutgoingEdges) {
             const getNode = this.index.get(edge.targetId);
-            if (getNode.type === RELATION_TYPE || (edge.type !== WEIGHTED_EDGE_TYPE && (edge.targetId === EXISTENCE_DEP_RELATION_TYPE || edge.targetId === IDENTIFYING_DEP_RELATION_TYPE))) {
+            if (!relationTypes.includes(getNode.type)) {
                 return createMarker('error',
-                                    'La entidad debil debe conectarse a una dependencia y siempre con una arista ponderada',
+                                    'La entidad debil debe conectarse a una relacion y siempre con una arista ponderada',
                                     node.id,
                                     'ERR: weak-entity-connection'
                 );

@@ -42,6 +42,12 @@ export interface Specialization {
     discriminator: string
 }
 
+export interface GeneratedTable {
+    name: string;
+    sql: string;
+    dependencies: string[];
+}
+
 export type EntityNodes = Map<string, Entity>;
 export type RelationNodes = Map<string, Relation>;
 export type SpecializationNodes = Map<string, Specialization>;
