@@ -1,5 +1,4 @@
 import { GEdge, GModelElement, GNode } from "@eclipse-glsp/server";
-import { PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE, PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE, TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE, TOTAL_OVERLAPPED_SPECIALIZATION_TYPE } from "../validation/utils/validation-constants";
 import { AttributeTransformer } from "./sql-attribute-transformer";
 import { EntitiesTransformer } from "./sql-entities-transformer";
 import { Entity, SpecializationNodes } from "./sql-interfaces";
@@ -7,52 +6,72 @@ import { SQLUtils } from "./sql-utils";
 
 export class SpecializationsTransformer {
 
-    static processSpecialization(entity: Entity, specializationNodes: SpecializationNodes, foreignColumns: string[], foreignKeys: string[], inheritedPKNames: string[], specializationRestrictions: string[], root: GModelElement) {
+    static processSpecialization(entity: Entity, specializationNodes: SpecializationNodes, foreignColumns: string[], foreignKeys: string[], inheritedPKNames: string[], specializationRestrictions: string[], root: GModelElement): Set<string> {
         const dependencies = new Set<string>();
 
         for (const spec of specializationNodes.values()) {
             const asChild = spec.children.find(child => child.node.id === entity.node.id);
+            
             if (asChild) {
-                const father = spec.father.node;
-                let fatherPKs: GNode[] = [];
+                const fatherNode = spec.father.node;
+                const fatherName = spec.father.name;
+                dependencies.add(fatherName);
 
-                dependencies.add(SQLUtils.cleanNames(father));
+                // Estructura para mapear: Nombre en tabla hijo -> Nombre en tabla padre
+                const identityMapping: { childCol: string, fatherCol: string, type: string }[] = [];
 
-                let isWeakEntityFromIdentifyingDependence = false;
-                AttributeTransformer.transformSimple(father, root).forEach(simple => {
-                    const {name} = SQLUtils.getNameAndType(simple);
-                    if (name.includes("_disc")) {
-                        fatherPKs.push(simple);
-                        isWeakEntityFromIdentifyingDependence = true;
-                    }
-                });
-                if (isWeakEntityFromIdentifyingDependence) {
-                    fatherPKs = fatherPKs.concat(EntitiesTransformer.getFatherPKsFromWeakEntity(father, root));
-                } else fatherPKs = AttributeTransformer.transformPKs(father, root);
+                // 1. OBTENER LAS COLUMNAS QUE FORMAN LA IDENTIDAD DEL PADRE
+                if (fatherNode.type === "WEAK_ENTITY") {
+                    // Si el padre es débil, su identidad es: (Relacion_PK_Abuelo + Discriminadores)
+                    const { name: identifyingRelName, pks: grandfatherPKs } = EntitiesTransformer.getFatherPKsFromWeakEntity(fatherNode, root);
+                    
+                    // A) Parte heredada del abuelo (Ej: Consta_Cod_comunidad)
+                    grandfatherPKs.forEach(gp => {
+                        const { name, type } = SQLUtils.getNameAndType(gp);
+                        const realFatherCol = `${identifyingRelName}_${name}`; 
+                        identityMapping.push({ childCol: name, fatherCol: realFatherCol, type });
+                    });
 
-                let fatherPKsName: string[] = [];
-                if (fatherPKs.length === 1) {
-                    const { name, type } = SQLUtils.getNameAndType(fatherPKs[0]);
-                    fatherPKsName.push(name);
-                    foreignColumns.push(`    ${name} ${type} NOT NULL PRIMARY KEY`);
+                    // B) Discriminadores del padre (Ej: Portal_disc)
+                    AttributeTransformer.transformSimple(fatherNode, root).forEach(simple => {
+                        const { name, type } = SQLUtils.getNameAndType(simple);
+                        if (name.includes("_disc")) {
+                            identityMapping.push({ childCol: name, fatherCol: name, type });
+                        }
+                    });
                 } else {
-                    fatherPKs.forEach(pkNode => {
-                        const { name, type } = SQLUtils.getNameAndType(pkNode);
-                        fatherPKsName.push(name);
-                        foreignColumns.push(`    ${name} ${type} NOT NULL`);
-                        inheritedPKNames.push(name);
+                    // Si el padre es fuerte, su identidad son sus PKs normales
+                    const fatherPKs = AttributeTransformer.transformPKs(fatherNode, root);
+                    fatherPKs.forEach(pk => {
+                        const { name, type } = SQLUtils.getNameAndType(pk);
+                        identityMapping.push({ childCol: name, fatherCol: name, type });
                     });
                 }
 
-                if (spec.type === PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE || spec.type === TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE) {
-                    foreignColumns.push(`    tipo_${entity.name} VARCHAR(100) DEFAULT '${entity.name}' NOT NULL`);
-                    specializationRestrictions.push(`    CHECK (tipo_${entity.name} = '${entity.name}')`);
-                    foreignKeys.push(`    FOREIGN KEY (${fatherPKsName.join(", ")}, tipo_${entity.name}) REFERENCES ${spec.father.name}(${fatherPKsName.join(", ")}, tipo_${spec.father.name}) ON DELETE CASCADE`);
-                } else if (spec.type === PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE || spec.type === TOTAL_OVERLAPPED_SPECIALIZATION_TYPE) {
-                    foreignColumns.push(`    tipo_${entity.name} BOOLEAN DEFAULT TRUE NOT NULL`);
-                    specializationRestrictions.push(`    CHECK (tipo_${entity.name} = TRUE)`);
-                    foreignKeys.push(`    FOREIGN KEY (${fatherPKsName.join(", ")}, tipo_${entity.name}) REFERENCES ${spec.father.name}(${fatherPKsName.join(", ")}, tipo_${spec.father.name}) ON DELETE CASCADE`);
+                // 2. GENERAR COLUMNAS EN LA TABLA HIJO (PK del hijo = PK del padre)
+                identityMapping.forEach(map => {
+                    // En el hijo usamos el nombre limpio (childCol) para que no arrastre prefijos de relaciones ajenas
+                    foreignColumns.push(`    ${map.childCol} ${map.type} NOT NULL`);
+                    inheritedPKNames.push(map.childCol);
+                });
+
+                // 3. GENERAR EL DISCRIMINADOR DE LA HERENCIA (tipo_Entidad o es_Entidad)
+                const discriminatorCol = `tipo_${entity.name}`;
+                if (spec.type.includes("EXCLUSIVE")) {
+                    foreignColumns.push(`    ${discriminatorCol} VARCHAR(100) DEFAULT '${entity.name}' NOT NULL`);
+                    specializationRestrictions.push(`    CHECK (${discriminatorCol} = '${entity.name}')`);
+                } else {
+                    // Overlapped
+                    foreignColumns.push(`    ${discriminatorCol} BOOLEAN DEFAULT TRUE NOT NULL`);
+                    specializationRestrictions.push(`    CHECK (${discriminatorCol} = TRUE)`);
                 }
+
+                // 4. GENERAR LA FOREIGN KEY HACIA EL PADRE
+                // Debe apuntar exactamente a las columnas del padre y al discriminador del padre
+                const childCols = [...identityMapping.map(m => m.childCol), discriminatorCol].join(", ");
+                const fatherCols = [...identityMapping.map(m => m.fatherCol), `tipo_${fatherName}`].join(", ");
+                
+                foreignKeys.push(`    FOREIGN KEY (${childCols}) REFERENCES ${fatherName}(${fatherCols}) ON DELETE CASCADE`);
             }
         }
         return dependencies;

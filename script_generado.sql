@@ -1,4 +1,4 @@
--- Fecha: 19/2/2026, 20:50:47
+-- Fecha: 23/2/2026, 15:05:46
 
 CREATE TABLE Administrador (
     Num_colegiado INTEGER NOT NULL PRIMARY KEY,
@@ -79,47 +79,32 @@ CREATE TABLE Recibo_Compañia (
     Importe FLOAT NOT NULL,
     Fecha DATE NOT NULL,
     Emite_CIF VARCHAR(20) NULL,
-    Secarga_Cod_banco INTEGER NULL,
+    Secarga_Tiene_Cod_banco INTEGER NULL,
     Secarga_id_cuenta_disc INTEGER NULL,
     FOREIGN KEY (Emite_CIF) REFERENCES Compañia(CIF),
-    FOREIGN KEY (Secarga_Cod_banco, Secarga_id_cuenta_disc) REFERENCES Cuenta(Cod_banco, id_cuenta_disc) ON DELETE CASCADE
+    FOREIGN KEY (Secarga_Tiene_Cod_banco, Secarga_id_cuenta_disc) REFERENCES Cuenta(Tiene_Cod_banco, id_cuenta_disc) ON DELETE CASCADE
 );
 
 CREATE TABLE VIvienda_Particular (
-    Portal_disc INTEGER NOT NULL,
-    Planta_disc INTEGER NOT NULL,
-    Letra_disc VARCHAR(1) NOT NULL,
-    Cod_comunidad INTEGER NOT NULL,
-    tipo_VIvienda_Particular VARCHAR(100) DEFAULT 'VIvienda_Particular' NOT NULL,
     Num_habitaciones INTEGER NOT NULL,
-    PRIMARY KEY (Portal_disc, Planta_disc, Letra_disc, Cod_comunidad),
-    CHECK (tipo_VIvienda_Particular = 'VIvienda_Particular'),
-    FOREIGN KEY (Portal_disc, Planta_disc, Letra_disc, Cod_comunidad, tipo_VIvienda_Particular) REFERENCES Propiedad(Portal_disc, Planta_disc, Letra_disc, Cod_comunidad, tipo_Propiedad) ON DELETE CASCADE
+    tipo_VIvienda_Particular BOOLEAN DEFAULT TRUE NOT NULL,
+    CHECK (tipo_VIvienda_Particular = TRUE),
+    FOREIGN KEY (tipo_VIvienda_Particular) REFERENCES Propiedad(tipo_Propiedad) ON DELETE CASCADE
 );
 
 CREATE TABLE Oficina (
-    Portal_disc INTEGER NOT NULL,
-    Planta_disc INTEGER NOT NULL,
-    Letra_disc VARCHAR(1) NOT NULL,
-    Cod_comunidad INTEGER NOT NULL,
-    tipo_Oficina VARCHAR(100) DEFAULT 'Oficina' NOT NULL,
     Actividad VARCHAR(20) NOT NULL,
-    PRIMARY KEY (Portal_disc, Planta_disc, Letra_disc, Cod_comunidad),
-    CHECK (tipo_Oficina = 'Oficina'),
-    FOREIGN KEY (Portal_disc, Planta_disc, Letra_disc, Cod_comunidad, tipo_Oficina) REFERENCES Propiedad(Portal_disc, Planta_disc, Letra_disc, Cod_comunidad, tipo_Propiedad) ON DELETE CASCADE
+    tipo_Oficina BOOLEAN DEFAULT TRUE NOT NULL,
+    CHECK (tipo_Oficina = TRUE),
+    FOREIGN KEY (tipo_Oficina) REFERENCES Propiedad(tipo_Propiedad) ON DELETE CASCADE
 );
 
 CREATE TABLE Local_Comercial (
-    Portal_disc INTEGER NOT NULL,
-    Planta_disc INTEGER NOT NULL,
-    Letra_disc VARCHAR(1) NOT NULL,
-    Cod_comunidad INTEGER NOT NULL,
-    tipo_Local_Comercial VARCHAR(100) DEFAULT 'Local_Comercial' NOT NULL,
     Tipo_comercio VARCHAR(20) NOT NULL,
     Horario DATE NOT NULL,
-    PRIMARY KEY (Portal_disc, Planta_disc, Letra_disc, Cod_comunidad),
-    CHECK (tipo_Local_Comercial = 'Local_Comercial'),
-    FOREIGN KEY (Portal_disc, Planta_disc, Letra_disc, Cod_comunidad, tipo_Local_Comercial) REFERENCES Propiedad(Portal_disc, Planta_disc, Letra_disc, Cod_comunidad, tipo_Propiedad) ON DELETE CASCADE
+    tipo_Local_Comercial BOOLEAN DEFAULT TRUE NOT NULL,
+    CHECK (tipo_Local_Comercial = TRUE),
+    FOREIGN KEY (tipo_Local_Comercial) REFERENCES Propiedad(tipo_Propiedad) ON DELETE CASCADE
 );
 
 CREATE TABLE Recibo_Cuota_Comunidad (
@@ -127,10 +112,10 @@ CREATE TABLE Recibo_Cuota_Comunidad (
     Estado VARCHAR(20) NOT NULL,
     Fecha DATE NOT NULL,
     importe FLOAT NOT NULL,
-    Corresponde_Cod_comunidad INTEGER NOT NULL,
+    Corresponde_Consta_Cod_comunidad INTEGER NOT NULL,
     Corresponde_Portal_disc INTEGER NOT NULL,
     Corresponde_Planta_disc INTEGER NOT NULL,
     Corresponde_Letra_disc VARCHAR(1) NOT NULL,
-    FOREIGN KEY (Corresponde_Cod_comunidad, Corresponde_Portal_disc, Corresponde_Planta_disc, Corresponde_Letra_disc) REFERENCES Propiedad(Cod_comunidad, Portal_disc, Planta_disc, Letra_disc) ON DELETE CASCADE
+    FOREIGN KEY (Corresponde_Consta_Cod_comunidad, Corresponde_Portal_disc, Corresponde_Planta_disc, Corresponde_Letra_disc) REFERENCES Propiedad(Consta_Cod_comunidad, Portal_disc, Planta_disc, Letra_disc) ON DELETE CASCADE
 );
 

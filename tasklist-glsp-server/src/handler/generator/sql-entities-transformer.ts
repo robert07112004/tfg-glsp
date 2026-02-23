@@ -8,163 +8,174 @@ import { SQLUtils } from "./sql-utils";
 
 export class EntitiesTransformer {
 
+    /**
+     * Transforma una entidad del modelo en una definición de tabla SQL completa.
+     * @param entity La entidad que se va a procesar.
+     * @param relationNodes Mapa de todas las relaciones del diagrama.
+     * @param specializationNodes Mapa de todas las jerarquías de especialización.
+     * @param root Elemento raíz del modelo (GModel).
+     * @returns Un objeto con el nombre de la tabla, su SQL y sus dependencias.
+     */
     static processEntity(entity: Entity, relationNodes: RelationNodes, specializationNodes: SpecializationNodes, root: GModelElement): GeneratedTable {
         const dependencies = new Set<string>();
         
-        let sql = `CREATE TABLE ${entity.name} (\n`;
-        
-        let { columnPKs, restriction: restrictionPks } = AttributeTransformer.processPK(entity.attributes.pk);
+        // Procesar Atributos base de la entidad
+        const { columnPKs, restriction: restrictionPks } = AttributeTransformer.processPK(entity.attributes.pk);
         const { columns: uniqueColumns, restriction: restrictionUnique } = AttributeTransformer.processUnique(entity.attributes.unique);
-        let simpleAttributes = AttributeTransformer.processSimpleAttributes(entity.attributes.simple);
+        const simpleAttributes = AttributeTransformer.processSimpleAttributes(entity.attributes.simple);
         const optionalAttributes = AttributeTransformer.processOptionalAttributes(entity.attributes.optional);
-        
-        const foreignColumns: string[] = [];
-        const foreignKeys: string[] = [];
-        const relationAttributes: string[] = [];
-        const relationRestrictions: string[] = [];
-        const relationMultivalued: string[] = [];
-        const pks: string[] = [];
-        let inheritedPKNames: string[] = [];
-        const specializationRestrictions: string[] = [];
 
-        const depsIdent = RelationsTransformer.processIdentifyingDependenceRelation("1:N", entity, relationNodes, foreignColumns, pks, relationAttributes, relationRestrictions, foreignKeys, relationMultivalued, root);
-        const deps1NExist = RelationsTransformer.processExistenceDependenceRelation("1:N", entity, relationNodes, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
-        const deps11Exist = RelationsTransformer.processExistenceDependenceRelation("1:1", entity, relationNodes, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
-        const deps1N = RelationsTransformer.process1NRelation(entity, relationNodes, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
-        const deps11 = RelationsTransformer.process11Relation(entity, relationNodes, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
-        const depsSpec = SpecializationsTransformer.processSpecialization(entity, specializationNodes, foreignColumns, foreignKeys, inheritedPKNames, specializationRestrictions, root);
+        // Inicializar contenedores para elementos absorbidos de relaciones y jerarquías
+        const absorbed = {
+            foreignColumns: [] as string[],
+            foreignKeys: [] as string[],
+            relationAttributes: [] as string[],
+            relationRestrictions: [] as string[],
+            relationMultivalued: [] as string[],
+            pks: [] as string[],                        // PKs cuando la entidad es débil
+            inheritedPKNames: [] as string[],           // PKs heredadas de un padre (subclases)
+            specRestrictions: [] as string[]
+        };
 
-        [deps1N, deps1NExist, depsIdent, deps11, deps11Exist, depsSpec].forEach(depSet => {
-            depSet.forEach(d => dependencies.add(d));
-        });
+        // Procesar todas las relaciones y especializaciones donde participa la entidad
+        this.processStructuralDependencies(entity, relationNodes, specializationNodes, absorbed, dependencies, root);
 
         let tableBody: string[] = [];
+        const isSubclass = absorbed.inheritedPKNames.length > 0;
 
-        const isSubclass = depsSpec.size > 0;
+        if (isSubclass) {                                       // CASO A: La entidad es una SUBCLASE (Hija en una especialización)
+            tableBody = this.buildSubclassTableBody(
+                absorbed, uniqueColumns, simpleAttributes, optionalAttributes, restrictionUnique
+            );
+        } else {                                                // CASO B: La entidad es BASE (Puede ser padre o estar sola)
+            // Si la entidad es padre en una jerarquía, añadimos discriminadores (Enums/Booleans)
+            this.handleFatherSpecializationLogic(entity, specializationNodes, simpleAttributes, restrictionUnique, absorbed, root);
 
-        if (isSubclass) {
-            let finalPK: string[] = [];
-            if (inheritedPKNames.length > 1) { finalPK = [`    PRIMARY KEY (${inheritedPKNames.join(', ')})`]; } 
-            tableBody = [
-                ...foreignColumns,      
-                ...uniqueColumns,
-                ...simpleAttributes,
-                ...optionalAttributes,
-                ...relationAttributes,
-                ...finalPK,             
-                ...(restrictionUnique || []),
-                ...relationRestrictions,
-                ...specializationRestrictions,
-                ...foreignKeys          
-            ];
-        } else {
-            let cleanPKs: string[] = [];
-            const identified = depsIdent.size > 0 
-            if (identified) cleanPKs = [`    PRIMARY KEY (${pks.join(", ")})`];
-
-            let specNode: GNode = new GNode;
-            for (const spec of specializationNodes.values()) {
-                const asFather = spec.father.node.id === entity.node.id;
-                if (asFather) {
-                    specNode = spec.node; 
-                    break;
-                }
-            }
-
-            let pksFromParent: string[] = [];
-            if (!identified) {
-                AttributeTransformer.transformPKs(entity.node, root).forEach(pk => {
-                    const {name, type: _} = SQLUtils.getNameAndType(pk);
-                    pksFromParent.push(name);
-                });
-            }
-
-            if (specNode.type === PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE) {
-                simpleAttributes.push(`    tipo_${entity.name} ENUM(${SpecializationsTransformer.getEnum(specNode, root)}, 'Otro')`)
-                if (!identified) restrictionUnique.push(`    UNIQUE (${pksFromParent.join(", ")}, tipo_${entity.name})`);
-                else restrictionUnique.push(`    UNIQUE (${pks.join(", ")}, tipo_${entity.name})`);
-            } else if (specNode.type === TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE) {
-                simpleAttributes.push(`    tipo_${entity.name} ENUM(${SpecializationsTransformer.getEnum(specNode, root)}) NOT NULL`);
-                if (!identified) restrictionUnique.push(`    UNIQUE (${pksFromParent.join(", ")}, tipo_${entity.name})`);
-                else restrictionUnique.push(`    UNIQUE (${pks.join(", ")}, tipo_${entity.name})`);
-            } else if (specNode.type === PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE) {
-                SpecializationsTransformer.getEnum(specNode, root).split(',').map(p => p.replace(/'/g, "").trim()).forEach(child => {
-                    simpleAttributes.push(`    es_${child} BOOLEAN DEFAULT FALSE NOT NULL`);
-                    if (!identified) restrictionUnique.push(`    UNIQUE (${pksFromParent.join(", ")}, es_${child})`);
-                    else restrictionUnique.push(`    UNIQUE (${pks.join(", ")}, es_${child})`)
-                });
-            } else if (specNode.type === TOTAL_OVERLAPPED_SPECIALIZATION_TYPE) {
-                const childNames = SpecializationsTransformer.getEnum(specNode, root)
-                    .split(',')
-                    .map(p => p.replace(/'/g, "").trim());
-
-                childNames.forEach(child => {
-                    simpleAttributes.push(`    es_${child} BOOLEAN DEFAULT FALSE NOT NULL`);
-                    if (!identified) restrictionUnique.push(`    UNIQUE (${pksFromParent.join(", ")}, es_${child})`);
-                    else restrictionUnique.push(`    UNIQUE (${pks.join(", ")}, es_${child})`)
-                });
-
-                if (childNames.length > 0) {
-                    const orConditions = childNames
-                        .map(child => `es_${child} = TRUE`)
-                        .join(" OR ");    
-                    specializationRestrictions.push(`    CHECK (${orConditions})`);
-                }
-            }
-
-            tableBody = [
-                ...columnPKs,                       
-                ...uniqueColumns,                   
-                ...simpleAttributes,                
-                ...optionalAttributes,              
-                ...foreignColumns,                  
-                ...relationAttributes,      
-                ...restrictionPks,
-                ...cleanPKs,                  
-                ...restrictionUnique,       
-                ...relationRestrictions,   
-                ...specializationRestrictions,         
-                ...foreignKeys                      
-            ];
+            tableBody = this.buildBaseTableBody(
+                columnPKs, uniqueColumns, simpleAttributes, optionalAttributes, 
+                restrictionPks, restrictionUnique, absorbed
+            );
         }
-        
+
+        // Construir SQL final
+        let sql = `CREATE TABLE ${entity.name} (\n`;
         sql += tableBody.join(",\n");
         sql += "\n);\n\n";
 
+        // Añadir SQL de atributos multivaluados (tanto de la entidad como de relaciones absorbidas)
         const entityMultivalued = AttributeTransformer.processMultivaluedAttributes(entity.attributes.multiValued, entity.node, root);
+        sql += entityMultivalued.join("\n") + absorbed.relationMultivalued.join("\n");
 
-        sql += entityMultivalued.join("\n");
-        sql += relationMultivalued.join("\n");
-
-        const results: GeneratedTable = {
+        return {
             name: entity.name,
             sql: sql,
             dependencies: Array.from(dependencies)
         };
-
-        return results;
     }
 
-    static getFatherPKsFromWeakEntity(entity: GNode, root: GModelElement): GNode[] {
+    /**
+     * Ejecuta los transformadores de relaciones y especializaciones para recolectar columnas y dependencias.
+     */
+    private static processStructuralDependencies(entity: Entity, relationNodes: RelationNodes, specializationNodes: SpecializationNodes, 
+                                                 abs: any, deps: Set<string>, root: GModelElement
+    ) {
+        const d1 = RelationsTransformer.processIdentifyingDependenceRelation("1:N", entity, relationNodes, abs.foreignColumns, abs.pks, abs.relationAttributes, abs.relationRestrictions, abs.foreignKeys, abs.relationMultivalued, root);
+        const d2 = RelationsTransformer.processExistenceDependenceRelation("1:N", entity, relationNodes, abs.foreignColumns, abs.foreignKeys, abs.relationAttributes, abs.relationRestrictions, abs.relationMultivalued, root);
+        const d3 = RelationsTransformer.processExistenceDependenceRelation("1:1", entity, relationNodes, abs.foreignColumns, abs.foreignKeys, abs.relationAttributes, abs.relationRestrictions, abs.relationMultivalued, root);
+        const d4 = RelationsTransformer.process1NRelation(entity, relationNodes, abs.foreignColumns, abs.foreignKeys, abs.relationAttributes, abs.relationRestrictions, abs.relationMultivalued, root);
+        const d5 = RelationsTransformer.process11Relation(entity, relationNodes, abs.foreignColumns, abs.foreignKeys, abs.relationAttributes, abs.relationRestrictions, abs.relationMultivalued, root);
+        const d6 = SpecializationsTransformer.processSpecialization(entity, specializationNodes, abs.foreignColumns, abs.foreignKeys, abs.inheritedPKNames, abs.specRestrictions, root);
+
+        [d1, d2, d3, d4, d5, d6].forEach(set => set.forEach(d => deps.add(d)));
+    }
+
+    /**
+     * Construye el cuerpo de la tabla para una entidad base o fuerte.
+     */
+    private static buildBaseTableBody(columnPKs: string[], uniqueCols: string[], simpleAttrs: string[], optionalAttrs: string[], restPKs: string[], restUnique: string[], abs: any): string[] {
+        const cleanPKs = abs.pks.length > 0 ? [`    PRIMARY KEY (${abs.pks.join(", ")})`] : [];
+        return [
+            ...columnPKs, ...uniqueCols, ...simpleAttrs, ...optionalAttrs, ...abs.foreignColumns,
+            ...abs.relationAttributes, ...restPKs, ...cleanPKs, ...restUnique,
+            ...abs.relationRestrictions, ...abs.specRestrictions, ...abs.foreignKeys
+        ];
+    }
+
+    /**
+     * Si la entidad es padre en una especialización, genera las columnas discriminadoras.
+     */
+    private static handleFatherSpecializationLogic(
+        entity: Entity, specializationNodes: SpecializationNodes, 
+        simpleAttributes: string[], restrictionUnique: string[], abs: any, root: GModelElement
+    ) {
+        // Buscamos si esta entidad es padre de alguna especialización
+        const spec = Array.from(specializationNodes.values()).find(s => s.father.node.id === entity.node.id);
+        if (!spec) return;
+
+        const specNode = spec.node;
+        const identified = abs.pks.length > 0;
+        
+        // Obtenemos nombres de PKs para las restricciones UNIQUE compuestas
+        const pkNames = identified ? abs.pks : AttributeTransformer.transformPKs(entity.node, root).map(pk => SQLUtils.getNameAndType(pk).name);
+        const enumValues = SpecializationsTransformer.getEnum(specNode, root);
+
+        switch (specNode.type) {
+            case PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE:
+                simpleAttributes.push(`    tipo_${entity.name} ENUM(${enumValues}, 'Otro')`);
+                restrictionUnique.push(`    UNIQUE (${pkNames.join(", ")}, tipo_${entity.name})`);
+                break;
+
+            case TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE:
+                simpleAttributes.push(`    tipo_${entity.name} ENUM(${enumValues}) NOT NULL`);
+                restrictionUnique.push(`    UNIQUE (${pkNames.join(", ")}, tipo_${entity.name})`);
+                break;
+
+            case TOTAL_OVERLAPPED_SPECIALIZATION_TYPE || PARTIAL_OVERLAPPED_SPECIALIZATION_TYPE:
+                const children = enumValues.split(',').map(p => p.replace(/'/g, "").trim());
+                children.forEach(child => {
+                    simpleAttributes.push(`    es_${child} BOOLEAN DEFAULT FALSE NOT NULL`);
+                    restrictionUnique.push(`    UNIQUE (${pkNames.join(", ")}, es_${child})`);
+                });
+
+                if (specNode.type === TOTAL_OVERLAPPED_SPECIALIZATION_TYPE && children.length > 0) {
+                    const orConditions = children.map(c => `es_${c} = TRUE`).join(" OR ");
+                    abs.specRestrictions.push(`    CHECK (${orConditions})`);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Construye el cuerpo de la tabla para una subclase.
+     */
+    private static buildSubclassTableBody(abs: any, uniques: string[], simples: string[], optionals: string[], restUnique: string[]): string[] {
+        const pkLine = abs.inheritedPKNames.length > 1 ? [`    PRIMARY KEY (${abs.inheritedPKNames.join(', ')})`] : [];
+        return [
+            ...abs.foreignColumns, ...uniques, ...simples, ...optionals, ...abs.relationAttributes,
+            ...pkLine, ...restUnique, ...abs.relationRestrictions, ...abs.specRestrictions, ...abs.foreignKeys
+        ];
+    }
+
+    static getFatherPKsFromWeakEntity(entity: GNode, root: GModelElement): { name: string, pks: GNode[]} {
         let fatherPKs: GNode[] = [];
 
-        // 1. Buscamos la ARISTA que conecta nuestra entidad débil con la relación identificativa
-        const edgesFromWeak = root.children.filter(child => 
-            child instanceof GEdge && 
-            child.type === WEIGHTED_EDGE_TYPE && 
-            child.sourceId === entity.id
-        ) as GEdge[];
+        // Buscamos la ARISTA que conecta nuestra entidad débil con la relación identificativa
+        const edgesFromWeak = root.children.filter(child => child instanceof GEdge && child.type === WEIGHTED_EDGE_TYPE && child.sourceId === entity.id) as GEdge[];
 
         const identifyingEdge = edgesFromWeak.find(edge => {
             const targetNode = SQLUtils.findById(edge.targetId, root);
             return targetNode?.type === IDENTIFYING_DEP_RELATION_TYPE;
         });
 
+        let relationNodeName = "";
+
         // Si encontramos la arista, significa que tenemos el ID de la relación (identifyingEdge.targetId)
         if (identifyingEdge) {
             const relationId = identifyingEdge.targetId;
+            const relationNode = SQLUtils.findById(relationId, root) as GNode;
+            relationNodeName = SQLUtils.cleanNames(relationNode);
 
-            // 2. Buscamos la OTRA arista que llega a esa misma relación desde la entidad fuerte
+            // Buscamos la OTRA arista que llega a esa misma relación desde la entidad fuerte
             const strongEdge = root.children.find(child => 
                 child instanceof GEdge && 
                 child.type === WEIGHTED_EDGE_TYPE && 
@@ -172,7 +183,7 @@ export class EntitiesTransformer {
                 child.sourceId !== entity.id // Importante: que no sea la que ya tenemos
             ) as GEdge | undefined;
 
-            // 3. Si encontramos la arista fuerte, sacamos su sourceId (el ID de la Entidad Fuerte)
+            // Si encontramos la arista fuerte, sacamos su sourceId (el ID de la Entidad Fuerte)
             if (strongEdge) {
                 const strongEntity = SQLUtils.findById(strongEdge.sourceId, root) as GNode;
                 if (strongEntity) {
@@ -182,6 +193,7 @@ export class EntitiesTransformer {
             }
         }
 
-        return fatherPKs;
+        return {name: relationNodeName, pks: fatherPKs};
     }
+    
 }

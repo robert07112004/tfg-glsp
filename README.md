@@ -92,3 +92,25 @@ Once you are up and running with this project template, we recommend to refer to
 
 For more information, please visit the [Eclipse GLSP Umbrella repository](https://github.com/eclipse-glsp/glsp) and the [Eclipse GLSP Website](https://www.eclipse.org/glsp/).
 If you have questions, please raise them in the [discussions](https://github.com/eclipse-glsp/glsp/discussions) and have a look at our [communication and support options](https://www.eclipse.org/glsp/contact/).
+
+
+# Diagram editor of ER model to SQL (in Eclipse GLSP)
+
+This project is a Eclipse GLSP based tool that allows to model ER diagrams straight in VS Code. The program not only let's the graphic creation of the model, but also validates it and automatically generates an SQL script.  
+
+## Components of the ER model
+
+### Entities
+
+- Strong entity: main element that represents the existence of an object. ![Strong Entity](images/entity.png)
+- Weak entity: depends of a strong entity for their identification or existence. Needs to be connected to a dependence relation. ![Weak Entity](images/weak-entity.png)
+
+### Attributes
+
+- Simple attribute: basic description of an entity. ![Normal attribute](images/normal-attribute.png)
+- Key attribute: unique identifier of an entity. ![Key attribute]()
+- Unique attribute: second unique identifiers. ![Unique attribute]
+- Composite attributes: attributes that can be divided into smaller sub-parts, each sub-part have their own mean.
+- Optional attributes: attributes that when transformed to SQL are NULL.
+- Derived attributes: attributes which their values are calculated off others.
+- Multivalued attributes: attributes that can have multiple values in the same instance.

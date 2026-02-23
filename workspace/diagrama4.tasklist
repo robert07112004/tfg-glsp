@@ -1,0 +1,504 @@
+{
+  "id": "c29f8e64-b762-4ce0-b38d-d7c8ef077502",
+  "tasks": [
+    {
+      "id": "27aaf33d-b63f-4c1d-a09c-c077a8d3fdfb",
+      "type": "entity",
+      "name": "Paciente",
+      "position": {
+        "x": 485,
+        "y": 234
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "c96ef720-95d5-4f05-802b-f0090cde7228",
+      "type": "entity",
+      "name": "Servicio",
+      "position": {
+        "x": 213.3038696248778,
+        "y": 767.9198584592956
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "f82800cd-f6d3-481d-8b35-dc24269bea30",
+      "type": "entity",
+      "name": "Facultativo",
+      "position": {
+        "x": 1029.9355724507784,
+        "y": 648.278923502275
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "64022ae6-b2cd-4be5-82ed-d6ff691b84f2",
+      "type": "entity",
+      "name": "Car",
+      "position": {
+        "x": 1072.1040832602766,
+        "y": 341.13570858903154
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "03f96d38-e9d4-4bf7-8e32-e4c7349895bb",
+      "type": "weakEntity",
+      "name": "Ingreso",
+      "position": {
+        "x": 483.3191907205384,
+        "y": 473.75682572093336
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "a0b9e87f-8103-4d16-aac1-ce98c6f1076f",
+      "type": "weakEntity",
+      "name": "Heart",
+      "position": {
+        "x": 1086.8170547803309,
+        "y": 475.4780629457841
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "978ef965-b4ac-4d10-be8e-448e3fbb5d36",
+      "type": "relation",
+      "name": "Receta",
+      "cardinality": "-",
+      "position": {
+        "x": 653.9996071041775,
+        "y": 620.8383420901146
+      },
+      "size": {
+        "width": 131.8710708618164,
+        "height": 60
+      }
+    },
+    {
+      "id": "271cd3a3-bf14-4413-9895-fd8e1014d803",
+      "type": "relation",
+      "name": "Revisa",
+      "cardinality": "-",
+      "position": {
+        "x": 461.3667255908099,
+        "y": 627.4240816290331
+      },
+      "size": {
+        "width": 131.8710708618164,
+        "height": 60
+      }
+    },
+    {
+      "id": "a5ef8516-c6e5-4c5c-88f1-33c9f07d5adb",
+      "type": "relation",
+      "name": "Pertenece",
+      "cardinality": "-",
+      "position": {
+        "x": 256.6599882560917,
+        "y": 621.3871537183578
+      },
+      "size": {
+        "width": 131.8710708618164,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [
+    {
+      "id": "863de7fb-d74e-4093-be35-7e3e88a661dd",
+      "type": "identifyingDependentRelation",
+      "name": "Ingresa",
+      "cardinality": "-",
+      "dependencyLabel": "Id",
+      "position": {
+        "x": 503.07640933729397,
+        "y": 342.5908465708054
+      },
+      "size": {
+        "width": 60,
+        "height": 60
+      }
+    }
+  ],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "435203b2-3600-4507-a63f-021ddd91e68a",
+      "type": "attribute",
+      "name": "Nombre: varchar(20)",
+      "position": {
+        "x": 422.7470045529818,
+        "y": 191.1477116427014
+      },
+      "size": {
+        "width": 108.7616195678711,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "8f85cae1-5906-444d-b3c4-787d4564aa52",
+      "type": "attribute",
+      "name": "Direccion: varchar(20)",
+      "position": {
+        "x": 518.6230603454162,
+        "y": 204.52504419310742
+      },
+      "size": {
+        "width": 115.89412689208984,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "24697d62-df30-4365-b83e-956dbee166ff",
+      "type": "attribute",
+      "name": "Telefono: integer",
+      "position": {
+        "x": 605.5122766133901,
+        "y": 227.13455116716176
+      },
+      "size": {
+        "width": 89.23837280273438,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "53dda59a-9e69-4f9c-977e-91468b0fcb38",
+      "type": "attribute",
+      "name": "Fecha_nac: date",
+      "position": {
+        "x": 599.7257906337896,
+        "y": 253.92614417864928
+      },
+      "size": {
+        "width": 89.45764923095703,
+        "height": 22
+      }
+    },
+    {
+      "id": "c46793b9-7b35-43ed-8883-59871b292c4d",
+      "type": "attribute",
+      "name": "Fecha_ingreso: date",
+      "position": {
+        "x": 559.0551954181018,
+        "y": 418.32685126836884
+      },
+      "size": {
+        "width": 115.89412689208984,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "65092c84-9fe8-4af9-a013-6735c169fb5b",
+      "type": "attribute",
+      "name": "Fecha_alta: date",
+      "position": {
+        "x": 606.2529954470182,
+        "y": 447.9626791935025
+      },
+      "size": {
+        "width": 115.89412689208984,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "42c4c4bf-3074-4f56-a136-2af99bb6786f",
+      "type": "attribute",
+      "name": "Diagnostico: varchar(20)",
+      "position": {
+        "x": 645.7674326805295,
+        "y": 475.40326060566304
+      },
+      "size": {
+        "width": 126.55120849609375,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "4e994dc2-82b2-4293-b703-ea938a1cc8af",
+      "type": "attribute",
+      "name": "Cod_ingreso_disc: varchar(20)",
+      "position": {
+        "x": 288.4910626941978,
+        "y": 465.5246512972851
+      },
+      "size": {
+        "width": 156.19012451171875,
+        "height": 21.854331970214844
+      }
+    },
+    {
+      "id": "9f3e5bb2-9e05-4d40-b0ab-953fcfb67e1d",
+      "type": "attribute",
+      "name": "Gasto_servicio: float",
+      "position": {
+        "x": 76.10096256407446,
+        "y": 790.4211352172671
+      },
+      "size": {
+        "width": 107.17804718017578,
+        "height": 22
+      }
+    },
+    {
+      "id": "fc1f101e-9ea7-4000-8a27-bfd82ca35b76",
+      "type": "attribute",
+      "name": "NewAttribute10: integer",
+      "position": {
+        "x": 1200.5376305888317,
+        "y": 310.9696571645547
+      },
+      "size": {
+        "width": 121.87884521484375,
+        "height": 21.92409896850586
+      }
+    },
+    {
+      "id": "3bc7fbe8-08e3-4724-871b-3a20964572b1",
+      "type": "attribute",
+      "name": "NewAttribute11: integer",
+      "position": {
+        "x": 1284.447958369862,
+        "y": 262.94203534251795
+      },
+      "size": {
+        "width": 121.08727264404297,
+        "height": 21.92409896850586
+      }
+    },
+    {
+      "id": "d366d66f-cf6a-48b9-aba8-ad51b8a4325c",
+      "type": "attribute",
+      "name": "NewAttribute12: integer",
+      "position": {
+        "x": 1347.9327458357723,
+        "y": 294.96044989054246
+      },
+      "size": {
+        "width": 121.87884521484375,
+        "height": 21.92409896850586
+      }
+    },
+    {
+      "id": "f15b039d-945c-4a64-a0fc-6017a6f39cad",
+      "type": "attribute",
+      "name": "NewAttribute13: integer",
+      "position": {
+        "x": 1338.5480381234206,
+        "y": 331.9472391098122
+      },
+      "size": {
+        "width": 121.87884521484375,
+        "height": 21.92409896850586
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [
+    {
+      "id": "151f2e42-970a-4f12-98f7-9f73ba710867",
+      "type": "derivedAttribute",
+      "name": "Gasto_ingreso: float",
+      "equation": "D2",
+      "position": {
+        "x": 618.875662896612,
+        "y": 504.4902769025533
+      },
+      "size": {
+        "width": 106.00738525390625,
+        "height": 35
+      }
+    }
+  ],
+  "keyAttributes": [
+    {
+      "id": "d6a57a8c-6ebd-456c-bcba-a911ee9f190a",
+      "type": "keyAttribute",
+      "name": "Num_paciente: integer",
+      "position": {
+        "x": 348.3798860663495,
+        "y": 245.1133372479695
+      },
+      "size": {
+        "width": 118.4669418334961,
+        "height": 22
+      }
+    },
+    {
+      "id": "f5c45837-4170-4254-ab94-75505de468ff",
+      "type": "keyAttribute",
+      "name": "Nombre: varchar(20)",
+      "position": {
+        "x": 77.19858582056088,
+        "y": 759.6876840356472
+      },
+      "size": {
+        "width": 108.7616195678711,
+        "height": 21.936275461981044
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "8bb193d3-e6df-4c3c-a44d-939a775ba01b",
+      "type": "alternativeKeyAttribute",
+      "name": "NSS: integer",
+      "position": {
+        "x": 380.35101159932697,
+        "y": 216.2003535448598
+      },
+      "size": {
+        "width": 70.85005187988281,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "e3e10737-6617-47ba-9d8c-659cfd5ad560",
+      "sourceTaskId": "27aaf33d-b63f-4c1d-a09c-c077a8d3fdfb",
+      "targetTaskId": "d6a57a8c-6ebd-456c-bcba-a911ee9f190a"
+    },
+    {
+      "id": "3d30a42c-c8c5-496b-a684-bc5180930743",
+      "sourceTaskId": "27aaf33d-b63f-4c1d-a09c-c077a8d3fdfb",
+      "targetTaskId": "8bb193d3-e6df-4c3c-a44d-939a775ba01b"
+    },
+    {
+      "id": "cfdd13c6-76d7-43df-a10d-dff8c3fc9173",
+      "sourceTaskId": "27aaf33d-b63f-4c1d-a09c-c077a8d3fdfb",
+      "targetTaskId": "435203b2-3600-4507-a63f-021ddd91e68a"
+    },
+    {
+      "id": "bd63d019-116a-4e64-90af-3074e91838f2",
+      "sourceTaskId": "27aaf33d-b63f-4c1d-a09c-c077a8d3fdfb",
+      "targetTaskId": "8f85cae1-5906-444d-b3c4-787d4564aa52"
+    },
+    {
+      "id": "4e5a129a-2f00-4f62-bd88-f35a0207337c",
+      "sourceTaskId": "27aaf33d-b63f-4c1d-a09c-c077a8d3fdfb",
+      "targetTaskId": "24697d62-df30-4365-b83e-956dbee166ff"
+    },
+    {
+      "id": "f34c27f5-96a6-4f47-9c72-70fe95c19d4b",
+      "sourceTaskId": "27aaf33d-b63f-4c1d-a09c-c077a8d3fdfb",
+      "targetTaskId": "53dda59a-9e69-4f9c-977e-91468b0fcb38"
+    },
+    {
+      "id": "a56f850c-0435-4e5e-9539-e80573ea5472",
+      "sourceTaskId": "03f96d38-e9d4-4bf7-8e32-e4c7349895bb",
+      "targetTaskId": "c46793b9-7b35-43ed-8883-59871b292c4d"
+    },
+    {
+      "id": "bac63e2f-0648-4e5e-8046-478ce5c8f80d",
+      "sourceTaskId": "03f96d38-e9d4-4bf7-8e32-e4c7349895bb",
+      "targetTaskId": "65092c84-9fe8-4af9-a013-6735c169fb5b"
+    },
+    {
+      "id": "d5b3376b-8339-412c-bb1b-663a2dd6023e",
+      "sourceTaskId": "03f96d38-e9d4-4bf7-8e32-e4c7349895bb",
+      "targetTaskId": "42c4c4bf-3074-4f56-a136-2af99bb6786f"
+    },
+    {
+      "id": "2b8caed4-5a63-4267-a580-8c79af8039fa",
+      "sourceTaskId": "03f96d38-e9d4-4bf7-8e32-e4c7349895bb",
+      "targetTaskId": "151f2e42-970a-4f12-98f7-9f73ba710867"
+    },
+    {
+      "id": "5cba5376-011e-42dc-a27f-303ccd3e3dd3",
+      "sourceTaskId": "03f96d38-e9d4-4bf7-8e32-e4c7349895bb",
+      "targetTaskId": "4e994dc2-82b2-4293-b703-ea938a1cc8af"
+    },
+    {
+      "id": "2a1eaea2-c023-49bd-bcdb-725f8a89d139",
+      "sourceTaskId": "c96ef720-95d5-4f05-802b-f0090cde7228",
+      "targetTaskId": "f5c45837-4170-4254-ab94-75505de468ff"
+    },
+    {
+      "id": "98b3d9e1-8ffd-4001-b8fb-a418f99ee080",
+      "sourceTaskId": "c96ef720-95d5-4f05-802b-f0090cde7228",
+      "targetTaskId": "9f3e5bb2-9e05-4d40-b0ab-953fcfb67e1d"
+    },
+    {
+      "id": "62b3d8ea-a400-4bec-b3fe-3389fcb475b5",
+      "sourceTaskId": "64022ae6-b2cd-4be5-82ed-d6ff691b84f2",
+      "targetTaskId": "fc1f101e-9ea7-4000-8a27-bfd82ca35b76"
+    },
+    {
+      "id": "eab0a4eb-5d32-4761-97a0-a58109c28bb8",
+      "sourceTaskId": "fc1f101e-9ea7-4000-8a27-bfd82ca35b76",
+      "targetTaskId": "3bc7fbe8-08e3-4724-871b-3a20964572b1"
+    },
+    {
+      "id": "b881a1ee-4774-4647-b18e-2109404fb123",
+      "sourceTaskId": "fc1f101e-9ea7-4000-8a27-bfd82ca35b76",
+      "targetTaskId": "d366d66f-cf6a-48b9-aba8-ad51b8a4325c"
+    },
+    {
+      "id": "5b310db7-1009-4e8a-a99f-f27da9e824c3",
+      "sourceTaskId": "fc1f101e-9ea7-4000-8a27-bfd82ca35b76",
+      "targetTaskId": "f15b039d-945c-4a64-a0fc-6017a6f39cad"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "ac2b1d65-5062-41f7-9566-a80ae3e85f57",
+      "type": "edge:weighted",
+      "sourceId": "27aaf33d-b63f-4c1d-a09c-c077a8d3fdfb",
+      "targetId": "863de7fb-d74e-4093-be35-7e3e88a661dd",
+      "description": "(1..1)"
+    },
+    {
+      "id": "50f62b4e-0d7c-4ddb-98fb-bbb1a2c8e624",
+      "type": "edge:weighted",
+      "sourceId": "03f96d38-e9d4-4bf7-8e32-e4c7349895bb",
+      "targetId": "863de7fb-d74e-4093-be35-7e3e88a661dd",
+      "description": "(1..N)"
+    },
+    {
+      "id": "9cbab2c7-828a-4500-a1c1-fda5e5eff0bc",
+      "type": "edge:weighted",
+      "sourceId": "c96ef720-95d5-4f05-802b-f0090cde7228",
+      "targetId": "a5ef8516-c6e5-4c5c-88f1-33c9f07d5adb",
+      "description": "(1..1)"
+    },
+    {
+      "id": "50792719-f6ea-4702-bb0a-6a442738b5fa",
+      "type": "edge:weighted",
+      "sourceId": "03f96d38-e9d4-4bf7-8e32-e4c7349895bb",
+      "targetId": "a5ef8516-c6e5-4c5c-88f1-33c9f07d5adb",
+      "description": "(0..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

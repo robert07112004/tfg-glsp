@@ -33,6 +33,12 @@ export interface Relation {
     attributes: AllAttributes,
 }
 
+export interface PKMapping {
+    node: GNode, 
+    tableName: string, 
+    colName: string
+}
+
 export interface Specialization {
     node: GNode,
     type: string,
