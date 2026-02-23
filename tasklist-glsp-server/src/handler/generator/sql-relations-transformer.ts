@@ -7,425 +7,446 @@ import { SQLUtils } from "./sql-utils";
 
 export class RelationsTransformer {
 
-    /**
-     * Procesa una relación de muchos a muchos (N:M) para generar su tabla SQL correspondiente.
-     * @param relation Objeto con la información de la relación y sus atributos.
-     * @param root El elemento raíz del modelo GModel.
-     * @returns Un objeto GeneratedTable con el SQL y sus dependencias.
-     */
-    static processRelationNM(relation: Relation, root: GModelElement): GeneratedTable {
-        const dependencies = new Set<string>();
-        const tableLines: string[] = [];
-        const pkColumns: string[] = [];
-        const fkColumns: string[] = [];
-        const isReflexive = this.isReflexive(relation.node, root);      // Booleano para saber si es reflexiva
+	/**
+	 * Procesa una relación de muchos a muchos (N:M) para generar su tabla SQL correspondiente.
+	 * @param relation Objeto con la información de la relación y sus atributos.
+	 * @param root El elemento raíz del modelo GModel.
+	 * @returns Un objeto GeneratedTable con el SQL y sus dependencias.
+	 */
+	static processRelationNM(relation: Relation, root: GModelElement): GeneratedTable {
+		const dependencies = new Set<string>();
+		const tableLines: string[] = [];
+		const pkColumns: string[] = [];
+		const fkColumns: string[] = [];
+		const isReflexive = this.isReflexive(relation.node, root);      // Booleano para saber si es reflexiva
 
-        // guardar los nombres de las PKs para referenciar a su padre en la tabla del atributo multivaluado
-        const colNameMapping: PKMapping[] = [];                         
+		// guardar los nombres de las PKs para referenciar a su padre en la tabla del atributo multivaluado
+		const colNameMapping: PKMapping[] = [];
 
-        // Procesar atributos de la relacion
-        const { columnPKs, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
-        const { columns: uniqueColumns, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
-        const simpleAttributes = AttributeTransformer.processSimpleAttributes(relation.attributes.simple); 
-        const optionalAttributes = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
+		// Procesar atributos de la relacion
+		const { columnPKs, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
+		const { columns: uniqueColumns, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
+		const simpleAttributes = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
+		const optionalAttributes = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
 
-        // Si la relación tiene su propia PK definida, la mapeamos
-        if (relation.attributes.pk.length > 0) {
-            relation.attributes.pk.forEach(pkNode => {
-                const { name } = SQLUtils.getNameAndType(pkNode);
-                colNameMapping.push({ node: pkNode, tableName: relation.name, colName: name });
-            });
-            tableLines.push(...columnPKs);
-        }
-        
-        // Procesar entidades conectadas para obtener las FKs (y PKs si la relación no tiene una propia)
-        relation.connectedEntities.forEach((conn, index) => {
-            const entityName = SQLUtils.cleanNames(conn.entity);
-            const entityPkNodes = AttributeTransformer.transformPKs(conn.entity, root);
-            dependencies.add(entityName);                               // Añadimos el nombre de la entidad al set de dependencias
+		// Si la relación tiene su propia PK definida, la mapeamos
+		if (relation.attributes.pk.length > 0) {
+			relation.attributes.pk.forEach(pkNode => {
+				const { name } = SQLUtils.getNameAndType(pkNode);
+				colNameMapping.push({ node: pkNode, tableName: relation.name, colName: name });
+			});
+			tableLines.push(...columnPKs);
+		}
 
-            entityPkNodes.forEach(pkNode => {
-                const { name, type } = SQLUtils.getNameAndType(pkNode);                
-                const colName = isReflexive ? `${name}_${index + 1}` : name;        // Si es reflexiva, evitamos colisión de nombres (ej: id_1, id_2)
-                tableLines.push(`    ${colName} ${type} NOT NULL`);
+		// Procesar entidades conectadas para obtener las FKs (y PKs si la relación no tiene una propia)
+		relation.connectedEntities.forEach((conn, index) => {
+			const entityName = SQLUtils.cleanNames(conn.entity);
+			const entityPkNodes = AttributeTransformer.transformPKs(conn.entity, root);
+			dependencies.add(entityName);                               // Añadimos el nombre de la entidad al set de dependencias
 
-                // Si la relación NO tiene PK propia, la PK de la tabla será la combinación de las PKs de las entidades
-                if (relation.attributes.pk.length === 0) {
-                    pkColumns.push(colName);
-                    colNameMapping.push({ node: pkNode, tableName: entityName, colName: colName });
-                }
+			entityPkNodes.forEach(pkNode => {
+				const { name, type } = SQLUtils.getNameAndType(pkNode);
+				const colName = isReflexive ? `${name}_${index + 1}` : name;        // Si es reflexiva, evitamos colisión de nombres (ej: id_1, id_2)
+				tableLines.push(`    ${colName} ${type} NOT NULL`);
 
-                fkColumns.push(this.generateFKLine(colName, entityName, name, relation.type));              // Generar la restricción de Foreign Key
-            });
-        });
-        
-        // Añadir atributos unique, simples y opcionales
-        tableLines.push(
-            ...uniqueColumns, 
-            ...simpleAttributes, 
-            ...optionalAttributes
-        );
+				// Si la relación NO tiene PK propia, la PK de la tabla será la combinación de las PKs de las entidades
+				if (relation.attributes.pk.length === 0) {
+					pkColumns.push(colName);
+					colNameMapping.push({ node: pkNode, tableName: entityName, colName: colName });
+				}
 
-        // Añadir la Primary Key constraint
-        if (relation.attributes.pk.length === 0 && pkColumns.length > 0) tableLines.push(`    PRIMARY KEY (${pkColumns.join(', ')})`);
-        else if (relPkRest.length > 0) tableLines.push(...relPkRest);
- 
-        if (relUniqueRest.length > 0) tableLines.push(...relUniqueRest);            // Añadir la UNIQUE constraint
-        
-        tableLines.push(...fkColumns);                                              // Añadir las Foreign Keys al final
+				fkColumns.push(this.generateFKLine(colName, entityName, name, relation.type));              // Generar la restricción de Foreign Key
+			});
+		});
 
-        // SQL
-        let sql = `CREATE TABLE ${relation.name} (\n`;
-        sql += tableLines.join(",\n") + "\n);\n\n";
+		// Añadir atributos unique, simples y opcionales
+		tableLines.push(
+			...uniqueColumns,
+			...simpleAttributes,
+			...optionalAttributes
+		);
 
-        let multivaluedSql: string[] = []; 
-        if (relation.attributes.multiValued.length > 0) {
-            // Inyectamos el mapeo de nombres de columnas para que las tablas de multivaluados sepan a qué columnas referenciar
-            relation.attributes.multiValued.forEach(mv => {
-                mv.parentPKs = colNameMapping;
-                mv.parentName = relation.name; 
-            });
-            // Procesar atributos multivaluados
-            multivaluedSql = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root);
-        }
+		// Añadir la Primary Key constraint
+		if (relation.attributes.pk.length === 0 && pkColumns.length > 0) tableLines.push(`    PRIMARY KEY (${pkColumns.join(', ')})`);
+		else if (relPkRest.length > 0) tableLines.push(...relPkRest);
 
-        return {
-            name: relation.name,
-            sql: sql + multivaluedSql.join("\n"),
-            dependencies: Array.from(dependencies)
-        };
-    }
-    
-    private static generateFKLine(col: string, refTable: string, refCol: string, relType: string): string {
-        let fkLine = `    FOREIGN KEY (${col}) REFERENCES ${refTable}(${refCol})`;
-        if (relType === EXISTENCE_DEP_RELATION_TYPE) {
-            fkLine += " ON DELETE CASCADE";                 // Si es una dependencia de existencia, añadimos el borrado en cascada
-        }
-        return fkLine;
-    }
-       
-    static isReflexive(relation: GNode, root: GModelElement): boolean {
-        const uniqueEntities = new Set<string>();
-        const edges = root.children.filter(child => child instanceof GEdge && child.targetId === relation.id) as GEdge[];
-        edges.forEach(edge => uniqueEntities.add(edge.sourceId));
-        return uniqueEntities.size === 1 && edges.length > 1;
-    }
+		if (relUniqueRest.length > 0) tableLines.push(...relUniqueRest);            // Añadir la UNIQUE constraint
 
-    static getConnectedEntities(relation: GNode, root: GModelElement): { cardinalityText: string, entity: GNode }[] {
-        const edges = root.children.filter(child => child instanceof GEdge && child.targetId === relation.id) as GEdge[];
-        return edges.map(edge => ({
-            cardinalityText: SQLUtils.getCardinality(edge),
-            entity: SQLUtils.findById(edge.sourceId, root) as GNode
-        }));
-    }
+		tableLines.push(...fkColumns);                                              // Añadir las Foreign Keys al final
 
-    /**
-     * Procesa relaciones 1:N -> Entidad actual es la entidad del lado N y absorbe la clave primaria del lado 1
-     * @param entity La entidad actual que se está transformando en tabla.
-     * @param relationNodes Mapa con todas las relaciones detectadas en el diagrama.
-     * @param foreignColumns Array donde se añadirán las definiciones de columnas de las claves foráneas.
-     * @param foreignKeys Array donde se añadirán las restricciones (constraints) FOREIGN KEY.
-     * @param relationAttributes Array para almacenar atributos simples u opcionales que provengan del rombo de la relación.
-     * @param relationRestrictions Array para almacenar restricciones UNIQUE o CHECK provenientes de la relación.
-     * @param relationMultivalued Array que recopila el código SQL generado para los atributos multivaluados de la relación.
-     * @param root El modelo completo (GModel) para realizar búsquedas de otros nodos y aristas.
-     * @returns Un Set con los nombres de las tablas de las que depende esta entidad.
-     */
-    static process1NRelation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
-        const dependencies = new Set<string>();
-        for (const relation of relationNodes.values()) {
-            const is1N = relation.cardinality.includes("1:N") && relation.type === RELATION_TYPE;    
-            if (is1N) {
-                const sideN = relation.connectedEntities.find(ce => ce.cardinalityText.toUpperCase().includes("N"));
-                const side1 = relation.connectedEntities.find(ce => ce.cardinalityText.includes("1") && !ce.cardinalityText.toUpperCase().includes("N"));
+		// SQL
+		let sql = `CREATE TABLE ${relation.name} (\n`;
+		sql += tableLines.join(",\n") + "\n);\n\n";
 
-                // Si somos el lado N, dependemos del lado 1 y absorbemos la relación
-                if (sideN && sideN.entity.id === entity.node.id && side1) {
-                    dependencies.add(SQLUtils.cleanNames(side1.entity));
-                    this.absorbRelation(relation, side1.entity, sideN.cardinalityText, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
-                }
-            }
-        }
-        return dependencies;
-    }
+		let multivaluedSql: string[] = [];
+		if (relation.attributes.multiValued.length > 0) {
+			// Inyectamos el mapeo de nombres de columnas para que las tablas de multivaluados sepan a qué columnas referenciar
+			relation.attributes.multiValued.forEach(mv => {
+				mv.parentPKs = colNameMapping;
+				mv.parentName = relation.name;
+			});
+			// Procesar atributos multivaluados
+			multivaluedSql = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root);
+		}
 
-    /**
-     * Procesa relaciones 1:1 -> Decide que entidad absorbe a cual basandose en la opcionalidad o en el ID del nodo
-     * @param entity La entidad actual que se está transformando en tabla.
-     * @param relationNodes Mapa con todas las relaciones detectadas en el diagrama.
-     * @param foreignColumns Array donde se añadirán las definiciones de columnas de las claves foráneas.
-     * @param foreignKeys Array donde se añadirán las restricciones (constraints) FOREIGN KEY.
-     * @param relationAttributes Array para almacenar atributos simples u opcionales que provengan del rombo de la relación.
-     * @param relationRestrictions Array para almacenar restricciones UNIQUE o CHECK provenientes de la relación.
-     * @param relationMultivalued Array que recopila el código SQL generado para los atributos multivaluados de la relación.
-     * @param root El modelo completo (GModel) para realizar búsquedas de otros nodos y aristas.
-     * @returns Un Set con los nombres de las tablas de las que depende esta entidad.
-     */
-    static process11Relation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
-        const dependencies = new Set<string>();
-        for (const relation of relationNodes.values()) {
-            const is11 = relation.cardinality.includes("1:1") && relation.type === RELATION_TYPE;    
-            if (is11) {
-                const [ceA, ceB] = relation.connectedEntities;
-                const isAOptional = ceA.cardinalityText.includes("0");
-                const isBOptional = ceB.cardinalityText.includes("0");
+		return {
+			name: relation.name,
+			sql: sql + multivaluedSql.join("\n"),
+			dependencies: Array.from(dependencies)
+		};
+	}
 
-                let selected: { entity: GNode, participation: string };
-                let other: GNode;
+	private static generateFKLine(col: string, refTable: string, refCol: string, relType: string): string {
+		let fkLine = `    FOREIGN KEY (${col}) REFERENCES ${refTable}(${refCol})`;
+		if (relType === EXISTENCE_DEP_RELATION_TYPE) {
+			fkLine += " ON DELETE CASCADE";                 // Si es una dependencia de existencia, añadimos el borrado en cascada
+		}
+		return fkLine;
+	}
 
-                if (!isAOptional && isBOptional) {                      // Selecciona participacion obligatoria
-                    selected = { entity: ceA.entity, participation: ceA.cardinalityText };
-                    other = ceB.entity;
-                } else if (isAOptional && !isBOptional) {               // Selecciona participacion obligatoria
-                    selected = { entity: ceB.entity, participation: ceB.cardinalityText };
-                    other = ceA.entity;
-                } else {
-                    // Si ambas son iguales (ambas 0:1 o ambas 1:1), usamos el ID como criterio de desempate
-                    const aMenor = ceA.entity.id < ceB.entity.id;
-                    selected = { entity: aMenor ? ceA.entity : ceB.entity, participation: aMenor ? ceA.cardinalityText : ceB.cardinalityText };
-                    other = aMenor ? ceB.entity : ceA.entity;
-                }
+	static isReflexive(relation: GNode, root: GModelElement): boolean {
+		const uniqueEntities = new Set<string>();
+		const edges = root.children.filter(child => child instanceof GEdge && child.targetId === relation.id) as GEdge[];
+		edges.forEach(edge => uniqueEntities.add(edge.sourceId));
+		return uniqueEntities.size === 1 && edges.length > 1;
+	}
 
-                if (selected.entity.id === entity.node.id) {
-                    dependencies.add(SQLUtils.cleanNames(other));
-                    this.absorbRelation(relation, other, selected.participation, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
-                }
-            }
-        }
-        return dependencies;
-    }
+	static getConnectedEntities(relation: GNode, root: GModelElement): { cardinalityText: string, entity: GNode }[] {
+		const edges = root.children.filter(child => child instanceof GEdge && child.targetId === relation.id) as GEdge[];
+		return edges.map(edge => ({
+			cardinalityText: SQLUtils.getCardinality(edge),
+			entity: SQLUtils.findById(edge.sourceId, root) as GNode
+		}));
+	}
 
-    /**
-     * Procesa relaciones relaciones de dependencia en existencia -> la entidad debil siempre absorbe a la fuerte
-     * @param cardinality Cardinalidad del rombo de la relacion
-     * @param entity La entidad actual que se está transformando en tabla.
-     * @param relationNodes Mapa con todas las relaciones detectadas en el diagrama.
-     * @param foreignColumns Array donde se añadirán las definiciones de columnas de las claves foráneas.
-     * @param foreignKeys Array donde se añadirán las restricciones (constraints) FOREIGN KEY.
-     * @param relationAttributes Array para almacenar atributos simples u opcionales que provengan del rombo de la relación.
-     * @param relationRestrictions Array para almacenar restricciones UNIQUE o CHECK provenientes de la relación.
-     * @param relationMultivalued Array que recopila el código SQL generado para los atributos multivaluados de la relación.
-     * @param root El modelo completo (GModel) para realizar búsquedas de otros nodos y aristas.
-     * @returns Un Set con los nombres de las tablas de las que depende esta entidad.
-     */
-    static processExistenceDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
-        const dependencies = new Set<string>();
-        for (const relation of relationNodes.values()) {
-            const isExistence = relation.cardinality.includes(cardinality) && relation.type === EXISTENCE_DEP_RELATION_TYPE;    
-            if (isExistence) {
-                const { sideNormal, sideWeak } = this.getSidesNormalAndWeak(relation);
-                
-                if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
-                    dependencies.add(SQLUtils.cleanNames(sideNormal.entity));
-                    this.absorbRelation(relation, sideNormal.entity, sideNormal.cardinalityText, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
-                }
-            }
-        }
-        return dependencies;
-    }
+	/**
+	 * Procesa relaciones 1:N -> Entidad actual es la entidad del lado N y absorbe la clave primaria del lado 1
+	 * @param entity La entidad actual que se está transformando en tabla.
+	 * @param relationNodes Mapa con todas las relaciones detectadas en el diagrama.
+	 * @param foreignColumns Array donde se añadirán las definiciones de columnas de las claves foráneas.
+	 * @param foreignKeys Array donde se añadirán las restricciones (constraints) FOREIGN KEY.
+	 * @param relationAttributes Array para almacenar atributos simples u opcionales que provengan del rombo de la relación.
+	 * @param relationRestrictions Array para almacenar restricciones UNIQUE o CHECK provenientes de la relación.
+	 * @param relationMultivalued Array que recopila el código SQL generado para los atributos multivaluados de la relación.
+	 * @param root El modelo completo (GModel) para realizar búsquedas de otros nodos y aristas.
+	 * @returns Un Set con los nombres de las tablas de las que depende esta entidad.
+	 */
+	static process1NRelation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+		const dependencies = new Set<string>();
+		for (const relation of relationNodes.values()) {
+			const is1N = relation.cardinality.includes("1:N") && relation.type === RELATION_TYPE;
+			if (is1N) {
+				const sideN = relation.connectedEntities.find(ce => ce.cardinalityText.toUpperCase().includes("N"));
+				const side1 = relation.connectedEntities.find(ce => ce.cardinalityText.includes("1") && !ce.cardinalityText.toUpperCase().includes("N"));
 
-    /**
-     * Helper privado que centraliza la absorción de una relación en una tabla.
-     * @param relation La relación que se va a aplanar/absorber.
-     * @param sourceEntity La entidad de origen de la cual tomaremos la clave primaria.
-     * @param participation Texto de participación (ej. "0:1") para determinar la nulidad.
-     * @param foreignColumns Puntero al array de columnas de la tabla destino.
-     * @param foreignKeys Puntero al array de claves foráneas de la tabla destino.
-     * @param relationAttributes Puntero al array de atributos de la relación.
-     * @param relationRestrictions Puntero al array de restricciones de la relación.
-     * @param relationMultivalued Puntero al array de SQL para multivaluados.
-     * @param root Contexto del modelo.
-     */
-    private static absorbRelation(relation: Relation, sourceEntity: GNode, participation: string, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
-        const sourceName = SQLUtils.cleanNames(sourceEntity);
-        
-        // Este array guardará la configuración de cada columna de la FK
-        const identityMapping: { localName: string, refName: string, type: string }[] = [];
+				// Si somos el lado N, dependemos del lado 1 y absorbemos la relación
+				if (sideN && sideN.entity.id === entity.node.id && side1) {
+					dependencies.add(SQLUtils.cleanNames(side1.entity));
+					this.absorbRelation(relation, side1.entity, sideN.cardinalityText, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
+				}
+			}
+		}
+		return dependencies;
+	}
 
-        if (sourceEntity.type === WEAK_ENTITY_TYPE) {
-            // 1. OBTENER IDENTIDAD DE ENTIDAD DÉBIL
-            const { name: identifyingRelName, pks: parentPKs } = EntitiesTransformer.getFatherPKsFromWeakEntity(sourceEntity, root);
-            
-            // A) Parte de la identidad que viene del Padre (Ej: Consta_Cod_comunidad)
-            parentPKs.forEach(pNode => {
-                const { name, type } = SQLUtils.getNameAndType(pNode);
-                const refColInSource = `${identifyingRelName}_${name}`; // Nombre real en la tabla debil
-                const localColName = `${relation.name}_${refColInSource}`; // Nombre en la tabla que absorbe
-                identityMapping.push({ localName: localColName, refName: refColInSource, type });
-            });
+	/**
+	 * Procesa relaciones 1:1 -> Decide que entidad absorbe a cual basandose en la opcionalidad o en el ID del nodo
+	 * @param entity La entidad actual que se está transformando en tabla.
+	 * @param relationNodes Mapa con todas las relaciones detectadas en el diagrama.
+	 * @param foreignColumns Array donde se añadirán las definiciones de columnas de las claves foráneas.
+	 * @param foreignKeys Array donde se añadirán las restricciones (constraints) FOREIGN KEY.
+	 * @param relationAttributes Array para almacenar atributos simples u opcionales que provengan del rombo de la relación.
+	 * @param relationRestrictions Array para almacenar restricciones UNIQUE o CHECK provenientes de la relación.
+	 * @param relationMultivalued Array que recopila el código SQL generado para los atributos multivaluados de la relación.
+	 * @param root El modelo completo (GModel) para realizar búsquedas de otros nodos y aristas.
+	 * @returns Un Set con los nombres de las tablas de las que depende esta entidad.
+	 */
+	static process11Relation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+		const dependencies = new Set<string>();
+		for (const relation of relationNodes.values()) {
+			const is11 = relation.cardinality.includes("1:1") && relation.type === RELATION_TYPE;
+			if (is11) {
+				const [ceA, ceB] = relation.connectedEntities;
+				const isAOptional = ceA.cardinalityText.includes("0");
+				const isBOptional = ceB.cardinalityText.includes("0");
 
-            // B) Parte de la identidad que son discriminadores (Ej: Portal_disc)
-            AttributeTransformer.transformSimple(sourceEntity, root).forEach(sNode => {
-                const { name, type } = SQLUtils.getNameAndType(sNode);
-                if (name.includes("_disc")) {
-                    identityMapping.push({ 
-                        localName: `${relation.name}_${name}`, 
-                        refName: name, 
-                        type 
-                    });
-                }
-            });
-        } else {
-            // 2. OBTENER IDENTIDAD DE ENTIDAD NORMAL
-            const fkNodes = AttributeTransformer.transformPKs(sourceEntity, root);
-            fkNodes.forEach(pkNode => {
-                const { name, type } = SQLUtils.getNameAndType(pkNode);
-                identityMapping.push({ 
-                    localName: `${relation.name}_${name}`, 
-                    refName: name, 
-                    type 
-                });
-            });
-        }
+				let selected: { entity: GNode, participation: string };
+				let other: GNode;
 
-        // 3. GENERAR COLUMNAS Y RESTRICCIÓN UNIQUE
-        const isOptional = participation.includes("0") && relation.type !== EXISTENCE_DEP_RELATION_TYPE;
-        const nullability = isOptional ? "NULL" : "NOT NULL";
-        const uniqueConstraint = !relation.cardinality.includes("N") ? " UNIQUE" : "";
+				if (!isAOptional && isBOptional) {                      // Selecciona participacion obligatoria
+					selected = { entity: ceA.entity, participation: ceA.cardinalityText };
+					other = ceB.entity;
+				} else if (isAOptional && !isBOptional) {               // Selecciona participacion obligatoria
+					selected = { entity: ceB.entity, participation: ceB.cardinalityText };
+					other = ceA.entity;
+				} else {
+					// Si ambas son iguales (ambas 0:1 o ambas 1:1), usamos el ID como criterio de desempate
+					const aMenor = ceA.entity.id < ceB.entity.id;
+					selected = { entity: aMenor ? ceA.entity : ceB.entity, participation: aMenor ? ceA.cardinalityText : ceB.cardinalityText };
+					other = aMenor ? ceB.entity : ceA.entity;
+				}
 
-        identityMapping.forEach(col => {
-            foreignColumns.push(`    ${col.localName} ${col.type} ${nullability}${uniqueConstraint}`);
-        });
+				if (selected.entity.id === entity.node.id) {
+					dependencies.add(SQLUtils.cleanNames(other));
+					this.absorbRelation(relation, other, selected.participation, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
+				}
+			}
+		}
+		return dependencies;
+	}
 
-        // 4. GENERAR LA FOREIGN KEY UNIFICADA
-        if (identityMapping.length > 0) {
-            const localCols = identityMapping.map(m => m.localName).join(', ');
-            const refCols = identityMapping.map(m => m.refName).join(', ');
-            const cascade = (relation.type === EXISTENCE_DEP_RELATION_TYPE || sourceEntity.type === WEAK_ENTITY_TYPE) 
-                            ? " ON DELETE CASCADE" : "";
+	/**
+	 * Procesa relaciones relaciones de dependencia en existencia -> la entidad debil siempre absorbe a la fuerte
+	 * @param cardinality Cardinalidad del rombo de la relacion
+	 * @param entity La entidad actual que se está transformando en tabla.
+	 * @param relationNodes Mapa con todas las relaciones detectadas en el diagrama.
+	 * @param foreignColumns Array donde se añadirán las definiciones de columnas de las claves foráneas.
+	 * @param foreignKeys Array donde se añadirán las restricciones (constraints) FOREIGN KEY.
+	 * @param relationAttributes Array para almacenar atributos simples u opcionales que provengan del rombo de la relación.
+	 * @param relationRestrictions Array para almacenar restricciones UNIQUE o CHECK provenientes de la relación.
+	 * @param relationMultivalued Array que recopila el código SQL generado para los atributos multivaluados de la relación.
+	 * @param root El modelo completo (GModel) para realizar búsquedas de otros nodos y aristas.
+	 * @returns Un Set con los nombres de las tablas de las que depende esta entidad.
+	 */
+	static processExistenceDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+		const dependencies = new Set<string>();
+		for (const relation of relationNodes.values()) {
+			const isExistence = relation.cardinality.includes(cardinality) && relation.type === EXISTENCE_DEP_RELATION_TYPE;
+			if (isExistence) {
+				const { sideNormal, sideWeak } = this.getSidesNormalAndWeak(relation);
 
-            foreignKeys.push(`    FOREIGN KEY (${localCols}) REFERENCES ${sourceName}(${refCols})${cascade}`);
-        }
+				if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
+					dependencies.add(SQLUtils.cleanNames(sideNormal.entity));
+					this.absorbRelation(relation, sideNormal.entity, sideNormal.cardinalityText, foreignColumns, foreignKeys, relationAttributes, relationRestrictions, relationMultivalued, root);
+				}
+			}
+		}
+		return dependencies;
+	}
 
-        // 5. PROCESAR ATRIBUTOS DEL ROMBO Y MULTIVALUADOS
-        this.collectAndProcessRelationAttributes(relation, relationAttributes, relationRestrictions);
-        relationMultivalued.push(...AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root));
-    }
+	/**
+	 * Helper privado que centraliza la absorción de una relación en una tabla.
+	 * @param relation La relación que se va a aplanar/absorber.
+	 * @param sourceEntity La entidad de origen de la cual tomaremos la clave primaria.
+	 * @param participation Texto de participación (ej. "0:1") para determinar la nulidad.
+	 * @param foreignColumns Puntero al array de columnas de la tabla destino.
+	 * @param foreignKeys Puntero al array de claves foráneas de la tabla destino.
+	 * @param relationAttributes Puntero al array de atributos de la relación.
+	 * @param relationRestrictions Puntero al array de restricciones de la relación.
+	 * @param relationMultivalued Puntero al array de SQL para multivaluados.
+	 * @param root Contexto del modelo.
+	 */
+	private static absorbRelation(relation: Relation, sourceEntity: GNode, participation: string, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
+		const sourceName = SQLUtils.cleanNames(sourceEntity);
 
-    /**
-     * Procesa dependencias en identificacion para entidades débiles.
-     * @param cardinality El tipo de cardinalidad a filtrar (ej. "1:N").
-     * @param entity La entidad débil que está siendo procesada.
-     * @param relationNodes Mapa de relaciones del modelo.
-     * @param foreignColumns Columnas que se añaden a la tabla (serán parte de la PK).
-     * @param pks Array que rastrea qué nombres de columnas forman la clave primaria de la tabla actual.
-     * @param relationAttributes Atributos que el rombo de la relación aporta a la tabla.
-     * @param relationRestrictions Restricciones adicionales del rombo.
-     * @param foreignKeys Restricciones FOREIGN KEY con ON DELETE CASCADE.
-     * @param relationMultivalued SQL para atributos multivaluados de la relación identificativa.
-     * @param root Modelo raíz para contexto.
-     */
+		// Este array guardará la configuración de cada columna de la FK
+		const identityMapping: { localName: string, refName: string, type: string }[] = [];
 
-    static processIdentifyingDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], pks: string[], relationAttributes: string[], relationRestrictions: string[], foreignKeys: string[], relationMultivalued: string[], root: GModelElement): Set<string> {
-        const dependencies = new Set<string>();
+		if (sourceEntity.type === WEAK_ENTITY_TYPE) {
+			// 1. OBTENER IDENTIDAD DE ENTIDAD DÉBIL
+			const { name: identifyingRelName, pks: parentPKs } = EntitiesTransformer.getFatherPKsFromWeakEntity(sourceEntity, root);
 
-        for (const relation of relationNodes.values()) {
-            const isIdentifying = relation.cardinality.includes(cardinality) && relation.type === IDENTIFYING_DEP_RELATION_TYPE;
+			// A) Parte de la identidad que viene del Padre (Ej: Consta_Cod_comunidad)
+			parentPKs.forEach(pNode => {
+				const { name, type } = SQLUtils.getNameAndType(pNode);
+				const refColInSource = `${identifyingRelName}_${name}`; // Nombre real en la tabla debil
+				const localColName = `${relation.name}_${refColInSource}`; // Nombre en la tabla que absorbe
+				identityMapping.push({ localName: localColName, refName: refColInSource, type });
+			});
 
-            if (isIdentifying) {
-                const { sideNormal, sideWeak } = this.getSidesNormalAndWeak(relation);
+			// B) Parte de la identidad que son discriminadores (Ej: Portal_disc)
+			AttributeTransformer.transformSimple(sourceEntity, root).forEach(sNode => {
+				const { name, type } = SQLUtils.getNameAndType(sNode);
+				if (name.includes("_disc")) {
+					identityMapping.push({
+						localName: `${relation.name}_${name}`,
+						refName: name,
+						type
+					});
+				}
+			});
+		} else {
+			// 2. OBTENER IDENTIDAD DE ENTIDAD NORMAL
+			const fkNodes = AttributeTransformer.transformPKs(sourceEntity, root);
+			fkNodes.forEach(pkNode => {
+				const { name, type } = SQLUtils.getNameAndType(pkNode);
+				identityMapping.push({
+					localName: `${relation.name}_${name}`,
+					refName: name,
+					type
+				});
+			});
+		}
 
-                if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
-                    const sourceName = SQLUtils.cleanNames(sideNormal.entity);
-                    dependencies.add(sourceName);
+		// 3. GENERAR COLUMNAS Y RESTRICCIÓN UNIQUE
+		const isOptional = participation.includes("0") && relation.type !== EXISTENCE_DEP_RELATION_TYPE;
+		const nullability = isOptional ? "NULL" : "NOT NULL";
+		const uniqueConstraint = !relation.cardinality.includes("N") ? " UNIQUE" : "";
 
-                    // 1. MAPA DE IDENTIDAD PARA MULTIVALUADOS
-                    // Guardaremos aquí las columnas reales que identifican a la entidad débil
-                    const weakEntityFullIdentity: { node: GNode, tableName: string, colName: string }[] = [];
+		identityMapping.forEach(col => {
+			foreignColumns.push(`    ${col.localName} ${col.type} ${nullability}${uniqueConstraint}`);
+		});
 
-                    // 2. PROCESAR PKs DEL PADRE (Se convierten en FKs y parte de la PK del hijo)
-                    const sideNormalPK = AttributeTransformer.transformPKs(sideNormal.entity, root);
-                    sideNormalPK.forEach(pk => {
-                        const { name, type } = SQLUtils.getNameAndType(pk);
-                        const localColName = `${relation.name}_${name}`; // Nombre prefijado: Consta_Cod_comunidad
+		// 4. GENERAR LA FOREIGN KEY UNIFICADA
+		if (identityMapping.length > 0) {
+			const localCols = identityMapping.map(m => m.localName).join(', ');
+			const refCols = identityMapping.map(m => m.refName).join(', ');
+			const cascade = (relation.type === EXISTENCE_DEP_RELATION_TYPE || sourceEntity.type === WEAK_ENTITY_TYPE)
+				? " ON DELETE CASCADE" : "";
 
-                        foreignColumns.push(`    ${localColName} ${type} NOT NULL`);
-                        pks.push(localColName); // Se añade a la PK de la tabla actual
-                        
-                        foreignKeys.push(`    FOREIGN KEY (${localColName}) REFERENCES ${sourceName}(${name}) ON DELETE CASCADE`);
+			foreignKeys.push(`    FOREIGN KEY (${localCols}) REFERENCES ${sourceName}(${refCols})${cascade}`);
+		}
 
-                        // Guardamos para los multivaluados: este valor apunta a la tabla del hijo (entity.name)
-                        weakEntityFullIdentity.push({ 
-                            node: pk, 
-                            tableName: entity.name, 
-                            colName: localColName 
-                        });
-                    });
+		// 5. PROCESAR ATRIBUTOS DEL ROMBO Y MULTIVALUADOS
+		this.collectAndProcessRelationAttributes(relation, relationAttributes, relationRestrictions);
+		relationMultivalued.push(...AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root));
+	}
 
-                    // 3. IDENTIFICAR DISCRIMINADORES DE LA ENTIDAD DÉBIL
-                    AttributeTransformer.transformSimple(entity.node, root).forEach(simple => {
-                        const { name } = SQLUtils.getNameAndType(simple);
-                        if (name.includes("_disc")) {
-                            // El discriminador NO se prefija porque es propio de la entidad débil
-                            pks.push(name); 
-                            
-                            // Guardamos para los multivaluados
-                            weakEntityFullIdentity.push({ 
-                                node: simple, 
-                                tableName: entity.name, 
-                                colName: name 
-                            });
-                        }
-                    });
+	/**
+	 * Procesa dependencias en identificacion para entidades débiles.
+	 * @param cardinality El tipo de cardinalidad a filtrar (ej. "1:N").
+	 * @param entity La entidad débil que está siendo procesada.
+	 * @param relationNodes Mapa de relaciones del modelo.
+	 * @param foreignColumns Columnas que se añaden a la tabla (serán parte de la PK).
+	 * @param pks Array que rastrea qué nombres de columnas forman la clave primaria de la tabla actual.
+	 * @param relationAttributes Atributos que el rombo de la relación aporta a la tabla.
+	 * @param relationRestrictions Restricciones adicionales del rombo.
+	 * @param foreignKeys Restricciones FOREIGN KEY con ON DELETE CASCADE.
+	 * @param relationMultivalued SQL para atributos multivaluados de la relación identificativa.
+	 * @param root Modelo raíz para contexto.
+	 */
+	static processIdentifyingDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], pks: string[], relationAttributes: string[], relationRestrictions: string[], foreignKeys: string[], relationMultivalued: string[], root: GModelElement): Set<string> {
+		const dependencies = new Set<string>();
 
-                    // 4. PROCESAR ATRIBUTOS DEL ROMBO
-                    // (Tu lógica de conversión de PK a UNIQUE es correcta)
-                    const { columnPKs: relPkCols, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
-                    const { columns: relUniqueCols, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
-                    const relSimple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
-                    const relOptional = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
+		for (const relation of relationNodes.values()) {
+			const isIdentifying = relation.cardinality.includes(cardinality) && relation.type === IDENTIFYING_DEP_RELATION_TYPE;
 
-                    const cleanedRelPkCols = relPkCols.map(col => col.replace(" PRIMARY KEY", " UNIQUE"));
-                    const cleanedRelPkRest = relPkRest.map(rel => rel.replace("PRIMARY KEY", "UNIQUE"));
+			if (isIdentifying) {
+				// const { sideNormal, sideWeak } = this.getSidesNormalAndWeak(relation);
 
-                    relationAttributes.push(...cleanedRelPkCols, ...relUniqueCols, ...relSimple, ...relOptional);
-                    if (cleanedRelPkRest) relationRestrictions.push(...cleanedRelPkRest);
-                    if (relUniqueRest) relationRestrictions.push(...relUniqueRest);
+				const sideWeak = relation.connectedEntities.find(ce => ce.cardinalityText.toUpperCase().includes("N"));
+				const sideNormal = relation.connectedEntities.find(ce => ce !== sideWeak);										// El padre es simplemente el OTRO lado (el que tiene cardinalidad 1)
 
-                    // 5. CONFIGURAR MULTIVALUADOS DEL ROMBO
-                    // Los multivaluados de una relación identificativa deben apuntar a la PK compuesta del hijo
-                    relation.attributes.multiValued.forEach(mv => {
-                        mv.parentPKs = weakEntityFullIdentity; // Le pasamos el mapa completo de (Padre_PK + Discriminadores)
-                        mv.parentName = entity.name;
-                    });
+				if (sideWeak && sideNormal && sideWeak.entity.id === entity.node.id) {
+					const sourceName = SQLUtils.cleanNames(sideNormal.entity);
+					dependencies.add(sourceName);
 
-                    // Generar los SQL de las tablas multivaluadas
-                    const mvTables = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root);
-                    relationMultivalued.push(...mvTables);
-                }
-            }
-        }
-        return dependencies;
-    }
+					// 1. MAPA DE IDENTIDAD PARA MULTIVALUADOS
+					// Guardaremos aquí las columnas reales que identifican a la entidad débil
+					const weakEntityFullIdentity: { node: GNode, tableName: string, colName: string }[] = [];
 
-    /**
-     * Helper para identificar los lados Normal (Fuerte) y Débil de una relación.
-     */
-    private static getSidesNormalAndWeak(relation: Relation) {
-        if (relation.isReflexive) {
-            return { sideNormal: relation.connectedEntities[0], sideWeak: relation.connectedEntities[1] };
-        }
-        return {
-            sideNormal: relation.connectedEntities.find((ce: any) => ce.entity.type === ENTITY_TYPE),
-            sideWeak: relation.connectedEntities.find((ce: any) => ce.entity.type === WEAK_ENTITY_TYPE)
-        };
-    }
+					// 2. PROCESAR PKs DEL PADRE (Se convierten en FKs y parte de la PK del hijo)
+					// const sideNormalPK = AttributeTransformer.transformPKs(sideNormal.entity, root);
 
-    /**
-     * Procesa atributos de una relación (PKs, Uniques, Simples) y los prepara para ser insertados en una tabla.
-     */
-    private static collectAndProcessRelationAttributes(relation: any, attrList: string[], restList: string[]) {
-        const simple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
-        const optional = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
-        const { columns: uniques, restriction: uniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
-        
-        // Las PKs de una relación absorbida se convierten en restricciones UNIQUE
-        const { columnPKs: pks, restriction: pkRest } = AttributeTransformer.processPK(relation.attributes.pk);
-        const cleanedPks = pks.map(col => col.replace(" PRIMARY KEY", " UNIQUE"));
-        const cleanedPkRest = pkRest.map(rel => rel.replace("PRIMARY KEY", "UNIQUE"));
+					// Si el padre es también una entidad débil, necesitamos TODA su identidad (Abuelo + Padre)
+					let sideNormalPKs: GNode[] = [];
+					if (sideNormal.entity.type === WEAK_ENTITY_TYPE) {
+						// Obtenemos las PKs que el padre heredó de su propio padre (el abuelo)
+						const { pks: inheritedFromGrandfather } = EntitiesTransformer.getFatherPKsFromWeakEntity(sideNormal.entity, root);
+						sideNormalPKs = [...inheritedFromGrandfather];
 
-        attrList.push(...cleanedPks, ...uniques, ...simple, ...optional);
-        restList.push(...cleanedPkRest, ...uniqueRest);
-    }
+						// Añadimos los discriminadores propios del padre
+						AttributeTransformer.transformSimple(sideNormal.entity, root).forEach(attr => {
+							if (SQLUtils.getNameAndType(attr).name.includes("_disc")) {
+								sideNormalPKs.push(attr);
+							}
+						});
+					} else {
+						// Si el padre es fuerte, solo sus PKs normales
+						sideNormalPKs = AttributeTransformer.transformPKs(sideNormal.entity, root);
+					}
+
+					sideNormalPKs.forEach(pk => {
+						const { name, type } = SQLUtils.getNameAndType(pk);
+						const localColName = `${relation.name}_${name}`;
+
+						foreignColumns.push(`    ${localColName} ${type} NOT NULL`);
+						pks.push(localColName); // Se añade a la PK de la tabla actual
+
+						foreignKeys.push(`    FOREIGN KEY (${localColName}) REFERENCES ${sourceName}(${name}) ON DELETE CASCADE`);
+
+						// Guardamos para los multivaluados: este valor apunta a la tabla del hijo (entity.name)
+						weakEntityFullIdentity.push({
+							node: pk,
+							tableName: entity.name,
+							colName: localColName
+						});
+					});
+
+					// 3. IDENTIFICAR DISCRIMINADORES DE LA ENTIDAD DÉBIL
+					AttributeTransformer.transformSimple(entity.node, root).forEach(simple => {
+						const { name } = SQLUtils.getNameAndType(simple);
+						if (name.includes("_disc")) {
+							// El discriminador NO se prefija porque es propio de la entidad débil
+							pks.push(name);
+
+							// Guardamos para los multivaluados
+							weakEntityFullIdentity.push({
+								node: simple,
+								tableName: entity.name,
+								colName: name
+							});
+						}
+					});
+
+					// 4. PROCESAR ATRIBUTOS DEL ROMBO
+					// (Tu lógica de conversión de PK a UNIQUE es correcta)
+					const { columnPKs: relPkCols, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
+					const { columns: relUniqueCols, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
+					const relSimple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
+					const relOptional = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
+
+					const cleanedRelPkCols = relPkCols.map(col => col.replace(" PRIMARY KEY", " UNIQUE"));
+					const cleanedRelPkRest = relPkRest.map(rel => rel.replace("PRIMARY KEY", "UNIQUE"));
+
+					relationAttributes.push(...cleanedRelPkCols, ...relUniqueCols, ...relSimple, ...relOptional);
+					if (cleanedRelPkRest) relationRestrictions.push(...cleanedRelPkRest);
+					if (relUniqueRest) relationRestrictions.push(...relUniqueRest);
+
+					// 5. CONFIGURAR MULTIVALUADOS DEL ROMBO
+					// Los multivaluados de una relación identificativa deben apuntar a la PK compuesta del hijo
+					relation.attributes.multiValued.forEach(mv => {
+						mv.parentPKs = weakEntityFullIdentity; // Le pasamos el mapa completo de (Padre_PK + Discriminadores)
+						mv.parentName = entity.name;
+					});
+
+					// Generar los SQL de las tablas multivaluadas
+					const mvTables = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root);
+					relationMultivalued.push(...mvTables);
+				}
+			}
+		}
+		return dependencies;
+	}
+
+	/**
+	 * Helper para identificar los lados Normal (Fuerte) y Débil de una relación.
+	 */
+	private static getSidesNormalAndWeak(relation: Relation) {
+		if (relation.isReflexive) {
+			return { sideNormal: relation.connectedEntities[0], sideWeak: relation.connectedEntities[1] };
+		}
+		return {
+			sideNormal: relation.connectedEntities.find((ce: any) => ce.entity.type === ENTITY_TYPE),
+			sideWeak: relation.connectedEntities.find((ce: any) => ce.entity.type === WEAK_ENTITY_TYPE)
+		};
+	}
+
+	/**
+	 * Procesa atributos de una relación (PKs, Uniques, Simples) y los prepara para ser insertados en una tabla.
+	 */
+	private static collectAndProcessRelationAttributes(relation: any, attrList: string[], restList: string[]) {
+		const simple = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
+		const optional = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
+		const { columns: uniques, restriction: uniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
+
+		// Las PKs de una relación absorbida se convierten en restricciones UNIQUE
+		const { columnPKs: pks, restriction: pkRest } = AttributeTransformer.processPK(relation.attributes.pk);
+		const cleanedPks = pks.map(col => col.replace(" PRIMARY KEY", " UNIQUE"));
+		const cleanedPkRest = pkRest.map(rel => rel.replace("PRIMARY KEY", "UNIQUE"));
+
+		attrList.push(...cleanedPks, ...uniques, ...simple, ...optional);
+		restList.push(...cleanedPkRest, ...uniqueRest);
+	}
 
 }

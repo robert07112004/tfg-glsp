@@ -1,4 +1,5 @@
 import { GEdge, GModelElement, GNode } from "@eclipse-glsp/server";
+import { PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE, TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE, WEAK_ENTITY_TYPE } from "../validation/utils/validation-constants";
 import { AttributeTransformer } from "./sql-attribute-transformer";
 import { EntitiesTransformer } from "./sql-entities-transformer";
 import { Entity, SpecializationNodes } from "./sql-interfaces";
@@ -11,7 +12,7 @@ export class SpecializationsTransformer {
 
         for (const spec of specializationNodes.values()) {
             const asChild = spec.children.find(child => child.node.id === entity.node.id);
-            
+
             if (asChild) {
                 const fatherNode = spec.father.node;
                 const fatherName = spec.father.name;
@@ -21,14 +22,16 @@ export class SpecializationsTransformer {
                 const identityMapping: { childCol: string, fatherCol: string, type: string }[] = [];
 
                 // 1. OBTENER LAS COLUMNAS QUE FORMAN LA IDENTIDAD DEL PADRE
-                if (fatherNode.type === "WEAK_ENTITY") {
+                if (fatherNode.type === WEAK_ENTITY_TYPE) {
                     // Si el padre es débil, su identidad es: (Relacion_PK_Abuelo + Discriminadores)
                     const { name: identifyingRelName, pks: grandfatherPKs } = EntitiesTransformer.getFatherPKsFromWeakEntity(fatherNode, root);
-                    
+
+                    console.log(grandfatherPKs.length);
+
                     // A) Parte heredada del abuelo (Ej: Consta_Cod_comunidad)
                     grandfatherPKs.forEach(gp => {
                         const { name, type } = SQLUtils.getNameAndType(gp);
-                        const realFatherCol = `${identifyingRelName}_${name}`; 
+                        const realFatherCol = `${identifyingRelName}_${name}`;
                         identityMapping.push({ childCol: name, fatherCol: realFatherCol, type });
                     });
 
@@ -57,7 +60,8 @@ export class SpecializationsTransformer {
 
                 // 3. GENERAR EL DISCRIMINADOR DE LA HERENCIA (tipo_Entidad o es_Entidad)
                 const discriminatorCol = `tipo_${entity.name}`;
-                if (spec.type.includes("EXCLUSIVE")) {
+                if (spec.type === TOTAL_EXCLUSIVE_SPECIALIZATION_TYPE || PARTIAL_EXCLUSIVE_SPECIALIZATION_TYPE) {
+                    // Exclusive
                     foreignColumns.push(`    ${discriminatorCol} VARCHAR(100) DEFAULT '${entity.name}' NOT NULL`);
                     specializationRestrictions.push(`    CHECK (${discriminatorCol} = '${entity.name}')`);
                 } else {
@@ -70,7 +74,7 @@ export class SpecializationsTransformer {
                 // Debe apuntar exactamente a las columnas del padre y al discriminador del padre
                 const childCols = [...identityMapping.map(m => m.childCol), discriminatorCol].join(", ");
                 const fatherCols = [...identityMapping.map(m => m.fatherCol), `tipo_${fatherName}`].join(", ");
-                
+
                 foreignKeys.push(`    FOREIGN KEY (${childCols}) REFERENCES ${fatherName}(${fatherCols}) ON DELETE CASCADE`);
             }
         }
@@ -83,7 +87,7 @@ export class SpecializationsTransformer {
         if (!fatherNode) {
             throw new Error(`Diagram Error: Father node not found for edge ${findInputEdge.id}.`);
         }
-        return { 
+        return {
             name: SQLUtils.cleanNames(fatherNode),
             node: fatherNode,
             type: fatherNode.type,

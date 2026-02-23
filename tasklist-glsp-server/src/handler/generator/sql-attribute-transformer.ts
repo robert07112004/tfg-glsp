@@ -19,12 +19,12 @@ export class AttributeTransformer {
         let restriction: string[] = [];
 
         if (pks.length === 1) {
-            const {name, type} = SQLUtils.getNameAndType(pks[0]);
+            const { name, type } = SQLUtils.getNameAndType(pks[0]);
             columnPKs = [`    ${name} ${type} NOT NULL PRIMARY KEY`];
         } else if (pks.length > 1) {
             const names: string[] = []
             for (const pk of pks) {
-                const {name, type} = SQLUtils.getNameAndType(pk);
+                const { name, type } = SQLUtils.getNameAndType(pk);
                 columnPKs.push(`    ${name} ${type} NOT NULL`);
                 names.push(name);
             }
@@ -46,7 +46,7 @@ export class AttributeTransformer {
         let restriction: string[] = [];
         for (const unique of uniques) {
             if (unique.nodes.length === 1) {
-                const {name, type} = SQLUtils.getNameAndType(unique.nodes[0]);
+                const { name, type } = SQLUtils.getNameAndType(unique.nodes[0]);
                 const nullability = unique.isNullable ? "NULL" : "NOT NULL";
                 columns.push(`    ${name} ${type} ${nullability} UNIQUE`);
             } else if (unique.nodes.length > 1) {
@@ -71,7 +71,7 @@ export class AttributeTransformer {
     static processSimpleAttributes(attributes: GNode[]): string[] {
         let columns: string[] = [];
         for (const attribute of attributes) {
-            const {name, type} = SQLUtils.getNameAndType(attribute);
+            const { name, type } = SQLUtils.getNameAndType(attribute);
             columns.push(`    ${name} ${type} NOT NULL`);
         }
         return columns;
@@ -85,7 +85,7 @@ export class AttributeTransformer {
     static processOptionalAttributes(optionalAttributes: GNode[]): string[] {
         let columns: string[] = [];
         for (const optionalAttribute of optionalAttributes) {
-            const {name, type} = SQLUtils.getNameAndType(optionalAttribute);
+            const { name, type } = SQLUtils.getNameAndType(optionalAttribute);
             columns.push(`    ${name} ${type} NULL`);
         }
         return columns;
@@ -98,7 +98,7 @@ export class AttributeTransformer {
     static processMultivaluedAttributes(multivaluedAttributes: Multivalued[], parentNode: GNode, root: GModelElement): string[] {
         let resultString: string[] = [];
         if (!multivaluedAttributes) return [];
-        
+
         // Recorremos todos los objetos Multivalued
         for (const multivalued of multivaluedAttributes) {
             let tableLines: string[] = [];
@@ -109,7 +109,7 @@ export class AttributeTransformer {
 
             // Recorremos todas las PKs del padre del multivaluado
             multivalued.parentPKs.forEach(pkData => {
-                const {name: _, type: type} = SQLUtils.getNameAndType(pkData.node);
+                const { name: _, type: type } = SQLUtils.getNameAndType(pkData.node);
                 tableLines.push(`    ${pkData.colName} ${type} NOT NULL`);              // Guardamos como columnas
                 pks.push(pkData.colName);                                               // Guardamos como PKs compuesta con selfNode
                 onlyParentFKs.push(pkData.colName);                                     // Guardamos como FKs
@@ -134,7 +134,7 @@ export class AttributeTransformer {
                 // Si es N:M reflexiva hay que quitar los sufijos _1, _2
                 multivalued.parentPKs.forEach(pkData => {
                     let newColName = pkData.colName;
-                    if (pkData.colName[pkData.colName.length - 1].includes("1") || pkData.colName[pkData.colName.length - 1].includes("2")) newColName = pkData.colName.slice(0, -2); 
+                    if (pkData.colName[pkData.colName.length - 1].includes("1") || pkData.colName[pkData.colName.length - 1].includes("2")) newColName = pkData.colName.slice(0, -2);
                     tableLines.push(`    FOREIGN KEY (${pkData.colName}) REFERENCES ${pkData.tableName}(${newColName}) ON DELETE CASCADE`);
                 });
             } else {
@@ -146,10 +146,10 @@ export class AttributeTransformer {
 
             sql += tableLines.join(",\n");
             sql += "\n);\n\n";
-            
+
             resultString.push(sql);
         }
-        
+
         return resultString;
     }
 
@@ -170,18 +170,18 @@ export class AttributeTransformer {
         });
 
         const simple = this.transformSimple(entity, root)
-                           .filter(n => !processedIds.has(n.id));
+            .filter(n => !processedIds.has(n.id));
         simple.forEach(n => processedIds.add(n.id));
 
         const optional = this.transformOptionals(entity, root)
-                             .filter(n => !processedIds.has(n.id));
+            .filter(n => !processedIds.has(n.id));
 
-        return { 
-            pk, 
-            unique, 
-            simple, 
-            optional, 
-            multiValued: this.transformMultivalued(entity, root) 
+        return {
+            pk,
+            unique,
+            simple,
+            optional,
+            multiValued: this.transformMultivalued(entity, root)
         };
     }
 
@@ -215,17 +215,17 @@ export class AttributeTransformer {
      */
     static transformUnique(entity: GNode, root: GModelElement): { isNullable: boolean, nodes: GNode[] }[] {
         const uniques: { isNullable: boolean, nodes: GNode[] }[] = [];
-        const edges = root.children.filter(child => child instanceof GEdge && 
-                                          (child.type === DEFAULT_EDGE_TYPE || child.type === OPTIONAL_EDGE_TYPE) && 
-                                           child.sourceId === entity.id) as GEdge[];
+        const edges = root.children.filter(child => child instanceof GEdge &&
+            (child.type === DEFAULT_EDGE_TYPE || child.type === OPTIONAL_EDGE_TYPE) &&
+            child.sourceId === entity.id) as GEdge[];
         for (const edge of edges) {
             const node = SQLUtils.findById(edge.targetId, root) as GNode;
             if (node.type === ALTERNATIVE_KEY_ATTRIBUTE_TYPE) {
                 const compositeUniques: GNode[] = [];
                 const isOptional: boolean = edge.type === OPTIONAL_EDGE_TYPE;
-                const compositeUniquesEdges: GEdge[] = root.children.filter(child => child instanceof GEdge && 
-                                                                           (child.type === DEFAULT_EDGE_TYPE || child.type === OPTIONAL_EDGE_TYPE) && 
-                                                                            child.sourceId === node.id) as GEdge[];
+                const compositeUniquesEdges: GEdge[] = root.children.filter(child => child instanceof GEdge &&
+                    (child.type === DEFAULT_EDGE_TYPE || child.type === OPTIONAL_EDGE_TYPE) &&
+                    child.sourceId === node.id) as GEdge[];
                 if (compositeUniquesEdges.length !== 0) {
                     for (const compositeUniqueEdge of compositeUniquesEdges) {
                         const nodeComposite: GNode = SQLUtils.findById(compositeUniqueEdge.targetId, root) as GNode;
@@ -260,7 +260,7 @@ export class AttributeTransformer {
                         attributes.push(compositeAttribute);
                     }
                 } else attributes.push(node);
-            } 
+            }
         }
         return attributes;
     }
@@ -312,13 +312,14 @@ export class AttributeTransformer {
 
         // Si el nodo es una entidad hay que encontrar sus PKs y guardarlas en el objeto
         if (node.type === ENTITY_TYPE) parentPKs = AttributeTransformer.transformPKs(node, root)
-                                                                       .map(pk => (
-                                                                                { node: pk, 
-                                                                                  tableName: SQLUtils.cleanNames(node), 
-                                                                                  colName: SQLUtils.getNameAndType(pk).name 
-                                                                                }
-                                                                       ));
-        
+            .map(pk => (
+                {
+                    node: pk,
+                    tableName: SQLUtils.cleanNames(node),
+                    colName: SQLUtils.getNameAndType(pk).name
+                }
+            ));
+
         // Si el nodo es un tipo de relacion, entonces sacamos la cardinalidad de la relacion y dependiendo del tipo se hace algo
         else if (node.type === RELATION_TYPE || node.type === EXISTENCE_DEP_RELATION_TYPE || node.type === IDENTIFYING_DEP_RELATION_TYPE) {
             const cardinality = SQLUtils.getCardinality(node);
@@ -330,13 +331,13 @@ export class AttributeTransformer {
                 // Tiene PKs -> se mapean las pks para crear el objeto con el nodo, tableName, colName
                 if (relPKs.length > 0) {
                     parentPKs = relPKs.map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(node), colName: SQLUtils.getNameAndType(pk).name }));
-                } 
-                
+                }
+
                 // No tiene PKs -> se llega a las entidades conectadas y se sacan sus PKs, luego se van concatenando los objetos a parentPKs
                 else {
-                    const connectedEdges = root.children.filter(child => child instanceof GEdge && 
-                                                                child.type === WEIGHTED_EDGE_TYPE && 
-                                                                child.targetId === node.id) as GEdge[];
+                    const connectedEdges = root.children.filter(child => child instanceof GEdge &&
+                        child.type === WEIGHTED_EDGE_TYPE &&
+                        child.targetId === node.id) as GEdge[];
                     for (const edge of connectedEdges) {
                         const entity = SQLUtils.findById(edge.sourceId, root) as GNode;
                         if (entity && entity.type === ENTITY_TYPE) {
@@ -346,21 +347,21 @@ export class AttributeTransformer {
                     }
                 }
 
-            // 1:N -> se guarda la weighted-edge del rombo que contiene la "..N" y se encuentra la entidad. Posteriormente, se sacan sus PKs
+                // 1:N -> se guarda la weighted-edge del rombo que contiene la "..N" y se encuentra la entidad. Posteriormente, se sacan sus PKs
             } else if (cardinality.includes("1:N")) {
                 const edgeN = root.children.find(child => child instanceof GEdge && child.targetId === node.id && SQLUtils.getCardinality(child).includes("N")) as GEdge;
                 const entity = SQLUtils.findById(edgeN.sourceId, root) as GNode;
-                parentPKs = AttributeTransformer.transformPKs(entity, root).map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(entity), colName: SQLUtils.getNameAndType(pk).name} ));
-            
-            // 1:1 -> se guardan las weighted-edge conectadas al rombo
+                parentPKs = AttributeTransformer.transformPKs(entity, root).map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(entity), colName: SQLUtils.getNameAndType(pk).name }));
+
+                // 1:1 -> se guardan las weighted-edge conectadas al rombo
             } else if (cardinality.includes("1:1")) {
-                const connectedEdges: GEdge[] = root.children.filter(child => child instanceof GEdge && 
-                                                                     child.type === WEIGHTED_EDGE_TYPE && 
-                                                                     child.targetId === node.id) as GEdge[];
+                const connectedEdges: GEdge[] = root.children.filter(child => child instanceof GEdge &&
+                    child.type === WEIGHTED_EDGE_TYPE &&
+                    child.targetId === node.id) as GEdge[];
                 if (connectedEdges.length === 2) {
                     const leftEdge = connectedEdges[0];
                     const rightEdge = connectedEdges[1];
-                    
+
                     // Se guardan las entidades de cada arista
                     const leftEntity = SQLUtils.findById(leftEdge.sourceId, root) as GNode;
                     const rightEntity = SQLUtils.findById(rightEdge.sourceId, root) as GNode;
@@ -386,7 +387,7 @@ export class AttributeTransformer {
         // Buscamos el atributo multivaluado conectado a la entidad y miramos tambien si es compuesto
         // Finalmente, se crea el objeto Multivalued
         for (const edge of edges) {
-            const mvNode = SQLUtils.findById(edge.targetId, root) as GNode;    
+            const mvNode = SQLUtils.findById(edge.targetId, root) as GNode;
             if (mvNode && mvNode.type === MULTI_VALUED_ATTRIBUTE_TYPE) {
                 const selfNodes = this.getCompositeNodes(mvNode, root);
                 multivalued.push({

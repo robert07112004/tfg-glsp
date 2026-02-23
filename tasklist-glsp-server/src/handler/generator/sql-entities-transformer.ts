@@ -18,7 +18,7 @@ export class EntitiesTransformer {
      */
     static processEntity(entity: Entity, relationNodes: RelationNodes, specializationNodes: SpecializationNodes, root: GModelElement): GeneratedTable {
         const dependencies = new Set<string>();
-        
+
         // Procesar Atributos base de la entidad
         const { columnPKs, restriction: restrictionPks } = AttributeTransformer.processPK(entity.attributes.pk);
         const { columns: uniqueColumns, restriction: restrictionUnique } = AttributeTransformer.processUnique(entity.attributes.unique);
@@ -44,15 +44,13 @@ export class EntitiesTransformer {
         const isSubclass = absorbed.inheritedPKNames.length > 0;
 
         if (isSubclass) {                                       // CASO A: La entidad es una SUBCLASE (Hija en una especialización)
-            tableBody = this.buildSubclassTableBody(
-                absorbed, uniqueColumns, simpleAttributes, optionalAttributes, restrictionUnique
-            );
+            tableBody = this.buildSubclassTableBody(absorbed, uniqueColumns, simpleAttributes, optionalAttributes, restrictionUnique);
         } else {                                                // CASO B: La entidad es BASE (Puede ser padre o estar sola)
             // Si la entidad es padre en una jerarquía, añadimos discriminadores (Enums/Booleans)
             this.handleFatherSpecializationLogic(entity, specializationNodes, simpleAttributes, restrictionUnique, absorbed, root);
 
             tableBody = this.buildBaseTableBody(
-                columnPKs, uniqueColumns, simpleAttributes, optionalAttributes, 
+                columnPKs, uniqueColumns, simpleAttributes, optionalAttributes,
                 restrictionPks, restrictionUnique, absorbed
             );
         }
@@ -76,8 +74,8 @@ export class EntitiesTransformer {
     /**
      * Ejecuta los transformadores de relaciones y especializaciones para recolectar columnas y dependencias.
      */
-    private static processStructuralDependencies(entity: Entity, relationNodes: RelationNodes, specializationNodes: SpecializationNodes, 
-                                                 abs: any, deps: Set<string>, root: GModelElement
+    private static processStructuralDependencies(entity: Entity, relationNodes: RelationNodes, specializationNodes: SpecializationNodes,
+        abs: any, deps: Set<string>, root: GModelElement
     ) {
         const d1 = RelationsTransformer.processIdentifyingDependenceRelation("1:N", entity, relationNodes, abs.foreignColumns, abs.pks, abs.relationAttributes, abs.relationRestrictions, abs.foreignKeys, abs.relationMultivalued, root);
         const d2 = RelationsTransformer.processExistenceDependenceRelation("1:N", entity, relationNodes, abs.foreignColumns, abs.foreignKeys, abs.relationAttributes, abs.relationRestrictions, abs.relationMultivalued, root);
@@ -105,7 +103,7 @@ export class EntitiesTransformer {
      * Si la entidad es padre en una especialización, genera las columnas discriminadoras.
      */
     private static handleFatherSpecializationLogic(
-        entity: Entity, specializationNodes: SpecializationNodes, 
+        entity: Entity, specializationNodes: SpecializationNodes,
         simpleAttributes: string[], restrictionUnique: string[], abs: any, root: GModelElement
     ) {
         // Buscamos si esta entidad es padre de alguna especialización
@@ -114,7 +112,7 @@ export class EntitiesTransformer {
 
         const specNode = spec.node;
         const identified = abs.pks.length > 0;
-        
+
         // Obtenemos nombres de PKs para las restricciones UNIQUE compuestas
         const pkNames = identified ? abs.pks : AttributeTransformer.transformPKs(entity.node, root).map(pk => SQLUtils.getNameAndType(pk).name);
         const enumValues = SpecializationsTransformer.getEnum(specNode, root);
@@ -156,8 +154,13 @@ export class EntitiesTransformer {
         ];
     }
 
-    static getFatherPKsFromWeakEntity(entity: GNode, root: GModelElement): { name: string, pks: GNode[]} {
+    static getFatherPKsFromWeakEntity(entity: GNode, root: GModelElement): { name: string, pks: GNode[] } {
         let fatherPKs: GNode[] = [];
+
+        const hasPK = AttributeTransformer.transformPKs(entity, root) as GNode[];
+        if (hasPK.length > 0) {
+            return { name: SQLUtils.cleanNames(entity), pks: hasPK };
+        }
 
         // Buscamos la ARISTA que conecta nuestra entidad débil con la relación identificativa
         const edgesFromWeak = root.children.filter(child => child instanceof GEdge && child.type === WEIGHTED_EDGE_TYPE && child.sourceId === entity.id) as GEdge[];
@@ -176,10 +179,10 @@ export class EntitiesTransformer {
             relationNodeName = SQLUtils.cleanNames(relationNode);
 
             // Buscamos la OTRA arista que llega a esa misma relación desde la entidad fuerte
-            const strongEdge = root.children.find(child => 
-                child instanceof GEdge && 
-                child.type === WEIGHTED_EDGE_TYPE && 
-                child.targetId === relationId && 
+            const strongEdge = root.children.find(child =>
+                child instanceof GEdge &&
+                child.type === WEIGHTED_EDGE_TYPE &&
+                child.targetId === relationId &&
                 child.sourceId !== entity.id // Importante: que no sea la que ya tenemos
             ) as GEdge | undefined;
 
@@ -193,7 +196,7 @@ export class EntitiesTransformer {
             }
         }
 
-        return {name: relationNodeName, pks: fatherPKs};
+        return { name: relationNodeName, pks: fatherPKs };
     }
-    
+
 }
