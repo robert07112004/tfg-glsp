@@ -8,12 +8,151 @@ import { SQLUtils } from "./sql-utils";
 export class RelationsTransformer {
 
 	/**
-	 * Procesa una relación de muchos a muchos (N:M) para generar su tabla SQL correspondiente.
+	 * Procesa una relación de muchos a muchos incluyendo relaciones ternarias para generar su tabla SQL correspondiente.
 	 * @param relation Objeto con la información de la relación y sus atributos.
 	 * @param root El elemento raíz del modelo GModel.
 	 * @returns Un objeto GeneratedTable con el SQL y sus dependencias.
 	 */
+
 	static processRelationNM(relation: Relation, root: GModelElement): GeneratedTable {
+		const dependencies = new Set<string>();
+		const tableLines: string[] = [];
+		const pkColumns: string[] = [];
+		const fkConstraints: string[] = [];
+		const isReflexive = this.isReflexive(relation.node, root);
+		const colNameMapping: PKMapping[] = [];
+
+		// 1. Procesar atributos propios del rombo
+		const { columnPKs, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
+		const { columns: uniqueColumns, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
+		const simpleAttributes = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
+		const optionalAttributes = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
+
+		if (relation.attributes.pk.length > 0) {
+			relation.attributes.pk.forEach(pkNode => {
+				const { name } = SQLUtils.getNameAndType(pkNode);
+				colNameMapping.push({ node: pkNode, tableName: relation.name, colName: name });
+			});
+			tableLines.push(...columnPKs);
+		}
+
+		// Lógica para determinar qué entidades van a la PK (para ternarias)
+		//const manySides = relation.connectedEntities.filter(ce => ce.cardinalityText.includes("N"));
+		const isTernary = relation.connectedEntities.length === 3;
+
+		// 2. Procesar cada entidad conectada
+		relation.connectedEntities.forEach((conn, index) => {
+			const entityName = SQLUtils.cleanNames(conn.entity);
+			dependencies.add(entityName);
+
+			// --- OBTENER IDENTIDAD COMPLETA DE LA ENTIDAD ---
+			let identityNodes: GNode[] = [];
+			if (conn.entity.type === WEAK_ENTITY_TYPE) {
+				// Si es débil, su identidad es: PKs del padre + sus discriminadores
+				const weakInfo = EntitiesTransformer.getFatherPKsFromWeakEntity(conn.entity, root);
+				identityNodes = [...weakInfo.pks];
+				AttributeTransformer.transformSimple(conn.entity, root).forEach(s => {
+					if (SQLUtils.getNameAndType(s).name.includes("_disc")) identityNodes.push(s);
+				});
+			} else {
+				// Si es fuerte, solo sus PKs
+				identityNodes = AttributeTransformer.transformPKs(conn.entity, root);
+			}
+
+			// Listas para construir la FK agrupada de ESTA entidad
+			const localColsForThisEntity: string[] = [];
+			const refColsInTargetTable: string[] = [];
+
+			identityNodes.forEach(node => {
+				const { name, type } = SQLUtils.getNameAndType(node);
+
+				// Si es reflexiva usamos sufijos, si no, el nombre original
+				let colName = isReflexive ? `${name}_${index + 1}` : name;
+
+				// Evitar duplicados de nombres en la misma tabla de relación
+				if (tableLines.some(line => line.includes(`    ${colName} `))) {
+					colName = `${entityName}_${colName}`;
+				}
+
+				tableLines.push(`    ${colName} ${type} NOT NULL`);
+				localColsForThisEntity.push(colName);
+				refColsInTargetTable.push(name);
+
+				// Obtenemos la cardinalidad global calculada del rombo (ej: "N:M:P", "1:N:M")
+				const relCardinality = relation.cardinality;
+				// Obtenemos la cardinalidad de la arista actual (ej: "0..N", "1..1")
+				const edgeCardinality = conn.cardinalityText.toUpperCase();
+
+				if (relation.attributes.pk.length === 0) {
+					let inPK = false;
+
+					if (!isTernary) inPK = true; // En una relación binaria N:M, ambas entidades siempre forman la PK
+					else {
+						if (relCardinality === "N:M:P") {
+							// Si es N:M:P, todas las entidades (las 3) forman parte de la PK
+							if (edgeCardinality.includes("..N")) inPK = true;
+						}
+						else if (relCardinality === "1:N:M") {
+							// Si es 1:N:M, solo las dos entidades del lado "Muchos" van a la PK
+							if (edgeCardinality.includes("..N")) inPK = true;
+						}
+						else if (relCardinality === "1:1:N") {
+							// Si es 1:1:N, la teoría dice que la PK se forma con las dos entidades del lado "1"
+							if (edgeCardinality.includes("..1")) inPK = true;
+						}
+						else if (relCardinality === "1:1:1") {
+							// Caso teórico 1:1:1: Cualquier combinación de dos entidades sirve como PK. (tomamos las dos primeras que procesamos)
+							if (index < 2) inPK = true;
+						}
+					}
+
+					if (inPK) {
+						pkColumns.push(colName);
+						colNameMapping.push({ node, tableName: entityName, colName: colName });
+					}
+				}
+			});
+
+			// --- GENERAR LA FOREIGN KEY AGRUPADA (Para esta entidad) ---
+			// Ejemplo: FOREIGN KEY (id_aula, num_puesto) REFERENCES Ordenador(id_aula, num_puesto)
+			const fkLine = `    FOREIGN KEY (${localColsForThisEntity.join(", ")}) REFERENCES ${entityName}(${refColsInTargetTable.join(", ")})`;
+			fkConstraints.push(fkLine);
+		});
+
+		// 3. Finalizar cuerpo de la tabla
+		tableLines.push(...uniqueColumns, ...simpleAttributes, ...optionalAttributes);
+
+		if (relation.attributes.pk.length === 0 && pkColumns.length > 0) {
+			tableLines.push(`    PRIMARY KEY (${pkColumns.join(', ')})`);
+		} else if (relPkRest.length > 0) {
+			tableLines.push(...relPkRest);
+		}
+
+		if (relUniqueRest.length > 0) tableLines.push(...relUniqueRest);
+
+		// Añadir las FKs al final
+		tableLines.push(...fkConstraints);
+
+		let sql = `CREATE TABLE ${relation.name} (\n${tableLines.join(",\n")}\n);\n\n`;
+
+		// 4. Multivaluados
+		let multivaluedSql: string[] = [];
+		if (relation.attributes.multiValued.length > 0) {
+			relation.attributes.multiValued.forEach(mv => {
+				mv.parentPKs = colNameMapping;
+				mv.parentName = relation.name;
+			});
+			multivaluedSql = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root);
+		}
+
+		return {
+			name: relation.name,
+			sql: sql + multivaluedSql.join("\n"),
+			dependencies: Array.from(dependencies)
+		};
+	}
+
+	/*static processRelationNM(relation: Relation, root: GModelElement): GeneratedTable {
 		const dependencies = new Set<string>();
 		const tableLines: string[] = [];
 		const pkColumns: string[] = [];
@@ -38,12 +177,57 @@ export class RelationsTransformer {
 			tableLines.push(...columnPKs);
 		}
 
+		const isBinary = relation.connectedEntities.length === 2;
+		const weakEntityPks: GNode[] = [];
+		let fatherWeakEntityName = "";
+
 		// Procesar entidades conectadas para obtener las FKs (y PKs si la relación no tiene una propia)
 		relation.connectedEntities.forEach((conn, index) => {
 			const entityName = SQLUtils.cleanNames(conn.entity);
-			const entityPkNodes = AttributeTransformer.transformPKs(conn.entity, root);
-			dependencies.add(entityName);                               // Añadimos el nombre de la entidad al set de dependencias
+			dependencies.add(entityName);
+			if (conn.entity.type === ENTITY_TYPE) {
+				const entityPkNodes = AttributeTransformer.transformPKs(conn.entity, root);
+				entityPkNodes.forEach(pkNode => {
+					const { name, type } = SQLUtils.getNameAndType(pkNode);
+					const colName = isReflexive ? `${name}_${index + 1}` : name;        // Si es reflexiva, evitamos colisión de nombres (ej: id_1, id_2)
+					tableLines.push(`    ${colName} ${type} NOT NULL`);
+					fkColumns.push(this.generateFKLine(colName, entityName, name, relation.type));
+					if (isBinary) {
+						if (relation.attributes.pk.length === 0) {
+							pkColumns.push(colName);
+							colNameMapping.push({ node: pkNode, tableName: entityName, colName: colName });
+						}
+					}
+				});
+			} else {
+				const { name, pks } = EntitiesTransformer.getFatherPKsFromWeakEntity(conn.entity, root);
+				fatherWeakEntityName = name;
+				weakEntityPks.push(...pks);
+				AttributeTransformer.transformSimple(conn.entity, root).forEach(sNode => {
+					const { name } = SQLUtils.getNameAndType(sNode);
+					if (name.includes("_disc")) weakEntityPks.push(sNode);
+				});
+			}
+		});
 
+		const weakEntityPksNames: string[] = [];
+		weakEntityPks.forEach(node => {
+			const { name, type } = SQLUtils.getNameAndType(node);
+			tableLines.push(`    ${name} ${type} NOT NULL`);
+			weakEntityPksNames.push(name);
+		});
+
+		fkColumns.push(this.generateFKLine(weakEntityPksNames.join(", "), fatherWeakEntityName, weakEntityPksNames.join(", "), RELATION_TYPE));
+
+		if (isBinary) {
+			if (relation.attributes.pk.length === 0) {
+				pkColumns.push(colName);
+				colNameMapping.push({ node: pkNode, tableName: entityName, colName: colName });
+			}
+		}
+
+		if (isBinary) {
+			let entityPkNodes: GNode[] = [];
 			entityPkNodes.forEach(pkNode => {
 				const { name, type } = SQLUtils.getNameAndType(pkNode);
 				const colName = isReflexive ? `${name}_${index + 1}` : name;        // Si es reflexiva, evitamos colisión de nombres (ej: id_1, id_2)
@@ -55,9 +239,20 @@ export class RelationsTransformer {
 					colNameMapping.push({ node: pkNode, tableName: entityName, colName: colName });
 				}
 
-				fkColumns.push(this.generateFKLine(colName, entityName, name, relation.type));              // Generar la restricción de Foreign Key
+				fkColumns.push(this.generateFKLine(colName, entityName, name, relation.type));
 			});
-		});
+		} else {
+			let weakEntityPkNodes: GNode[] = [];
+			weakEntityPkNodes.push(...EntitiesTransformer.getFatherPKsFromWeakEntity(conn.entity, root).pks);
+			AttributeTransformer.transformSimple(conn.entity, root).forEach(sNode => {
+				const { name } = SQLUtils.getNameAndType(sNode);
+				if (name.includes("_disc")) weakEntityPkNodes.push(sNode);
+			});
+			if (relation.cardinality.includes("N:M:P")) {
+
+			}
+
+		}
 
 		// Añadir atributos unique, simples y opcionales
 		tableLines.push(
@@ -102,7 +297,7 @@ export class RelationsTransformer {
 			fkLine += " ON DELETE CASCADE";                 // Si es una dependencia de existencia, añadimos el borrado en cascada
 		}
 		return fkLine;
-	}
+	}*/
 
 	static isReflexive(relation: GNode, root: GModelElement): boolean {
 		const uniqueEntities = new Set<string>();

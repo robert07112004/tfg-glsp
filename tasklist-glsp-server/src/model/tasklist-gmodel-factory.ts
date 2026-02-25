@@ -27,7 +27,7 @@ export class TaskListGModelFactory implements GModelFactory {
     createModel(): void {
         const taskList = this.modelState.sourceModel;
         this.modelState.index.indexTaskList(taskList);
-        
+
         const childNodes = [
             ...taskList.tasks.map(task => this.createTaskNode(task)),
             ...taskList.weakEntities.map(weakEntity => this.createWeakEntityNode(weakEntity)),
@@ -44,7 +44,7 @@ export class TaskListGModelFactory implements GModelFactory {
             ...taskList.keyAttributes.map(keyAttribute => this.createKeyAttributeNode(keyAttribute)),
             ...taskList.alternativeKeyAttributes.map(alternativeKeyAttribute => this.createAlternativeKeyAttributeNode(alternativeKeyAttribute))
         ];
-        
+
         const childEdges = [
             ...taskList.transitions.map(transition => this.createTransitionEdge(transition)),
             ...taskList.weightedEdges.map(weightedEdge => this.createWeightedEdge(weightedEdge)),
@@ -124,12 +124,12 @@ export class TaskListGModelFactory implements GModelFactory {
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'center')
-            .addLayoutOption('paddingTop', 15)      
-            .addLayoutOption('paddingBottom', 15)   
-            .addLayoutOption('paddingLeft', 20)  
+            .addLayoutOption('paddingTop', 15)
+            .addLayoutOption('paddingBottom', 15)
+            .addLayoutOption('paddingLeft', 20)
             .addLayoutOption('paddingRight', 20)
             .position(relation.position);
-        
+
         if (relation.size) {
             builder.addLayoutOptions({ prefWidth: relation.size.width, prefHeight: relation.size.height });
         } else {
@@ -161,12 +161,12 @@ export class TaskListGModelFactory implements GModelFactory {
                 .type('label:cardinality')
                 .addCssClass('cardinality-label')
                 .build())
-            
+
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'center')
             .position(existenceDependentRelation.position);
-        
+
         if (existenceDependentRelation.size) {
             builder.addLayoutOptions({ prefWidth: existenceDependentRelation.size.width, prefHeight: existenceDependentRelation.size.height });
         } else {
@@ -197,12 +197,12 @@ export class TaskListGModelFactory implements GModelFactory {
                 .type('label:cardinality')
                 .addCssClass('cardinality-label')
                 .build())
-            
+
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'center')
             .position(identifyingDependentRelation.position);
-        
+
         if (identifyingDependentRelation.size) {
             builder.addLayoutOptions({ prefWidth: identifyingDependentRelation.size.width, prefHeight: identifyingDependentRelation.size.height });
         } else {
@@ -233,7 +233,7 @@ export class TaskListGModelFactory implements GModelFactory {
             builder.addLayoutOptions({ prefWidth: partialExclusiveSpecialization.size.width, prefHeight: partialExclusiveSpecialization.size.height });
         }
 
-        return builder.build();   
+        return builder.build();
     }
 
     protected createTotalExclusiveSpecializationNode(totalExclusiveSpecialization: TotalExclusiveSpecialization): GNode {
@@ -309,29 +309,35 @@ export class TaskListGModelFactory implements GModelFactory {
         return builder.build();
     }
 
-    protected computeCardinality(allEdges: WeightedEdge[], relationId: string): string {
-        const allConnectedEdges = allEdges.filter(
-            e => e.targetId === relationId || e.sourceId === relationId
-        );
-        const manyEdgesCount = allConnectedEdges.filter(
-            e => e.description.includes('..N')
-        ).length;
-        
-        if (manyEdgesCount >= 2) {
-            return 'N:M';
-        } else if (manyEdgesCount === 1) {
-            return '1:N';
-        } else if (allConnectedEdges.length > 0) {
-            return '1:1';
-        } else {
-            return '-';
+    private computeCardinality(allEdges: WeightedEdge[], relationId: string): string {
+        const allConnectedEdges = allEdges.filter(e => e.targetId === relationId);
+        const edgesWithoutCardinality = allConnectedEdges.every(e => e.description.includes('New Weighted Edge'));
+        const manyEdgesCount = allConnectedEdges.filter(e => e.description.includes('..N')).length;
+
+        if (edgesWithoutCardinality || allConnectedEdges.length < 2) return '-';     // edges sin cardinalidad
+
+        let cardinalityText = '';
+        if (allConnectedEdges.length === 2) {
+            switch (manyEdgesCount) {
+                case 2: cardinalityText = 'N:M'; break;
+                case 1: cardinalityText = '1:N'; break;
+                default: cardinalityText = '1:1'; break;
+            }
+        } else if (allConnectedEdges.length === 3) {
+            switch (manyEdgesCount) {
+                case 3: cardinalityText = 'N:M:P'; break;
+                case 2: cardinalityText = '1:N:M'; break;
+                case 1: cardinalityText = '1:1:N'; break;
+                default: cardinalityText = '1:1:1'; break;
+            }
         }
+        return cardinalityText;
     }
 
     protected createAttributeNode(attribute: Attribute): GNode {
         const builder = GNode.builder()
             .id(attribute.id)
-            .type('node:attribute') 
+            .type('node:attribute')
             .addCssClass('attribute-node')
             .add(GLabel.builder().text(attribute.name).id(`${attribute.id}_label`).build())
             .layout('vbox')
@@ -349,7 +355,7 @@ export class TaskListGModelFactory implements GModelFactory {
     protected createMultiValuedAttributeNode(multiValuedAttribute: MultiValuedAttribute): GNode {
         const builder = GNode.builder()
             .id(multiValuedAttribute.id)
-            .type('node:multiValuedAttribute') 
+            .type('node:multiValuedAttribute')
             .addCssClass('multi-valued-attribute-node')
             .add(GLabel.builder().text(multiValuedAttribute.name).id(`${multiValuedAttribute.id}_label`).build())
             .layout('vbox')
@@ -367,7 +373,7 @@ export class TaskListGModelFactory implements GModelFactory {
     protected createDerivedAttributeNode(derivedAttribute: DerivedAttribute): GNode {
         const builder = GNode.builder()
             .id(derivedAttribute.id)
-            .type('node:derivedAttribute') 
+            .type('node:derivedAttribute')
             .addCssClass('derived-attribute-node')
             .add(GLabel.builder().text(derivedAttribute.name).id(`${derivedAttribute.id}_label`).build())
             .add(GLabel.builder().text(derivedAttribute.equation).id(`${derivedAttribute.id}_equation_label`).build())
@@ -382,17 +388,17 @@ export class TaskListGModelFactory implements GModelFactory {
 
         return builder.build();
     }
-    
+
     protected createKeyAttributeNode(keyAttribute: KeyAttribute): GNode {
         const builder = GNode.builder()
             .id(keyAttribute.id)
-            .type('node:keyAttribute') 
+            .type('node:keyAttribute')
             .addCssClass('key-attribute-node')
             .add(GLabel.builder()
-                    .text(keyAttribute.name)
-                    .id(`${keyAttribute.id}_label`)
-                    .addCssClass('key-attribute-label')
-                    .build())
+                .text(keyAttribute.name)
+                .id(`${keyAttribute.id}_label`)
+                .addCssClass('key-attribute-label')
+                .build())
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'middle')
@@ -408,13 +414,13 @@ export class TaskListGModelFactory implements GModelFactory {
     protected createAlternativeKeyAttributeNode(alternativeKeyAttribute: AlternativeKeyAttribute): GNode {
         const builder = GNode.builder()
             .id(alternativeKeyAttribute.id)
-            .type('node:alternativeKeyAttribute') 
+            .type('node:alternativeKeyAttribute')
             .addCssClass('alternative-key-attribute-node')
             .add(GLabel.builder()
-                    .text(alternativeKeyAttribute.name)
-                    .id(`${alternativeKeyAttribute.id}_label`)
-                    .addCssClass('alternative-key-attribute-label')
-                    .build())
+                .text(alternativeKeyAttribute.name)
+                .id(`${alternativeKeyAttribute.id}_label`)
+                .addCssClass('alternative-key-attribute-label')
+                .build())
             .layout('vbox')
             .addLayoutOption('hAlign', 'center')
             .addLayoutOption('vAlign', 'middle')
@@ -492,13 +498,13 @@ export class TaskListGModelFactory implements GModelFactory {
     protected createOptionalAttributeEdge(optionalAttributeEdge: OptionalAttributeEdge): GEdge {
         return GEdge.builder()
             .id(optionalAttributeEdge.id)
-            .type('edge:optional') 
-            .addCssClass('optional-attribute-edge') 
+            .type('edge:optional')
+            .addCssClass('optional-attribute-edge')
             .sourceId(optionalAttributeEdge.sourceId)
             .targetId(optionalAttributeEdge.targetId)
             .build();
     }
- 
+
     protected createExclusionEdge(exclusionEdge: ExclusionEdge): GEdge {
         return GEdge.builder()
             .id(exclusionEdge.id)
@@ -579,7 +585,7 @@ export class TaskListGModelFactory implements GModelFactory {
                     const length = Math.sqrt(dx * dx + dy * dy) || 1;
                     const px = -dy / length;
                     const py = dx / length;
-                    const amplitude = 30; 
+                    const amplitude = 30;
                     groupEdges.forEach((edge, index) => {
                         const offset = (index - (groupEdges.length - 1) / 2) * amplitude;
                         edge.routingPoints = [{

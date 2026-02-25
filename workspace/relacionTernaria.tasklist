@@ -1,0 +1,220 @@
+{
+  "id": "671c1593-797b-4155-a4a6-920b9910dba4",
+  "tasks": [
+    {
+      "id": "b7b5a031-b252-4632-b8ea-a097497ae3ef",
+      "type": "entity",
+      "name": "Profesor",
+      "position": {
+        "x": 505.0000000000001,
+        "y": 391.00000000000006
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "a6e03925-fd61-4c9f-a5a8-fb673af71773",
+      "type": "entity",
+      "name": "Software",
+      "position": {
+        "x": 945.0000000000001,
+        "y": 404.00000000000006
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "cae00f6a-8e97-4536-862a-df7049059a49",
+      "type": "entity",
+      "name": "Aula",
+      "position": {
+        "x": 716.9820838273607,
+        "y": 813.580767190111
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "dfd4d42e-6bc8-49f8-b90f-23ca173c1dd9",
+      "type": "weakEntity",
+      "name": "Ordenador",
+      "position": {
+        "x": 720,
+        "y": 565.4511883717568
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "2216b23f-40f0-4500-b276-04202ad77e6d",
+      "type": "relation",
+      "name": "Hola",
+      "cardinality": "-",
+      "position": {
+        "x": 691,
+        "y": 423
+      },
+      "size": {
+        "width": 162.81875610351562,
+        "height": 73
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [
+    {
+      "id": "5ee912d2-0e6c-4d2a-b275-b4abcbc97334",
+      "type": "identifyingDependentRelation",
+      "name": "Pertenece",
+      "cardinality": "-",
+      "dependencyLabel": "Id",
+      "position": {
+        "x": 710.4939675449284,
+        "y": 684.0637764406562
+      },
+      "size": {
+        "width": 100.0562515258789,
+        "height": 60
+      }
+    }
+  ],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "b234ba9a-22fa-4fc4-a07c-f4c6ea28b047",
+      "type": "attribute",
+      "name": "num_aula_disc: integer",
+      "position": {
+        "x": 852.5232349077737,
+        "y": 563.3095042356663
+      },
+      "size": {
+        "width": 120.64739227294922,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "8861b70a-cea0-4035-baa2-763e93c37ed2",
+      "type": "keyAttribute",
+      "name": "id_profesor: integer",
+      "position": {
+        "x": 500.1785090278005,
+        "y": 333.2258272463641
+      },
+      "size": {
+        "width": 134.2668228149414,
+        "height": 22
+      }
+    },
+    {
+      "id": "a8747f25-d79e-4b34-be0b-1c9238310ad5",
+      "type": "keyAttribute",
+      "name": "cod_software: integer",
+      "position": {
+        "x": 947.214258251009,
+        "y": 333.75087143947167
+      },
+      "size": {
+        "width": 113.13375854492188,
+        "height": 22
+      }
+    },
+    {
+      "id": "c659c1a5-f879-4758-b6ec-857e29b59991",
+      "type": "keyAttribute",
+      "name": "id_aula: integer",
+      "position": {
+        "x": 882.174383928568,
+        "y": 806.4831439336247
+      },
+      "size": {
+        "width": 84.12115478515625,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "b9057294-26c8-48d5-bd19-125d481e0245",
+      "sourceTaskId": "b7b5a031-b252-4632-b8ea-a097497ae3ef",
+      "targetTaskId": "8861b70a-cea0-4035-baa2-763e93c37ed2"
+    },
+    {
+      "id": "cf45aefa-540e-4f82-8bb8-cf6222867813",
+      "sourceTaskId": "a6e03925-fd61-4c9f-a5a8-fb673af71773",
+      "targetTaskId": "a8747f25-d79e-4b34-be0b-1c9238310ad5"
+    },
+    {
+      "id": "9f21e983-5dc8-4932-9450-6df421cdfeb5",
+      "sourceTaskId": "dfd4d42e-6bc8-49f8-b90f-23ca173c1dd9",
+      "targetTaskId": "b234ba9a-22fa-4fc4-a07c-f4c6ea28b047"
+    },
+    {
+      "id": "880f3b70-d6a5-4fb8-bc98-854ec4d7f1b8",
+      "sourceTaskId": "cae00f6a-8e97-4536-862a-df7049059a49",
+      "targetTaskId": "c659c1a5-f879-4758-b6ec-857e29b59991"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "172cda60-7ee4-4286-81ab-526c7e739971",
+      "type": "edge:weighted",
+      "sourceId": "a6e03925-fd61-4c9f-a5a8-fb673af71773",
+      "targetId": "2216b23f-40f0-4500-b276-04202ad77e6d",
+      "description": "(1..1)"
+    },
+    {
+      "id": "bd2691be-873b-4884-9dc7-9fd56c82cec1",
+      "type": "edge:weighted",
+      "sourceId": "b7b5a031-b252-4632-b8ea-a097497ae3ef",
+      "targetId": "2216b23f-40f0-4500-b276-04202ad77e6d",
+      "description": "(1..1)"
+    },
+    {
+      "id": "248700b5-75e0-42ea-9765-f6a75827e1c3",
+      "type": "edge:weighted",
+      "sourceId": "dfd4d42e-6bc8-49f8-b90f-23ca173c1dd9",
+      "targetId": "2216b23f-40f0-4500-b276-04202ad77e6d",
+      "description": "(1..1)"
+    },
+    {
+      "id": "c3ecd9ef-c6b5-4b35-b638-7c631c8efaae",
+      "type": "edge:weighted",
+      "sourceId": "dfd4d42e-6bc8-49f8-b90f-23ca173c1dd9",
+      "targetId": "5ee912d2-0e6c-4d2a-b275-b4abcbc97334",
+      "description": "(1..1)"
+    },
+    {
+      "id": "6f8f186d-fdf1-494c-8e7a-ad9743ba83e3",
+      "type": "edge:weighted",
+      "sourceId": "cae00f6a-8e97-4536-862a-df7049059a49",
+      "targetId": "5ee912d2-0e6c-4d2a-b275-b4abcbc97334",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

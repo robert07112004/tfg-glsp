@@ -10,7 +10,7 @@ import { SQLUtils } from './sql-utils';
 
 @injectable()
 export class SQLGenerator {
-    
+
     private entityNodes: EntityNodes = new Map();
     private relationNodes: RelationNodes = new Map();
     private specializationNodes: SpecializationNodes = new Map();
@@ -67,11 +67,15 @@ export class SQLGenerator {
         });
 
         this.relationNodes.forEach(relation => {
-            if (relation.cardinality.includes("N:M")) allTables.push(RelationsTransformer.processRelationNM(relation, root));
+            const numEntities = relation.connectedEntities.length;
+            const isBinaryNM = numEntities === 2 && relation.cardinality === "N:M";
+            const isTernary = numEntities === 3 && relation.type === RELATION_TYPE;
+
+            if (isBinaryNM || isTernary) allTables.push(RelationsTransformer.processRelationNM(relation, root));
         });
 
         sql += this.sortTables(allTables);
-        
+
         return sql;
     }
 
@@ -82,9 +86,9 @@ export class SQLGenerator {
 
         while (remaining.length > 0) {
             const initialLength = remaining.length;
-            
+
             remaining = remaining.filter(table => {
-                const canCreate = table.dependencies.every(dep => 
+                const canCreate = table.dependencies.every(dep =>
                     createdTableNames.has(dep) || dep === table.name
                 );
 
