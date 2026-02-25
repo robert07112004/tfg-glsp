@@ -152,153 +152,6 @@ export class RelationsTransformer {
 		};
 	}
 
-	/*static processRelationNM(relation: Relation, root: GModelElement): GeneratedTable {
-		const dependencies = new Set<string>();
-		const tableLines: string[] = [];
-		const pkColumns: string[] = [];
-		const fkColumns: string[] = [];
-		const isReflexive = this.isReflexive(relation.node, root);      // Booleano para saber si es reflexiva
-
-		// guardar los nombres de las PKs para referenciar a su padre en la tabla del atributo multivaluado
-		const colNameMapping: PKMapping[] = [];
-
-		// Procesar atributos de la relacion
-		const { columnPKs, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
-		const { columns: uniqueColumns, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
-		const simpleAttributes = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
-		const optionalAttributes = AttributeTransformer.processOptionalAttributes(relation.attributes.optional);
-
-		// Si la relación tiene su propia PK definida, la mapeamos
-		if (relation.attributes.pk.length > 0) {
-			relation.attributes.pk.forEach(pkNode => {
-				const { name } = SQLUtils.getNameAndType(pkNode);
-				colNameMapping.push({ node: pkNode, tableName: relation.name, colName: name });
-			});
-			tableLines.push(...columnPKs);
-		}
-
-		const isBinary = relation.connectedEntities.length === 2;
-		const weakEntityPks: GNode[] = [];
-		let fatherWeakEntityName = "";
-
-		// Procesar entidades conectadas para obtener las FKs (y PKs si la relación no tiene una propia)
-		relation.connectedEntities.forEach((conn, index) => {
-			const entityName = SQLUtils.cleanNames(conn.entity);
-			dependencies.add(entityName);
-			if (conn.entity.type === ENTITY_TYPE) {
-				const entityPkNodes = AttributeTransformer.transformPKs(conn.entity, root);
-				entityPkNodes.forEach(pkNode => {
-					const { name, type } = SQLUtils.getNameAndType(pkNode);
-					const colName = isReflexive ? `${name}_${index + 1}` : name;        // Si es reflexiva, evitamos colisión de nombres (ej: id_1, id_2)
-					tableLines.push(`    ${colName} ${type} NOT NULL`);
-					fkColumns.push(this.generateFKLine(colName, entityName, name, relation.type));
-					if (isBinary) {
-						if (relation.attributes.pk.length === 0) {
-							pkColumns.push(colName);
-							colNameMapping.push({ node: pkNode, tableName: entityName, colName: colName });
-						}
-					}
-				});
-			} else {
-				const { name, pks } = EntitiesTransformer.getFatherPKsFromWeakEntity(conn.entity, root);
-				fatherWeakEntityName = name;
-				weakEntityPks.push(...pks);
-				AttributeTransformer.transformSimple(conn.entity, root).forEach(sNode => {
-					const { name } = SQLUtils.getNameAndType(sNode);
-					if (name.includes("_disc")) weakEntityPks.push(sNode);
-				});
-			}
-		});
-
-		const weakEntityPksNames: string[] = [];
-		weakEntityPks.forEach(node => {
-			const { name, type } = SQLUtils.getNameAndType(node);
-			tableLines.push(`    ${name} ${type} NOT NULL`);
-			weakEntityPksNames.push(name);
-		});
-
-		fkColumns.push(this.generateFKLine(weakEntityPksNames.join(", "), fatherWeakEntityName, weakEntityPksNames.join(", "), RELATION_TYPE));
-
-		if (isBinary) {
-			if (relation.attributes.pk.length === 0) {
-				pkColumns.push(colName);
-				colNameMapping.push({ node: pkNode, tableName: entityName, colName: colName });
-			}
-		}
-
-		if (isBinary) {
-			let entityPkNodes: GNode[] = [];
-			entityPkNodes.forEach(pkNode => {
-				const { name, type } = SQLUtils.getNameAndType(pkNode);
-				const colName = isReflexive ? `${name}_${index + 1}` : name;        // Si es reflexiva, evitamos colisión de nombres (ej: id_1, id_2)
-				tableLines.push(`    ${colName} ${type} NOT NULL`);
-
-				// Si la relación NO tiene PK propia, la PK de la tabla será la combinación de las PKs de las entidades
-				if (relation.attributes.pk.length === 0) {
-					pkColumns.push(colName);
-					colNameMapping.push({ node: pkNode, tableName: entityName, colName: colName });
-				}
-
-				fkColumns.push(this.generateFKLine(colName, entityName, name, relation.type));
-			});
-		} else {
-			let weakEntityPkNodes: GNode[] = [];
-			weakEntityPkNodes.push(...EntitiesTransformer.getFatherPKsFromWeakEntity(conn.entity, root).pks);
-			AttributeTransformer.transformSimple(conn.entity, root).forEach(sNode => {
-				const { name } = SQLUtils.getNameAndType(sNode);
-				if (name.includes("_disc")) weakEntityPkNodes.push(sNode);
-			});
-			if (relation.cardinality.includes("N:M:P")) {
-
-			}
-
-		}
-
-		// Añadir atributos unique, simples y opcionales
-		tableLines.push(
-			...uniqueColumns,
-			...simpleAttributes,
-			...optionalAttributes
-		);
-
-		// Añadir la Primary Key constraint
-		if (relation.attributes.pk.length === 0 && pkColumns.length > 0) tableLines.push(`    PRIMARY KEY (${pkColumns.join(', ')})`);
-		else if (relPkRest.length > 0) tableLines.push(...relPkRest);
-
-		if (relUniqueRest.length > 0) tableLines.push(...relUniqueRest);            // Añadir la UNIQUE constraint
-
-		tableLines.push(...fkColumns);                                              // Añadir las Foreign Keys al final
-
-		// SQL
-		let sql = `CREATE TABLE ${relation.name} (\n`;
-		sql += tableLines.join(",\n") + "\n);\n\n";
-
-		let multivaluedSql: string[] = [];
-		if (relation.attributes.multiValued.length > 0) {
-			// Inyectamos el mapeo de nombres de columnas para que las tablas de multivaluados sepan a qué columnas referenciar
-			relation.attributes.multiValued.forEach(mv => {
-				mv.parentPKs = colNameMapping;
-				mv.parentName = relation.name;
-			});
-			// Procesar atributos multivaluados
-			multivaluedSql = AttributeTransformer.processMultivaluedAttributes(relation.attributes.multiValued, relation.node, root);
-		}
-
-		return {
-			name: relation.name,
-			sql: sql + multivaluedSql.join("\n"),
-			dependencies: Array.from(dependencies)
-		};
-	}
-
-	private static generateFKLine(col: string, refTable: string, refCol: string, relType: string): string {
-		let fkLine = `    FOREIGN KEY (${col}) REFERENCES ${refTable}(${refCol})`;
-		if (relType === EXISTENCE_DEP_RELATION_TYPE) {
-			fkLine += " ON DELETE CASCADE";                 // Si es una dependencia de existencia, añadimos el borrado en cascada
-		}
-		return fkLine;
-	}*/
-
 	static isReflexive(relation: GNode, root: GModelElement): boolean {
 		const uniqueEntities = new Set<string>();
 		const edges = root.children.filter(child => child instanceof GEdge && child.targetId === relation.id) as GEdge[];
@@ -329,7 +182,7 @@ export class RelationsTransformer {
 	static process1NRelation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
 		const dependencies = new Set<string>();
 		for (const relation of relationNodes.values()) {
-			const is1N = relation.cardinality.includes("1:N") && relation.type === RELATION_TYPE;
+			const is1N = relation.cardinality === "1:N" && relation.type === RELATION_TYPE;
 			if (is1N) {
 				const sideN = relation.connectedEntities.find(ce => ce.cardinalityText.toUpperCase().includes("N"));
 				const side1 = relation.connectedEntities.find(ce => ce.cardinalityText.includes("1") && !ce.cardinalityText.toUpperCase().includes("N"));
@@ -359,7 +212,7 @@ export class RelationsTransformer {
 	static process11Relation(entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
 		const dependencies = new Set<string>();
 		for (const relation of relationNodes.values()) {
-			const is11 = relation.cardinality.includes("1:1") && relation.type === RELATION_TYPE;
+			const is11 = relation.cardinality === "1:1" && relation.type === RELATION_TYPE;
 			if (is11) {
 				const [ceA, ceB] = relation.connectedEntities;
 				const isAOptional = ceA.cardinalityText.includes("0");
@@ -406,7 +259,7 @@ export class RelationsTransformer {
 	static processExistenceDependenceRelation(cardinality: string, entity: Entity, relationNodes: RelationNodes, foreignColumns: string[], foreignKeys: string[], relationAttributes: string[], relationRestrictions: string[], relationMultivalued: string[], root: GModelElement) {
 		const dependencies = new Set<string>();
 		for (const relation of relationNodes.values()) {
-			const isExistence = relation.cardinality.includes(cardinality) && relation.type === EXISTENCE_DEP_RELATION_TYPE;
+			const isExistence = relation.cardinality === cardinality && relation.type === EXISTENCE_DEP_RELATION_TYPE;
 			if (isExistence) {
 				const { sideNormal, sideWeak } = this.getSidesNormalAndWeak(relation);
 

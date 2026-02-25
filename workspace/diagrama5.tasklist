@@ -1,0 +1,313 @@
+{
+  "id": "1f9a6560-6765-4504-8c37-331b619e37a8",
+  "tasks": [
+    {
+      "id": "68082430-c678-418e-9acb-d023aee736b9",
+      "type": "entity",
+      "name": "Profesor",
+      "position": {
+        "x": 492.00000000000006,
+        "y": 462.00000000000006
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "fd68da44-64ce-4ec7-bd95-b7a27051c879",
+      "type": "entity",
+      "name": "Linea_Investigacion",
+      "position": {
+        "x": 1147,
+        "y": 708
+      },
+      "size": {
+        "width": 104.27088165283203,
+        "height": 40
+      }
+    },
+    {
+      "id": "9cf107a1-2323-45e3-ad99-683714a45278",
+      "type": "entity",
+      "name": "Proyecto_investigacion",
+      "position": {
+        "x": 554.0000000000001,
+        "y": 231.00000000000003
+      },
+      "size": {
+        "width": 119.65648651123047,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "16f64807-8d01-48d7-988f-13aab510479d",
+      "type": "weakEntity",
+      "name": "Publicacion",
+      "position": {
+        "x": 1286,
+        "y": 240.00000000000003
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "3589b6e2-b29c-4b7a-93f6-c27d676016d1",
+      "type": "relation",
+      "name": "Escribe",
+      "cardinality": "-",
+      "position": {
+        "x": 893,
+        "y": 467
+      },
+      "size": {
+        "width": 75.60572052001953,
+        "height": 60
+      }
+    },
+    {
+      "id": "c712ffe0-2e95-4cab-a67a-71ffc8f287c6",
+      "type": "relation",
+      "name": "Desarrolla",
+      "cardinality": "-",
+      "position": {
+        "x": 595,
+        "y": 688
+      },
+      "size": {
+        "width": 131.88787841796875,
+        "height": 60
+      }
+    },
+    {
+      "id": "ffc6a8c3-0774-4349-b5c9-51099881faee",
+      "type": "relation",
+      "name": "Incluye",
+      "cardinality": "-",
+      "position": {
+        "x": 1243,
+        "y": 439
+      },
+      "size": {
+        "width": 73.83666610717773,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [
+    {
+      "id": "1927d24d-7b64-4c4b-bb67-179bbbf2bf59",
+      "type": "identifyingDependentRelation",
+      "name": "Produce",
+      "cardinality": "-",
+      "dependencyLabel": "Id",
+      "position": {
+        "x": 932.9999999999999,
+        "y": 231.00000000000003
+      },
+      "size": {
+        "width": 60,
+        "height": 60
+      }
+    }
+  ],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "95ad7927-5906-4b58-8ef0-b3247b2ca4ef",
+      "type": "attribute",
+      "name": "nombre: varchar(20)",
+      "position": {
+        "x": 1249,
+        "y": 779
+      },
+      "size": {
+        "width": 106.58495330810547,
+        "height": 22
+      }
+    },
+    {
+      "id": "494f3dde-3898-4f04-be20-cf87ceefb840",
+      "type": "attribute",
+      "name": "num_disc: integer",
+      "position": {
+        "x": 1340,
+        "y": 177.00000000000003
+      },
+      "size": {
+        "width": 95.35987091064453,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [
+    {
+      "id": "9364edd9-2351-419d-ad27-d3f8758d2a73",
+      "type": "multiValuedAttribute",
+      "name": "descriptor: varchar(20)",
+      "position": {
+        "x": 1285,
+        "y": 721
+      },
+      "size": {
+        "width": 117.24092102050781,
+        "height": 22
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "e77f6fcf-b6b6-49b2-b311-c901d632c9a1",
+      "type": "keyAttribute",
+      "name": "nombre: varchar(20)",
+      "position": {
+        "x": 366,
+        "y": 470
+      },
+      "size": {
+        "width": 106.58495330810547,
+        "height": 22
+      }
+    },
+    {
+      "id": "c40d2160-53dd-4292-b389-b8bb32f6244f",
+      "type": "keyAttribute",
+      "name": "codigo: integer",
+      "position": {
+        "x": 1131,
+        "y": 783
+      },
+      "size": {
+        "width": 81.1553726196289,
+        "height": 22
+      }
+    },
+    {
+      "id": "80691b85-cdc3-4db1-9b81-450c1c3d0d76",
+      "type": "keyAttribute",
+      "name": "cod_referencia: integer",
+      "position": {
+        "x": 456.00000000000006,
+        "y": 183.00000000000003
+      },
+      "size": {
+        "width": 120.24641418457031,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "386f6ba4-57ff-4a3a-8141-b50c353b3351",
+      "sourceTaskId": "68082430-c678-418e-9acb-d023aee736b9",
+      "targetTaskId": "e77f6fcf-b6b6-49b2-b311-c901d632c9a1"
+    },
+    {
+      "id": "3b41356e-b410-4146-8e89-1c6dd997adf4",
+      "sourceTaskId": "fd68da44-64ce-4ec7-bd95-b7a27051c879",
+      "targetTaskId": "9364edd9-2351-419d-ad27-d3f8758d2a73"
+    },
+    {
+      "id": "9296de60-ca1b-4bd7-9d5e-93a9958b9ccf",
+      "sourceTaskId": "fd68da44-64ce-4ec7-bd95-b7a27051c879",
+      "targetTaskId": "c40d2160-53dd-4292-b389-b8bb32f6244f"
+    },
+    {
+      "id": "15a0ce01-2377-4f8a-ba12-2e8ddc9890e3",
+      "sourceTaskId": "fd68da44-64ce-4ec7-bd95-b7a27051c879",
+      "targetTaskId": "95ad7927-5906-4b58-8ef0-b3247b2ca4ef"
+    },
+    {
+      "id": "c9cd4b86-d683-4774-9ded-153862df0f5b",
+      "sourceTaskId": "9cf107a1-2323-45e3-ad99-683714a45278",
+      "targetTaskId": "80691b85-cdc3-4db1-9b81-450c1c3d0d76"
+    },
+    {
+      "id": "ca327361-85dd-42ac-bc1a-986111e7038e",
+      "sourceTaskId": "16f64807-8d01-48d7-988f-13aab510479d",
+      "targetTaskId": "494f3dde-3898-4f04-be20-cf87ceefb840"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "bf237a29-bb34-4142-b48e-059909ca45d4",
+      "type": "edge:weighted",
+      "sourceId": "68082430-c678-418e-9acb-d023aee736b9",
+      "targetId": "c712ffe0-2e95-4cab-a67a-71ffc8f287c6",
+      "description": "(0..N)"
+    },
+    {
+      "id": "9360c83b-9f97-447d-8456-1f15d3fcdc4d",
+      "type": "edge:weighted",
+      "sourceId": "fd68da44-64ce-4ec7-bd95-b7a27051c879",
+      "targetId": "c712ffe0-2e95-4cab-a67a-71ffc8f287c6",
+      "description": "(0..N)"
+    },
+    {
+      "id": "b3fd358f-0446-4b37-9058-d8bad5da4e04",
+      "type": "edge:weighted",
+      "sourceId": "fd68da44-64ce-4ec7-bd95-b7a27051c879",
+      "targetId": "3589b6e2-b29c-4b7a-93f6-c27d676016d1",
+      "description": "(1..1)"
+    },
+    {
+      "id": "c219ec44-b21b-479b-b246-d4189adf64ff",
+      "type": "edge:weighted",
+      "sourceId": "68082430-c678-418e-9acb-d023aee736b9",
+      "targetId": "3589b6e2-b29c-4b7a-93f6-c27d676016d1",
+      "description": "(1..N)"
+    },
+    {
+      "id": "cc048ed3-94b9-4057-aa12-3888575070d9",
+      "type": "edge:weighted",
+      "sourceId": "fd68da44-64ce-4ec7-bd95-b7a27051c879",
+      "targetId": "ffc6a8c3-0774-4349-b5c9-51099881faee",
+      "description": "(1..N)"
+    },
+    {
+      "id": "4a8ca55d-102b-4f0c-9b78-08390a14c1ea",
+      "type": "edge:weighted",
+      "sourceId": "16f64807-8d01-48d7-988f-13aab510479d",
+      "targetId": "3589b6e2-b29c-4b7a-93f6-c27d676016d1",
+      "description": "(1..N)"
+    },
+    {
+      "id": "1339a63b-8c8b-4890-9842-b70be57ac354",
+      "type": "edge:weighted",
+      "sourceId": "16f64807-8d01-48d7-988f-13aab510479d",
+      "targetId": "1927d24d-7b64-4c4b-bb67-179bbbf2bf59",
+      "description": "(0..N)"
+    },
+    {
+      "id": "bf3b7427-cc42-4550-94b3-a3199b9c406a",
+      "type": "edge:weighted",
+      "sourceId": "9cf107a1-2323-45e3-ad99-683714a45278",
+      "targetId": "1927d24d-7b64-4c4b-bb67-179bbbf2bf59",
+      "description": "(1..1)"
+    },
+    {
+      "id": "10972514-b5c9-4504-a9fd-75b4e5b00ce2",
+      "type": "edge:weighted",
+      "sourceId": "9cf107a1-2323-45e3-ad99-683714a45278",
+      "targetId": "ffc6a8c3-0774-4349-b5c9-51099881faee",
+      "description": "(0..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}
