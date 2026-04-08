@@ -294,15 +294,6 @@ export class AttributeTransformer {
      * Entrada -> entidad (GNode), root (GModelElement)
      * Salida -> Multivalued[]
      */
-
-    /*
-     *   export interface Multivalued {
-     *       name: string,
-     *       parentName: string,
-     *       parentPKs: { node: GNode, tableName: string, colName: string }[],
-     *       selfNode: GNode[]
-     *   }
-     */
     static transformMultivalued(node: GNode, root: GModelElement): Multivalued[] {
         const multivalued: Multivalued[] = [];
         let parentPKs: { node: GNode, tableName: string, colName: string }[] = [];
@@ -347,13 +338,13 @@ export class AttributeTransformer {
                     }
                 }
 
-                // 1:N -> se guarda la weighted-edge del rombo que contiene la "..N" y se encuentra la entidad. Posteriormente, se sacan sus PKs
+            // 1:N -> se guarda la weighted-edge del rombo que contiene la "..N" y se encuentra la entidad. Posteriormente, se sacan sus PKs
             } else if (cardinality.includes("1:N")) {
                 const edgeN = root.children.find(child => child instanceof GEdge && child.targetId === node.id && SQLUtils.getCardinality(child).includes("N")) as GEdge;
                 const entity = SQLUtils.findById(edgeN.sourceId, root) as GNode;
                 parentPKs = AttributeTransformer.transformPKs(entity, root).map(pk => ({ node: pk, tableName: SQLUtils.cleanNames(entity), colName: SQLUtils.getNameAndType(pk).name }));
 
-                // 1:1 -> se guardan las weighted-edge conectadas al rombo
+            // 1:1 -> se guardan las weighted-edge conectadas al rombo
             } else if (cardinality.includes("1:1")) {
                 const connectedEdges: GEdge[] = root.children.filter(child => child instanceof GEdge &&
                     child.type === WEIGHTED_EDGE_TYPE &&

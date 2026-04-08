@@ -22,7 +22,7 @@ export class RelationsTransformer {
 		const isReflexive = this.isReflexive(relation.node, root);
 		const colNameMapping: PKMapping[] = [];
 
-		// 1. Procesar atributos propios del rombo
+		// Procesar atributos propios del rombo
 		const { columnPKs, restriction: relPkRest } = AttributeTransformer.processPK(relation.attributes.pk);
 		const { columns: uniqueColumns, restriction: relUniqueRest } = AttributeTransformer.processUnique(relation.attributes.unique);
 		const simpleAttributes = AttributeTransformer.processSimpleAttributes(relation.attributes.simple);
@@ -37,15 +37,13 @@ export class RelationsTransformer {
 		}
 
 		// Lógica para determinar qué entidades van a la PK (para ternarias)
-		//const manySides = relation.connectedEntities.filter(ce => ce.cardinalityText.includes("N"));
 		const isTernary = relation.connectedEntities.length === 3;
 
-		// 2. Procesar cada entidad conectada
+		// Procesar cada entidad conectada
 		relation.connectedEntities.forEach((conn, index) => {
 			const entityName = SQLUtils.cleanNames(conn.entity);
 			dependencies.add(entityName);
 
-			// --- OBTENER IDENTIDAD COMPLETA DE LA ENTIDAD ---
 			let identityNodes: GNode[] = [];
 			if (conn.entity.type === WEAK_ENTITY_TYPE) {
 				// Si es débil, su identidad es: PKs del padre + sus discriminadores
@@ -65,8 +63,6 @@ export class RelationsTransformer {
 
 			identityNodes.forEach(node => {
 				const { name, type } = SQLUtils.getNameAndType(node);
-
-				// Si es reflexiva usamos sufijos, si no, el nombre original
 				let colName = isReflexive ? `${name}_${index + 1}` : name;
 
 				// Evitar duplicados de nombres en la misma tabla de relación
@@ -78,10 +74,8 @@ export class RelationsTransformer {
 				localColsForThisEntity.push(colName);
 				refColsInTargetTable.push(name);
 
-				// Obtenemos la cardinalidad global calculada del rombo (ej: "N:M:P", "1:N:M")
-				const relCardinality = relation.cardinality;
-				// Obtenemos la cardinalidad de la arista actual (ej: "0..N", "1..1")
-				const edgeCardinality = conn.cardinalityText.toUpperCase();
+				const relCardinality = relation.cardinality;					// cardinalidad rombo
+				const edgeCardinality = conn.cardinalityText.toUpperCase();		// cardinalidad arista
 
 				if (relation.attributes.pk.length === 0) {
 					let inPK = false;
@@ -113,29 +107,21 @@ export class RelationsTransformer {
 				}
 			});
 
-			// --- GENERAR LA FOREIGN KEY AGRUPADA (Para esta entidad) ---
-			// Ejemplo: FOREIGN KEY (id_aula, num_puesto) REFERENCES Ordenador(id_aula, num_puesto)
-			const fkLine = `    FOREIGN KEY (${localColsForThisEntity.join(", ")}) REFERENCES ${entityName}(${refColsInTargetTable.join(", ")})`;
-			fkConstraints.push(fkLine);
+			// fk para la entidad actual
+			fkConstraints.push(`    FOREIGN KEY (${localColsForThisEntity.join(", ")}) REFERENCES ${entityName}(${refColsInTargetTable.join(", ")})`);
 		});
 
-		// 3. Finalizar cuerpo de la tabla
 		tableLines.push(...uniqueColumns, ...simpleAttributes, ...optionalAttributes);
 
-		if (relation.attributes.pk.length === 0 && pkColumns.length > 0) {
-			tableLines.push(`    PRIMARY KEY (${pkColumns.join(', ')})`);
-		} else if (relPkRest.length > 0) {
-			tableLines.push(...relPkRest);
-		}
+		if (relation.attributes.pk.length === 0 && pkColumns.length > 0) tableLines.push(`    PRIMARY KEY (${pkColumns.join(', ')})`);
+		else if (relPkRest.length > 0) tableLines.push(...relPkRest);
 
 		if (relUniqueRest.length > 0) tableLines.push(...relUniqueRest);
 
-		// Añadir las FKs al final
 		tableLines.push(...fkConstraints);
 
 		let sql = `CREATE TABLE ${relation.name} (\n${tableLines.join(",\n")}\n);\n\n`;
 
-		// 4. Multivaluados
 		let multivaluedSql: string[] = [];
 		if (relation.attributes.multiValued.length > 0) {
 			relation.attributes.multiValued.forEach(mv => {
