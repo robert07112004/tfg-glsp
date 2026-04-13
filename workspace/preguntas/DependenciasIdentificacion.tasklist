@@ -1,0 +1,118 @@
+{
+  "id": "b7676c36-ccb3-41f7-9433-b2b2fad40dc1",
+  "tasks": [
+    {
+      "id": "3230f127-e14e-40e0-b9ed-2719a825b6f7",
+      "type": "entity",
+      "name": "NewEntityNode1",
+      "position": {
+        "x": 477,
+        "y": 418
+      }
+    }
+  ],
+  "weakEntities": [
+    {
+      "id": "64177a83-25df-4a18-866a-7e3012652c08",
+      "type": "weakEntity",
+      "name": "NewWeakEntity1",
+      "position": {
+        "x": 1010,
+        "y": 418
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [
+    {
+      "id": "1cd87c24-23cc-447c-b0c2-243663f24553",
+      "type": "identifyingDependentRelation",
+      "name": "NewIdentRelation1",
+      "cardinality": "-",
+      "dependencyLabel": "Id",
+      "position": {
+        "x": 759,
+        "y": 402
+      },
+      "size": {
+        "width": 100.0562515258789,
+        "height": 60
+      }
+    }
+  ],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "8d20f069-c398-4e9f-9f97-929528eb026d",
+      "type": "attribute",
+      "name": "NewAttribute1_disc: integer",
+      "position": {
+        "x": 1019.078962853238,
+        "y": 360.33274409190045
+      },
+      "size": {
+        "width": 140.78497314453125,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "61dfc551-5d55-4790-b761-a8d6c5ef08dc",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute1: integer",
+      "position": {
+        "x": 437.88744854367525,
+        "y": 368.01610688730534
+      },
+      "size": {
+        "width": 134.2668228149414,
+        "height": 21.854331970214844
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "0716992a-7585-4189-a6f2-f845f47d17d4",
+      "sourceTaskId": "64177a83-25df-4a18-866a-7e3012652c08",
+      "targetTaskId": "8d20f069-c398-4e9f-9f97-929528eb026d"
+    },
+    {
+      "id": "65fec144-b273-4776-8d7f-0f6b02d6130f",
+      "sourceTaskId": "3230f127-e14e-40e0-b9ed-2719a825b6f7",
+      "targetTaskId": "61dfc551-5d55-4790-b761-a8d6c5ef08dc"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "9068fa79-8897-4412-ab47-038b1fde3f92",
+      "type": "edge:weighted",
+      "sourceId": "64177a83-25df-4a18-866a-7e3012652c08",
+      "targetId": "1cd87c24-23cc-447c-b0c2-243663f24553",
+      "description": "(1..N)"
+    },
+    {
+      "id": "6dfff4ec-a000-4853-83fa-a696dabc4061",
+      "type": "edge:weighted",
+      "sourceId": "3230f127-e14e-40e0-b9ed-2719a825b6f7",
+      "targetId": "1cd87c24-23cc-447c-b0c2-243663f24553",
+      "description": "(0..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

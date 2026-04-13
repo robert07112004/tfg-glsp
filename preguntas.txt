@@ -1,0 +1,72 @@
+Atributos:
+- PK -> puede ser tanto simple como compuesta.
+- UNIQUE ->
+    Si son dos atributos unique separados atr1 UNIQUE, atr2 UNIQUE
+    Si es un atributo unique compuesto atr1 NULL O NOT NULL, atr2 NULL O NOT NULL, UNIQUE(atr1, atr2)
+- Simple -> NOT NULL
+- Opcional -> NULL
+- Compuesto -> que dice que sea nulo o no. La transicion que entra al atributo padre o las transiciones que salen?
+- Derivado -> se utiliza en SQL?
+- Multivaluado -> se crea tabla nueva que depende de la tabla de la entidad (misma duda con las transiciones en las compuestas)
+
+Relaciones N:M
+- Se crean las tablas de las entidades primero y luego la tabla de la relacion, si tiene atributos la relacion se añaden en la tabla que se crea
+- Si hay atributo multivaluado en la relacion -> nueva tabla y PK(pk_ent1, pk_ent2, atr_multivaluado) y FK(atr_ent1, atr_ent2) REFERENCES Tabla intermedia
+- Problema -> la relacion puede tener PK?
+- En el caso de que tenga PK, en tabla de la relacion se pone una única PK de la relacion, las columnas de las pk de las entidades y luego FK que referencian a las entidades.
+- Creo que se podrian poner en la tabla intermedia las pk de las entidades como UNIQUE?
+- Por último, en el caso de que la relacion tenga un atributo multivaluado, se hacen las FK hacia la entidad tanto en la tabla intermedia de la relacion 
+  como en la tabla del multivaluado o solo en una de las dos?
+
+Relaciones 1:N
+- La Pk del lado 1 viaja hasta la tabla del lado N y se convierte en FK
+- Dependiendo de la cardinalidad mínima se pone a la FK -> NOT NULL si (1, N) o NULL si (0, N).
+- Atributos en el rombo se añaden a la tabla del lado N.
+- Si tiene PK el rombo se pasa a la tabla del lado N como unique.
+- Si tiene un atributo multivaluado la relacion, en la tabla que crea coge la pk de la entidad que tiene cardinalidad N y luego hace un FK hacia ella.
+
+Relaciones 1:1
+- Hay que poner la FK en la tabla que tenga la participación obligatoria y la FK se pone como UNIQUE para que se diferencie de la 1:N.
+- Los atributos del rombo van a la tabla que se pone la FK (si tiene PK el rombo se añade como UNIQUE).
+- Si ambos lados son opcionales u obligatorios se escoge uno.
+- Pasa lo mismo con los multivaluados que en 1:N.
+
+Relaciones reflexivas:
+- Se hace lo mismo que ya hemos visto pero cambiamos los nombres de los atributos.
+- En las relaciones reflexivas 1:1 y 1:N se pone el nombre de la relacion + nombre de la clave primaria.
+- En las relaciones reflexivas N:M se pone el nombre de la clave primaria + 1 o 2 en la nueva tabla intermedia.
+
+Dependencias en existencia -> entidad débil no puede existir sin la fuerte (pero tiene su propia PK).
+
+Dependencia en existencia N:M
+- Seguimos la misma regla, creamos la tabla intermedia, pero añadimos ON DELETE CASCADE.
+
+Dependencia en existencia 1:N
+- La PK de la entidad fuerte viaja a la tabla débil como FK.
+- La columna de la FK debe ser NOT NULL y se añade ON DELETE CASCADE.
+
+Dependencia en existencia 1:1
+- La PK de la entidad fuerte viaja a la entidad débil.
+- La columna de la FK debe ser UNIQUE NOT NULL y utilizar ON DELETE CASCADE.
+En las dependencias en existencia es normal tener atributos en el rombo? Hay que tratarlos?
+
+Dependencias en identificación: la entidad débil no tiene identidad propia (no tienen sentido las dependencias en identificación N:M y 1:1)
+
+Dependencia en identificación 1:N
+- La PK de la tabla débil es una clave compuesta por la PK del padre y el discriminador de la entidad débil.
+En las dependencias en identificación es normal poner atributos en el rombo?
+
+Jerarquía parcial + exclusiva:
+- El padre puede existir solo, y si es hijo, solo puede ser de un tipo.
+
+Jerarquía total + exclusiva:
+- Total -> Todo registro de la tabla padre debe tener un registro correspondiente a una tabla hijo.
+- Exclusiva -> Un registro puede estar en un subtipo, pero no en ambos.
+
+Jerarquía parcial + solapada:
+- Parcial -> un padre puede no ser ningún hijo.
+- Solapada -> un padre puede ser varios hijos al mismo tiempo.
+
+Jerarquía total + solapada:
+- Total -> un registro del padre está obligado a ser al menos uno de los hijos.
+- Solapada -> un registro puede ser varios hijos a la vez.

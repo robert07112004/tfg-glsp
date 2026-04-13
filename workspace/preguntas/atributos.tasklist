@@ -1,0 +1,353 @@
+{
+  "id": "c297a021-7093-4132-8e08-7aa73d9b2fdd",
+  "tasks": [
+    {
+      "id": "f1b73607-c9cf-460d-a9ff-f594b9373166",
+      "type": "entity",
+      "name": "NewEntityNode1",
+      "position": {
+        "x": 114,
+        "y": 414
+      }
+    },
+    {
+      "id": "cd115117-4e9a-4cc1-9a3a-88e69065da0e",
+      "type": "entity",
+      "name": "NewEntityNode2",
+      "position": {
+        "x": 471,
+        "y": 400
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "3f8e5787-caa2-416f-a8a6-51d119a3cf95",
+      "type": "entity",
+      "name": "NewEntityNode3",
+      "position": {
+        "x": 943,
+        "y": 428
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "c3c830bc-c3b0-42d1-9221-54d155f01aff",
+      "type": "entity",
+      "name": "NewEntityNode4",
+      "position": {
+        "x": 1290,
+        "y": 442
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "cbace767-58be-4cc8-834a-c8d79c1da88f",
+      "type": "entity",
+      "name": "NewEntityNode5",
+      "position": {
+        "x": 1627,
+        "y": 453
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "92317fc4-9699-4a28-aee3-2532c9923123",
+      "type": "attribute",
+      "name": "NewAttribute1: integer",
+      "position": {
+        "x": 1001,
+        "y": 372
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    },
+    {
+      "id": "6ecf2807-b94e-4f61-bf7b-6977e2ef1582",
+      "type": "attribute",
+      "name": "NewAttribute2: integer",
+      "position": {
+        "x": 1018,
+        "y": 298
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    },
+    {
+      "id": "f426e4fa-8771-4189-86cd-52b468d4d134",
+      "type": "attribute",
+      "name": "NewAttribute3: integer",
+      "position": {
+        "x": 1154,
+        "y": 339
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    },
+    {
+      "id": "f216eb90-b841-4135-b9c6-707835099ded",
+      "type": "attribute",
+      "name": "NewAttribute4: integer",
+      "position": {
+        "x": 1711,
+        "y": 318
+      }
+    },
+    {
+      "id": "d55baea9-557c-4ace-9486-f41f15edb6e1",
+      "type": "attribute",
+      "name": "NewAttribute5: integer",
+      "position": {
+        "x": 1871,
+        "y": 348
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [
+    {
+      "id": "7e43760b-f1ce-4ec0-8773-72f0272d680f",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 1697,
+        "y": 387
+      }
+    }
+  ],
+  "derivedAttributes": [
+    {
+      "id": "cbde0dd6-40e5-4ae8-b9f6-304d6639f3c7",
+      "type": "derivedAttribute",
+      "name": "NewDerivedAttribute1: integer",
+      "equation": "Equation of Derived Attribute",
+      "position": {
+        "x": 1360,
+        "y": 375
+      },
+      "size": {
+        "width": 153.4006805419922,
+        "height": 35
+      }
+    }
+  ],
+  "keyAttributes": [
+    {
+      "id": "76297a25-00ed-4ad1-9d1f-d14a78657714",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute1: integer",
+      "position": {
+        "x": 141,
+        "y": 356
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "5dd53606-7d85-4053-90ce-61f434876a08",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute2: integer",
+      "position": {
+        "x": 226,
+        "y": 395
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "5cc82a0c-8c15-4951-abff-6893b494ec09",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute3: integer",
+      "position": {
+        "x": 1706,
+        "y": 535
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "414d9247-316a-456e-a745-885c55517eac",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 339,
+        "y": 490
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 22
+      }
+    },
+    {
+      "id": "e59eab7f-500f-43c9-bfa1-875eca7c9dfa",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 564,
+        "y": 487
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 22
+      }
+    },
+    {
+      "id": "bda4fc95-b9c6-4374-bda2-17e3f305d144",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 530,
+        "y": 352
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 22
+      }
+    },
+    {
+      "id": "d63b3de1-859b-4970-a114-91cf3a456c22",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 499,
+        "y": 291
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 22
+      }
+    },
+    {
+      "id": "48329a3e-05ab-4692-9a0f-c4d7e918aac7",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 708,
+        "y": 315
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 22
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "cb00ad3d-e6a4-4bf1-878a-4fb9ac0a7dbd",
+      "sourceTaskId": "f1b73607-c9cf-460d-a9ff-f594b9373166",
+      "targetTaskId": "76297a25-00ed-4ad1-9d1f-d14a78657714"
+    },
+    {
+      "id": "e47fa0b2-d0c0-48c7-b4bf-5e7720ab7acd",
+      "sourceTaskId": "f1b73607-c9cf-460d-a9ff-f594b9373166",
+      "targetTaskId": "5dd53606-7d85-4053-90ce-61f434876a08"
+    },
+    {
+      "id": "f7b9c93b-85f3-4abc-acf0-d35d131a4794",
+      "sourceTaskId": "cd115117-4e9a-4cc1-9a3a-88e69065da0e",
+      "targetTaskId": "e59eab7f-500f-43c9-bfa1-875eca7c9dfa"
+    },
+    {
+      "id": "d91fbcb1-0f76-44f5-9cec-3ee81c54cb30",
+      "sourceTaskId": "bda4fc95-b9c6-4374-bda2-17e3f305d144",
+      "targetTaskId": "d63b3de1-859b-4970-a114-91cf3a456c22"
+    },
+    {
+      "id": "4a823e4d-43e1-428b-9671-9e9a6c5dfb2a",
+      "sourceTaskId": "bda4fc95-b9c6-4374-bda2-17e3f305d144",
+      "targetTaskId": "48329a3e-05ab-4692-9a0f-c4d7e918aac7"
+    },
+    {
+      "id": "f3bfb59f-f9a8-4865-91a7-abfa4b368acd",
+      "sourceTaskId": "3f8e5787-caa2-416f-a8a6-51d119a3cf95",
+      "targetTaskId": "92317fc4-9699-4a28-aee3-2532c9923123"
+    },
+    {
+      "id": "3a0a237b-1dba-41e6-8498-22d31d7ed3ce",
+      "sourceTaskId": "92317fc4-9699-4a28-aee3-2532c9923123",
+      "targetTaskId": "f426e4fa-8771-4189-86cd-52b468d4d134"
+    },
+    {
+      "id": "494d007e-c38f-43db-8f2c-6e5893b284a0",
+      "sourceTaskId": "c3c830bc-c3b0-42d1-9221-54d155f01aff",
+      "targetTaskId": "cbde0dd6-40e5-4ae8-b9f6-304d6639f3c7"
+    },
+    {
+      "id": "49e16ff4-debd-48b0-9fa2-8d3feffc6950",
+      "sourceTaskId": "cbace767-58be-4cc8-834a-c8d79c1da88f",
+      "targetTaskId": "5cc82a0c-8c15-4951-abff-6893b494ec09"
+    },
+    {
+      "id": "0abbf512-b5d4-4338-9a99-d858d637a14a",
+      "sourceTaskId": "7e43760b-f1ce-4ec0-8773-72f0272d680f",
+      "targetTaskId": "f216eb90-b841-4135-b9c6-707835099ded"
+    }
+  ],
+  "weightedEdges": [],
+  "optionalAttributeEdges": [
+    {
+      "id": "ec4adacd-41e1-46a1-9101-9fbcd39c02c8",
+      "type": "edge:optional",
+      "sourceId": "cd115117-4e9a-4cc1-9a3a-88e69065da0e",
+      "targetId": "414d9247-316a-456e-a745-885c55517eac"
+    },
+    {
+      "id": "ce1c8ea9-1c4e-4e0b-b144-f5f5ffdf94db",
+      "type": "edge:optional",
+      "sourceId": "cd115117-4e9a-4cc1-9a3a-88e69065da0e",
+      "targetId": "bda4fc95-b9c6-4374-bda2-17e3f305d144"
+    },
+    {
+      "id": "4a4910a9-1513-4904-9895-ca039a509aee",
+      "type": "edge:optional",
+      "sourceId": "92317fc4-9699-4a28-aee3-2532c9923123",
+      "targetId": "6ecf2807-b94e-4f61-bf7b-6977e2ef1582"
+    },
+    {
+      "id": "ed5d3298-7636-4bd4-bbd2-2cfa9234a6e3",
+      "type": "edge:optional",
+      "sourceId": "cbace767-58be-4cc8-834a-c8d79c1da88f",
+      "targetId": "7e43760b-f1ce-4ec0-8773-72f0272d680f"
+    },
+    {
+      "id": "df9568f1-0cc9-46c3-97eb-ca38830ba955",
+      "type": "edge:optional",
+      "sourceId": "7e43760b-f1ce-4ec0-8773-72f0272d680f",
+      "targetId": "d55baea9-557c-4ace-9486-f41f15edb6e1"
+    }
+  ],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

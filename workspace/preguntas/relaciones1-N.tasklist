@@ -1,0 +1,343 @@
+{
+  "id": "7bed688e-1c24-4d1e-9761-8e24faf4f9cd",
+  "tasks": [
+    {
+      "id": "763b838a-3781-41d5-a4c6-af189eccc733",
+      "type": "entity",
+      "name": "NewEntityNode1",
+      "position": {
+        "x": 488,
+        "y": 191
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "9d0a6ebb-86f6-4460-833c-eef41f263722",
+      "type": "entity",
+      "name": "NewEntityNode2",
+      "position": {
+        "x": 965,
+        "y": 193
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "d2f61ce1-5c87-487e-96f7-e3af8ca6b9da",
+      "type": "entity",
+      "name": "NewEntityNode3",
+      "position": {
+        "x": 495,
+        "y": 437
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "7e426a81-4c62-46d1-a493-b63d4f2087d0",
+      "type": "entity",
+      "name": "NewEntityNode4",
+      "position": {
+        "x": 967,
+        "y": 432
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "5d5144c2-fdba-4280-ae52-f0a91b5712ee",
+      "type": "entity",
+      "name": "NewEntityNode5",
+      "position": {
+        "x": 462,
+        "y": 686
+      }
+    },
+    {
+      "id": "326969d4-fdb8-4eba-b524-3ae5883f401d",
+      "type": "entity",
+      "name": "NewEntityNode6",
+      "position": {
+        "x": 965,
+        "y": 688
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "a2a01953-8a15-49f8-a93b-e60ea82b80f1",
+      "type": "relation",
+      "name": "NewRelationNode1",
+      "cardinality": "-",
+      "position": {
+        "x": 694,
+        "y": 177
+      },
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    },
+    {
+      "id": "203d0cb6-43b2-49f1-92a5-b73ca5862123",
+      "type": "relation",
+      "name": "NewRelationNode2",
+      "cardinality": "-",
+      "position": {
+        "x": 718,
+        "y": 430
+      },
+      "size": {
+        "width": 131.88787841796875,
+        "height": 60
+      }
+    },
+    {
+      "id": "542782a1-d410-438f-aa01-adada7750c9d",
+      "type": "relation",
+      "name": "NewRelationNode3",
+      "cardinality": "-",
+      "position": {
+        "x": 692,
+        "y": 679
+      },
+      "size": {
+        "width": 131.88787841796875,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "072cc3b2-89f9-4f9d-8f35-136f2ac0c86a",
+      "type": "attribute",
+      "name": "NewAttribute1: integer",
+      "position": {
+        "x": 716,
+        "y": 106
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 22
+      }
+    }
+  ],
+  "multiValuedAttributes": [
+    {
+      "id": "45200622-18a4-42da-908c-d65a6ea3e315",
+      "type": "multiValuedAttribute",
+      "name": "NewMultiValuedAttribute1: integer",
+      "position": {
+        "x": 706,
+        "y": 610
+      },
+      "size": {
+        "width": 171.56996154785156,
+        "height": 22
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "4ce6116c-2178-4888-89e9-835375213d84",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute1: integer",
+      "position": {
+        "x": 1047,
+        "y": 109
+      }
+    },
+    {
+      "id": "5581e7ff-d1bd-4d06-a115-a94ca8929abd",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute2: integer",
+      "position": {
+        "x": 369,
+        "y": 123
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "91d6a35b-b0bf-4475-97c8-c68db682585e",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute3: integer",
+      "position": {
+        "x": 410,
+        "y": 383
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "f19dd646-7255-443c-af07-5a5406664823",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute4: integer",
+      "position": {
+        "x": 1031,
+        "y": 382
+      }
+    },
+    {
+      "id": "f862b9ff-e781-4293-a439-a79989a93ab7",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute5: integer",
+      "position": {
+        "x": 409,
+        "y": 617
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "672e41da-0cb0-4214-9e8d-361d7c42f499",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute6: integer",
+      "position": {
+        "x": 1010,
+        "y": 623
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    },
+    {
+      "id": "35735ca7-baae-4732-99f1-4b36c21bdc2c",
+      "type": "keyAttribute",
+      "name": "NewKeyAttribute7: integer",
+      "position": {
+        "x": 722,
+        "y": 372
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 22
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "d3e7a98e-f6cd-4b90-a27e-03228f6c2a39",
+      "sourceTaskId": "a2a01953-8a15-49f8-a93b-e60ea82b80f1",
+      "targetTaskId": "072cc3b2-89f9-4f9d-8f35-136f2ac0c86a"
+    },
+    {
+      "id": "5c9952f1-d810-42fc-b283-637437d65399",
+      "sourceTaskId": "9d0a6ebb-86f6-4460-833c-eef41f263722",
+      "targetTaskId": "4ce6116c-2178-4888-89e9-835375213d84"
+    },
+    {
+      "id": "e91937ef-8626-45d7-83aa-eee4d76a1a3d",
+      "sourceTaskId": "763b838a-3781-41d5-a4c6-af189eccc733",
+      "targetTaskId": "5581e7ff-d1bd-4d06-a115-a94ca8929abd"
+    },
+    {
+      "id": "8d151f6e-b016-4d34-a138-8378d6b4f23a",
+      "sourceTaskId": "7e426a81-4c62-46d1-a493-b63d4f2087d0",
+      "targetTaskId": "f19dd646-7255-443c-af07-5a5406664823"
+    },
+    {
+      "id": "d821e6db-2a6b-4c0c-9db9-7f0033aef59f",
+      "sourceTaskId": "d2f61ce1-5c87-487e-96f7-e3af8ca6b9da",
+      "targetTaskId": "91d6a35b-b0bf-4475-97c8-c68db682585e"
+    },
+    {
+      "id": "19a67a27-2f70-4d4f-9ce3-e84ac78c9308",
+      "sourceTaskId": "203d0cb6-43b2-49f1-92a5-b73ca5862123",
+      "targetTaskId": "35735ca7-baae-4732-99f1-4b36c21bdc2c"
+    },
+    {
+      "id": "69eb970e-52a4-48bd-bb01-1e3a05a86141",
+      "sourceTaskId": "326969d4-fdb8-4eba-b524-3ae5883f401d",
+      "targetTaskId": "672e41da-0cb0-4214-9e8d-361d7c42f499"
+    },
+    {
+      "id": "fcf75322-ce1e-43a5-a286-1af8d662a245",
+      "sourceTaskId": "5d5144c2-fdba-4280-ae52-f0a91b5712ee",
+      "targetTaskId": "f862b9ff-e781-4293-a439-a79989a93ab7"
+    },
+    {
+      "id": "88b370e0-bd4c-4ea6-89f7-4b401609c088",
+      "sourceTaskId": "542782a1-d410-438f-aa01-adada7750c9d",
+      "targetTaskId": "45200622-18a4-42da-908c-d65a6ea3e315"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "5a5ce5bf-93f2-4835-941e-b1b6f3aa4b66",
+      "type": "edge:weighted",
+      "sourceId": "9d0a6ebb-86f6-4460-833c-eef41f263722",
+      "targetId": "a2a01953-8a15-49f8-a93b-e60ea82b80f1",
+      "description": "(0..1)"
+    },
+    {
+      "id": "dfa0131c-0b48-4d0f-9a9e-95b51c616cbd",
+      "type": "edge:weighted",
+      "sourceId": "763b838a-3781-41d5-a4c6-af189eccc733",
+      "targetId": "a2a01953-8a15-49f8-a93b-e60ea82b80f1",
+      "description": "(1..N)"
+    },
+    {
+      "id": "3a828cfd-4015-4d97-a7bb-fbc235e4dbf1",
+      "type": "edge:weighted",
+      "sourceId": "7e426a81-4c62-46d1-a493-b63d4f2087d0",
+      "targetId": "203d0cb6-43b2-49f1-92a5-b73ca5862123",
+      "description": "(1..1)"
+    },
+    {
+      "id": "2a599f9d-9671-4a4b-b97c-bfa76742f43d",
+      "type": "edge:weighted",
+      "sourceId": "d2f61ce1-5c87-487e-96f7-e3af8ca6b9da",
+      "targetId": "203d0cb6-43b2-49f1-92a5-b73ca5862123",
+      "description": "(0..N)"
+    },
+    {
+      "id": "24ea2b93-b2f0-411f-9440-1d8273c0aa6d",
+      "type": "edge:weighted",
+      "sourceId": "326969d4-fdb8-4eba-b524-3ae5883f401d",
+      "targetId": "542782a1-d410-438f-aa01-adada7750c9d",
+      "description": "(1..1)"
+    },
+    {
+      "id": "4446ff64-2d82-43d8-a058-6139894c740a",
+      "type": "edge:weighted",
+      "sourceId": "5d5144c2-fdba-4280-ae52-f0a91b5712ee",
+      "targetId": "542782a1-d410-438f-aa01-adada7750c9d",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

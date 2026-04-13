@@ -33,7 +33,7 @@ export class GenerateSqlActionHandler implements ActionHandler {
         if (errors.length > 0) {
             console.error("No se puede generar SQL. Hay errores en el modelo:");
             errors.forEach(e => console.error(` - ${e.description}`));
-            return[];
+            return [];
         }
 
         console.log("Validación correcta. Generando SQL...");
@@ -52,6 +52,6 @@ export class GenerateSqlActionHandler implements ActionHandler {
             console.error("❌ Error al guardar el archivo:", err);
         }
 
-        return[];
+        return [];
     }
 }
