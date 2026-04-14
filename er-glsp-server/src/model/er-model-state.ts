@@ -25,6 +25,10 @@ export class ErModelState extends DefaultModelState implements JsonModelState<Er
     override readonly index: ErModelIndex;
 
     protected _ermodel: ErModel;
+    protected _uri: string;
+
+    get uri(): string { return this._uri; }
+    set uri(value: string) { this._uri = value; }
 
     get sourceModel(): ErModel {
         return this._ermodel;
@@ -34,4 +38,5 @@ export class ErModelState extends DefaultModelState implements JsonModelState<Er
         this._ermodel = ermodel;
         this.index.indexErModel(ermodel);
     }
+
 }

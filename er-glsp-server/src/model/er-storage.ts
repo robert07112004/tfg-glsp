@@ -29,6 +29,7 @@ export class ErStorage extends AbstractJsonModelStorage {
     loadSourceModel(action: RequestModelAction): MaybePromise<void> {
         const sourceUri = this.getSourceUri(action);
         const er = this.loadFromFile(sourceUri, ErModel.is);
+        this.modelState.uri = sourceUri;
         this.modelState.updateSourceModel(er);
     }
 

@@ -1,0 +1,8 @@
+Compilar el proyecto con yarn build desde la raiz
+Generar el paquete con yarn package desde la raiz -> empaquetara el proyecto en er-vscode/extension
+Instalar en vscode:
+    - abrir vscode
+    - ir a las extensiones
+    - click en el menu de 3 puntos ... y seleccionar install from VSIX
+    - seleccionar tu archivo .VSIX
+ 

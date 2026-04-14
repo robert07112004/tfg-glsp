@@ -49,8 +49,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     // Wrap server with quickstart component
     const minimalServer = new SocketGlspVscodeServer({
-        clientId: 'glsp.er', // Cambiado a er
-        clientName: 'er',    // Cambiado a er
+        clientId: 'glsp.er',
+        clientName: 'er',
         connectionOptions: { port: serverProcess?.getPort() || JSON.parse(process.env.ER_SERVER_PORT || DEFAULT_SERVER_PORT) }
     });
 

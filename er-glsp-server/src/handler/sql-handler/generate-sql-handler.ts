@@ -2,6 +2,7 @@ import { Action, ActionHandler } from '@eclipse-glsp/server';
 import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { ErModelState } from '../../model/er-model-state';
 import { SQLGenerator } from '../generator/sql-generator';
 import { ErModelValidator } from '../validation/diagram-validator';
@@ -36,20 +37,40 @@ export class GenerateSqlActionHandler implements ActionHandler {
             return [];
         }
 
+        const modelUri = this.modelState.uri;
+        if (!modelUri) {
+            console.error("No se pudo determinar la ruta del modelo.");
+            return [];
+        }
+
         console.log("Validación correcta. Generando SQL...");
         const sql = this.sqlGenerator.generate(root);
 
         try {
-            const fileName = 'script_generado.sql';
-            const projectRoot = path.resolve(__dirname, '../../../');
-            const filePath = path.join(projectRoot, fileName);
+            let modelPath: string;
+
+            if (modelUri.startsWith('file:///')) {
+                modelPath = decodeURIComponent(modelUri.replace('file:///', ''));
+                modelPath = modelPath.replace(/\//g, path.sep);
+            } else if (modelUri.startsWith('file://')) {
+                modelPath = fileURLToPath(modelUri);
+            } else {
+                modelPath = modelUri;
+            }
+
+            const modelDir = path.dirname(modelPath);
+
+            let counter = 1;
+            let filePath = path.join(modelDir, `script_generado${counter}.sql`);
+            while (fs.existsSync(filePath)) {
+                counter++;
+                filePath = path.join(modelDir, `script_generado${counter}.sql`);
+            }
+
             fs.writeFileSync(filePath, sql, 'utf-8');
-            console.log("----------------------------------------------");
-            console.log(`✅ Archivo SQL generado en la raíz del proyecto:`);
-            console.log(filePath);
-            console.log("----------------------------------------------");
+            console.log(`SQL generado en: ${filePath}`);
         } catch (err) {
-            console.error("❌ Error al guardar el archivo:", err);
+            console.error("Error al guardar el archivo:", err);
         }
 
         return [];

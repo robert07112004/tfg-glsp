@@ -25,11 +25,6 @@
   ],
   "publisher": "Eclipse-GLSP",
   "main": "dist/er-extension.js",
-  "files": [
-    "lib",
-    "server",
-    "webview"
-  ],
   "workspaces": {
     "nohoist": [
       "**/@vscode/codicons",
