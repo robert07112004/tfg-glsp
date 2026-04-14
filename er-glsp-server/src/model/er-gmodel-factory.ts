@@ -55,7 +55,6 @@ export class ErGModelFactory implements GModelFactory {
             ...(taskList.overlappingEdges || []).map(overlappingEdge => this.createOverlappingEdge(overlappingEdge))
         ]
 
-        this.preprocessParallelEdges(childEdges, childNodes);
         this.updatePortPositions(childEdges, childNodes);
 
         const newRoot = GGraph.builder()
@@ -439,6 +438,7 @@ export class ErGModelFactory implements GModelFactory {
             .addCssClass('tasklist-transition')
             .sourceId(transition.sourceTaskId)
             .targetId(transition.targetTaskId)
+            .addRoutingPoints(transition.routingPoints || [])
             .build();
     }
 
@@ -449,6 +449,7 @@ export class ErGModelFactory implements GModelFactory {
             .addCssClass('weighted-edge')
             .sourceId(weightedEdge.sourceId)
             .targetId(weightedEdge.targetId)
+            .addRoutingPoints(weightedEdge.routingPoints || [])
             .add(
                 GLabel.builder()
                     .id(`${weightedEdge.id}_label`)
@@ -502,6 +503,7 @@ export class ErGModelFactory implements GModelFactory {
             .addCssClass('optional-attribute-edge')
             .sourceId(optionalAttributeEdge.sourceId)
             .targetId(optionalAttributeEdge.targetId)
+            .addRoutingPoints(optionalAttributeEdge.routingPoints || [])
             .build();
     }
 
@@ -557,44 +559,4 @@ export class ErGModelFactory implements GModelFactory {
             .build();
     }
 
-    private preprocessParallelEdges(edges: GEdge[], nodes: GNode[]): void {
-        const nodeMap = new Map<string, GNode>();
-        nodes.forEach(n => nodeMap.set(n.id, n));
-        const groups = new Map<string, GEdge[]>();
-        edges.forEach(edge => {
-            const key = [edge.sourceId, edge.targetId].sort().join('-');
-            if (!groups.has(key)) {
-                groups.set(key, []);
-            }
-            groups.get(key)!.push(edge);
-        });
-        groups.forEach((groupEdges, key) => {
-            if (groupEdges.length > 1) {
-                const firstEdge = groupEdges[0];
-                const sourceNode = nodeMap.get(firstEdge.sourceId);
-                const targetNode = nodeMap.get(firstEdge.targetId);
-                if (sourceNode && targetNode && sourceNode.position && targetNode.position && sourceNode.id !== targetNode.id) {
-                    const x1 = sourceNode.position.x;
-                    const y1 = sourceNode.position.y;
-                    const x2 = targetNode.position.x;
-                    const y2 = targetNode.position.y;
-                    const mx = (x1 + x2) / 2;
-                    const my = (y1 + y2) / 2;
-                    const dx = x2 - x1;
-                    const dy = y2 - y1;
-                    const length = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const px = -dy / length;
-                    const py = dx / length;
-                    const amplitude = 30;
-                    groupEdges.forEach((edge, index) => {
-                        const offset = (index - (groupEdges.length - 1) / 2) * amplitude;
-                        edge.routingPoints = [{
-                            x: mx + px * offset,
-                            y: my + py * offset
-                        }];
-                    });
-                }
-            }
-        });
-    }
 }

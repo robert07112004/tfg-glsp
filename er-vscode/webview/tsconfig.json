@@ -4,7 +4,8 @@
     "rootDir": "src",
     "composite": true,
     "outDir": "lib",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "ignoreDeprecations": "5.0"
   },
   "include": [
     "src"

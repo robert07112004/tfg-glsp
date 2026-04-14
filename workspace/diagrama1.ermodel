@@ -1,0 +1,80 @@
+{
+  "id": "1ae6ba1f-516c-463c-8cf2-cbaec4f28ac4",
+  "entities": [
+    {
+      "id": "e9ae5a86-4d69-4cb4-8e88-dd550d216eb2",
+      "type": "entity",
+      "name": "NewEntityNode1",
+      "position": {
+        "x": 571,
+        "y": 391
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "f1527cf6-b91e-4298-af1f-1421e1c5e3c0",
+      "type": "relation",
+      "name": "NewRelationNode1",
+      "cardinality": "-",
+      "position": {
+        "x": 817,
+        "y": 371
+      },
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [],
+  "alternativeKeyAttributes": [],
+  "transitions": [],
+  "weightedEdges": [
+    {
+      "id": "6ce9acdb-938f-4614-9c0b-fb637dac8109",
+      "type": "edge:weighted",
+      "sourceId": "e9ae5a86-4d69-4cb4-8e88-dd550d216eb2",
+      "targetId": "f1527cf6-b91e-4298-af1f-1421e1c5e3c0",
+      "description": "(1..N)",
+      "routingPoints": [
+        {
+          "kind": "linear",
+          "x": 771,
+          "y": 517.3037191369416,
+          "pointIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "45c91c71-3020-4309-be4b-b70e7bbb8098",
+      "type": "edge:weighted",
+      "sourceId": "e9ae5a86-4d69-4cb4-8e88-dd550d216eb2",
+      "targetId": "f1527cf6-b91e-4298-af1f-1421e1c5e3c0",
+      "description": "(1..1)",
+      "routingPoints": [
+        {
+          "kind": "linear",
+          "x": 720.438027896217,
+          "y": 369.17172148572325,
+          "pointIndex": 0
+        }
+      ]
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

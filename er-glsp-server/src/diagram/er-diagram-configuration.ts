@@ -174,24 +174,24 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
             {
                 elementTypeId: DefaultTypes.EDGE,
                 deletable: true,
-                repositionable: false,
-                routable: false,
+                repositionable: true,
+                routable: true,
                 sourceElementTypeIds: [DefaultTypes.NODE],
                 targetElementTypeIds: [DefaultTypes.NODE]
             },
             {
                 elementTypeId: 'edge:weighted',
                 deletable: true,
-                repositionable: false,
-                routable: false,
+                repositionable: true,
+                routable: true,
                 sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
                 targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
             },
             {
                 elementTypeId: 'edge:optional',
                 deletable: true,
-                repositionable: false,
-                routable: false,
+                repositionable: true,
+                routable: true,
                 sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
                 targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
             },

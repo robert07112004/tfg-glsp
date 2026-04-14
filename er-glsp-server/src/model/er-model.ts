@@ -352,6 +352,7 @@ export interface Transition {
     id: string;
     sourceTaskId: string;
     targetTaskId: string;
+    routingPoints?: { x: number; y: number }[];
 }
 
 export namespace Transition {
@@ -371,6 +372,7 @@ export interface WeightedEdge {
     description: string;
     sourceId: string;
     targetId: string;
+    routingPoints?: { x: number; y: number }[];
 }
 
 export namespace WeightedEdge {
@@ -391,6 +393,7 @@ export interface OptionalAttributeEdge {
     type: 'edge:optional';
     sourceId: string;
     targetId: string;
+    routingPoints?: { x: number; y: number }[];
 }
 
 export namespace OptionalAttributeEdge {

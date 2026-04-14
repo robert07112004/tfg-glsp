@@ -6,7 +6,10 @@
     "reactNamespace": "JSX",
     "skipLibCheck": true,
     "types": [],
-    "composite": true
+    "composite": true,
+    "ignoreDeprecations": "5.0"
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

@@ -39,6 +39,7 @@ import { CreateTransitionHandler } from '../handler/edge-handlers/create-transit
 import { CreateWeightedEdgeHandler } from '../handler/edge-handlers/create-weighted-edge-handler';
 import { ErApplyLabelEditHandler } from '../handler/er-apply-label-edit-handler';
 import { ErChangeBoundsHandler } from '../handler/er-change-bounds-handler';
+import { ErChangeRoutingPointsHandler } from '../handler/er-change-routing-points-handler';
 import { ErLabelEditValidator } from '../handler/er-label-edit-validator';
 import { SQLGenerator } from '../handler/generator/sql-generator';
 import { CreateAlternativeKeyAttributeHandler } from '../handler/node-handlers/attribute-handlers/create-alternative-key-attribute-node-handler';
@@ -126,6 +127,7 @@ export class ErDiagramModule extends DiagramModule {
         binding.add(ErChangeBoundsHandler);
         binding.add(ErApplyLabelEditHandler);
         binding.add(DeleteElementHandler);
+        binding.add(ErChangeRoutingPointsHandler);
     }
 
     protected override bindModelValidator(): BindingTarget<ErModelValidator> | undefined {
