@@ -1,0 +1,84 @@
+/********************************************************************************
+ * Copyright (c) 2022 EclipseSource and others.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the Eclipse
+ * Public License v. 2.0 are satisfied:
+ * -- GNU General Public License, version 2 with the GNU Classpath Exception
+ * which is available at https://www.gnu.org/software/classpath/license.html
+ * -- MIT License which is available at https://opensource.org/license/mit.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
+ ********************************************************************************/
+import { ApplyLabelEditOperation } from '@eclipse-glsp/protocol';
+import { Command, GEdge, GLSPServerError, GNode, JsonOperationHandler, MaybePromise, toTypeGuard } from '@eclipse-glsp/server/node';
+import { inject, injectable } from 'inversify';
+import { ErModelState } from '../model/er-model-state';
+
+@injectable()
+export class ErApplyLabelEditHandler extends JsonOperationHandler {
+    readonly operationType = ApplyLabelEditOperation.KIND;
+
+    @inject(ErModelState)
+    protected override readonly modelState: ErModelState;
+
+    override createCommand(operation: ApplyLabelEditOperation): MaybePromise<Command | undefined> {
+        return this.commandOf(() => {
+            const index = this.modelState.index;
+            const parentNode = index.findParentElement(operation.labelId, toTypeGuard(GNode));
+            if (parentNode) {
+                const task = index.findEntity(parentNode.id);
+                const weakEntity = index.findWeakEntity(parentNode.id);
+                const relation = index.findRelation(parentNode.id);
+                const existenceDependentRelation = index.findExistenceDependentRelation(parentNode.id);
+                const identifyingDependentRelation = index.findIdentifyingDependentRelation(parentNode.id);
+                const attribute = index.findAttribute(parentNode.id);
+                const multiValuedAttribute = index.findMultiValuedAttribute(parentNode.id);
+                const derivedAttribute = index.findDerivedAttribute(parentNode.id);
+                const keyAttribute = index.findKeyAttribute(parentNode.id);
+                const alternativeKeyAttribute = index.findAlternativeKeyAttribute(parentNode.id);
+                if (task) {
+                    task.name = operation.text;
+                } else if (weakEntity) {
+                    weakEntity.name = operation.text;
+                } else if (relation) {
+                    relation.name = operation.text;
+                } else if (existenceDependentRelation) {
+                    existenceDependentRelation.name = operation.text;
+                } else if (identifyingDependentRelation) {
+                    identifyingDependentRelation.name = operation.text;
+                } else if (attribute) {
+                    attribute.name = operation.text;
+                } else if (multiValuedAttribute) {
+                    multiValuedAttribute.name = operation.text;
+                } else if (derivedAttribute) {
+                    if (operation.labelId.endsWith('_equation_label')) {
+                        derivedAttribute.equation = operation.text;
+                    } else {
+                        derivedAttribute.name = operation.text;
+                    }
+                } else if (keyAttribute) {
+                    keyAttribute.name = operation.text;
+                } else if (alternativeKeyAttribute) {
+                    alternativeKeyAttribute.name = operation.text;
+                } else {
+                    throw new GLSPServerError(`Could not find model element for node with id ${parentNode.id}`);
+                }
+            } else {
+                const parentEdge = index.findParentElement(operation.labelId, toTypeGuard(GEdge));
+                if (parentEdge) {
+                    const weightedEdge = index.findWeightedEdge(parentEdge.id);
+                    if (weightedEdge) {
+                        weightedEdge.description = operation.text;
+                    } else {
+                        throw new GLSPServerError(`Could not find model element for edge with id ${parentEdge.id}`);
+                    }
+                }
+            }
+        });
+    }
+}

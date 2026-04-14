@@ -1,0 +1,42 @@
+import {
+    Command,
+    CreateNodeOperation,
+    JsonCreateNodeOperationHandler,
+    MaybePromise,
+    Point
+} from '@eclipse-glsp/server';
+import { inject, injectable } from 'inversify';
+import * as uuid from 'uuid';
+import { TotalOverlappedSpecialization } from '../../../model/er-model';
+import { ErModelState } from '../../../model/er-model-state';
+
+@injectable()
+export class CreateTotalOverlappedSpecializationNodeHandler extends JsonCreateNodeOperationHandler {
+    readonly elementTypeIds = ['node:totalOverlappedSpecialization'];
+
+    @inject(ErModelState)
+    protected override modelState: ErModelState;
+
+    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
+        return this.commandOf(() => {
+            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
+            const totalOverlappedSpecialization = this.createTotalOverlappedSpecialization(relativeLocation);
+            const taskList = this.modelState.sourceModel;
+            taskList.totalOverlappedSpecializations.push(totalOverlappedSpecialization);
+        });
+    }
+
+    protected createTotalOverlappedSpecialization(position: Point): TotalOverlappedSpecialization {
+        return {
+            id: uuid.v4(),
+            type: 'totalOverlappedSpecialization',
+            name: 'Total Overlapped',
+            position
+        };
+    }
+
+    get label(): string {
+        return 'Total-Overlapped-Specialization';
+    }
+
+}

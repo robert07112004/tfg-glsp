@@ -6,16 +6,16 @@
   },
   "references": [
     {
-      "path": "./tasklist-glsp-client"
+      "path": "./er-glsp-client"
     },
     {
-      "path": "./tasklist-glsp-server"
+      "path": "./er-glsp-server"
     },
     {
-      "path": "./tasklist-vscode/extension"
+      "path": "./er-vscode/extension"
     },
     {
-      "path": "./tasklist-vscode/webview"
+      "path": "./er-vscode/webview"
     }
   ]
 }

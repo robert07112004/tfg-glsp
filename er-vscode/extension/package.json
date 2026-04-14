@@ -1,0 +1,194 @@
+{
+  "name": "er-vscode",
+  "displayName": "ER GLSP Diagram Editor",
+  "version": "2.5.0",
+  "private": "true",
+  "description": "Extension for ER GLSP diagrams",
+  "categories": [
+    "Programming Languages"
+  ],
+  "homepage": "https://www.eclipse.org/glsp/",
+  "bugs": "https://github.com/eclipse-glsp/glsp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse-glsp/glsp-examples.git"
+  },
+  "author": {
+    "name": "EclipseGLSP"
+  },
+  "contributors": [
+    {
+      "name": "Eclipse GLSP Project",
+      "email": "glsp-dev@eclipse.org",
+      "url": "https://projects.eclipse.org/projects/ecd.glsp"
+    }
+  ],
+  "publisher": "Eclipse-GLSP",
+  "main": "dist/er-extension.js",
+  "files": [
+    "lib",
+    "server",
+    "webview"
+  ],
+  "workspaces": {
+    "nohoist": [
+      "**/@vscode/codicons",
+      "**/@vscode/codicons/**"
+    ]
+  },
+  "scripts": {
+    "build": "tsc -b && yarn bundle",
+    "bundle": "webpack",
+    "bundle:prod": "webpack --config ./webpack.prod.js",
+    "clean": "rimraf lib tsconfig.tsbuildinfo dist",
+    "lint": "eslint --ext .ts,.tsx ./src",
+    "package": "vsce package --yarn",
+    "watch": "tsc -w",
+    "watch:bundle": "webpack --watch"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "er.generateSql",
+        "title": "Generar SQL",
+        "icon": "$(database)", 
+        "category": "GLSP"
+      },
+      {
+        "command": "er.fit",
+        "title": "Fit to Screen",
+        "category": "ER Diagram",
+        "enablement": "activeCustomEditorId == 'er.glspDiagram'"
+      },
+      {
+        "command": "er.center",
+        "title": "Center selection",
+        "category": "ER Diagram",
+        "enablement": "activeCustomEditorId == 'er.glspDiagram'"
+      },
+      {
+        "command": "er.layout",
+        "title": "Layout diagram",
+        "category": "ER Diagram",
+        "enablement": "activeCustomEditorId == 'er.glspDiagram'"
+      },
+      {
+        "command": "er.exportAsSVG",
+        "title": "Export as SVG",
+        "category": "ER Diagram",
+        "enablement": "activeCustomEditorId == 'er.glspDiagram'"
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "er.glspDiagram",
+        "displayName": "ER Diagram Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.ermodel"
+          }
+        ]
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "er.generateSql",
+        "key": "ctrl+alt+s",
+        "when": "activeCustomEditorId == 'er.glspDiagram'"
+      },
+      {
+        "key": "alt+f",
+        "mac": "alt+f",
+        "command": "er.fit",
+        "when": "activeCustomEditorId == 'er.glspDiagram'"
+      },
+      {
+        "key": "alt+c",
+        "mac": "alt+c",
+        "command": "er.center",
+        "when": "activeCustomEditorId == 'er.glspDiagram'"
+      },
+      {
+        "key": "alt+l",
+        "mac": "alt+l",
+        "command": "er.layout",
+        "when": "activeCustomEditorId == 'er.glspDiagram'"
+      },
+      {
+        "key": "ctrl+a",
+        "mac": "ctrl+a",
+        "command": "er.selectAll",
+        "when": "activeCustomEditorId == 'er.glspDiagram'"
+      },
+      {
+        "key": "alt+e",
+        "mac": "alt+e",
+        "command": "er.exportAsSVG",
+        "when": "activeCustomEditorId == 'er.glspDiagram'"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "er.generateSql",
+          "group": "navigation",
+          "when": "activeCustomEditorId == 'er.glspDiagram'"
+        },
+        {
+          "submenu": "er.editor.title",
+          "group": "bookmarks"
+        }
+      ],
+      "er.editor.title": [
+        {
+          "command": "er.fit",
+          "group": "navigation",
+          "when": "activeCustomEditorId == 'er.glspDiagram'"
+        },
+        {
+          "command": "er.center",
+          "group": "navigation",
+          "when": "activeCustomEditorId == 'er.glspDiagram'"
+        },
+        {
+          "command": "er.layout",
+          "group": "navigation",
+          "when": "activeCustomEditorId == 'er.glspDiagram'"
+        },
+        {
+          "command": "er.exportAsSVG",
+          "when": "activeCustomEditorId == 'er.glspDiagram'"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "er.editor.title",
+        "label": "Diagram"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "dependencies": {
+    "@vscode/codicons": "^0.0.25"
+  },
+  "devDependencies": {
+    "@eclipse-glsp/vscode-integration": "2.5.0",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.54.0",
+    "@vscode/vsce": "^2.24.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "path": "^0.12.7",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^2.6.3",
+    "er-webview": "2.5.0",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^9.1.1",
+    "webpack-merge": "^5.9.0"
+  },
+  "engines": {
+    "vscode": "^1.54.0"
+  }
+}
