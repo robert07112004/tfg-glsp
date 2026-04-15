@@ -36,7 +36,7 @@ export class ErChangeBoundsHandler extends JsonOperationHandler {
             idx.findRelation(id) ??
             idx.findExistenceDependentRelation(id) ??
             idx.findIdentifyingDependentRelation(id) ??
-            idx.findPartialExlcusiveSpecialization(id) ??
+            idx.findPartialExclusiveSpecialization(id) ??
             idx.findTotalExclusiveSpecialization(id) ??
             idx.findPartialOverlappedSpecialization(id) ??
             idx.findTotalOverlappedSpecialization(id) ??
