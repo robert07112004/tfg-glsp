@@ -1,42 +1,29 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { AlternativeKeyAttribute } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateAlternativeKeyAttributeHandler extends JsonCreateNodeOperationHandler {
+export class CreateAlternativeKeyAttributeHandler extends BaseCreateNodeHandler<AlternativeKeyAttribute> {
     readonly elementTypeIds = ['node:alternativeKeyAttribute'];
+    readonly label = 'Alternative Key Attribute';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'alternativeKeyAttribute';
+    protected readonly namePrefix = 'NewAlternativeKeyAttribute';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const alternativeKeyAttribute = this.createAlternativeKeyAttribute(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.alternativeKeyAttributes.push(alternativeKeyAttribute);
-        });
+    protected getTargetArray(): AlternativeKeyAttribute[] {
+        return this.modelState.sourceModel.alternativeKeyAttributes;
     }
 
-    protected createAlternativeKeyAttribute(position: Point): AlternativeKeyAttribute {
-        const attributeCounter = this.modelState.sourceModel.keyAttributes.length;
-        return {
-            id: uuid.v4(),
-            type: 'alternativeKeyAttribute',
-            name: `NewAlternativeKeyAttribute${attributeCounter + 1}: integer`,
-            position
-        };
+    protected setTargetArray(array: AlternativeKeyAttribute[]): void {
+        this.modelState.sourceModel.alternativeKeyAttributes = array;
     }
 
-    get label(): string {
-        return 'Alternative Key Attribute';
+    protected override createErNode(position: Point, currentCount: number): AlternativeKeyAttribute {
+        const node = super.createErNode(position, currentCount);
+        node.name = `${this.namePrefix}${currentCount + 1}: integer`;
+        return node;
     }
 }

@@ -1,31 +1,19 @@
-import { Command, CreateEdgeOperation, JsonCreateEdgeOperationHandler, MaybePromise } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { WeightedEdge } from '../../model/er-model';
-import { ErModelState } from '../../model/er-model-state';
+import { BaseCreateEdgeHandler } from './base-create-edge-handler';
 
 @injectable()
-export class CreateWeightedEdgeHandler extends JsonCreateEdgeOperationHandler {
+export class CreateWeightedEdgeHandler extends BaseCreateEdgeHandler<WeightedEdge> {
     readonly elementTypeIds = ['weighted-edge'];
+    readonly label = 'Weighted Edge';
+    protected readonly edgeType = 'edge:weighted';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected getTargetArray(): WeightedEdge[] { return this.modelState.sourceModel.weightedEdges; }
+    protected setTargetArray(array: WeightedEdge[]): void { this.modelState.sourceModel.weightedEdges = array; }
 
-    override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const weightedEdge: WeightedEdge = {
-                id: uuid.v4(),
-                type: 'edge:weighted',
-                sourceId: operation.sourceElementId,
-                targetId: operation.targetElementId,
-                description: 'New Weighted Edge'
-            };
-            this.modelState.sourceModel.weightedEdges.push(weightedEdge);
-        });
-    }
-
-
-    get label(): string {
-        return 'Weighted Edge';
+    protected override createErEdge(sourceId: string, targetId: string): WeightedEdge {
+        const edge = super.createErEdge(sourceId, targetId);
+        edge.description = 'New Weighted Edge';
+        return edge;
     }
 }

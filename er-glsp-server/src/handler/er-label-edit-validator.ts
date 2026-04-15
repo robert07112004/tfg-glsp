@@ -1,45 +1,32 @@
-/********************************************************************************
- * Copyright (c) 2022 EclipseSource and others.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v. 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0.
- *
- * This Source Code may also be made available under the following Secondary
- * Licenses when the conditions for such availability set forth in the Eclipse
- * Public License v. 2.0 are satisfied:
- * -- GNU General Public License, version 2 with the GNU Classpath Exception
- * which is available at https://www.gnu.org/software/classpath/license.html
- * -- MIT License which is available at https://opensource.org/license/mit.
- *
- * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
- ********************************************************************************/
-import { GEdge, GLabel, GModelElement, GNode, LabelEditValidator, ValidationStatus } from '@eclipse-glsp/server';
+import { GEdge, GModelElement, GNode, LabelEditValidator, toTypeGuard, ValidationStatus } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { ErModelState } from '../model/er-model-state';
 
-// Custom type guards
-function isEdge(element: GModelElement): element is GEdge {
-    return element.type === 'edge' || element.type.startsWith('edge:');
-}
+const CARDINALITY_REGEX = /^\([0-9]+\.\.([0-9]+|N)\)$/;
+const EQUATION_REGEX = /^[a-zA-Z0-9_\s+\-*/().]+$/;
 
-function isLabel(element: GModelElement): element is GLabel {
-    return element.type === 'label' || element.type.startsWith('label:');
-}
-
-function isNode(element: GModelElement): element is GNode {
-    return element.type === 'node' || element.type.startsWith('node:');
-}
+const ALLOWED_SQL_TYPES = [
+    'integer', 'smallint', 'bigint', 'tinyint',
+    'decimal\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
+    'numeric\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
+    'float', 'real',
+    'varchar\\(\\s*\\d+\\s*\\)', 'char\\(\\s*\\d+\\s*\\)', 'text',
+    'date', 'time', 'datetime', 'timestamp',
+    'boolean',
+    'blob', 'binary', 'varbinary',
+    'json', 'xml', 'uuid',
+    'geometry', 'geography'
+];
+const ATTRIBUTE_REGEX = new RegExp(`^[^:]+:\\s*(${ALLOWED_SQL_TYPES.join('|')})\\s*$`, 'i');
 
 function isAttributeNode(elementType: string): boolean {
-    const attributeTypes = [
+    return [
         'node:attribute',
         'node:keyAttribute',
         'node:alternativeKeyAttribute',
         'node:multiValuedAttribute',
         'node:derivedAttribute'
-    ];
-    return attributeTypes.includes(elementType);
+    ].includes(elementType);
 }
 
 /**
@@ -50,76 +37,48 @@ export class ErLabelEditValidator implements LabelEditValidator {
     @inject(ErModelState)
     protected modelState: ErModelState;
 
-    protected findParentElement(elementId: string): GModelElement | undefined {
-        const find = (element: GModelElement): GModelElement | undefined => {
-            if (element.children) {
-                for (const child of element.children) {
-                    if (child.id === elementId) {
-                        return element;
-                    }
-                    const found = find(child);
-                    if (found) {
-                        return found;
-                    }
-                }
-            }
-            return undefined;
-        };
-        return find(this.modelState.root);
-    }
-
     validate(label: string, element: GModelElement): ValidationStatus {
-        const container = isLabel(element) ? this.findParentElement(element.id) : element;
+        const index = this.modelState.index;
 
-        if (container && isEdge(container)) {
-            const weightedEdge = this.modelState.index.findWeightedEdge(container.id);
-            if (weightedEdge) {
-                const regex = /^\([0-9]+\.\.([0-9]+|N)\)$/;
-                if (!regex.test(label)) {
-                    return {
-                        severity: ValidationStatus.Severity.ERROR,
-                        message: 'The format is not correct, please follow the format (1..N) or (0..1).'
-                    };
-                }
+        const trimmedLabel = label.trim();
+        if (trimmedLabel.length < 1 || (trimmedLabel.includes(':') && trimmedLabel.split(':')[0].trim().length < 1)) {
+            return { severity: ValidationStatus.Severity.ERROR, message: 'Name must not be empty.' };
+        }
+
+        const container = element.type.startsWith('label')
+            ? (index.findParentElement(element.id, toTypeGuard(GNode)) ?? index.findParentElement(element.id, toTypeGuard(GEdge)))
+            : element;
+
+        if (!container) {
+            return { severity: ValidationStatus.Severity.OK };
+        }
+
+        if (container instanceof GEdge) {
+            const weightedEdge = index.findWeightedEdge(container.id);
+            if (weightedEdge && !CARDINALITY_REGEX.test(label)) {
+                return {
+                    severity: ValidationStatus.Severity.ERROR,
+                    message: 'El formato no es correcto, por favor utilice (1..N) or (0..1).'
+                };
             }
-        } else if (container && isNode(container) && isAttributeNode(container.type)) {
+        } else if (container instanceof GNode && isAttributeNode(container.type)) {
             if (element.id.endsWith('_equation_label')) {
-                const equationRegex = /^[a-zA-Z0-9_\s+\-*/().]+$/;
-                if (!equationRegex.test(label)) {
+                if (!EQUATION_REGEX.test(label)) {
                     return {
                         severity: ValidationStatus.Severity.ERROR,
-                        message: 'Invalid formula. Only attributes, numbers and operators (+ - * /) are allowed.'
+                        message: 'Fórmula incorrecta, por favor solo utilice atributos, números y operadores (+ - * /).'
                     };
                 }
             } else {
-                const allowedTypes = [
-                    'integer', 'smallint', 'bigint', 'tinyint',
-                    'decimal\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
-                    'numeric\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
-                    'float', 'real',
-                    'varchar\\(\\s*\\d+\\s*\\)', 'char\\(\\s*\\d+\\s*\\)', 'text',
-                    'date', 'time', 'datetime', 'timestamp',
-                    'boolean',
-                    'blob', 'binary', 'varbinary',
-                    'json', 'xml', 'uuid',
-                    'geometry', 'geography'
-                ];
-                const typesRegex = `(${allowedTypes.join('|')})`;
-                const attributeRegex = new RegExp(`^[^:]+:\\s*${typesRegex}\\s*$`, 'i');
-                if (!attributeRegex.test(label)) {
+                if (!ATTRIBUTE_REGEX.test(label)) {
                     return {
                         severity: ValidationStatus.Severity.ERROR,
-                        message: 'The format is not correct, please follow the format: {name: type} with SQL types (ex. "age: integer")'
+                        message: 'El formato no es correcto, por favor utilice (solo tipos de SQL): {name: type} (ex. "age: integer")'
                     };
                 }
             }
-        }
-
-        if (label.trim().length < 1 || label.includes(':') && label.split(':')[0].trim().length < 1) {
-            return { severity: ValidationStatus.Severity.ERROR, message: 'Name must not be empty.' };
         }
 
         return { severity: ValidationStatus.Severity.OK };
     }
-
 }

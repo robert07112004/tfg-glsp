@@ -1,19 +1,3 @@
-/********************************************************************************
- * Copyright (c) 2022 EclipseSource and others.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v. 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0.
- *
- * This Source Code may also be made available under the following Secondary
- * Licenses when the conditions for such availability set forth in the Eclipse
- * Public License v. 2.0 are satisfied:
- * -- GNU General Public License, version 2 with the GNU Classpath Exception
- * which is available at https://www.gnu.org/software/classpath/license.html
- * -- MIT License which is available at https://opensource.org/license/mit.
- *
- * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
- ********************************************************************************/
 import {
     DefaultTypes,
     DiagramConfiguration,
@@ -37,121 +21,48 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
     }
 
     get shapeTypeHints(): ShapeTypeHint[] {
-        return [
-            {
-                elementTypeId: DefaultTypes.NODE_RECTANGLE,
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:weakEntity',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: DefaultTypes.NODE_DIAMOND,
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:existenceDependentRelation',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:identifyingDependentRelation',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:partialExclusiveSpecialization',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:totalExclusiveSpecialization',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:partialOverlappedSpecialization',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:totalOverlappedSpecialization',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:attribute',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:multiValuedAttribute',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:derivedAttribute',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:keyAttribute',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'node:alternativeKeyAttribute',
-                deletable: true,
-                reparentable: false,
-                repositionable: true,
-                resizable: true
-            },
-            {
-                elementTypeId: 'port:constraint',
-                deletable: false,
-                reparentable: false,
-                repositionable: false,
-                resizable: false
-            }
+        const defaultShapeConfig = {
+            deletable: true,
+            reparentable: false,
+            repositionable: true,
+            resizable: true
+        };
+
+        const standardNodes = [
+            DefaultTypes.NODE_RECTANGLE,
+            'node:weakEntity',
+            DefaultTypes.NODE_DIAMOND,
+            'node:existenceDependentRelation',
+            'node:identifyingDependentRelation',
+            'node:partialExclusiveSpecialization',
+            'node:totalExclusiveSpecialization',
+            'node:partialOverlappedSpecialization',
+            'node:totalOverlappedSpecialization',
+            'node:attribute',
+            'node:multiValuedAttribute',
+            'node:derivedAttribute',
+            'node:keyAttribute',
+            'node:alternativeKeyAttribute'
         ];
+
+        const hints: ShapeTypeHint[] = standardNodes.map(typeId => ({
+            elementTypeId: typeId,
+            ...defaultShapeConfig
+        }));
+
+        hints.push({
+            elementTypeId: 'port:constraint',
+            deletable: false,
+            reparentable: false,
+            repositionable: false,
+            resizable: false
+        });
+
+        return hints;
     }
 
     get edgeTypeHints(): EdgeTypeHint[] {
-        const entityTypes = [
-            DefaultTypes.NODE_RECTANGLE,
-            'node:weakEntity'
-        ];
-
+        const entityTypes = [DefaultTypes.NODE_RECTANGLE, 'node:weakEntity'];
         const relationTypes = [
             DefaultTypes.NODE_DIAMOND,
             'node:existenceDependentRelation',
@@ -161,7 +72,6 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
             'node:partialOverlappedSpecialization',
             'node:totalOverlappedSpecialization'
         ];
-
         const attributeTypes = [
             'node:attribute',
             'node:keyAttribute',
@@ -169,6 +79,33 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
             'node:derivedAttribute',
             'node:alternativeKeyAttribute'
         ];
+
+        const allMainNodes = [...entityTypes, ...relationTypes, ...attributeTypes];
+        const entityAndRelations = [...entityTypes, ...relationTypes];
+
+        const defaultEdgeConfig = {
+            deletable: true,
+            repositionable: true,
+            routable: true,
+            sourceElementTypeIds: allMainNodes,
+            targetElementTypeIds: allMainNodes
+        };
+
+        const constraintEdgeConfig = {
+            deletable: true,
+            repositionable: false,
+            routable: false,
+            sourceElementTypeIds: entityAndRelations,
+            targetElementTypeIds: entityAndRelations
+        };
+
+        const portOnlyConfig = {
+            deletable: true,
+            repositionable: false,
+            routable: false,
+            sourceElementTypeIds: ['port:constraint'],
+            targetElementTypeIds: ['port:constraint']
+        };
 
         return [
             {
@@ -179,54 +116,12 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
                 sourceElementTypeIds: [DefaultTypes.NODE],
                 targetElementTypeIds: [DefaultTypes.NODE]
             },
-            {
-                elementTypeId: 'edge:weighted',
-                deletable: true,
-                repositionable: true,
-                routable: true,
-                sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
-                targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
-            },
-            {
-                elementTypeId: 'edge:optional',
-                deletable: true,
-                repositionable: true,
-                routable: true,
-                sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
-                targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
-            },
-            {
-                elementTypeId: 'edge:exclusion',
-                deletable: true,
-                repositionable: false,
-                routable: false,
-                sourceElementTypeIds: [...entityTypes, ...relationTypes],
-                targetElementTypeIds: [...entityTypes, ...relationTypes]
-            },
-            {
-                elementTypeId: 'edge:inclusion',
-                deletable: true,
-                repositionable: false,
-                routable: false,
-                sourceElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes],
-                targetElementTypeIds: [...entityTypes, ...relationTypes, ...attributeTypes]
-            },
-            {
-                elementTypeId: 'edge:disjointness',
-                deletable: true,
-                repositionable: false,
-                routable: false,
-                sourceElementTypeIds: ['port:constraint'],
-                targetElementTypeIds: ['port:constraint']
-            },
-            {
-                elementTypeId: 'edge:overlap',
-                deletable: true,
-                repositionable: false,
-                routable: false,
-                sourceElementTypeIds: ['port:constraint'],
-                targetElementTypeIds: ['port:constraint']
-            }
+            { elementTypeId: 'edge:weighted', ...defaultEdgeConfig },
+            { elementTypeId: 'edge:optional', ...defaultEdgeConfig },
+            { elementTypeId: 'edge:exclusion', ...constraintEdgeConfig },
+            { elementTypeId: 'edge:inclusion', ...constraintEdgeConfig, sourceElementTypeIds: allMainNodes, targetElementTypeIds: allMainNodes },
+            { elementTypeId: 'edge:disjointness', ...portOnlyConfig },
+            { elementTypeId: 'edge:overlap', ...portOnlyConfig }
         ];
     }
 }

@@ -1,42 +1,29 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { KeyAttribute } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateKeyAttributeHandler extends JsonCreateNodeOperationHandler {
+export class CreateKeyAttributeHandler extends BaseCreateNodeHandler<KeyAttribute> {
     readonly elementTypeIds = ['node:keyAttribute'];
+    readonly label = 'Key Attribute';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'keyAttribute';
+    protected readonly namePrefix = 'NewKeyAttribute';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const keyAttribute = this.createKeyAttribute(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.keyAttributes.push(keyAttribute);
-        });
+    protected getTargetArray(): KeyAttribute[] {
+        return this.modelState.sourceModel.keyAttributes;
     }
 
-    protected createKeyAttribute(position: Point): KeyAttribute {
-        const attributeCounter = this.modelState.sourceModel.keyAttributes.length;
-        return {
-            id: uuid.v4(),
-            type: 'keyAttribute',
-            name: `NewKeyAttribute${attributeCounter + 1}: integer`,
-            position
-        };
+    protected setTargetArray(array: KeyAttribute[]): void {
+        this.modelState.sourceModel.keyAttributes = array;
     }
 
-    get label(): string {
-        return 'Key Attribute';
+    protected override createErNode(position: Point, currentCount: number): KeyAttribute {
+        const node = super.createErNode(position, currentCount);
+        node.name = `${this.namePrefix}${currentCount + 1}: integer`;
+        return node;
     }
 }

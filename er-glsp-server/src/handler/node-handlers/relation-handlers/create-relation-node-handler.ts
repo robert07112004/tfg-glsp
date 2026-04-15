@@ -1,45 +1,30 @@
 import {
-    Command,
-    CreateNodeOperation,
     DefaultTypes,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { Relation } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateRelationHandler extends JsonCreateNodeOperationHandler {
+export class CreateRelationHandler extends BaseCreateNodeHandler<Relation> {
     readonly elementTypeIds = [DefaultTypes.NODE_DIAMOND];
+    readonly label = 'Relation';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'relation';
+    protected readonly namePrefix = 'NewRelationNode';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const relation = this.createRelation(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.relations.push(relation);
-        });
+    protected getTargetArray(): Relation[] {
+        return this.modelState.sourceModel.relations;
     }
 
-    protected createRelation(position: Point): Relation {
-        const relationCounter = this.modelState.sourceModel.relations.length;
-        return {
-            id: uuid.v4(),
-            type: 'relation',
-            name: `NewRelationNode${relationCounter + 1}`,
-            cardinality: '-',
-            position
-        };
+    protected setTargetArray(array: Relation[]): void {
+        this.modelState.sourceModel.relations = array;
     }
 
-    get label(): string {
-        return 'Relation';
+    protected override createErNode(position: Point, currentCount: number): Relation {
+        const node = super.createErNode(position, currentCount);
+        node.cardinality = '-';
+        return node;
     }
-
 }

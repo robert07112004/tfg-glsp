@@ -1,32 +1,13 @@
-import { Command, CreateEdgeOperation, JsonCreateEdgeOperationHandler, MaybePromise } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { InclusionEdge } from '../../model/er-model';
-import { ErModelState } from '../../model/er-model-state';
+import { BaseCreateEdgeHandler } from './base-create-edge-handler';
 
 @injectable()
-export class CreateInclusionEdgeHandler extends JsonCreateEdgeOperationHandler {
+export class CreateInclusionEdgeHandler extends BaseCreateEdgeHandler<InclusionEdge> {
     readonly elementTypeIds = ['edge:inclusion'];
+    readonly label = 'Inclusion Constraint';
+    protected readonly edgeType = 'edge:inclusion';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
-
-    override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            if (!this.modelState.sourceModel.inclusionEdges) {
-                this.modelState.sourceModel.inclusionEdges = [];
-            }
-            const inclusionEdge: InclusionEdge = {
-                id: uuid.v4(),
-                type: 'edge:inclusion',
-                sourceId: operation.sourceElementId,
-                targetId: operation.targetElementId,
-            };
-            this.modelState.sourceModel.inclusionEdges.push(inclusionEdge);
-        });
-    }
-
-    get label(): string {
-        return 'Inclusion Constraint';
-    }
+    protected getTargetArray(): InclusionEdge[] { return this.modelState.sourceModel.inclusionEdges; }
+    protected setTargetArray(array: InclusionEdge[]): void { this.modelState.sourceModel.inclusionEdges = array; }
 }

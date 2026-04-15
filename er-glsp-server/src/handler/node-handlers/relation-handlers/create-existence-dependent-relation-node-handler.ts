@@ -1,44 +1,30 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { ExistenceDependentRelation } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateExistenceDependentRelationHandler extends JsonCreateNodeOperationHandler {
+export class CreateExistenceDependentRelationHandler extends BaseCreateNodeHandler<ExistenceDependentRelation> {
     readonly elementTypeIds = ['node:existenceDependentRelation'];
+    readonly label = 'Existence-Dep Relation';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'existenceDependentRelation';
+    protected readonly namePrefix = 'NewDepRelation';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const relation = this.createRelation(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.existenceDependentRelations.push(relation);
-        });
+    protected getTargetArray(): ExistenceDependentRelation[] {
+        return this.modelState.sourceModel.existenceDependentRelations;
     }
 
-    protected createRelation(position: Point): ExistenceDependentRelation {
-        const relationCounter = this.modelState.sourceModel.existenceDependentRelations.length;
-        return {
-            id: uuid.v4(),
-            type: 'existenceDependentRelation',
-            name: `NewDepRelation${relationCounter + 1}`,
-            cardinality: '-',
-            dependencyLabel: 'E',
-            position
-        };
+    protected setTargetArray(array: ExistenceDependentRelation[]): void {
+        this.modelState.sourceModel.existenceDependentRelations = array;
     }
 
-    get label(): string {
-        return 'Existence-Dep Relation';
+    protected override createErNode(position: Point, currentCount: number): ExistenceDependentRelation {
+        const node = super.createErNode(position, currentCount);
+        node.cardinality = '-';
+        node.dependencyLabel = 'E';
+        return node;
     }
 }

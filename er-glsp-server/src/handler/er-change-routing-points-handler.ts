@@ -5,7 +5,7 @@ import {
     MaybePromise
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { ErModel } from '../model/er-model';
+import { ErEdge } from '../model/er-model';
 import { ErModelState } from '../model/er-model-state';
 
 @injectable()
@@ -17,20 +17,14 @@ export class ErChangeRoutingPointsHandler extends JsonOperationHandler {
 
     override createCommand(operation: ChangeRoutingPointsOperation): MaybePromise<Command | undefined> {
         return this.commandOf(() => {
-            const sourceModel = this.modelState.sourceModel as ErModel;
+            const index = this.modelState.index;
 
             for (const change of operation.newRoutingPoints) {
-                const edgeId = change.elementId;
+                const element = index.findElement(change.elementId);
 
-                const allEdges = [
-                    ...sourceModel.transitions || [],
-                    ...sourceModel.weightedEdges || [],
-                    ...sourceModel.optionalAttributeEdges || []
-                ];
-
-                const edge = allEdges.find(e => e.id === edgeId);
-
-                if (edge) edge.routingPoints = change.newRoutingPoints;
+                if (element && 'sourceId' in element) {
+                    (element as ErEdge).routingPoints = change.newRoutingPoints;
+                }
             }
         });
     }

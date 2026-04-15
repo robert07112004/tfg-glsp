@@ -1,42 +1,29 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { PartialOverlappedSpecialization } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreatePartialOverlappedSpecializationNodeHandler extends JsonCreateNodeOperationHandler {
+export class CreatePartialOverlappedSpecializationNodeHandler extends BaseCreateNodeHandler<PartialOverlappedSpecialization> {
     readonly elementTypeIds = ['node:partialOverlappedSpecialization'];
+    readonly label = 'Partial-Overlapped-Specialization';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'partialOverlappedSpecialization';
+    protected readonly namePrefix = 'PartialOverlapped';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const partialOverlappedSpecialization = this.createPartialOverlappedSpecialization(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.partialOverlappedSpecializations.push(partialOverlappedSpecialization);
-        });
+    protected getTargetArray(): PartialOverlappedSpecialization[] {
+        return this.modelState.sourceModel.partialOverlappedSpecializations;
     }
 
-    protected createPartialOverlappedSpecialization(position: Point): PartialOverlappedSpecialization {
-        return {
-            id: uuid.v4(),
-            type: 'partialOverlappedSpecialization',
-            name: 'Partial Overlapped',
-            position
-        };
+    protected setTargetArray(array: PartialOverlappedSpecialization[]): void {
+        this.modelState.sourceModel.partialOverlappedSpecializations = array;
     }
 
-    get label(): string {
-        return 'Partial-Overlapped-Specialization';
+    protected override createErNode(position: Point, currentCount: number): PartialOverlappedSpecialization {
+        const node = super.createErNode(position, currentCount);
+        node.name = 'Partial Overlapped';
+        return node;
     }
-
 }

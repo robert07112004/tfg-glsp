@@ -1,42 +1,20 @@
-import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
-    Point
-} from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { WeakEntity } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateWeakEntityHandler extends JsonCreateNodeOperationHandler {
+export class CreateWeakEntityHandler extends BaseCreateNodeHandler<WeakEntity> {
     readonly elementTypeIds = ['node:weakEntity'];
+    readonly label = 'Weak Entity';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'weakEntity';
+    protected readonly namePrefix = 'NewWeakEntity';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const weakEntity = this.createWeakEntity(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.weakEntities.push(weakEntity);
-        });
+    protected getTargetArray(): WeakEntity[] {
+        return this.modelState.sourceModel.weakEntities;
     }
 
-    protected createWeakEntity(position: Point): WeakEntity {
-        const entityCounter = this.modelState.sourceModel.weakEntities.length;
-        return {
-            id: uuid.v4(),
-            type: 'weakEntity',
-            name: `NewWeakEntity${entityCounter + 1}`,
-            position
-        };
-    }
-
-    get label(): string {
-        return 'Weak Entity';
+    protected setTargetArray(array: WeakEntity[]): void {
+        this.modelState.sourceModel.weakEntities = array;
     }
 }

@@ -1,44 +1,30 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { IdentifyingDependentRelation } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateIdentifyingDependentRelationHandler extends JsonCreateNodeOperationHandler {
+export class CreateIdentifyingDependentRelationHandler extends BaseCreateNodeHandler<IdentifyingDependentRelation> {
     readonly elementTypeIds = ['node:identifyingDependentRelation'];
+    readonly label = 'Identifying-Dep Relation';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'identifyingDependentRelation';
+    protected readonly namePrefix = 'NewIdentRelation';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const relation = this.createRelation(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.identifyingDependentRelations.push(relation);
-        });
+    protected getTargetArray(): IdentifyingDependentRelation[] {
+        return this.modelState.sourceModel.identifyingDependentRelations;
     }
 
-    protected createRelation(position: Point): IdentifyingDependentRelation {
-        const relationCounter = this.modelState.sourceModel.existenceDependentRelations.length;
-        return {
-            id: uuid.v4(),
-            type: 'identifyingDependentRelation',
-            name: `NewIdentRelation${relationCounter + 1}`,
-            cardinality: '-',
-            dependencyLabel: 'Id',
-            position
-        };
+    protected setTargetArray(array: IdentifyingDependentRelation[]): void {
+        this.modelState.sourceModel.identifyingDependentRelations = array;
     }
 
-    get label(): string {
-        return 'Identifying-Dep Relation';
+    protected override createErNode(position: Point, currentCount: number): IdentifyingDependentRelation {
+        const node = super.createErNode(position, currentCount);
+        node.cardinality = '-';
+        node.dependencyLabel = 'Id';
+        return node;
     }
 }

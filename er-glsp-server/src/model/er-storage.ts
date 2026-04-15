@@ -28,17 +28,15 @@ export class ErStorage extends AbstractJsonModelStorage {
 
     loadSourceModel(action: RequestModelAction): MaybePromise<void> {
         const sourceUri = this.getSourceUri(action);
-        const er = this.loadFromFile(sourceUri, ErModel.is);
         this.modelState.uri = sourceUri;
-        this.modelState.updateSourceModel(er);
+        this.modelState.updateSourceModel(this.loadFromFile(sourceUri, ErModel.is));
     }
 
     saveSourceModel(action: SaveModelAction): MaybePromise<void> {
-        const sourceUri = this.getFileUri(action);
-        this.writeFile(sourceUri, this.modelState.sourceModel);
+        this.writeFile(this.getFileUri(action), this.modelState.sourceModel);
     }
 
-    protected override createModelForEmptyFile(path: string): ErModel {
+    protected override createModelForEmptyFile(_path: string): ErModel {
         return {
             id: uuid.v4(),
             entities: [],

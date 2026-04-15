@@ -1,42 +1,29 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { TotalExclusiveSpecialization } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateTotalExclusiveSpecializationNodeHandler extends JsonCreateNodeOperationHandler {
+export class CreateTotalExclusiveSpecializationNodeHandler extends BaseCreateNodeHandler<TotalExclusiveSpecialization> {
     readonly elementTypeIds = ['node:totalExclusiveSpecialization'];
+    readonly label = 'Total-Exclusive-Specialization';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'totalExclusiveSpecialization';
+    protected readonly namePrefix = 'TotalExclusive';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const totalExclusiveSpecialization = this.createTotalExclusiveSpecialization(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.totalExclusiveSpecializations.push(totalExclusiveSpecialization);
-        });
+    protected getTargetArray(): TotalExclusiveSpecialization[] {
+        return this.modelState.sourceModel.totalExclusiveSpecializations;
     }
 
-    protected createTotalExclusiveSpecialization(position: Point): TotalExclusiveSpecialization {
-        return {
-            id: uuid.v4(),
-            type: 'totalExclusiveSpecialization',
-            name: 'Total Exclusive',
-            position
-        };
+    protected setTargetArray(array: TotalExclusiveSpecialization[]): void {
+        this.modelState.sourceModel.totalExclusiveSpecializations = array;
     }
 
-    get label(): string {
-        return 'Total-Exclusive-Specialization';
+    protected override createErNode(position: Point, currentCount: number): TotalExclusiveSpecialization {
+        const node = super.createErNode(position, currentCount);
+        node.name = 'Total Exclusive';
+        return node;
     }
-
 }

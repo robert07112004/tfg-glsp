@@ -1,43 +1,32 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { DerivedAttribute } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateDerivedAttributeHandler extends JsonCreateNodeOperationHandler {
+export class CreateDerivedAttributeHandler extends BaseCreateNodeHandler<DerivedAttribute> {
     readonly elementTypeIds = ['node:derivedAttribute'];
+    readonly label = 'Derived Attribute';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'derivedAttribute';
+    protected readonly namePrefix = 'NewDerivedAttribute';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const derivedAttribute = this.createDerivedAttribute(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.derivedAttributes.push(derivedAttribute);
-        });
+    protected getTargetArray(): DerivedAttribute[] {
+        return this.modelState.sourceModel.derivedAttributes;
     }
 
-    protected createDerivedAttribute(position: Point): DerivedAttribute {
-        const attributeCounter = this.modelState.sourceModel.derivedAttributes.length;
-        return {
-            id: uuid.v4(),
-            type: 'derivedAttribute',
-            name: `NewDerivedAttribute${attributeCounter + 1}: integer`,
-            equation: 'Equation of Derived Attribute',
-            position
-        };
+    protected setTargetArray(array: DerivedAttribute[]): void {
+        this.modelState.sourceModel.derivedAttributes = array;
     }
 
-    get label(): string {
-        return 'Derived Attribute';
+    protected override createErNode(position: Point, currentCount: number): DerivedAttribute {
+        const node = super.createErNode(position, currentCount);
+
+        node.name = `${this.namePrefix}${currentCount + 1}: integer`;
+        node.equation = 'Equation of Derived Attribute';
+
+        return node;
     }
 }

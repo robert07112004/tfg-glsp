@@ -1,42 +1,29 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { PartialExclusiveSpecialization } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreatePartialExclusiveSpecializationNodeHandler extends JsonCreateNodeOperationHandler {
+export class CreatePartialExclusiveSpecializationNodeHandler extends BaseCreateNodeHandler<PartialExclusiveSpecialization> {
     readonly elementTypeIds = ['node:partialExclusiveSpecialization'];
+    readonly label = 'Partial-Exclusive-Specialization';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'partialExclusiveSpecialization';
+    protected readonly namePrefix = 'PartialExclusive';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const partialExclusiveSpecialization = this.createPartialExclusiveSpecialization(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.partialExclusiveSpecializations.push(partialExclusiveSpecialization);
-        });
+    protected getTargetArray(): PartialExclusiveSpecialization[] {
+        return this.modelState.sourceModel.partialExclusiveSpecializations;
     }
 
-    protected createPartialExclusiveSpecialization(position: Point): PartialExclusiveSpecialization {
-        return {
-            id: uuid.v4(),
-            type: 'partialExclusiveSpecialization',
-            name: 'Partial Exclusive',
-            position
-        };
+    protected setTargetArray(array: PartialExclusiveSpecialization[]): void {
+        this.modelState.sourceModel.partialExclusiveSpecializations = array;
     }
 
-    get label(): string {
-        return 'Partial-Exclusive-Specialization';
+    protected override createErNode(position: Point, currentCount: number): PartialExclusiveSpecialization {
+        const node = super.createErNode(position, currentCount);
+        node.name = 'Partial Exclusive';
+        return node;
     }
-
 }

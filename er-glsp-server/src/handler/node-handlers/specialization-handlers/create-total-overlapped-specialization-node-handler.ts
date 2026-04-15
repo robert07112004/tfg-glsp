@@ -1,42 +1,29 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { TotalOverlappedSpecialization } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateTotalOverlappedSpecializationNodeHandler extends JsonCreateNodeOperationHandler {
+export class CreateTotalOverlappedSpecializationNodeHandler extends BaseCreateNodeHandler<TotalOverlappedSpecialization> {
     readonly elementTypeIds = ['node:totalOverlappedSpecialization'];
+    readonly label = 'Total-Overlapped-Specialization';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'totalOverlappedSpecialization';
+    protected readonly namePrefix = 'TotalOverlapped';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const totalOverlappedSpecialization = this.createTotalOverlappedSpecialization(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.totalOverlappedSpecializations.push(totalOverlappedSpecialization);
-        });
+    protected getTargetArray(): TotalOverlappedSpecialization[] {
+        return this.modelState.sourceModel.totalOverlappedSpecializations;
     }
 
-    protected createTotalOverlappedSpecialization(position: Point): TotalOverlappedSpecialization {
-        return {
-            id: uuid.v4(),
-            type: 'totalOverlappedSpecialization',
-            name: 'Total Overlapped',
-            position
-        };
+    protected setTargetArray(array: TotalOverlappedSpecialization[]): void {
+        this.modelState.sourceModel.totalOverlappedSpecializations = array;
     }
 
-    get label(): string {
-        return 'Total-Overlapped-Specialization';
+    protected override createErNode(position: Point, currentCount: number): TotalOverlappedSpecialization {
+        const node = super.createErNode(position, currentCount);
+        node.name = 'Total Overlapped';
+        return node;
     }
-
 }

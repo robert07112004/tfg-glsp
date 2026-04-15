@@ -1,42 +1,29 @@
 import {
-    Command,
-    CreateNodeOperation,
-    JsonCreateNodeOperationHandler,
-    MaybePromise,
     Point
 } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { MultiValuedAttribute } from '../../../model/er-model';
-import { ErModelState } from '../../../model/er-model-state';
+import { BaseCreateNodeHandler } from '../base-create-node-handler';
 
 @injectable()
-export class CreateMultiValuedAttributeHandler extends JsonCreateNodeOperationHandler {
+export class CreateMultiValuedAttributeHandler extends BaseCreateNodeHandler<MultiValuedAttribute> {
     readonly elementTypeIds = ['node:multiValuedAttribute'];
+    readonly label = 'Multi-valued Attribute';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
+    protected readonly nodeType = 'multiValuedAttribute';
+    protected readonly namePrefix = 'NewMultiValuedAttribute';
 
-    override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-            const multiValuedAttribute = this.createMultiValuedAttribute(relativeLocation);
-            const taskList = this.modelState.sourceModel;
-            taskList.multiValuedAttributes.push(multiValuedAttribute);
-        });
+    protected getTargetArray(): MultiValuedAttribute[] {
+        return this.modelState.sourceModel.multiValuedAttributes;
     }
 
-    protected createMultiValuedAttribute(position: Point): MultiValuedAttribute {
-        const attributeCounter = this.modelState.sourceModel.multiValuedAttributes.length;
-        return {
-            id: uuid.v4(),
-            type: 'multiValuedAttribute',
-            name: `NewMultiValuedAttribute${attributeCounter + 1}: integer`,
-            position
-        };
+    protected setTargetArray(array: MultiValuedAttribute[]): void {
+        this.modelState.sourceModel.multiValuedAttributes = array;
     }
 
-    get label(): string {
-        return 'Multi-valued Attribute';
+    protected override createErNode(position: Point, currentCount: number): MultiValuedAttribute {
+        const node = super.createErNode(position, currentCount);
+        node.name = `${this.namePrefix}${currentCount + 1}: integer`;
+        return node;
     }
 }

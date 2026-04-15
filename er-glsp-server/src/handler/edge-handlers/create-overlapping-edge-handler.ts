@@ -1,32 +1,13 @@
-import { Command, CreateEdgeOperation, JsonCreateEdgeOperationHandler, MaybePromise } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { OverlappingEdge } from '../../model/er-model';
-import { ErModelState } from '../../model/er-model-state';
+import { BaseCreateEdgeHandler } from './base-create-edge-handler';
 
 @injectable()
-export class CreateOverlappingEdgeHandler extends JsonCreateEdgeOperationHandler {
+export class CreateOverlappingEdgeHandler extends BaseCreateEdgeHandler<OverlappingEdge> {
     readonly elementTypeIds = ['edge:overlap'];
+    readonly label = 'Overlapping Constraint';
+    protected readonly edgeType = 'edge:overlap';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
-
-    override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            if (!this.modelState.sourceModel.overlappingEdges) {
-                this.modelState.sourceModel.overlappingEdges = [];
-            }
-            const overlappingEdge: OverlappingEdge = {
-                id: uuid.v4(),
-                type: 'edge:overlap',
-                sourceId: operation.sourceElementId,
-                targetId: operation.targetElementId
-            };
-            this.modelState.sourceModel.overlappingEdges.push(overlappingEdge);
-        });
-    }
-
-    get label(): string {
-        return 'Overlapping Constraint';
-    }
+    protected getTargetArray(): OverlappingEdge[] { return this.modelState.sourceModel.overlappingEdges; }
+    protected setTargetArray(array: OverlappingEdge[]): void { this.modelState.sourceModel.overlappingEdges = array; }
 }

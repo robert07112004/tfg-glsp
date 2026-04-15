@@ -1,26 +1,48 @@
-/********************************************************************************
- * Copyright (c) 2022 EclipseSource and others.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v. 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0.
- *
- * This Source Code may also be made available under the following Secondary
- * Licenses when the conditions for such availability set forth in the Eclipse
- * Public License v. 2.0 are satisfied:
- * -- GNU General Public License, version 2 with the GNU Classpath Exception
- * which is available at https://www.gnu.org/software/classpath/license.html
- * -- MIT License which is available at https://opensource.org/license/mit.
- *
- * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
- ********************************************************************************/
-
 import { AnyObject, hasArrayProp, hasObjectProp, hasStringProp } from '@eclipse-glsp/server';
 
-/**
- * The source model for `tasklist` GLSP diagrams. A `TaskList` is a
- * plain JSON objects that contains a set of {@link Task tasks} and {@link Transition transitions}.
- */
+// Basic interfaces
+
+export interface ErElement {
+    id: string;
+    type: string;
+}
+
+export interface ErNode extends ErElement {
+    name: string;
+    position: { x: number; y: number };
+    size?: { width: number; height: number };
+}
+
+export interface ErEdge extends ErElement {
+    sourceId: string;
+    targetId: string;
+    routingPoints?: { x: number; y: number }[];
+}
+
+// Utils
+
+function isErNode(object: any, expectedType: string): boolean {
+    return (
+        AnyObject.is(object) &&
+        hasStringProp(object, 'id') &&
+        hasStringProp(object, 'type') && (object as any).type === expectedType &&
+        hasStringProp(object, 'name') &&
+        hasObjectProp(object, 'position')
+    );
+}
+
+function isErEdge(object: any, expectedType: string): boolean {
+    return (
+        AnyObject.is(object) &&
+        hasStringProp(object, 'id') &&
+        hasStringProp(object, 'type') && (object as any).type === expectedType &&
+        hasStringProp(object, 'sourceId') &&
+        hasStringProp(object, 'targetId')
+    );
+}
+
+// ER model
+
 export interface ErModel {
     id: string;
     entities: Entity[];
@@ -48,438 +70,109 @@ export interface ErModel {
 
 export namespace ErModel {
     export function is(object: any): object is ErModel {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasArrayProp(object, 'entities')
-        );
+        return AnyObject.is(object) && hasStringProp(object, 'id') && hasArrayProp(object, 'entities');
     }
 }
 
-export interface Entity {
-    id: string;
-    type: 'entity';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
+// Entities
 
-export namespace Entity {
-    export function is(object: any): object is Entity {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as Entity).type === 'entity' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
+export interface Entity extends ErNode { type: 'entity'; }
+export namespace Entity { export const is = (obj: any): obj is Entity => isErNode(obj, 'entity'); }
 
-export interface WeakEntity {
-    id: string;
-    type: 'weakEntity';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
+export interface WeakEntity extends ErNode { type: 'weakEntity'; }
+export namespace WeakEntity { export const is = (obj: any): obj is WeakEntity => isErNode(obj, 'weakEntity'); }
 
-export namespace WeakEntity {
-    export function is(object: any): object is WeakEntity {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as WeakEntity).type === 'weakEntity' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
+// Attributes
 
-export interface Relation {
-    id: string;
-    type: 'relation';
-    name: string;
-    cardinality: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
+export interface Attribute extends ErNode { type: 'attribute'; }
+export namespace Attribute { export const is = (obj: any): obj is Attribute => isErNode(obj, 'attribute'); }
 
-export namespace Relation {
-    export function is(object: any): object is Relation {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as Relation).type === 'relation' &&
-            hasStringProp(object, 'name') &&
-            hasStringProp(object, 'cardinality') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
+export interface KeyAttribute extends ErNode { type: 'keyAttribute'; }
+export namespace KeyAttribute { export const is = (obj: any): obj is KeyAttribute => isErNode(obj, 'keyAttribute'); }
 
-export interface ExistenceDependentRelation {
-    id: string;
-    type: 'existenceDependentRelation';
-    name: string;
-    cardinality: string;
-    dependencyLabel: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
+export interface AlternativeKeyAttribute extends ErNode { type: 'alternativeKeyAttribute'; }
+export namespace AlternativeKeyAttribute { export const is = (obj: any): obj is AlternativeKeyAttribute => isErNode(obj, 'alternativeKeyAttribute'); }
 
-export namespace ExistenceDependentRelation {
-    export function is(object: any): object is ExistenceDependentRelation {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as ExistenceDependentRelation).type === 'existenceDependentRelation' &&
-            hasStringProp(object, 'name') &&
-            hasStringProp(object, 'cardinality') &&
-            hasStringProp(object, 'dependencyLabel') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
+export interface MultiValuedAttribute extends ErNode { type: 'multiValuedAttribute'; }
+export namespace MultiValuedAttribute { export const is = (obj: any): obj is MultiValuedAttribute => isErNode(obj, 'multiValuedAttribute'); }
 
-export interface IdentifyingDependentRelation {
-    id: string;
-    type: 'identifyingDependentRelation';
-    name: string;
-    cardinality: string;
-    dependencyLabel: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
-
-export namespace IdentifyingDependentRelation {
-    export function is(object: any): object is IdentifyingDependentRelation {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as IdentifyingDependentRelation).type === 'identifyingDependentRelation' &&
-            hasStringProp(object, 'name') &&
-            hasStringProp(object, 'cardinality') &&
-            hasStringProp(object, 'dependencyLabel') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
-
-export interface PartialExclusiveSpecialization {
-    id: string;
-    type: 'partialExclusiveSpecialization';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
-
-export namespace PartialExclusiveSpecialization {
-    export function is(object: any): object is PartialExclusiveSpecialization {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as PartialExclusiveSpecialization).type === 'partialExclusiveSpecialization' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
-
-export interface TotalExclusiveSpecialization {
-    id: string;
-    type: 'totalExclusiveSpecialization';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
-
-export namespace TotalExclusiveSpecialization {
-    export function is(object: any): object is TotalExclusiveSpecialization {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as TotalExclusiveSpecialization).type === 'totalExclusiveSpecialization' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
-
-export interface PartialOverlappedSpecialization {
-    id: string;
-    type: 'partialOverlappedSpecialization';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
-
-export namespace PartialOverlappedSpecialization {
-    export function is(object: any): object is PartialOverlappedSpecialization {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as PartialOverlappedSpecialization).type === 'partialOverlappedSpecialization' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
-
-export interface TotalOverlappedSpecialization {
-    id: string;
-    type: 'totalOverlappedSpecialization';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
-
-export namespace TotalOverlappedSpecialization {
-    export function is(object: any): object is TotalOverlappedSpecialization {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as TotalOverlappedSpecialization).type === 'totalOverlappedSpecialization' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
-
-export interface Attribute {
-    id: string;
-    type: 'attribute';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
-
-export namespace Attribute {
-    export function is(object: any): object is Attribute {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as Attribute).type === 'attribute' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
-
-export interface MultiValuedAttribute {
-    id: string;
-    type: 'multiValuedAttribute';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
-}
-
-export namespace MultiValuedAttribute {
-    export function is(object: any): object is MultiValuedAttribute {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as MultiValuedAttribute).type === 'multiValuedAttribute' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
-}
-
-export interface DerivedAttribute {
-    id: string;
+export interface DerivedAttribute extends ErNode {
     type: 'derivedAttribute';
-    name: string;
     equation: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
 }
-
 export namespace DerivedAttribute {
-    export function is(object: any): object is DerivedAttribute {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as DerivedAttribute).type === 'derivedAttribute' &&
-            hasStringProp(object, 'name') &&
-            hasStringProp(object, 'equation') &&
-            hasObjectProp(object, 'position')
-        );
-    }
+    export const is = (obj: any): obj is DerivedAttribute => isErNode(obj, 'derivedAttribute') && hasStringProp(obj, 'equation');
 }
 
-export interface KeyAttribute {
-    id: string;
-    type: 'keyAttribute';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
+// Relations
+
+export interface BaseRelation extends ErNode {
+    cardinality: string;
 }
 
-export namespace KeyAttribute {
-    export function is(object: any): object is KeyAttribute {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as KeyAttribute).type === 'keyAttribute' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
+export interface Relation extends BaseRelation {
+    type: 'relation';
+}
+export namespace Relation {
+    export const is = (obj: any): obj is Relation => isErNode(obj, 'relation') && hasStringProp(obj, 'cardinality');
 }
 
-export interface AlternativeKeyAttribute {
-    id: string;
-    type: 'alternativeKeyAttribute';
-    name: string;
-    position: { x: number; y: number };
-    size?: { width: number; height: number };
+export interface ExistenceDependentRelation extends BaseRelation {
+    type: 'existenceDependentRelation';
+    dependencyLabel: string;
+}
+export namespace ExistenceDependentRelation {
+    export const is = (obj: any): obj is ExistenceDependentRelation =>
+        isErNode(obj, 'existenceDependentRelation') && hasStringProp(obj, 'cardinality') && hasStringProp(obj, 'dependencyLabel');
 }
 
-export namespace AlternativeKeyAttribute {
-    export function is(object: any): object is AlternativeKeyAttribute {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as AlternativeKeyAttribute).type === 'alternativeKeyAttribute' &&
-            hasStringProp(object, 'name') &&
-            hasObjectProp(object, 'position')
-        );
-    }
+export interface IdentifyingDependentRelation extends BaseRelation {
+    type: 'identifyingDependentRelation';
+    dependencyLabel: string;
+}
+export namespace IdentifyingDependentRelation {
+    export const is = (obj: any): obj is IdentifyingDependentRelation =>
+        isErNode(obj, 'identifyingDependentRelation') && hasStringProp(obj, 'cardinality') && hasStringProp(obj, 'dependencyLabel');
 }
 
-export interface Transition {
-    id: string;
-    sourceTaskId: string;
-    targetTaskId: string;
-    routingPoints?: { x: number; y: number }[];
-}
+// Specializations
 
-export namespace Transition {
-    export function is(object: any): object is Transition {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'sourceTaskId') &&
-            hasStringProp(object, 'targetTaskId')
-        );
-    }
-}
+export interface PartialExclusiveSpecialization extends ErNode { type: 'partialExclusiveSpecialization'; }
+export namespace PartialExclusiveSpecialization { export const is = (obj: any): obj is PartialExclusiveSpecialization => isErNode(obj, 'partialExclusiveSpecialization'); }
 
-export interface WeightedEdge {
-    id: string;
+export interface TotalExclusiveSpecialization extends ErNode { type: 'totalExclusiveSpecialization'; }
+export namespace TotalExclusiveSpecialization { export const is = (obj: any): obj is TotalExclusiveSpecialization => isErNode(obj, 'totalExclusiveSpecialization'); }
+
+export interface PartialOverlappedSpecialization extends ErNode { type: 'partialOverlappedSpecialization'; }
+export namespace PartialOverlappedSpecialization { export const is = (obj: any): obj is PartialOverlappedSpecialization => isErNode(obj, 'partialOverlappedSpecialization'); }
+
+export interface TotalOverlappedSpecialization extends ErNode { type: 'totalOverlappedSpecialization'; }
+export namespace TotalOverlappedSpecialization { export const is = (obj: any): obj is TotalOverlappedSpecialization => isErNode(obj, 'totalOverlappedSpecialization'); }
+
+// Edges
+
+export interface Transition extends ErEdge { type: 'transition'; }
+export namespace Transition { export const is = (obj: any): obj is Transition => isErEdge(obj, 'transition'); }
+
+export interface WeightedEdge extends ErEdge {
     type: 'edge:weighted';
     description: string;
-    sourceId: string;
-    targetId: string;
-    routingPoints?: { x: number; y: number }[];
 }
-
 export namespace WeightedEdge {
-    export function is(object: any): object is WeightedEdge {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as WeightedEdge).type === 'edge:weighted' &&
-            hasStringProp(object, 'description') &&
-            hasStringProp(object, 'sourceId') &&
-            hasStringProp(object, 'targetId')
-        );
-    }
+    export const is = (obj: any): obj is WeightedEdge => isErEdge(obj, 'edge:weighted') && hasStringProp(obj, 'description');
 }
 
-export interface OptionalAttributeEdge {
-    id: string;
-    type: 'edge:optional';
-    sourceId: string;
-    targetId: string;
-    routingPoints?: { x: number; y: number }[];
-}
+export interface OptionalAttributeEdge extends ErEdge { type: 'edge:optional'; }
+export namespace OptionalAttributeEdge { export const is = (obj: any): obj is OptionalAttributeEdge => isErEdge(obj, 'edge:optional'); }
 
-export namespace OptionalAttributeEdge {
-    export function is(object: any): object is OptionalAttributeEdge {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as OptionalAttributeEdge).type === 'edge:optional' &&
-            hasStringProp(object, 'sourceId') &&
-            hasStringProp(object, 'targetId')
-        );
-    }
-}
+export interface ExclusionEdge extends ErEdge { type: 'edge:exclusion'; }
+export namespace ExclusionEdge { export const is = (obj: any): obj is ExclusionEdge => isErEdge(obj, 'edge:exclusion'); }
 
-export interface ExclusionEdge {
-    id: string;
-    type: 'edge:exclusion';
-    sourceId: string;
-    targetId: string;
-}
+export interface InclusionEdge extends ErEdge { type: 'edge:inclusion'; }
+export namespace InclusionEdge { export const is = (obj: any): obj is InclusionEdge => isErEdge(obj, 'edge:inclusion'); }
 
-export namespace ExclusionEdge {
-    export function is(object: any): object is ExclusionEdge {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as ExclusionEdge).type === 'edge:exclusion' &&
-            hasStringProp(object, 'sourceId') &&
-            hasStringProp(object, 'targetId')
-        );
-    }
-}
+export interface DisjointnessEdge extends ErEdge { type: 'edge:disjointness'; }
+export namespace DisjointnessEdge { export const is = (obj: any): obj is DisjointnessEdge => isErEdge(obj, 'edge:disjointness'); }
 
-export interface InclusionEdge {
-    id: string;
-    type: 'edge:inclusion';
-    sourceId: string;
-    targetId: string;
-}
-
-export namespace InclusionEdge {
-    export function is(object: any): object is InclusionEdge {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as InclusionEdge).type === 'edge:inclusion' &&
-            hasStringProp(object, 'sourceId') &&
-            hasStringProp(object, 'targetId')
-        );
-    }
-}
-
-export interface DisjointnessEdge {
-    id: string;
-    type: 'edge:disjointness';
-    sourceId: string;
-    targetId: string;
-}
-
-export namespace DisjointnessEdge {
-    export function is(object: any): object is DisjointnessEdge {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as DisjointnessEdge).type === 'edge:disjointness' &&
-            hasStringProp(object, 'sourceId') &&
-            hasStringProp(object, 'targetId')
-        );
-    }
-}
-
-export interface OverlappingEdge {
-    id: string;
-    type: 'edge:overlap';
-    sourceId: string;
-    targetId: string;
-}
-
-export namespace OverlappingEdge {
-    export function is(object: any): object is OverlappingEdge {
-        return (
-            AnyObject.is(object) &&
-            hasStringProp(object, 'id') &&
-            hasStringProp(object, 'type') && (object as OverlappingEdge).type === 'edge:overlap' &&
-            hasStringProp(object, 'sourceId') &&
-            hasStringProp(object, 'targetId')
-        );
-    }
-}
+export interface OverlappingEdge extends ErEdge { type: 'edge:overlap'; }
+export namespace OverlappingEdge { export const is = (obj: any): obj is OverlappingEdge => isErEdge(obj, 'edge:overlap'); }

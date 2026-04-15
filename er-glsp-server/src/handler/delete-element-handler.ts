@@ -1,19 +1,3 @@
-/********************************************************************************
- * Copyright (c) 2022 EclipseSource and others.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v. 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0.
- *
- * This Source Code may also be made available under the following Secondary
- * Licenses when the conditions for such availability set forth in the Eclipse
- * Public License v. 2.0 are satisfied:
- * -- GNU General Public License, version 2 with the GNU Classpath Exception
- * which is available at https://www.gnu.org/software/classpath/license.html
- * -- MIT License which is available at https://opensource.org/license/mit.
- *
- * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
- ********************************************************************************/
 import {
     Command,
     DeleteElementOperation,
@@ -25,7 +9,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, DisjointnessEdge, Entity, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, OverlappingEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/er-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, DisjointnessEdge, Entity, ErElement, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, OverlappingEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/er-model';
 import { ErModelState } from '../model/er-model-state';
 
 @injectable()
@@ -72,52 +56,59 @@ export class DeleteElementHandler extends JsonOperationHandler {
         return [];
     }
 
-    private deleteModelElement(modelElement: Entity | WeakEntity | Relation | ExistenceDependentRelation | IdentifyingDependentRelation | PartialExclusiveSpecialization |
-        TotalExclusiveSpecialization | PartialOverlappedSpecialization | TotalOverlappedSpecialization | Attribute | MultiValuedAttribute |
-        DerivedAttribute | KeyAttribute | AlternativeKeyAttribute | Transition | WeightedEdge | OptionalAttributeEdge |
-        ExclusionEdge | InclusionEdge | DisjointnessEdge | OverlappingEdge | undefined): void {
+    private safeRemove<T>(array: T[] | undefined, element: T): void {
+        if (array) {
+            remove(array, element);
+        }
+    }
+
+    private deleteModelElement(modelElement: ErElement | undefined): void {
+        if (!modelElement) return;
+
+        const sourceModel = this.modelState.sourceModel;
+
         if (Entity.is(modelElement)) {
-            remove(this.modelState.sourceModel.entities, modelElement);
+            this.safeRemove(sourceModel.entities, modelElement);
         } else if (WeakEntity.is(modelElement)) {
-            remove(this.modelState.sourceModel.weakEntities, modelElement);
+            this.safeRemove(sourceModel.weakEntities, modelElement);
         } else if (Relation.is(modelElement)) {
-            remove(this.modelState.sourceModel.relations, modelElement);
+            this.safeRemove(sourceModel.relations, modelElement);
         } else if (ExistenceDependentRelation.is(modelElement)) {
-            remove(this.modelState.sourceModel.existenceDependentRelations, modelElement);
+            this.safeRemove(sourceModel.existenceDependentRelations, modelElement);
         } else if (IdentifyingDependentRelation.is(modelElement)) {
-            remove(this.modelState.sourceModel.identifyingDependentRelations, modelElement);
+            this.safeRemove(sourceModel.identifyingDependentRelations, modelElement);
         } else if (PartialExclusiveSpecialization.is(modelElement)) {
-            remove(this.modelState.sourceModel.partialExclusiveSpecializations, modelElement);
+            this.safeRemove(sourceModel.partialExclusiveSpecializations, modelElement);
         } else if (TotalExclusiveSpecialization.is(modelElement)) {
-            remove(this.modelState.sourceModel.totalExclusiveSpecializations, modelElement);
+            this.safeRemove(sourceModel.totalExclusiveSpecializations, modelElement);
         } else if (PartialOverlappedSpecialization.is(modelElement)) {
-            remove(this.modelState.sourceModel.partialOverlappedSpecializations, modelElement);
+            this.safeRemove(sourceModel.partialOverlappedSpecializations, modelElement);
         } else if (TotalOverlappedSpecialization.is(modelElement)) {
-            remove(this.modelState.sourceModel.totalOverlappedSpecializations, modelElement);
+            this.safeRemove(sourceModel.totalOverlappedSpecializations, modelElement);
         } else if (Attribute.is(modelElement)) {
-            remove(this.modelState.sourceModel.attributes, modelElement);
+            this.safeRemove(sourceModel.attributes, modelElement);
         } else if (MultiValuedAttribute.is(modelElement)) {
-            remove(this.modelState.sourceModel.multiValuedAttributes, modelElement);
+            this.safeRemove(sourceModel.multiValuedAttributes, modelElement);
         } else if (DerivedAttribute.is(modelElement)) {
-            remove(this.modelState.sourceModel.derivedAttributes, modelElement);
+            this.safeRemove(sourceModel.derivedAttributes, modelElement);
         } else if (KeyAttribute.is(modelElement)) {
-            remove(this.modelState.sourceModel.keyAttributes, modelElement);
+            this.safeRemove(sourceModel.keyAttributes, modelElement);
         } else if (AlternativeKeyAttribute.is(modelElement)) {
-            remove(this.modelState.sourceModel.alternativeKeyAttributes, modelElement);
+            this.safeRemove(sourceModel.alternativeKeyAttributes, modelElement);
         } else if (Transition.is(modelElement)) {
-            remove(this.modelState.sourceModel.transitions, modelElement);
+            this.safeRemove(sourceModel.transitions, modelElement);
         } else if (WeightedEdge.is(modelElement)) {
-            remove(this.modelState.sourceModel.weightedEdges, modelElement);
+            this.safeRemove(sourceModel.weightedEdges, modelElement);
         } else if (OptionalAttributeEdge.is(modelElement)) {
-            remove(this.modelState.sourceModel.optionalAttributeEdges, modelElement)
+            this.safeRemove(sourceModel.optionalAttributeEdges, modelElement);
         } else if (ExclusionEdge.is(modelElement)) {
-            remove(this.modelState.sourceModel.exclusionEdges, modelElement);
+            this.safeRemove(sourceModel.exclusionEdges, modelElement);
         } else if (InclusionEdge.is(modelElement)) {
-            remove(this.modelState.sourceModel.inclusionEdges, modelElement);
+            this.safeRemove(sourceModel.inclusionEdges, modelElement);
         } else if (DisjointnessEdge.is(modelElement)) {
-            remove(this.modelState.sourceModel.disjointnessEdges, modelElement);
+            this.safeRemove(sourceModel.disjointnessEdges, modelElement);
         } else if (OverlappingEdge.is(modelElement)) {
-            remove(this.modelState.sourceModel.overlappingEdges, modelElement);
+            this.safeRemove(sourceModel.overlappingEdges, modelElement);
         }
     }
 }

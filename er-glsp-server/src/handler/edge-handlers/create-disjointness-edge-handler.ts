@@ -1,32 +1,13 @@
-import { Command, CreateEdgeOperation, JsonCreateEdgeOperationHandler, MaybePromise } from '@eclipse-glsp/server';
-import { inject, injectable } from 'inversify';
-import * as uuid from 'uuid';
+import { injectable } from 'inversify';
 import { DisjointnessEdge } from '../../model/er-model';
-import { ErModelState } from '../../model/er-model-state';
+import { BaseCreateEdgeHandler } from './base-create-edge-handler';
 
 @injectable()
-export class CreateDisjointnessEdgeHandler extends JsonCreateEdgeOperationHandler {
+export class CreateDisjointnessEdgeHandler extends BaseCreateEdgeHandler<DisjointnessEdge> {
     readonly elementTypeIds = ['edge:disjointness'];
+    readonly label = 'Disjointness Constraint';
+    protected readonly edgeType = 'edge:disjointness';
 
-    @inject(ErModelState)
-    protected override modelState: ErModelState;
-
-    override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
-        return this.commandOf(() => {
-            if (!this.modelState.sourceModel.disjointnessEdges) {
-                this.modelState.sourceModel.disjointnessEdges = [];
-            }
-            const disjointnessEdge: DisjointnessEdge = {
-                id: uuid.v4(),
-                type: 'edge:disjointness',
-                sourceId: operation.sourceElementId,
-                targetId: operation.targetElementId
-            };
-            this.modelState.sourceModel.disjointnessEdges.push(disjointnessEdge);
-        });
-    }
-
-    get label(): string {
-        return 'Disjointness Constraint';
-    }
+    protected getTargetArray(): DisjointnessEdge[] { return this.modelState.sourceModel.disjointnessEdges; }
+    protected setTargetArray(array: DisjointnessEdge[]): void { this.modelState.sourceModel.disjointnessEdges = array; }
 }
