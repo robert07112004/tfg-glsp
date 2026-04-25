@@ -18,7 +18,7 @@ export interface AllAttributes {
 
 export interface Entity {
     name: string,
-    node: GNode,
+    //  node: GNode,
     type: string,
     attributes: AllAttributes
 }
@@ -34,8 +34,8 @@ export interface Relation {
 }
 
 export interface PKMapping {
-    node: GNode, 
-    tableName: string, 
+    node: GNode,
+    tableName: string,
     colName: string
 }
 

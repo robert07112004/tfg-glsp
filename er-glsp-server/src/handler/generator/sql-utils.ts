@@ -2,6 +2,14 @@ import { GEdge, GLabel, GModelElement, GNode } from '@eclipse-glsp/server';
 import { DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE } from '../validation/utils/validation-constants';
 
 export class SQLUtils {
+
+    static parseNameAndType(rawName: string): { name: string, type: string } {
+        const parts = rawName.split(':');
+        const name = parts[0].trim().replace(/\s+/g, '_');
+        const type = parts.length > 1 ? parts[1].trim().toUpperCase() : 'VARCHAR(255)';
+        return { name, type };
+    }
+
     static findById(id: string, root: GModelElement) {
         return root.children.find(element => element.id === id);
     }
@@ -9,8 +17,8 @@ export class SQLUtils {
     static cleanNames(node: GNode): string {
         const labels = node.children.filter((c): c is GLabel => c instanceof GLabel);
 
-        const nameLabel = labels.find(l => 
-            !l.id.includes('_existence_label') && 
+        const nameLabel = labels.find(l =>
+            !l.id.includes('_existence_label') &&
             !l.id.includes('_identifying_label') &&
             !l.id.includes('_cardinality_label')
         ) || labels[0];

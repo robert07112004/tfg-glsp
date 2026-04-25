@@ -1,0 +1,203 @@
+{
+  "id": "da316c5a-05ad-435a-88d5-36254fa68731",
+  "entities": [
+    {
+      "id": "e387f7e8-5043-4327-aadd-be5f89a843b1",
+      "type": "entity",
+      "name": "Coche",
+      "position": {
+        "x": 774,
+        "y": 480
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "21bec6af-9bfb-4f1f-b233-948f0c462824",
+      "type": "attribute",
+      "name": "NewAttribute1: integer",
+      "position": {
+        "x": 904,
+        "y": 420
+      }
+    },
+    {
+      "id": "bb8ca37f-e274-417b-b174-66ae1b25b251",
+      "type": "attribute",
+      "name": "NewAttribute2: integer",
+      "position": {
+        "x": 932,
+        "y": 351
+      }
+    },
+    {
+      "id": "e62c7fa2-c00c-45f3-8dc9-3ee49799671e",
+      "type": "attribute",
+      "name": "NewAttribute3: integer",
+      "position": {
+        "x": 1028,
+        "y": 396
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 40
+      }
+    }
+  ],
+  "multiValuedAttributes": [
+    {
+      "id": "af7fb211-878a-4122-9fe2-f474d5d4bd9d",
+      "type": "multiValuedAttribute",
+      "name": "hola: integer",
+      "position": {
+        "x": 955,
+        "y": 547
+      },
+      "size": {
+        "width": 109.56996154785156,
+        "height": 28
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "54a5f809-82b8-4e0f-b3d3-4fd3ae11b275",
+      "type": "keyAttribute",
+      "name": "id: INTEGER",
+      "position": {
+        "x": 577,
+        "y": 473
+      },
+      "size": {
+        "width": 99,
+        "height": 31
+      }
+    },
+    {
+      "id": "2b865461-748b-4082-8c78-528d24069cf3",
+      "type": "keyAttribute",
+      "name": "matricula: VARCHAR(7)",
+      "position": {
+        "x": 566,
+        "y": 526
+      },
+      "size": {
+        "width": 134.04408264160156,
+        "height": 29
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "3fa95823-d658-4e9f-8421-33a664bcf6bb",
+      "type": "alternativeKeyAttribute",
+      "name": "turbo: INTEGER",
+      "position": {
+        "x": 631,
+        "y": 375
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 32
+      }
+    },
+    {
+      "id": "f3c82702-4c88-4b02-8142-89f59b8e44e6",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute2: integer",
+      "position": {
+        "x": 457,
+        "y": 287
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 40
+      }
+    },
+    {
+      "id": "37d5bab5-1752-4174-a78e-3952d715989d",
+      "type": "alternativeKeyAttribute",
+      "name": "NewAlternativeKeyAttribute3: integer",
+      "position": {
+        "x": 685,
+        "y": 290
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 40
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "998102fc-079c-4687-be03-212755f4e49b",
+      "type": "transition",
+      "sourceId": "e387f7e8-5043-4327-aadd-be5f89a843b1",
+      "targetId": "54a5f809-82b8-4e0f-b3d3-4fd3ae11b275"
+    },
+    {
+      "id": "8b090875-244b-4927-bc26-6e3c4b16a912",
+      "type": "transition",
+      "sourceId": "e387f7e8-5043-4327-aadd-be5f89a843b1",
+      "targetId": "2b865461-748b-4082-8c78-528d24069cf3"
+    },
+    {
+      "id": "4a344f19-cdbc-4149-9e66-8c3257498a26",
+      "type": "transition",
+      "sourceId": "e387f7e8-5043-4327-aadd-be5f89a843b1",
+      "targetId": "af7fb211-878a-4122-9fe2-f474d5d4bd9d"
+    },
+    {
+      "id": "a965cfd3-bdf9-4886-a9de-a553ae88b36b",
+      "type": "transition",
+      "sourceId": "e387f7e8-5043-4327-aadd-be5f89a843b1",
+      "targetId": "3fa95823-d658-4e9f-8421-33a664bcf6bb"
+    },
+    {
+      "id": "f240a994-a750-441e-87ae-abb492fba38b",
+      "type": "transition",
+      "sourceId": "3fa95823-d658-4e9f-8421-33a664bcf6bb",
+      "targetId": "f3c82702-4c88-4b02-8142-89f59b8e44e6"
+    },
+    {
+      "id": "f472b784-fbd2-4237-9a8e-03f279058248",
+      "type": "transition",
+      "sourceId": "21bec6af-9bfb-4f1f-b233-948f0c462824",
+      "targetId": "bb8ca37f-e274-417b-b174-66ae1b25b251"
+    }
+  ],
+  "weightedEdges": [],
+  "optionalAttributeEdges": [
+    {
+      "id": "5790fc91-0bcb-4d40-97c0-6b5cb61dcbee",
+      "type": "edge:optional",
+      "sourceId": "3fa95823-d658-4e9f-8421-33a664bcf6bb",
+      "targetId": "37d5bab5-1752-4174-a78e-3952d715989d"
+    },
+    {
+      "id": "938ff7d5-b350-4dab-97cd-24219fc202a6",
+      "type": "edge:optional",
+      "sourceId": "e387f7e8-5043-4327-aadd-be5f89a843b1",
+      "targetId": "21bec6af-9bfb-4f1f-b233-948f0c462824"
+    },
+    {
+      "id": "b9d62483-cd61-4010-ae46-2acb53167180",
+      "type": "edge:optional",
+      "sourceId": "21bec6af-9bfb-4f1f-b233-948f0c462824",
+      "targetId": "e62c7fa2-c00c-45f3-8dc9-3ee49799671e"
+    }
+  ],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

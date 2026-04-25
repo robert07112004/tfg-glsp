@@ -1,85 +1,53 @@
-import { GModelElement, GNode } from '@eclipse-glsp/server';
-import { injectable } from 'inversify';
-import { ENTITY_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, RELATION_TYPE, specializationTypes, WEAK_ENTITY_TYPE } from '../validation/utils/validation-constants';
+import { inject, injectable } from 'inversify';
+import { ErModelState } from '../../model/er-model-state';
 import { AttributeTransformer } from './sql-attribute-transformer';
-import { EntitiesTransformer } from './sql-entities-transformer';
-import { EntityNodes, GeneratedTable, RelationNodes, SpecializationNodes } from './sql-interfaces';
-import { RelationsTransformer } from './sql-relations-transformer';
-import { SpecializationsTransformer } from './sql-specializations-transformer';
 import { SQLUtils } from './sql-utils';
 
 @injectable()
 export class SQLGenerator {
 
-    private entityNodes: EntityNodes = new Map();
-    private relationNodes: RelationNodes = new Map();
-    private specializationNodes: SpecializationNodes = new Map();
+    @inject(ErModelState)
+    protected modelState: ErModelState;
 
-    public generate(root: GModelElement): string {
-        this.entityNodes.clear();
-        this.relationNodes.clear();
-        this.specializationNodes.clear();
-
-        // 1.- Collect entity nodes
-        const entities = root.children.filter(child => child.type === ENTITY_TYPE || child.type === WEAK_ENTITY_TYPE) as GNode[];
-        for (const entity of entities) {
-            this.entityNodes.set(entity.id, {
-                name: SQLUtils.cleanNames(entity),
-                node: entity,
-                type: entity.type,
-                attributes: AttributeTransformer.getAllAttributes(entity, root)
-            });
-        }
-
-        // 2.- Collect relation nodes
-        const relations = root.children.filter(child => child.type === RELATION_TYPE || child.type === EXISTENCE_DEP_RELATION_TYPE || child.type === IDENTIFYING_DEP_RELATION_TYPE) as GNode[];
-        for (const relation of relations) {
-            this.relationNodes.set(relation.id, {
-                name: SQLUtils.cleanNames(relation),
-                node: relation,
-                type: relation.type,
-                cardinality: SQLUtils.getCardinality(relation),
-                isReflexive: RelationsTransformer.isReflexive(relation, root),
-                attributes: AttributeTransformer.getAllAttributes(relation, root),
-                connectedEntities: RelationsTransformer.getConnectedEntities(relation, root)
-            });
-        }
-
-        // 3.- Collect specialization nodes
-        const specializations = root.children.filter(child => specializationTypes.includes(child.type)) as GNode[];
-        for (const specialization of specializations) {
-            this.specializationNodes.set(specialization.id, {
-                node: specialization,
-                type: specialization.type,
-                father: SpecializationsTransformer.findFather(specialization, root),
-                children: SpecializationsTransformer.findChildren(specialization, root),
-                enum: SpecializationsTransformer.getEnum(specialization, root),
-                discriminator: SpecializationsTransformer.getDiscriminator(specialization, root)
-            });
-        }
-
+    public generate(): string {
+        const erModel = this.modelState.sourceModel;
         let sql = "-- Fecha: " + new Date().toLocaleString() + "\n\n";
 
-        const allTables: GeneratedTable[] = [];
+        for (const entity of erModel.entities) {
 
-        this.entityNodes.forEach(entity => {
-            allTables.push(EntitiesTransformer.processEntity(entity, this.relationNodes, this.specializationNodes, root));
-        });
+            const pks = AttributeTransformer.getPks(entity, erModel);
+            const altKeys = AttributeTransformer.getAlternativeKeys(entity, erModel);
+            const simples = AttributeTransformer.getSimpleAttributes(entity, erModel);
+            const optionals = AttributeTransformer.getOptionalAttributes(entity, erModel);
+            const multiValued = AttributeTransformer.getMultiValuedAttributes(entity, erModel);
 
-        this.relationNodes.forEach(relation => {
-            const numEntities = relation.connectedEntities.length;
-            const isBinaryNM = numEntities === 2 && relation.cardinality === "N:M";
-            const isTernary = numEntities === 3 && relation.type === RELATION_TYPE;
+            const { columns: pkCols, primaryKeyConstraint } = AttributeTransformer.processPKs(pks);
+            const { columns: akCols, uniqueConstraints } = AttributeTransformer.processAlternativeKeys(altKeys, erModel);
+            const attrCols = AttributeTransformer.processAttributes([...simples, ...optionals], erModel);
+            const mvTablesSql = AttributeTransformer.processMultiValuedAttributes(multiValued, entity, erModel);
 
-            if (isBinaryNM || isTernary) allTables.push(RelationsTransformer.processRelationNM(relation, root));
-        });
+            const tableName = SQLUtils.parseNameAndType(entity.name).name;
+            const mainTableLines = [
+                ...pkCols,
+                ...akCols,
+                ...attrCols
+            ];
 
-        sql += this.sortTables(allTables);
+            if (primaryKeyConstraint) mainTableLines.push(primaryKeyConstraint);
+            if (uniqueConstraints.length > 0) mainTableLines.push(...uniqueConstraints);
+
+            sql += `CREATE TABLE ${tableName} (\n`;
+            sql += mainTableLines.join(',\n');
+            sql += `\n);\n\n`;
+
+            if (mvTablesSql.length > 0) sql += mvTablesSql.join('\n') + '\n';
+
+        }
 
         return sql;
     }
 
-    private sortTables(tables: GeneratedTable[]): string {
+    /*private sortTables(tables: GeneratedTable[]): string {
         const sorted: string[] = [];
         const createdTableNames = new Set<string>();
         let remaining = [...tables];
@@ -108,6 +76,6 @@ export class SQLGenerator {
             }
         }
         return sorted.join("");
-    }
+    }*/
 
 }

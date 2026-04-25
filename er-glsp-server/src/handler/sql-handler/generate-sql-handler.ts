@@ -44,7 +44,7 @@ export class GenerateSqlActionHandler implements ActionHandler {
         }
 
         console.log("Validación correcta. Generando SQL...");
-        const sql = this.sqlGenerator.generate(root);
+        const sql = this.sqlGenerator.generate();
 
         try {
             let modelPath: string;
