@@ -1,0 +1,137 @@
+{
+  "id": "e9653d06-de75-41e5-931d-029c2eb21d04",
+  "entities": [
+    {
+      "id": "492c7ea3-c202-4fd4-abe2-2ab075c1935d",
+      "type": "entity",
+      "name": "Departamento",
+      "position": {
+        "x": 488,
+        "y": 381
+      }
+    },
+    {
+      "id": "6ebb021d-9b4c-4dce-bb43-39cc36105322",
+      "type": "entity",
+      "name": "Empleado",
+      "position": {
+        "x": 1042,
+        "y": 387
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "1c4cdf6e-d526-4f77-a548-834c132b8522",
+      "type": "relation",
+      "name": "Trabaja_En",
+      "position": {
+        "x": 742,
+        "y": 377
+      },
+      "cardinality": "1:N",
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "1d61d073-98b2-42d2-bd66-083f0e47c546",
+      "type": "attribute",
+      "name": "fecha: date",
+      "position": {
+        "x": 758,
+        "y": 484
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 40
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "43fa998f-6abd-4754-8213-cf326c51a474",
+      "type": "keyAttribute",
+      "name": "cod_departamento: integer",
+      "position": {
+        "x": 384,
+        "y": 295
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 40
+      }
+    },
+    {
+      "id": "b40e99d9-42fa-421a-88f4-2fe54b852be8",
+      "type": "keyAttribute",
+      "name": "cod_empleado: integer",
+      "position": {
+        "x": 1085,
+        "y": 304
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 40
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "217ffcc1-6106-472b-9952-22b70bfed19d",
+      "type": "transition",
+      "sourceId": "492c7ea3-c202-4fd4-abe2-2ab075c1935d",
+      "targetId": "43fa998f-6abd-4754-8213-cf326c51a474"
+    },
+    {
+      "id": "f1ae85bf-5389-42cc-9c97-a6ddd78d9c5e",
+      "type": "transition",
+      "sourceId": "6ebb021d-9b4c-4dce-bb43-39cc36105322",
+      "targetId": "b40e99d9-42fa-421a-88f4-2fe54b852be8"
+    },
+    {
+      "id": "d3997004-0f05-4252-9d07-0f6a24d6ba1a",
+      "type": "transition",
+      "sourceId": "1c4cdf6e-d526-4f77-a548-834c132b8522",
+      "targetId": "1d61d073-98b2-42d2-bd66-083f0e47c546"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "65166f48-2619-4186-a300-d9181b10d94f",
+      "type": "edge:weighted",
+      "sourceId": "492c7ea3-c202-4fd4-abe2-2ab075c1935d",
+      "targetId": "1c4cdf6e-d526-4f77-a548-834c132b8522",
+      "description": "(0..1)"
+    },
+    {
+      "id": "60c9b58f-fc83-4414-a9de-30ef65b005bf",
+      "type": "edge:weighted",
+      "sourceId": "6ebb021d-9b4c-4dce-bb43-39cc36105322",
+      "targetId": "1c4cdf6e-d526-4f77-a548-834c132b8522",
+      "description": "(0..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

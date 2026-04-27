@@ -1,8 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { ErModelState } from '../../model/er-model-state';
-import { AttributeTransformer } from './sql-attribute-transformer';
+import { EntityTransformer } from './sql-entity-transformer';
 import { RelationTransformer } from './sql-relation-transformer';
-import { SQLUtils } from './sql-utils';
 
 @injectable()
 export class SQLGenerator {
@@ -14,42 +13,14 @@ export class SQLGenerator {
         const erModel = this.modelState.sourceModel;
         let sql = "-- Fecha: " + new Date().toLocaleString() + "\n\n";
 
-        // Generar entidades y atributos
+        // 1. Generar Entidades (Esto ahora incluye atributos propios Y las propagaciones 1:N)
         for (const entity of erModel.entities) {
-
-            const pks = AttributeTransformer.getPks(entity, erModel);
-            const altKeys = AttributeTransformer.getAlternativeKeys(entity, erModel);
-            const simples = AttributeTransformer.getSimpleAttributes(entity, erModel);
-            const optionals = AttributeTransformer.getOptionalAttributes(entity, erModel);
-            const multiValued = AttributeTransformer.getMultiValuedAttributes(entity, erModel);
-
-            const { columns: pkCols, primaryKeyConstraint } = AttributeTransformer.processPKs(pks);
-            const { columns: akCols, uniqueConstraints } = AttributeTransformer.processAlternativeKeys(altKeys, erModel);
-            const attrCols = AttributeTransformer.processAttributes([...simples, ...optionals], erModel);
-            const mvTablesSql = AttributeTransformer.processMultiValuedAttributes(multiValued, entity, erModel);
-
-            const tableName = SQLUtils.parseNameAndType(entity.name).name;
-            const mainTableLines = [
-                ...pkCols,
-                ...akCols,
-                ...attrCols
-            ];
-
-            if (primaryKeyConstraint) mainTableLines.push(primaryKeyConstraint);
-            if (uniqueConstraints.length > 0) mainTableLines.push(...uniqueConstraints);
-
-            sql += `CREATE TABLE ${tableName} (\n`;
-            sql += mainTableLines.join(',\n');
-            sql += `\n);\n\n`;
-
-            if (mvTablesSql.length > 0) sql += mvTablesSql.join('\n') + '\n';
-
+            sql += EntityTransformer.generateEntityTable(entity, erModel);
         }
 
-        // Generar relaciones N:M
+        // 2. Generar Relaciones N:M (y Ternarias/N-arias puras)
         for (const relation of erModel.relations) {
             if (RelationTransformer.isManyToMany(relation, erModel)) {
-                console.log('siuuuuu');
                 sql += RelationTransformer.generateManyToManyTable(relation, erModel);
             }
         }
