@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { ErModelState } from '../../model/er-model-state';
 import { AttributeTransformer } from './sql-attribute-transformer';
+import { RelationTransformer } from './sql-relation-transformer';
 import { SQLUtils } from './sql-utils';
 
 @injectable()
@@ -13,6 +14,7 @@ export class SQLGenerator {
         const erModel = this.modelState.sourceModel;
         let sql = "-- Fecha: " + new Date().toLocaleString() + "\n\n";
 
+        // Generar entidades y atributos
         for (const entity of erModel.entities) {
 
             const pks = AttributeTransformer.getPks(entity, erModel);
@@ -42,6 +44,14 @@ export class SQLGenerator {
 
             if (mvTablesSql.length > 0) sql += mvTablesSql.join('\n') + '\n';
 
+        }
+
+        // Generar relaciones N:M
+        for (const relation of erModel.relations) {
+            if (RelationTransformer.isManyToMany(relation, erModel)) {
+                console.log('siuuuuu');
+                sql += RelationTransformer.generateManyToManyTable(relation, erModel);
+            }
         }
 
         return sql;

@@ -1,4 +1,5 @@
 import { GNode } from '@eclipse-glsp/server';
+import { AlternativeKeyAttribute, Attribute, KeyAttribute, MultiValuedAttribute } from '../../model/er-model';
 
 export interface Multivalued {
     name: string,
@@ -8,12 +9,11 @@ export interface Multivalued {
 }
 
 export interface AllAttributes {
-    pk: GNode[];
-    unique: { isNullable: boolean, nodes: GNode[] }[];
-    simple: GNode[];
-    optional: GNode[];
-    multiValued: Multivalued[];
-    derived?: GNode[];
+    pk: KeyAttribute[];
+    unique: AlternativeKeyAttribute[];
+    simple: Attribute[];
+    optional: Attribute[];
+    multiValued: MultiValuedAttribute[];
 }
 
 export interface Entity {

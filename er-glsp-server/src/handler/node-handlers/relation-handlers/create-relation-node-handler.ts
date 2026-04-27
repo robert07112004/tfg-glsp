@@ -24,7 +24,6 @@ export class CreateRelationHandler extends BaseCreateNodeHandler<Relation> {
 
     protected override createErNode(position: Point, currentCount: number): Relation {
         const node = super.createErNode(position, currentCount);
-        node.cardinality = '-';
         return node;
     }
 }

@@ -1,0 +1,165 @@
+{
+  "id": "75d50637-788d-4db5-8a2f-b9a232d1c13d",
+  "entities": [
+    {
+      "id": "2e2f892c-b463-4be2-8bc7-f4285542950c",
+      "type": "entity",
+      "name": "Estudiante",
+      "position": {
+        "x": 110,
+        "y": 424
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "8a129678-1898-457d-b8d9-5c8b955e3513",
+      "type": "entity",
+      "name": "Curso",
+      "position": {
+        "x": 528,
+        "y": 429
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "f3169878-9b77-4f5f-b43c-d25c666d06eb",
+      "type": "relation",
+      "name": "Matricula",
+      "position": {
+        "x": 295,
+        "y": 420
+      },
+      "cardinality": "-",
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "a5611c4a-8d43-4211-877a-6594c2ab49bb",
+      "type": "attribute",
+      "name": "fecha_inscripcion: date",
+      "position": {
+        "x": 308,
+        "y": 322
+      },
+      "size": {
+        "width": 116.68228912353516,
+        "height": 40
+      }
+    }
+  ],
+  "multiValuedAttributes": [
+    {
+      "id": "a9d7ae56-db64-4d13-9184-f1bebed85ac0",
+      "type": "multiValuedAttribute",
+      "name": "hola: varchar(20)",
+      "position": {
+        "x": 290,
+        "y": 516
+      },
+      "size": {
+        "width": 171.56996154785156,
+        "height": 40
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "7da0c9e4-b8ef-4313-85a8-a1e171eaafca",
+      "type": "keyAttribute",
+      "name": "codigo_estudiante: integer",
+      "position": {
+        "x": 47,
+        "y": 342
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 40
+      }
+    },
+    {
+      "id": "63e694ff-693c-4239-83b8-566495ac43a6",
+      "type": "keyAttribute",
+      "name": "codigo_curso: integer",
+      "position": {
+        "x": 543,
+        "y": 342
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 40
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "b0fb15c1-37b2-4729-82a8-38556816ad95",
+      "type": "transition",
+      "sourceId": "8a129678-1898-457d-b8d9-5c8b955e3513",
+      "targetId": "63e694ff-693c-4239-83b8-566495ac43a6"
+    },
+    {
+      "id": "a859e6ab-9e4b-48a8-9fcf-8e3b9b08caf0",
+      "type": "transition",
+      "sourceId": "2e2f892c-b463-4be2-8bc7-f4285542950c",
+      "targetId": "7da0c9e4-b8ef-4313-85a8-a1e171eaafca"
+    },
+    {
+      "id": "5e022628-c491-44c5-8ba5-8cbc9849e606",
+      "type": "transition",
+      "sourceId": "f3169878-9b77-4f5f-b43c-d25c666d06eb",
+      "targetId": "a5611c4a-8d43-4211-877a-6594c2ab49bb",
+      "routingPoints": []
+    },
+    {
+      "id": "da15de69-5353-40d9-8280-36cae4e57e8a",
+      "type": "transition",
+      "sourceId": "f3169878-9b77-4f5f-b43c-d25c666d06eb",
+      "targetId": "a9d7ae56-db64-4d13-9184-f1bebed85ac0",
+      "routingPoints": []
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "4db7bdcb-4022-40a7-8d73-62aa6508cc51",
+      "type": "edge:weighted",
+      "sourceId": "8a129678-1898-457d-b8d9-5c8b955e3513",
+      "targetId": "f3169878-9b77-4f5f-b43c-d25c666d06eb",
+      "description": "(0..N)",
+      "routingPoints": []
+    },
+    {
+      "id": "ebc64258-6e31-4256-b84a-ccbd2dd2f25c",
+      "type": "edge:weighted",
+      "sourceId": "2e2f892c-b463-4be2-8bc7-f4285542950c",
+      "targetId": "f3169878-9b77-4f5f-b43c-d25c666d06eb",
+      "description": "(1..N)",
+      "routingPoints": []
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

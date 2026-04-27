@@ -23,7 +23,6 @@ export class CreateExistenceDependentRelationHandler extends BaseCreateNodeHandl
 
     protected override createErNode(position: Point, currentCount: number): ExistenceDependentRelation {
         const node = super.createErNode(position, currentCount);
-        node.cardinality = '-';
         node.dependencyLabel = 'E';
         return node;
     }

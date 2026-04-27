@@ -1,48 +1,47 @@
 import { AlternativeKeyAttribute, Attribute, Entity, ErModel, ErNode, KeyAttribute, MultiValuedAttribute } from "../../model/er-model";
+import { AllAttributes } from "./sql-interfaces";
 import { SQLUtils } from "./sql-utils";
 
 export class AttributeTransformer {
 
-    public static getPks(entity: Entity, erModel: ErModel): KeyAttribute[] {
-        const transitionsOfEntity = erModel.transitions.filter(transition => transition.sourceId === entity.id);
-        const targetIds = transitionsOfEntity.map(t => t.targetId);
-        return erModel.keyAttributes.filter(pk => targetIds.includes(pk.id));
+    private static getConnectedNodes<T extends ErNode>(nodeId: string, edges: { sourceId: string, targetId: string }[], targetCollection: T[]): T[] {
+        const targetIds = edges.filter(e => e.sourceId === nodeId).map(e => e.targetId);
+        return targetCollection.filter(item => targetIds.includes(item.id));
     }
 
-    public static getAlternativeKeys(entity: Entity, erModel: ErModel): AlternativeKeyAttribute[] {
-        const transitionsOfEntity = erModel.transitions.filter(transition => transition.sourceId === entity.id);
-        const targetIds = transitionsOfEntity.map(t => t.targetId);
-        return erModel.alternativeKeyAttributes.filter(attr => targetIds.includes(attr.id));
+    public static getPks(node: ErNode, erModel: ErModel): KeyAttribute[] {
+        return this.getConnectedNodes(node.id, erModel.transitions, erModel.keyAttributes);
     }
 
-    public static getSimpleAttributes(entity: Entity, erModel: ErModel): Attribute[] {
-        const transitionsOfEntity = erModel.transitions.filter(transition => transition.sourceId === entity.id);
-        const targetIds = transitionsOfEntity.map(t => t.targetId);
-        return erModel.attributes.filter(attr => targetIds.includes(attr.id));
+    public static getAlternativeKeys(node: ErNode, erModel: ErModel): AlternativeKeyAttribute[] {
+        return this.getConnectedNodes(node.id, erModel.transitions, erModel.alternativeKeyAttributes);
     }
 
-    public static getOptionalAttributes(entity: Entity, erModel: ErModel): Attribute[] {
-        const optionalEdges = erModel.optionalAttributeEdges.filter(edge => edge.sourceId === entity.id);
-        const targetIds = optionalEdges.map(edge => edge.targetId);
-        return erModel.attributes.filter(attr => targetIds.includes(attr.id));
+    public static getSimpleAttributes(node: ErNode, erModel: ErModel): Attribute[] {
+        return this.getConnectedNodes(node.id, erModel.transitions, erModel.attributes);
     }
 
-    public static getMultiValuedAttributes(entity: Entity, erModel: ErModel): MultiValuedAttribute[] {
-        const transitionsOfEntity = erModel.transitions.filter(transition => transition.sourceId === entity.id);
-        const targetIds = transitionsOfEntity.map(t => t.targetId);
-        return erModel.multiValuedAttributes.filter(attr => targetIds.includes(attr.id));
+    public static getOptionalAttributes(node: ErNode, erModel: ErModel): Attribute[] {
+        return this.getConnectedNodes(node.id, erModel.optionalAttributeEdges, erModel.attributes);
+    }
+
+    public static getMultiValuedAttributes(node: ErNode, erModel: ErModel): MultiValuedAttribute[] {
+        return this.getConnectedNodes(node.id, erModel.transitions, erModel.multiValuedAttributes);
+    }
+
+    public static getAllAtributes(node: ErNode, erModel: ErModel): AllAttributes {
+        return {
+            pk: this.getPks(node, erModel),
+            unique: this.getAlternativeKeys(node, erModel),
+            simple: this.getSimpleAttributes(node, erModel),
+            optional: this.getOptionalAttributes(node, erModel),
+            multiValued: this.getMultiValuedAttributes(node, erModel)
+        };
     }
 
     public static processPKs(pks: KeyAttribute[]): { columns: string[], primaryKeyConstraint: string } {
-        const columns: string[] = [];
-        const pkNames: string[] = [];
-
-        for (const pk of pks) {
-            const { name, type } = SQLUtils.parseNameAndType(pk.name);
-            columns.push(`    ${name} ${type} NOT NULL`);
-            pkNames.push(name);
-        }
-
+        const columns = pks.map(pk => `    ${SQLUtils.parseNameAndType(pk.name).name} ${SQLUtils.parseNameAndType(pk.name).type} NOT NULL`);
+        const pkNames = pks.map(pk => SQLUtils.parseNameAndType(pk.name).name);
         const primaryKeyConstraint = pkNames.length > 0 ? `    PRIMARY KEY (${pkNames.join(', ')})` : '';
         return { columns, primaryKeyConstraint };
     }
@@ -54,96 +53,70 @@ export class AttributeTransformer {
         for (const ak of altKeys) {
             const isParentNullable = this.isNullable(ak, erModel);
             const nullableStr = isParentNullable ? 'NULL' : 'NOT NULL';
+            const childrenNodes = this.getChildrenNodes(ak.id, erModel);
 
-            if (this.hasChildren(ak, erModel)) {
-                const childrenIds: string[] = this.getChildren(ak, erModel);
+            if (childrenNodes.length > 0) {
                 const childColumnNames: string[] = [];
+                for (const child of childrenNodes) {
+                    const { name, type } = SQLUtils.parseNameAndType(child.name);
+                    const isChildOptionalEdge = erModel.optionalAttributeEdges.some(e => e.sourceId === ak.id && e.targetId === child.id);
+                    const childNullableStr = (isParentNullable || isChildOptionalEdge) ? 'NULL' : 'NOT NULL';
 
-                for (const childId of childrenIds) {
-                    const childNode = this.findAttributeNode(childId, erModel);
-
-                    if (childNode) {
-                        const { name, type } = SQLUtils.parseNameAndType(childNode.name);
-                        const isChildOptionalEdge = erModel.optionalAttributeEdges.some(e => e.sourceId === ak.id && e.targetId === childId);
-                        const childNullableStr = (isParentNullable || isChildOptionalEdge) ? 'NULL' : 'NOT NULL';
-
-                        columns.push(`    ${name} ${type} ${childNullableStr}`);
-                        childColumnNames.push(name);
-                    }
+                    columns.push(`    ${name} ${type} ${childNullableStr}`);
+                    childColumnNames.push(name);
                 }
-
-                if (childColumnNames.length > 0) uniqueConstraints.push(`    UNIQUE (${childColumnNames.join(', ')})`);
+                uniqueConstraints.push(`    UNIQUE (${childColumnNames.join(', ')})`);
             } else {
                 const { name, type } = SQLUtils.parseNameAndType(ak.name);
                 columns.push(`    ${name} ${type} UNIQUE ${nullableStr}`);
             }
-
         }
-
         return { columns, uniqueConstraints };
     }
 
     public static processAttributes(attributes: Attribute[], erModel: ErModel): string[] {
         const columns: string[] = [];
-
         for (const attr of attributes) {
             const isParentNullable = this.isNullable(attr, erModel);
             const nullableStr = isParentNullable ? 'NULL' : 'NOT NULL';
+            const childrenNodes = this.getChildrenNodes(attr.id, erModel);
 
-            if (this.hasChildren(attr, erModel)) {
-                const childrenIds: string[] = this.getChildren(attr, erModel);
-
-                for (const childId of childrenIds) {
-                    const childNode = this.findAttributeNode(childId, erModel);
-
-                    if (childNode) {
-                        const { name, type } = SQLUtils.parseNameAndType(childNode.name);
-                        const isChildOptionalEdge = erModel.optionalAttributeEdges.some(e => e.sourceId === attr.id && e.targetId === childId);
-                        const childNullableStr = (isParentNullable || isChildOptionalEdge) ? 'NULL' : 'NOT NULL';
-
-                        columns.push(`    ${name} ${type} ${childNullableStr}`);
-                    }
+            if (childrenNodes.length > 0) {
+                for (const child of childrenNodes) {
+                    const { name, type } = SQLUtils.parseNameAndType(child.name);
+                    const isChildOptionalEdge = erModel.optionalAttributeEdges.some(e => e.sourceId === attr.id && e.targetId === child.id);
+                    const childNullableStr = (isParentNullable || isChildOptionalEdge) ? 'NULL' : 'NOT NULL';
+                    columns.push(`    ${name} ${type} ${childNullableStr}`);
                 }
             } else {
                 const { name, type } = SQLUtils.parseNameAndType(attr.name);
                 columns.push(`    ${name} ${type} ${nullableStr}`);
             }
         }
-
         return columns;
     }
 
     public static processMultiValuedAttributes(multiValuedAttrs: MultiValuedAttribute[], parentEntity: Entity, erModel: ErModel): string[] {
         const createTableStatements: string[] = [];
-
         const parentTableName = SQLUtils.parseNameAndType(parentEntity.name).name;
-        const parentPks = this.getPks(parentEntity, erModel);
 
-        const parentPkColumns: string[] = [];
-        const parentPkNames: string[] = [];
-
-        for (const pk of parentPks) {
-            const { name, type } = SQLUtils.parseNameAndType(pk.name);
-            parentPkColumns.push(`    ${name} ${type} NOT NULL`);
-            parentPkNames.push(name);
-        }
+        const parentPks = this.getPks(parentEntity, erModel).map(pk => SQLUtils.parseNameAndType(pk.name));
+        const parentPkColumns = parentPks.map(pk => `    ${pk.name} ${pk.type} NOT NULL`);
+        const parentPkNames = parentPks.map(pk => pk.name);
 
         for (const mvAttr of multiValuedAttrs) {
-            const { name: mvRootName } = SQLUtils.parseNameAndType(mvAttr.name);
+            const mvRootName = SQLUtils.parseNameAndType(mvAttr.name).name;
             const newTableName = `${parentTableName}_${mvRootName}`;
 
             const columns: string[] = [...parentPkColumns];
             const currentAttrNames: string[] = [];
+            const childrenNodes = this.getChildrenNodes(mvAttr.id, erModel);
 
-            if (this.hasChildren(mvAttr, erModel)) {
-                const childrenIds = this.getChildren(mvAttr, erModel);
-                for (const childId of childrenIds) {
-                    const childNode = this.findAttributeNode(childId, erModel);
-                    if (childNode) {
-                        const { name, type } = SQLUtils.parseNameAndType(childNode.name);
-                        columns.push(`    ${name} ${type} NOT NULL`);
-                        currentAttrNames.push(name);
-                    }
+            if (childrenNodes.length > 0) {
+                for (const child of childrenNodes) {
+                    const { name, type } = SQLUtils.parseNameAndType(child.name);
+                    columns.push(`    ${name} ${type} NOT NULL`);
+                    currentAttrNames.push(name);
                 }
             } else {
                 const { name, type } = SQLUtils.parseNameAndType(mvAttr.name);
@@ -152,47 +125,30 @@ export class AttributeTransformer {
             }
 
             const allPkNames = [...parentPkNames, ...currentAttrNames];
-            const pkConstraint = `    PRIMARY KEY (${allPkNames.join(', ')})`;
+            const tableLines = [
+                ...columns,
+                `    PRIMARY KEY (${allPkNames.join(', ')})`
+            ];
 
-            let fkConstraint = "";
             if (parentPkNames.length > 0) {
-                fkConstraint = `    FOREIGN KEY (${parentPkNames.join(', ')}) REFERENCES ${parentTableName}(${parentPkNames.join(', ')}) ON DELETE CASCADE`;
+                tableLines.push(`    FOREIGN KEY (${parentPkNames.join(', ')}) REFERENCES ${parentTableName}(${parentPkNames.join(', ')}) ON DELETE CASCADE`);
             }
 
-            const tableLines = [...columns, pkConstraint];
-            if (fkConstraint) tableLines.push(fkConstraint);
-
-            const tableSql = `CREATE TABLE ${newTableName} (\n${tableLines.join(',\n')}\n);\n`;
-            createTableStatements.push(tableSql);
+            createTableStatements.push(`CREATE TABLE ${newTableName} (\n${tableLines.join(',\n')}\n);\n`);
         }
-
         return createTableStatements;
     }
 
-    private static isNullable(attribute: ErNode, erModel: ErModel): boolean | undefined {
+    private static isNullable(attribute: ErNode, erModel: ErModel): boolean {
         return erModel.optionalAttributeEdges.some(edge => edge.targetId === attribute.id);
     }
 
-    private static hasChildren(attribute: ErNode, erModel: ErModel): boolean {
-        for (const transition of erModel.transitions) {
-            if (transition.sourceId === attribute.id) return true;
-        }
-
-        for (const optionalEdge of erModel.optionalAttributeEdges) {
-            if (optionalEdge.sourceId === attribute.id) return true;
-        }
-
-        return false;
-    }
-
-    private static getChildren(attribute: ErNode, erModel: ErModel): string[] {
-        const getTransitions = erModel.transitions.filter(transition => transition.sourceId === attribute.id);
-        const getOptionalEdges = erModel.optionalAttributeEdges.filter(optionalEdge => optionalEdge.sourceId === attribute.id);
-
-        const targetIds = getTransitions.map(t => t.targetId);
-        const targetOptionalIds = getOptionalEdges.map(o => o.targetId);
-
-        return [...targetIds, ...targetOptionalIds];
+    public static getChildrenNodes(attributeId: string, erModel: ErModel): ErNode[] {
+        const targetIds = [
+            ...erModel.transitions.filter(t => t.sourceId === attributeId).map(t => t.targetId),
+            ...erModel.optionalAttributeEdges.filter(o => o.sourceId === attributeId).map(o => o.targetId)
+        ];
+        return targetIds.map(id => this.findAttributeNode(id, erModel)).filter((n): n is ErNode => n !== undefined);
     }
 
     private static findAttributeNode(id: string, erModel: ErModel): ErNode | undefined {

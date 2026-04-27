@@ -138,6 +138,7 @@ export class ErGModelFactory implements GModelFactory {
     // Relations
 
     protected createRelationNode(relation: Relation, weightedEdges: WeightedEdge[]): GNode {
+        relation.cardinality = this.computeCardinality(weightedEdges, relation.id);
         return this.createBaseNodeBuilder(relation, DefaultTypes.NODE_DIAMOND, 'relation-node', 60, 60)
             .addLayoutOption('paddingTop', 15).addLayoutOption('paddingBottom', 15)
             .addLayoutOption('paddingLeft', 20).addLayoutOption('paddingRight', 20)
@@ -147,6 +148,7 @@ export class ErGModelFactory implements GModelFactory {
     }
 
     protected createExistenceDependentRelationNode(relation: ExistenceDependentRelation, weightedEdges: WeightedEdge[]): GNode {
+        relation.cardinality = this.computeCardinality(weightedEdges, relation.id);
         return this.createBaseNodeBuilder(relation, 'node:existenceDependentRelation', 'existence-dependent-relation-node', 60, 60)
             .add(this.createLabel(`${relation.id}_existence_label`, 'E', 'label:static', 'existence-label'))
             .add(this.createLabel(`${relation.id}_label`, relation.name))
@@ -155,6 +157,7 @@ export class ErGModelFactory implements GModelFactory {
     }
 
     protected createIdentifyingDependentRelationNode(relation: IdentifyingDependentRelation, weightedEdges: WeightedEdge[]): GNode {
+        relation.cardinality = this.computeCardinality(weightedEdges, relation.id);
         return this.createBaseNodeBuilder(relation, 'node:identifyingDependentRelation', 'existence-dependent-relation-node', 60, 60)
             .add(this.createLabel(`${relation.id}_identifying_label`, 'Id', 'label:static', 'existence-label'))
             .add(this.createLabel(`${relation.id}_label`, relation.name))

@@ -1,0 +1,188 @@
+{
+  "id": "fa75eedd-a91a-410a-a9db-7b2ce6bd651b",
+  "entities": [
+    {
+      "id": "9390a1f6-b072-4e7a-9b15-186e1a6fd129",
+      "type": "entity",
+      "name": "Medico",
+      "position": {
+        "x": 438,
+        "y": 493
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "459bace5-d468-46ce-96f9-6839502da21f",
+      "type": "entity",
+      "name": "Paciente",
+      "position": {
+        "x": 841,
+        "y": 278
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "3141c3c1-58e1-40d5-9134-f81c72b23434",
+      "type": "entity",
+      "name": "Medicamento",
+      "position": {
+        "x": 1250,
+        "y": 492
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "5626d788-da14-4c64-ae3e-0baba8d695d6",
+      "type": "relation",
+      "name": "Receta",
+      "position": {
+        "x": 836,
+        "y": 488
+      },
+      "cardinality": "N:M:P",
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "ccf4ae54-bf7a-482e-b799-6a570b9371eb",
+      "type": "attribute",
+      "name": "dosis: float",
+      "position": {
+        "x": 726,
+        "y": 589
+      }
+    }
+  ],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "2eca5a20-15b1-4a7a-ba52-3683ba8de4a1",
+      "type": "keyAttribute",
+      "name": "cod_medico: integer",
+      "position": {
+        "x": 370,
+        "y": 409
+      }
+    },
+    {
+      "id": "e8e2bf46-9562-4a87-b532-25f4906a25c7",
+      "type": "keyAttribute",
+      "name": "cod_paciente: integer",
+      "position": {
+        "x": 881,
+        "y": 185
+      }
+    },
+    {
+      "id": "2a6d70b1-22db-40a3-8b4b-bdbb828ce264",
+      "type": "keyAttribute",
+      "name": "cod_medicamento: integer",
+      "position": {
+        "x": 1295,
+        "y": 406
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 40
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [
+    {
+      "id": "3b8ca156-997d-406f-a5e5-2d256dfcf395",
+      "type": "alternativeKeyAttribute",
+      "name": "cod_receta: integer",
+      "position": {
+        "x": 916,
+        "y": 575
+      },
+      "size": {
+        "width": 185.3894500732422,
+        "height": 40
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "53e77c98-0d40-4253-8f9b-f0ab3a28a98e",
+      "type": "transition",
+      "sourceId": "3141c3c1-58e1-40d5-9134-f81c72b23434",
+      "targetId": "2a6d70b1-22db-40a3-8b4b-bdbb828ce264"
+    },
+    {
+      "id": "f9a9ca09-093a-44c5-a5aa-b28596ec2cbd",
+      "type": "transition",
+      "sourceId": "459bace5-d468-46ce-96f9-6839502da21f",
+      "targetId": "e8e2bf46-9562-4a87-b532-25f4906a25c7"
+    },
+    {
+      "id": "0dee46ff-b397-445a-811c-9f6a8b6506ac",
+      "type": "transition",
+      "sourceId": "9390a1f6-b072-4e7a-9b15-186e1a6fd129",
+      "targetId": "2eca5a20-15b1-4a7a-ba52-3683ba8de4a1"
+    },
+    {
+      "id": "8de5e1dc-e5ff-4187-b746-e5d34468e298",
+      "type": "transition",
+      "sourceId": "5626d788-da14-4c64-ae3e-0baba8d695d6",
+      "targetId": "ccf4ae54-bf7a-482e-b799-6a570b9371eb"
+    },
+    {
+      "id": "06ff97ed-8e49-45ff-a1c3-ade6f6d854c7",
+      "type": "transition",
+      "sourceId": "5626d788-da14-4c64-ae3e-0baba8d695d6",
+      "targetId": "3b8ca156-997d-406f-a5e5-2d256dfcf395"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "19dc22b7-654e-42c7-990d-859e90b345aa",
+      "type": "edge:weighted",
+      "sourceId": "3141c3c1-58e1-40d5-9134-f81c72b23434",
+      "targetId": "5626d788-da14-4c64-ae3e-0baba8d695d6",
+      "description": "(1..N)"
+    },
+    {
+      "id": "dc26594b-b058-42ec-a64f-8539067b5a30",
+      "type": "edge:weighted",
+      "sourceId": "459bace5-d468-46ce-96f9-6839502da21f",
+      "targetId": "5626d788-da14-4c64-ae3e-0baba8d695d6",
+      "description": "(0..N)"
+    },
+    {
+      "id": "8e71d02b-1b5a-4f74-83da-eda98250e8b9",
+      "type": "edge:weighted",
+      "sourceId": "9390a1f6-b072-4e7a-9b15-186e1a6fd129",
+      "targetId": "5626d788-da14-4c64-ae3e-0baba8d695d6",
+      "description": "(1..N)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

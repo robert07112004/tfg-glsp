@@ -23,7 +23,6 @@ export class CreateIdentifyingDependentRelationHandler extends BaseCreateNodeHan
 
     protected override createErNode(position: Point, currentCount: number): IdentifyingDependentRelation {
         const node = super.createErNode(position, currentCount);
-        node.cardinality = '-';
         node.dependencyLabel = 'Id';
         return node;
     }
