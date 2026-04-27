@@ -1,0 +1,97 @@
+{
+  "id": "e78aa136-918a-4e43-b20f-9e75555d5805",
+  "entities": [
+    {
+      "id": "7a5f2fef-d21e-4420-b0cd-e3406d620777",
+      "type": "entity",
+      "name": "Persona",
+      "position": {
+        "x": 199,
+        "y": 415
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "59106ac0-3a7c-41ba-b529-b7f0dba53b24",
+      "type": "relation",
+      "name": "Matrimonio",
+      "position": {
+        "x": 430,
+        "y": 410
+      },
+      "cardinality": "1:1",
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "e051b709-ec81-463a-9630-a24e54ec38a6",
+      "type": "keyAttribute",
+      "name": "cod_persona: integer",
+      "position": {
+        "x": 85,
+        "y": 330
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "65cd2d99-b76f-49c1-909a-76b47b84bc50",
+      "type": "transition",
+      "sourceId": "7a5f2fef-d21e-4420-b0cd-e3406d620777",
+      "targetId": "e051b709-ec81-463a-9630-a24e54ec38a6"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "10f223d8-13e5-437a-952a-f0b32cd05ccf",
+      "type": "edge:weighted",
+      "sourceId": "7a5f2fef-d21e-4420-b0cd-e3406d620777",
+      "targetId": "59106ac0-3a7c-41ba-b529-b7f0dba53b24",
+      "description": "(1..1)",
+      "routingPoints": [
+        {
+          "kind": "linear",
+          "x": 375.5,
+          "y": 373.3389148057347,
+          "pointIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "e784677e-210e-42a4-a9f5-ac7540914435",
+      "type": "edge:weighted",
+      "sourceId": "7a5f2fef-d21e-4420-b0cd-e3406d620777",
+      "targetId": "59106ac0-3a7c-41ba-b529-b7f0dba53b24",
+      "description": "(1..1)",
+      "routingPoints": [
+        {
+          "kind": "linear",
+          "x": 363.5,
+          "y": 492.3389148057347,
+          "pointIndex": 0
+        }
+      ]
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

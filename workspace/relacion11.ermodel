@@ -1,0 +1,118 @@
+{
+  "id": "f280c56c-1b7f-4f75-a98d-a30eebfdc41f",
+  "entities": [
+    {
+      "id": "a68aaef5-c58a-499b-9628-2a85d278bcb1",
+      "type": "entity",
+      "name": "Estado",
+      "position": {
+        "x": 395,
+        "y": 401
+      }
+    },
+    {
+      "id": "18902d59-853c-4f22-af35-d845237deac4",
+      "type": "entity",
+      "name": "Capital",
+      "position": {
+        "x": 977,
+        "y": 396
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "3f80cf59-9593-4cdd-9afd-2f8fa0b6b008",
+      "type": "relation",
+      "name": "Tiene",
+      "position": {
+        "x": 658,
+        "y": 383
+      },
+      "cardinality": "1:1",
+      "size": {
+        "width": 131.81875610351562,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [],
+  "multiValuedAttributes": [],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "ee31671e-e809-4a13-a9b0-c1c676c192c6",
+      "type": "keyAttribute",
+      "name": "cod_estado: integer",
+      "position": {
+        "x": 306,
+        "y": 318
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 40
+      }
+    },
+    {
+      "id": "0d69df8a-e37f-47b0-a166-06c95db35569",
+      "type": "keyAttribute",
+      "name": "cod_capital: integer",
+      "position": {
+        "x": 1022,
+        "y": 308
+      },
+      "size": {
+        "width": 135.04408264160156,
+        "height": 40
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "9fb4d1f5-0568-4511-b977-c688eb8e0c24",
+      "type": "transition",
+      "sourceId": "18902d59-853c-4f22-af35-d845237deac4",
+      "targetId": "0d69df8a-e37f-47b0-a166-06c95db35569"
+    },
+    {
+      "id": "9325879b-83da-4daa-9ac7-08d839e89b67",
+      "type": "transition",
+      "sourceId": "a68aaef5-c58a-499b-9628-2a85d278bcb1",
+      "targetId": "ee31671e-e809-4a13-a9b0-c1c676c192c6"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "434fb705-2634-440d-b317-2ec9884e25d8",
+      "type": "edge:weighted",
+      "sourceId": "18902d59-853c-4f22-af35-d845237deac4",
+      "targetId": "3f80cf59-9593-4cdd-9afd-2f8fa0b6b008",
+      "description": "(0..1)",
+      "routingPoints": []
+    },
+    {
+      "id": "69a8e3bc-3e5c-4def-8cf3-c700bd908c12",
+      "type": "edge:weighted",
+      "sourceId": "a68aaef5-c58a-499b-9628-2a85d278bcb1",
+      "targetId": "3f80cf59-9593-4cdd-9afd-2f8fa0b6b008",
+      "description": "(0..1)"
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}
