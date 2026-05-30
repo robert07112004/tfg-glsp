@@ -1,5 +1,5 @@
-import { AlternativeKeyAttribute, Attribute, Entity, ErModel, ErNode, KeyAttribute, MultiValuedAttribute } from "../../model/er-model";
-import { AllAttributes } from "./sql-interfaces";
+import { AlternativeKeyAttribute, Attribute, ErModel, ErNode, KeyAttribute, MultiValuedAttribute } from "../../model/er-model";
+import { AllAttributes, FullPK } from "./sql-interfaces";
 import { SQLUtils } from "./sql-utils";
 
 export class AttributeTransformer {
@@ -29,6 +29,17 @@ export class AttributeTransformer {
         return this.getConnectedNodes(node.id, erModel.transitions, erModel.multiValuedAttributes);
     }
 
+    public static getDiscriminator(node: ErNode, erModel: ErModel): Attribute[] {
+        const attributes = erModel.attributes || [];
+        const transitions = erModel.transitions || [];
+
+        return attributes.filter(attr => {
+            const { name } = SQLUtils.parseNameAndType(attr.name);
+            if (!name.toLowerCase().endsWith('_disc')) return false;
+            return transitions.some(t => t.sourceId === node.id && t.targetId === attr.id);
+        });
+    }
+
     public static getAllAtributes(node: ErNode, erModel: ErModel): AllAttributes {
         return {
             pk: this.getPks(node, erModel),
@@ -40,7 +51,10 @@ export class AttributeTransformer {
     }
 
     public static processPKs(pks: KeyAttribute[]): { columns: string[], primaryKeyConstraint: string } {
-        const columns = pks.map(pk => `    ${SQLUtils.parseNameAndType(pk.name).name} ${SQLUtils.parseNameAndType(pk.name).type} NOT NULL`);
+        const columns = pks.map(pk => {
+            const { name, type } = SQLUtils.parseNameAndType(pk.name);
+            return `    ${name} ${type} NOT NULL`;
+        });
         const pkNames = pks.map(pk => SQLUtils.parseNameAndType(pk.name).name);
         const primaryKeyConstraint = pkNames.length > 0 ? `    PRIMARY KEY (${pkNames.join(', ')})` : '';
         return { columns, primaryKeyConstraint };
@@ -52,7 +66,6 @@ export class AttributeTransformer {
 
         for (const ak of altKeys) {
             const isParentNullable = this.isNullable(ak, erModel);
-            const nullableStr = isParentNullable ? 'NULL' : 'NOT NULL';
             const childrenNodes = this.getChildrenNodes(ak.id, erModel);
 
             if (childrenNodes.length > 0) {
@@ -68,17 +81,17 @@ export class AttributeTransformer {
                 uniqueConstraints.push(`    UNIQUE (${childColumnNames.join(', ')})`);
             } else {
                 const { name, type } = SQLUtils.parseNameAndType(ak.name);
+                const nullableStr = isParentNullable ? 'NULL' : 'NOT NULL';
                 columns.push(`    ${name} ${type} UNIQUE ${nullableStr}`);
             }
         }
         return { columns, uniqueConstraints };
     }
 
-    public static processAttributes(attributes: Attribute[], erModel: ErModel): string[] {
+    public static processAttributes(attributes: Attribute[], erModel: ErModel, forceNull: boolean = false): string[] {
         const columns: string[] = [];
         for (const attr of attributes) {
-            const isParentNullable = this.isNullable(attr, erModel);
-            const nullableStr = isParentNullable ? 'NULL' : 'NOT NULL';
+            const isParentNullable = forceNull || this.isNullable(attr, erModel);
             const childrenNodes = this.getChildrenNodes(attr.id, erModel);
 
             if (childrenNodes.length > 0) {
@@ -90,19 +103,25 @@ export class AttributeTransformer {
                 }
             } else {
                 const { name, type } = SQLUtils.parseNameAndType(attr.name);
+                const nullableStr = isParentNullable ? 'NULL' : 'NOT NULL';
                 columns.push(`    ${name} ${type} ${nullableStr}`);
             }
         }
         return columns;
     }
 
-    public static processMultiValuedAttributes(multiValuedAttrs: MultiValuedAttribute[], parentEntity: Entity, erModel: ErModel): string[] {
+    public static processMultiValuedAttributes(multiValuedAttrs: MultiValuedAttribute[], parentNode: ErNode, erModel: ErModel, fullPKs?: FullPK[]): string[] {
         const createTableStatements: string[] = [];
-        const parentTableName = SQLUtils.parseNameAndType(parentEntity.name).name;
+        const parentTableName = SQLUtils.parseNameAndType(parentNode.name).name;
 
-        const parentPks = this.getPks(parentEntity, erModel).map(pk => SQLUtils.parseNameAndType(pk.name));
-        const parentPkColumns = parentPks.map(pk => `    ${pk.name} ${pk.type} NOT NULL`);
-        const parentPkNames = parentPks.map(pk => pk.name);
+        // Si se pasan fullPKs (caso de entidad débil), se usan directamente.
+        // Si no, se calculan las PKs propias del nodo (caso de entidad fuerte o relación N:M).
+        const pkData = fullPKs
+            ? fullPKs.map(pk => ({ name: pk.colNameInThisTable, type: pk.type }))
+            : this.getPks(parentNode, erModel).map(pk => SQLUtils.parseNameAndType(pk.name));
+
+        const parentPkColumns = pkData.map(pk => `    ${pk.name} ${pk.type} NOT NULL`);
+        const parentPkNames = pkData.map(pk => pk.name);
 
         for (const mvAttr of multiValuedAttrs) {
             const mvRootName = SQLUtils.parseNameAndType(mvAttr.name).name;
@@ -112,16 +131,12 @@ export class AttributeTransformer {
             const currentAttrNames: string[] = [];
             const childrenNodes = this.getChildrenNodes(mvAttr.id, erModel);
 
-            if (childrenNodes.length > 0) {
-                for (const child of childrenNodes) {
-                    const { name, type } = SQLUtils.parseNameAndType(child.name);
-                    columns.push(`    ${name} ${type} NOT NULL`);
-                    currentAttrNames.push(name);
-                }
-            } else {
-                const { name, type } = SQLUtils.parseNameAndType(mvAttr.name);
-                columns.push(`    ${name} ${type} NOT NULL`);
-                currentAttrNames.push(name);
+            const nodesToProcess = childrenNodes.length > 0 ? childrenNodes : [mvAttr];
+            for (const node of nodesToProcess) {
+                const { name, type } = SQLUtils.parseNameAndType(node.name);
+                const isOptional = erModel.optionalAttributeEdges.some(e => e.sourceId === mvAttr.id && e.targetId === node.id);
+                columns.push(`    ${name} ${type} ${isOptional ? 'NULL' : 'NOT NULL'}`);
+                if (!isOptional) currentAttrNames.push(name);
             }
 
             const allPkNames = [...parentPkNames, ...currentAttrNames];

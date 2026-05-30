@@ -1,17 +1,10 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
+import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
-import { SQLUtils } from '../../../generator/sql-utils';
-import { relationTypes } from '../../utils/validation-constants';
+import { relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
-
-/* Identifying dependence relation rules:
- * 1. Identifying dependence relation not connected to anything.
- * 2. Identifying dependence relation can't be connected to relations, other dependencies
- * 3. Identifying dependence relation must be connected to an entity, a weak entity with weighted edges. 
- * 4. Cardinality of existende dependence relations can't be N..M or 1..1
- */
 
 @injectable()
 export class IdentifyingDependenceRelationValidator {
@@ -19,44 +12,58 @@ export class IdentifyingDependenceRelationValidator {
     protected readonly modelState!: ErModelState;
 
     protected get index(): ErModelIndex {
-        return this.modelState.index;
+        return this.modelState.index as ErModelIndex;
     }
 
     validate(node: GNode): Marker | undefined {
-        const getOutgoingEdges = this.index.getOutgoingEdges(node);
-        const getIncomingEdges = this.index.getIncomingEdges(node);
+        const outgoing = this.index.getOutgoingEdges(node);
+        const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Identifying dependence not connected to anything.
-        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+        // Rule 1: Not isolated
+        if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
-                'Dependencia en identificación no conectada a nada',
-                node.id,
-                'ERR: identificación-sinConexion'
+                'Esta dependencia en identificación no está conectada a nada. Debe conectarse a una entidad normal y a una entidad débil.',
+                node.id, 'ERR: dep-identificacion-aislada'
             );
         }
 
-        // Rule 4: Cardinality of existende dependence relations can't be N..M or 1..1
-        if (!SQLUtils.getCardinality(node).includes("1:N")) {
+        // R-1: Empty name
+        const name = SQLUtils.cleanNames(node);
+        if (!name) {
             return createMarker('error',
-                'Una dependencia en identificacion no puede ser N:M o 1:1',
-                node.id,
-                'ERR: IdentifyingDependenceRelationValidator'
+                'El nombre de la dependencia en identificación no puede estar vacío. Escribe un nombre que describa la relación (ej: "Se_compone_de", "Contiene").',
+                node.id, 'ERR: dep-identificacion-sinNombre'
             );
         }
 
-        // Rule 2: Identifying dependence relation can't be connected to relations, other dependencies
-        for (const edge of getIncomingEdges) {
-            if (relationTypes.includes(edge.sourceId)) {
+        // Rule 4: Cardinality must be 1:N
+        if (!SQLUtils.getCardinality(node).includes('1:N')) {
+            return createMarker('error',
+                'Una dependencia en identificación siempre debe ser de cardinalidad 1:N: la entidad fuerte participa con cardinalidad 1 y la entidad débil con N. Revisa las cardinalidades en las aristas ponderadas.',
+                node.id, 'ERR: dep-identificacion-cardinalidadInvalida'
+            );
+        }
+
+        // Rule 2 (B-3 fix): Cannot connect to other relations
+        for (const edge of incoming) {
+            const sourceNode = this.index.get(edge.sourceId);
+            if (sourceNode && relationTypes.includes(sourceNode.type)) {
                 return createMarker('error',
-                    'Una dependencia en identificación no se puede conectar a relaciones',
-                    node.id,
-                    'ERR: IdentifyingDependenceRelationValidator'
+                    'Una dependencia en identificación no puede conectarse a otras interrelaciones.',
+                    node.id, 'ERR: dep-identificacion-conexionRelacion'
                 );
             }
         }
 
+        // R-3: At least 2 entity connections (incoming weighted edges)
+        const entityConnections = incoming.filter(e => e.type === WEIGHTED_EDGE_TYPE);
+        if (entityConnections.length < 2) {
+            return createMarker('error',
+                'Una dependencia en identificación debe conectarse a al menos dos entidades usando aristas ponderadas.',
+                node.id, 'ERR: dep-identificacion-pocasEntidades'
+            );
+        }
+
         return undefined;
-
     }
-
 }

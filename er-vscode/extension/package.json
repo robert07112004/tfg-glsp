@@ -33,7 +33,7 @@
   },
   "scripts": {
     "build": "tsc -b && yarn bundle",
-    "bundle": "webpack",
+    "bundle": "set NODE_OPTIONS=--no-deprecation && webpack",
     "bundle:prod": "webpack --config ./webpack.prod.js",
     "clean": "rimraf lib tsconfig.tsbuildinfo dist",
     "lint": "eslint --ext .ts,.tsx ./src",
@@ -89,7 +89,7 @@
       {
         "command": "er.generateSql",
         "key": "ctrl+alt+s",
-        "when": "activeCustomEditorId == 'er.glspDiagram'"
+        "when": "activeCustomEditorId == 'er.glspDiagram' && er.validationClean"
       },
       {
         "key": "alt+f",
@@ -127,7 +127,7 @@
         {
           "command": "er.generateSql",
           "group": "navigation",
-          "when": "activeCustomEditorId == 'er.glspDiagram'"
+          "when": "activeCustomEditorId == 'er.glspDiagram' && er.validationClean"
         },
         {
           "submenu": "er.editor.title",

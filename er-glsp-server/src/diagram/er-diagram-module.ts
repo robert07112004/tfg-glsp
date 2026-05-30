@@ -26,15 +26,13 @@ import {
     LabelEditValidator,
     ModelState,
     OperationHandlerConstructor,
+    RequestClipboardDataActionHandler,
     SourceModelStorage
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
-import { CreateDisjointnessEdgeHandler } from '../handler/edge-handlers/create-disjointness-edge-handler';
-import { CreateExclusionEdgeHandler } from '../handler/edge-handlers/create-exclusion-edge-handler';
-import { CreateInclusionEdgeHandler } from '../handler/edge-handlers/create-inclusion-edge-handler';
+import { ErPasteOperationHandler } from '../handler/er-paste-operation-handler';
 import { CreateOptionalAttributeEdgeHandler } from '../handler/edge-handlers/create-optional-attribute-edge-handler';
-import { CreateOverlappingEdgeHandler } from '../handler/edge-handlers/create-overlapping-edge-handler';
 import { CreateTransitionHandler } from '../handler/edge-handlers/create-transition-handler';
 import { CreateWeightedEdgeHandler } from '../handler/edge-handlers/create-weighted-edge-handler';
 import { ErApplyLabelEditHandler } from '../handler/er-apply-label-edit-handler';
@@ -99,6 +97,7 @@ export class ErDiagramModule extends DiagramModule {
         super.configureActionHandlers(binding);
         binding.add(ComputedBoundsActionHandler);
         binding.add(GenerateSqlActionHandler);
+        binding.add(RequestClipboardDataActionHandler);
     }
 
     protected override configureOperationHandlers(binding: InstanceMultiBinding<OperationHandlerConstructor>): void {
@@ -120,14 +119,11 @@ export class ErDiagramModule extends DiagramModule {
         binding.add(CreateTransitionHandler);
         binding.add(CreateWeightedEdgeHandler);
         binding.add(CreateOptionalAttributeEdgeHandler);
-        binding.add(CreateExclusionEdgeHandler);
-        binding.add(CreateInclusionEdgeHandler);
-        binding.add(CreateDisjointnessEdgeHandler);
-        binding.add(CreateOverlappingEdgeHandler);
         binding.add(ErChangeBoundsHandler);
         binding.add(ErApplyLabelEditHandler);
         binding.add(DeleteElementHandler);
         binding.add(ErChangeRoutingPointsHandler);
+        binding.add(ErPasteOperationHandler);
     }
 
     protected override bindModelValidator(): BindingTarget<ErModelValidator> | undefined {

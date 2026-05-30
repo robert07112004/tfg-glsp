@@ -29,6 +29,7 @@ export class ErApplyLabelEditHandler extends JsonOperationHandler {
 
                 if ('name' in modelElement) {
                     (modelElement as ErNode).name = operation.text;
+                    (modelElement as ErNode).size = undefined; // reset para que el cliente recalcule el tamaño
                     return;
                 }
 

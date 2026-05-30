@@ -46,7 +46,7 @@ const config = {
             ]
         })
     ],
-    ignoreWarnings: [/Can't resolve .* in '.*ws\/lib'/],
+    ignoreWarnings: [/Can't resolve .* in '.*ws[/\\]lib'/],
     performance: {
         hints: false
     }

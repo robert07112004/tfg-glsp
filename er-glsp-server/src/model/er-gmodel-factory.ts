@@ -1,6 +1,6 @@
 import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode, GPort } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, DisjointnessEdge, Entity, ErEdge, ErNode, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, OverlappingEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './er-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, Entity, ErEdge, ErNode, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './er-model';
 import { ErModelState } from './er-model-state';
 
 @injectable()
@@ -32,11 +32,7 @@ export class ErGModelFactory implements GModelFactory {
         const childEdges = [
             ...(erModel.transitions || []).map(t => this.createTransitionEdge(t)),
             ...(erModel.weightedEdges || []).map(we => this.createWeightedEdge(we)),
-            ...(erModel.optionalAttributeEdges || []).map(oae => this.createOptionalAttributeEdge(oae)),
-            ...(erModel.exclusionEdges || []).map(e => this.createExclusionEdge(e)),
-            ...(erModel.inclusionEdges || []).map(ie => this.createInclusionEdge(ie)),
-            ...(erModel.disjointnessEdges || []).map(de => this.createDisjointnessEdge(de)),
-            ...(erModel.overlappingEdges || []).map(oe => this.createOverlappingEdge(oe))
+            ...(erModel.optionalAttributeEdges || []).map(oae => this.createOptionalAttributeEdge(oae))
         ]
 
         this.updatePortPositions(childEdges, childNodes);
@@ -50,8 +46,7 @@ export class ErGModelFactory implements GModelFactory {
     }
 
     // Helpers
-
-    private createBaseNodeBuilder(node: ErNode, type: string, cssClass: string, defaultWidth: number, defaultHeight: number) {
+    private createBaseNodeBuilder(node: ErNode, type: string, cssClass: string, defaultWidth?: number, defaultHeight?: number) {
         const builder = GNode.builder()
             .id(node.id)
             .type(type)
@@ -63,7 +58,7 @@ export class ErGModelFactory implements GModelFactory {
 
         if (node.size) {
             builder.addLayoutOptions({ prefWidth: node.size.width, prefHeight: node.size.height });
-        } else {
+        } else if (defaultWidth !== undefined && defaultHeight !== undefined) {
             builder.addLayoutOptions({ prefWidth: defaultWidth, prefHeight: defaultHeight });
         }
         return builder;
@@ -89,59 +84,70 @@ export class ErGModelFactory implements GModelFactory {
     }
 
     // Entities
-
     protected createEntityNode(entity: Entity): GNode {
         return this.createBaseNodeBuilder(entity, DefaultTypes.NODE_RECTANGLE, 'entity-node', 100, 40)
+            .addLayoutOption('paddingTop', 15).addLayoutOption('paddingBottom', 15)
+            .addLayoutOption('paddingLeft', 5).addLayoutOption('paddingRight', 5)
             .add(this.createLabel(`${entity.id}_label`, entity.name))
             .build();
     }
 
     protected createWeakEntityNode(weakEntity: WeakEntity): GNode {
         return this.createBaseNodeBuilder(weakEntity, 'node:weakEntity', 'weak-entity-node', 100, 40)
+            .addLayoutOption('paddingTop', 10).addLayoutOption('paddingBottom', 10)
+            .addLayoutOption('paddingLeft', 5).addLayoutOption('paddingRight', 5)
             .add(this.createLabel(`${weakEntity.id}_label`, weakEntity.name))
             .build();
     }
 
     // Attributes
-
     protected createAttributeNode(attribute: Attribute): GNode {
-        return this.createBaseNodeBuilder(attribute, 'node:attribute', 'attribute-node', 100, 40)
+        return this.createBaseNodeBuilder(attribute, 'node:attribute', 'attribute-node')
+            .addLayoutOption('paddingTop', 5).addLayoutOption('paddingBottom', 5)
+            .addLayoutOption('paddingLeft', 10).addLayoutOption('paddingRight', 10)
             .add(this.createLabel(`${attribute.id}_label`, attribute.name))
             .build();
     }
 
     protected createKeyAttributeNode(attribute: KeyAttribute): GNode {
-        return this.createBaseNodeBuilder(attribute, 'node:keyAttribute', 'key-attribute-node', 100, 40)
+        return this.createBaseNodeBuilder(attribute, 'node:keyAttribute', 'key-attribute-node')
+            .addLayoutOption('paddingTop', 5).addLayoutOption('paddingBottom', 5)
+            .addLayoutOption('paddingLeft', 10).addLayoutOption('paddingRight', 10)
             .add(this.createLabel(`${attribute.id}_label`, attribute.name, undefined, 'key-attribute-label'))
             .build();
     }
 
     protected createAlternativeKeyAttributeNode(attribute: AlternativeKeyAttribute): GNode {
-        return this.createBaseNodeBuilder(attribute, 'node:alternativeKeyAttribute', 'alternative-key-attribute-node', 100, 40)
+        return this.createBaseNodeBuilder(attribute, 'node:alternativeKeyAttribute', 'alternative-key-attribute-node')
+            .addLayoutOption('paddingTop', 5).addLayoutOption('paddingBottom', 5)
+            .addLayoutOption('paddingLeft', 10).addLayoutOption('paddingRight', 10)
             .add(this.createLabel(`${attribute.id}_label`, attribute.name, undefined, 'alternative-key-attribute-label'))
             .build();
     }
 
     protected createMultiValuedAttributeNode(attribute: MultiValuedAttribute): GNode {
-        return this.createBaseNodeBuilder(attribute, 'node:multiValuedAttribute', 'multi-valued-attribute-node', 100, 40)
+        return this.createBaseNodeBuilder(attribute, 'node:multiValuedAttribute', 'multi-valued-attribute-node')
+            .addLayoutOption('paddingTop', 5).addLayoutOption('paddingBottom', 5)
+            .addLayoutOption('paddingLeft', 10).addLayoutOption('paddingRight', 10)
             .add(this.createLabel(`${attribute.id}_label`, attribute.name))
             .build();
     }
 
     protected createDerivedAttributeNode(attribute: DerivedAttribute): GNode {
-        return this.createBaseNodeBuilder(attribute, 'node:derivedAttribute', 'derived-attribute-node', 100, 40)
+        return this.createBaseNodeBuilder(attribute, 'node:derivedAttribute', 'derived-attribute-node')
+            .addLayoutOption('paddingTop', 5).addLayoutOption('paddingBottom', 5)
+            .addLayoutOption('paddingLeft', 10).addLayoutOption('paddingRight', 10)
             .add(this.createLabel(`${attribute.id}_label`, attribute.name))
             .add(this.createLabel(`${attribute.id}_equation_label`, attribute.equation))
             .build();
     }
 
     // Relations
-
     protected createRelationNode(relation: Relation, weightedEdges: WeightedEdge[]): GNode {
         relation.cardinality = this.computeCardinality(weightedEdges, relation.id);
         return this.createBaseNodeBuilder(relation, DefaultTypes.NODE_DIAMOND, 'relation-node', 60, 60)
             .addLayoutOption('paddingTop', 15).addLayoutOption('paddingBottom', 15)
-            .addLayoutOption('paddingLeft', 20).addLayoutOption('paddingRight', 20)
+            .addLayoutOption('paddingLeft', 15).addLayoutOption('paddingRight', 15)
             .add(this.createLabel(`${relation.id}_label`, relation.name))
             .add(this.createLabel(`${relation.id}_cardinality_label`, this.computeCardinality(weightedEdges, relation.id), 'label:cardinality', 'cardinality-label'))
             .build();
@@ -150,6 +156,8 @@ export class ErGModelFactory implements GModelFactory {
     protected createExistenceDependentRelationNode(relation: ExistenceDependentRelation, weightedEdges: WeightedEdge[]): GNode {
         relation.cardinality = this.computeCardinality(weightedEdges, relation.id);
         return this.createBaseNodeBuilder(relation, 'node:existenceDependentRelation', 'existence-dependent-relation-node', 60, 60)
+            .addLayoutOption('paddingTop', 6).addLayoutOption('paddingBottom', 6)
+            .addLayoutOption('paddingLeft', 15).addLayoutOption('paddingRight', 15)
             .add(this.createLabel(`${relation.id}_existence_label`, 'E', 'label:static', 'existence-label'))
             .add(this.createLabel(`${relation.id}_label`, relation.name))
             .add(this.createLabel(`${relation.id}_cardinality_label`, this.computeCardinality(weightedEdges, relation.id), 'label:cardinality', 'cardinality-label'))
@@ -159,6 +167,8 @@ export class ErGModelFactory implements GModelFactory {
     protected createIdentifyingDependentRelationNode(relation: IdentifyingDependentRelation, weightedEdges: WeightedEdge[]): GNode {
         relation.cardinality = this.computeCardinality(weightedEdges, relation.id);
         return this.createBaseNodeBuilder(relation, 'node:identifyingDependentRelation', 'existence-dependent-relation-node', 60, 60)
+            .addLayoutOption('paddingTop', 6).addLayoutOption('paddingBottom', 6)
+            .addLayoutOption('paddingLeft', 15).addLayoutOption('paddingRight', 15)
             .add(this.createLabel(`${relation.id}_identifying_label`, 'Id', 'label:static', 'existence-label'))
             .add(this.createLabel(`${relation.id}_label`, relation.name))
             .add(this.createLabel(`${relation.id}_cardinality_label`, this.computeCardinality(weightedEdges, relation.id), 'label:cardinality', 'cardinality-label'))
@@ -166,41 +176,44 @@ export class ErGModelFactory implements GModelFactory {
     }
 
     // Specializations
-
     protected createPartialExclusiveSpecializationNode(spec: PartialExclusiveSpecialization): GNode {
-        return this.createBaseNodeBuilder(spec, 'node:partialExclusiveSpecialization', 'partial-exclusive-specialization-node', 60, 60)
+        return this.createBaseNodeBuilder(spec, 'node:partialExclusiveSpecialization', 'partial-exclusive-specialization-node', 150, 40)
             .add(this.createLabel(`${spec.id}_label`, 'Partial Exclusive', 'label:static', 'existence-label'))
             .build();
     }
 
     protected createTotalExclusiveSpecializationNode(spec: TotalExclusiveSpecialization): GNode {
-        return this.createBaseNodeBuilder(spec, 'node:totalExclusiveSpecialization', 'total-exclusive-specialization-node', 60, 60)
+        return this.createBaseNodeBuilder(spec, 'node:totalExclusiveSpecialization', 'total-exclusive-specialization-node', 150, 40)
             .add(this.createLabel(`${spec.id}_label`, 'Total Exclusive', 'label:static', 'existence-label'))
             .build();
     }
 
     protected createPartialOverlappedSpecializationNode(spec: PartialOverlappedSpecialization): GNode {
-        return this.createBaseNodeBuilder(spec, 'node:partialOverlappedSpecialization', 'partial-overlapped-specialization-node', 60, 60)
+        return this.createBaseNodeBuilder(spec, 'node:partialOverlappedSpecialization', 'partial-overlapped-specialization-node', 150, 40)
             .add(this.createLabel(`${spec.id}_label`, 'Partial Overlapped', 'label:static', 'existence-label'))
             .build();
     }
 
     protected createTotalOverlappedSpecializationNode(spec: TotalOverlappedSpecialization): GNode {
-        return this.createBaseNodeBuilder(spec, 'node:totalOverlappedSpecialization', 'total-overlapped-specialization-node', 60, 60)
+        return this.createBaseNodeBuilder(spec, 'node:totalOverlappedSpecialization', 'total-overlapped-specialization-node', 150, 40)
             .add(this.createLabel(`${spec.id}_label`, 'Total Overlapped', 'label:static', 'existence-label'))
             .build();
     }
 
     // Edges
-
     protected createTransitionEdge(transition: Transition): GEdge {
         return this.createBaseEdgeBuilder(transition, undefined, 'tasklist-transition').build();
     }
 
     protected createWeightedEdge(weightedEdge: WeightedEdge): GEdge {
+        const label = GLabel.builder()
+            .id(`${weightedEdge.id}_label`)
+            .text(weightedEdge.description ?? '')
+            .type('label:weighted')
+            .addCssClass('weighted-edge-label')
+            .build();
         return this.createBaseEdgeBuilder(weightedEdge, 'edge:weighted', 'weighted-edge')
-            .add(this.createLabel(`${weightedEdge.id}_label`, weightedEdge.description ?? '', 'label:weighted', 'weighted-edge-label'))
-            .add(GPort.builder().id(`${weightedEdge.id}_port`).type('port:constraint').build())
+            .add(label)
             .build();
     }
 
@@ -208,32 +221,21 @@ export class ErGModelFactory implements GModelFactory {
         return this.createBaseEdgeBuilder(edge, 'edge:optional', 'optional-attribute-edge').build();
     }
 
-    protected createExclusionEdge(edge: ExclusionEdge): GEdge {
-        return this.createBaseEdgeBuilder(edge, 'edge:exclusion', 'exclusion-edge')
-            .add(this.createLabel(`${edge.id}_label`, 'Exclusion', 'label:static', 'exclusion-label'))
-            .build();
-    }
-
-    protected createInclusionEdge(edge: InclusionEdge): GEdge {
-        return this.createBaseEdgeBuilder(edge, 'edge:inclusion', 'inclusion-edge')
-            .add(this.createLabel(`${edge.id}_label`, 'Inclusion', 'label:static', 'inclusion-label'))
-            .build();
-    }
-
-    protected createDisjointnessEdge(edge: DisjointnessEdge): GEdge {
-        return this.createBaseEdgeBuilder(edge, 'edge:disjointness', 'disjointness-edge').build();
-    }
-
-    protected createOverlappingEdge(edge: OverlappingEdge): GEdge {
-        return this.createBaseEdgeBuilder(edge, 'edge:overlap', 'overlapping-edge').build();
-    }
-
     // Logic
+
+    /** Mirrors SQLUtils.isMany for use in the GModel factory (no direct import to avoid coupling). */
+    private isManyEdge(description: string): boolean {
+        const desc = (description || '').toUpperCase().trim();
+        if (desc.includes('N') || desc.includes('M')) return true;
+        const nums = desc.match(/\d+/g);
+        if (nums && nums.length > 0) return parseInt(nums[nums.length - 1], 10) > 1;
+        return false;
+    }
 
     private computeCardinality(allEdges: WeightedEdge[], relationId: string): string {
         const allConnectedEdges = allEdges.filter(e => e.targetId === relationId);
         const edgesWithoutCardinality = allConnectedEdges.every(e => e.description.includes('New Weighted Edge'));
-        const manyEdgesCount = allConnectedEdges.filter(e => e.description.includes('..N')).length;
+        const manyEdgesCount = allConnectedEdges.filter(e => this.isManyEdge(e.description)).length;
 
         if (edgesWithoutCardinality || allConnectedEdges.length < 2) return '-';
 

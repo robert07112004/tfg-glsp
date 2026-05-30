@@ -6,16 +6,42 @@ const CARDINALITY_REGEX = /^\([0-9]+\.\.([0-9]+|N)\)$/;
 const EQUATION_REGEX = /^[a-zA-Z0-9_\s+\-*/().]+$/;
 
 const ALLOWED_SQL_TYPES = [
-    'integer', 'smallint', 'bigint', 'tinyint',
+    // Enteros
+    'tinyint', 'smallint', 'mediumint', 'int', 'bigint',
+    'tinyint\\(\\s*\\d+\\s*\\)', 'smallint\\(\\s*\\d+\\s*\\)',
+    'mediumint\\(\\s*\\d+\\s*\\)', 'int\\(\\s*\\d+\\s*\\)', 'bigint\\(\\s*\\d+\\s*\\)',
+
+    // Decimales exactos
     'decimal\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
     'numeric\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
-    'float', 'real',
-    'varchar\\(\\s*\\d+\\s*\\)', 'char\\(\\s*\\d+\\s*\\)', 'text',
-    'date', 'time', 'datetime', 'timestamp',
-    'boolean',
-    'blob', 'binary', 'varbinary',
-    'json', 'xml', 'uuid',
-    'geometry', 'geography'
+    'decimal\\(\\s*\\d+\\s*\\)',
+    'numeric\\(\\s*\\d+\\s*\\)',
+
+    // Decimales aproximados
+    'float', 'float\\(\\s*\\d+\\s*\\)',
+    'double', 'double\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
+    'real',
+
+    // Cadenas de texto
+    'char\\(\\s*\\d+\\s*\\)', 'varchar\\(\\s*\\d+\\s*\\)',
+    'tinytext', 'text', 'mediumtext', 'longtext',
+
+    // Binarios
+    'binary\\(\\s*\\d+\\s*\\)', 'varbinary\\(\\s*\\d+\\s*\\)',
+    'tinyblob', 'blob', 'mediumblob', 'longblob',
+
+    // Fecha y hora
+    'date', 'time', 'datetime', 'timestamp', 'year',
+
+    // Booleano (alias de tinyint(1) en MySQL)
+    'boolean', 'bool',
+
+    // JSON
+    'json',
+
+    // Enum y Set
+    "enum\\(\\s*('[^']*'\\s*,\\s*)*'[^']*'\\s*\\)",
+    "set\\(\\s*('[^']*'\\s*,\\s*)*'[^']*'\\s*\\)"
 ];
 const ATTRIBUTE_REGEX = new RegExp(`^[^:]+:\\s*(${ALLOWED_SQL_TYPES.join('|')})\\s*$`, 'i');
 
@@ -73,7 +99,7 @@ export class ErLabelEditValidator implements LabelEditValidator {
                 if (!ATTRIBUTE_REGEX.test(label)) {
                     return {
                         severity: ValidationStatus.Severity.ERROR,
-                        message: 'El formato no es correcto, por favor utilice (solo tipos de SQL): {name: type} (ex. "age: integer")'
+                        message: 'El formato no es correcto, por favor utilice (solo tipos de SQL): {name: type} (ex. "age: int")'
                     };
                 }
             }

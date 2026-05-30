@@ -31,8 +31,13 @@ export const LOG_DIR = path.join(__dirname, '..', '..', 'logs');
 
 const DEFAULT_SERVER_PORT = '0';
 
+/** VS Code context key that controls whether the Generate SQL button is visible. */
+const VALIDATION_CLEAN_CONTEXT = 'er.validationClean';
+
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-    // Start server process using quickstart component
+    // SQL button starts hidden: the user must explicitly validate with 0 errors first.
+    vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, false);
+
     let serverProcess: GlspSocketServerLauncher | undefined;
 
     if (process.env.ER_SERVER_DEBUG !== 'true') {
@@ -47,17 +52,43 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         await serverProcess.start();
     }
 
-    // Wrap server with quickstart component
     const minimalServer = new SocketGlspVscodeServer({
         clientId: 'glsp.er',
         clientName: 'er',
         connectionOptions: { port: serverProcess?.getPort() || JSON.parse(process.env.ER_SERVER_PORT || DEFAULT_SERVER_PORT) }
     });
 
-    // Initialize GLSP-VSCode connector with server wrapper
     const glspVscodeConnector = new GlspVscodeConnector({
         server: minimalServer,
-        logging: true
+        logging: true,
+        onBeforeReceiveMessageFromServer: (message, callback) => {
+            const msg = message as any;
+            if (msg?.action) {
+                const action = msg.action;
+
+                if (action.kind === 'setMarkers') {
+                    const reason = action.reason as string | undefined;
+                    const hasErrors = (action.markers ?? []).some((m: any) => m.kind === 'error');
+
+                    if (reason === 'batch') {
+                        // User explicitly pressed the validate button.
+                        // Enable or disable based on whether there are errors.
+                        vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, !hasErrors);
+                    } else if (hasErrors) {
+                        // Automatic live validation found errors → disable button.
+                        // If no errors in live validation, keep the current state unchanged
+                        // so auto-validation at load does NOT falsely enable the button.
+                        vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, false);
+                    }
+                }
+
+                // Any model modification requires re-validation before generating SQL.
+                if (action.kind === 'setDirtyState' && action.isDirty === true) {
+                    vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, false);
+                }
+            }
+            callback(message, true);
+        }
     });
 
     const customEditorProvider = vscode.window.registerCustomEditorProvider(

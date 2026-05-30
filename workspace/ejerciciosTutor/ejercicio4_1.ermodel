@@ -1,0 +1,526 @@
+{
+  "id": "eec403cf-ae7e-4200-99c1-0b948d711592",
+  "entities": [
+    {
+      "id": "720212e7-ff1a-4ae0-9493-df718e388ec9",
+      "type": "entity",
+      "name": "monitor",
+      "position": {
+        "x": 292,
+        "y": 97
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "faa25386-9c4f-4a59-a6f9-256baf1b600c",
+      "type": "entity",
+      "name": "aparato",
+      "position": {
+        "x": 764,
+        "y": 91
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "d31dc3b4-b377-4e19-b638-10d295dcc6c1",
+      "type": "entity",
+      "name": "clase",
+      "position": {
+        "x": 294,
+        "y": 351
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "f5af4d17-1486-4487-9b11-c8d97e1ef5fd",
+      "type": "entity",
+      "name": "socio",
+      "position": {
+        "x": 301,
+        "y": 662
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "e58d7b34-2ea2-42a7-8feb-2f3e6a951306",
+      "type": "entity",
+      "name": "squash",
+      "position": {
+        "x": 768,
+        "y": 663
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    },
+    {
+      "id": "66ddfb5f-6639-4721-9c55-219a7af462f6",
+      "type": "entity",
+      "name": "sala",
+      "position": {
+        "x": 765,
+        "y": 350
+      },
+      "size": {
+        "width": 100,
+        "height": 40
+      }
+    }
+  ],
+  "weakEntities": [],
+  "relations": [
+    {
+      "id": "d07cd496-b6ab-4379-a03c-346917f16994",
+      "type": "relation",
+      "name": "imparte",
+      "position": {
+        "x": 274,
+        "y": 210
+      },
+      "cardinality": "1:N",
+      "size": {
+        "width": 131.859375,
+        "height": 60
+      }
+    },
+    {
+      "id": "8cb3f943-8ce8-4fe8-b8cc-ce725ce392a3",
+      "type": "relation",
+      "name": "asiste",
+      "position": {
+        "x": 281,
+        "y": 493
+      },
+      "cardinality": "N:M",
+      "size": {
+        "width": 131.9200897216797,
+        "height": 60
+      }
+    },
+    {
+      "id": "a416fa66-1944-4f1f-9ea5-3a5485127f1b",
+      "type": "relation",
+      "name": "reserva",
+      "position": {
+        "x": 530,
+        "y": 653
+      },
+      "cardinality": "N:M",
+      "size": {
+        "width": 131.9200897216797,
+        "height": 60
+      }
+    },
+    {
+      "id": "ae1731ae-a492-4acc-8d9b-7c94238fd0d2",
+      "type": "relation",
+      "name": "tiene_asignada",
+      "position": {
+        "x": 521,
+        "y": 339
+      },
+      "cardinality": "1:N",
+      "size": {
+        "width": 132.9200897216797,
+        "height": 60
+      }
+    },
+    {
+      "id": "4f48e6fe-3301-49de-9493-1097d8a3887f",
+      "type": "relation",
+      "name": "tiene",
+      "position": {
+        "x": 745,
+        "y": 198
+      },
+      "cardinality": "1:N",
+      "size": {
+        "width": 131.9200897216797,
+        "height": 60
+      }
+    }
+  ],
+  "existenceDependentRelations": [],
+  "identifyingDependentRelations": [],
+  "partialExclusiveSpecializations": [],
+  "totalExclusiveSpecializations": [],
+  "partialOverlappedSpecializations": [],
+  "totalOverlappedSpecializations": [],
+  "attributes": [
+    {
+      "id": "6323d46c-08e6-4818-932c-a43a1f819791",
+      "type": "attribute",
+      "name": "metros: float",
+      "position": {
+        "x": 925,
+        "y": 336
+      },
+      "size": {
+        "width": 83,
+        "height": 22
+      }
+    },
+    {
+      "id": "9f27c3df-faa4-420f-8375-6dd6e2a05cb3",
+      "type": "attribute",
+      "name": "tipo: varchar(20)",
+      "position": {
+        "x": 921,
+        "y": 368
+      },
+      "size": {
+        "width": 89.06289672851562,
+        "height": 24
+      }
+    },
+    {
+      "id": "d0417438-43d3-42b6-919a-4ee2703d8b2e",
+      "type": "attribute",
+      "name": "ubiacion: varchar(20)",
+      "position": {
+        "x": 882,
+        "y": 400
+      },
+      "size": {
+        "width": 110.58522033691406,
+        "height": 24
+      }
+    },
+    {
+      "id": "75184135-45ac-4996-aac2-135eea59c82d",
+      "type": "attribute",
+      "name": "hora: time",
+      "position": {
+        "x": 514,
+        "y": 605
+      },
+      "size": {
+        "width": 63,
+        "height": 25
+      }
+    },
+    {
+      "id": "a5f38fee-426b-413a-8b0f-1a3022192d0f",
+      "type": "attribute",
+      "name": "fecha: date",
+      "position": {
+        "x": 617,
+        "y": 606
+      },
+      "size": {
+        "width": 73,
+        "height": 22
+      }
+    },
+    {
+      "id": "9ba2f0b6-7808-4f68-b65e-0447b5ee6b72",
+      "type": "attribute",
+      "name": "ubicacion: varchar(20)",
+      "position": {
+        "x": 899,
+        "y": 663
+      },
+      "size": {
+        "width": 117.91520690917969,
+        "height": 26
+      }
+    },
+    {
+      "id": "180274df-cb63-4a1a-8d12-1210ab1fa8fb",
+      "type": "attribute",
+      "name": "estado: varchar(20)",
+      "position": {
+        "x": 898,
+        "y": 699
+      },
+      "size": {
+        "width": 106.88172912597656,
+        "height": 24
+      }
+    }
+  ],
+  "multiValuedAttributes": [
+    {
+      "id": "4d6e28b6-e225-4086-84d3-5c3eb7a94247",
+      "type": "multiValuedAttribute",
+      "name": "preparacion: varchar(20)",
+      "position": {
+        "x": 416,
+        "y": 84
+      },
+      "size": {
+        "width": 127.17376708984375,
+        "height": 26
+      }
+    }
+  ],
+  "derivedAttributes": [],
+  "keyAttributes": [
+    {
+      "id": "d0d4883f-2a7d-4b50-ba84-2e1a7023a693",
+      "type": "keyAttribute",
+      "name": "dni_m: varchar(9)",
+      "position": {
+        "x": 315,
+        "y": 49
+      },
+      "size": {
+        "width": 94.28913879394531,
+        "height": 27
+      }
+    },
+    {
+      "id": "2510f85e-808c-4540-b582-ba9e7efd0bc0",
+      "type": "keyAttribute",
+      "name": "codigo: integer",
+      "position": {
+        "x": 886,
+        "y": 68
+      },
+      "size": {
+        "width": 95,
+        "height": 26
+      }
+    },
+    {
+      "id": "e67d2d5e-4652-4fc5-b888-be0d13f29c88",
+      "type": "keyAttribute",
+      "name": "n_sala: integer",
+      "position": {
+        "x": 872,
+        "y": 306
+      },
+      "size": {
+        "width": 83,
+        "height": 27
+      }
+    },
+    {
+      "id": "2374d535-2566-430f-bb61-37e7683d4e11",
+      "type": "keyAttribute",
+      "name": "cod_clas: integer",
+      "position": {
+        "x": 170,
+        "y": 345
+      },
+      "size": {
+        "width": 97,
+        "height": 27
+      }
+    },
+    {
+      "id": "e823012c-8483-4ea5-adbc-daf3ec547c73",
+      "type": "keyAttribute",
+      "name": "n_socio: integer",
+      "position": {
+        "x": 176,
+        "y": 678
+      },
+      "size": {
+        "width": 98,
+        "height": 30
+      }
+    },
+    {
+      "id": "01933e7c-b771-4771-906c-d1541e3c44e1",
+      "type": "keyAttribute",
+      "name": "n_pista: integer",
+      "position": {
+        "x": 904,
+        "y": 628
+      },
+      "size": {
+        "width": 91,
+        "height": 26
+      }
+    }
+  ],
+  "alternativeKeyAttributes": [],
+  "transitions": [
+    {
+      "id": "62bf6e1e-91c4-44f6-99a2-e6eb81acfc24",
+      "type": "transition",
+      "sourceId": "720212e7-ff1a-4ae0-9493-df718e388ec9",
+      "targetId": "4d6e28b6-e225-4086-84d3-5c3eb7a94247"
+    },
+    {
+      "id": "5bd8f0c3-efb7-4804-973f-85d2c50f8473",
+      "type": "transition",
+      "sourceId": "720212e7-ff1a-4ae0-9493-df718e388ec9",
+      "targetId": "d0d4883f-2a7d-4b50-ba84-2e1a7023a693"
+    },
+    {
+      "id": "2c977e51-ab9b-4833-9e74-02be9cb65242",
+      "type": "transition",
+      "sourceId": "faa25386-9c4f-4a59-a6f9-256baf1b600c",
+      "targetId": "2510f85e-808c-4540-b582-ba9e7efd0bc0",
+      "routingPoints": []
+    },
+    {
+      "id": "a4c67f18-c068-4da0-8a38-88e28692e8f2",
+      "type": "transition",
+      "sourceId": "66ddfb5f-6639-4721-9c55-219a7af462f6",
+      "targetId": "e67d2d5e-4652-4fc5-b888-be0d13f29c88"
+    },
+    {
+      "id": "1aace40a-6d6e-46b2-a4e8-3cbb544de2f6",
+      "type": "transition",
+      "sourceId": "66ddfb5f-6639-4721-9c55-219a7af462f6",
+      "targetId": "6323d46c-08e6-4818-932c-a43a1f819791"
+    },
+    {
+      "id": "88d8d42c-ff87-4a87-8ef6-a0da9f41b85c",
+      "type": "transition",
+      "sourceId": "66ddfb5f-6639-4721-9c55-219a7af462f6",
+      "targetId": "9f27c3df-faa4-420f-8375-6dd6e2a05cb3"
+    },
+    {
+      "id": "fb9f5bca-831b-4d18-92bd-f152d23c7c79",
+      "type": "transition",
+      "sourceId": "66ddfb5f-6639-4721-9c55-219a7af462f6",
+      "targetId": "d0417438-43d3-42b6-919a-4ee2703d8b2e"
+    },
+    {
+      "id": "e65e9cb6-cf00-4131-9ad0-1f6420e88645",
+      "type": "transition",
+      "sourceId": "d31dc3b4-b377-4e19-b638-10d295dcc6c1",
+      "targetId": "2374d535-2566-430f-bb61-37e7683d4e11",
+      "routingPoints": []
+    },
+    {
+      "id": "e0410f1f-a9cf-403b-9596-8cbf7fb7b42b",
+      "type": "transition",
+      "sourceId": "f5af4d17-1486-4487-9b11-c8d97e1ef5fd",
+      "targetId": "e823012c-8483-4ea5-adbc-daf3ec547c73"
+    },
+    {
+      "id": "8f9f49c1-14a8-4eb1-9f88-c4dac76246ea",
+      "type": "transition",
+      "sourceId": "a416fa66-1944-4f1f-9ea5-3a5485127f1b",
+      "targetId": "75184135-45ac-4996-aac2-135eea59c82d",
+      "routingPoints": []
+    },
+    {
+      "id": "cf74234b-3d4d-48dc-871d-5a97ecaa6802",
+      "type": "transition",
+      "sourceId": "a416fa66-1944-4f1f-9ea5-3a5485127f1b",
+      "targetId": "a5f38fee-426b-413a-8b0f-1a3022192d0f",
+      "routingPoints": []
+    },
+    {
+      "id": "2f912961-9a63-4ef7-821a-fb2c28ca8200",
+      "type": "transition",
+      "sourceId": "e58d7b34-2ea2-42a7-8feb-2f3e6a951306",
+      "targetId": "01933e7c-b771-4771-906c-d1541e3c44e1"
+    },
+    {
+      "id": "6e315bca-dad5-48cf-9393-b4870c28c128",
+      "type": "transition",
+      "sourceId": "e58d7b34-2ea2-42a7-8feb-2f3e6a951306",
+      "targetId": "9ba2f0b6-7808-4f68-b65e-0447b5ee6b72"
+    },
+    {
+      "id": "1d93f971-dece-4f51-b0ae-ccd6fc96246f",
+      "type": "transition",
+      "sourceId": "e58d7b34-2ea2-42a7-8feb-2f3e6a951306",
+      "targetId": "180274df-cb63-4a1a-8d12-1210ab1fa8fb"
+    }
+  ],
+  "weightedEdges": [
+    {
+      "id": "11915c05-fd2e-4c0c-a2f7-59edb6d1c85c",
+      "type": "edge:weighted",
+      "sourceId": "720212e7-ff1a-4ae0-9493-df718e388ec9",
+      "targetId": "d07cd496-b6ab-4379-a03c-346917f16994",
+      "description": "(1..1)",
+      "routingPoints": []
+    },
+    {
+      "id": "9a930c99-9810-4981-9901-f423dc60fcec",
+      "type": "edge:weighted",
+      "sourceId": "d31dc3b4-b377-4e19-b638-10d295dcc6c1",
+      "targetId": "d07cd496-b6ab-4379-a03c-346917f16994",
+      "description": "(0..N)",
+      "routingPoints": []
+    },
+    {
+      "id": "759eb5fc-ec7b-451e-a1c4-24ff2c8150df",
+      "type": "edge:weighted",
+      "sourceId": "d31dc3b4-b377-4e19-b638-10d295dcc6c1",
+      "targetId": "ae1731ae-a492-4acc-8d9b-7c94238fd0d2",
+      "description": "(0..N)",
+      "routingPoints": []
+    },
+    {
+      "id": "cdb4762a-4928-415c-9cea-9338e347c0fb",
+      "type": "edge:weighted",
+      "sourceId": "66ddfb5f-6639-4721-9c55-219a7af462f6",
+      "targetId": "ae1731ae-a492-4acc-8d9b-7c94238fd0d2",
+      "description": "(1..1)",
+      "routingPoints": []
+    },
+    {
+      "id": "73d70bd7-16b7-4940-8882-50833fddcbd8",
+      "type": "edge:weighted",
+      "sourceId": "faa25386-9c4f-4a59-a6f9-256baf1b600c",
+      "targetId": "4f48e6fe-3301-49de-9493-1097d8a3887f",
+      "description": "(0..N)"
+    },
+    {
+      "id": "026130b8-d40e-4348-be0c-caadd9dd7d28",
+      "type": "edge:weighted",
+      "sourceId": "66ddfb5f-6639-4721-9c55-219a7af462f6",
+      "targetId": "4f48e6fe-3301-49de-9493-1097d8a3887f",
+      "description": "(1..1)",
+      "routingPoints": []
+    },
+    {
+      "id": "c002c32f-3511-484a-a05a-da09f5d44a8d",
+      "type": "edge:weighted",
+      "sourceId": "d31dc3b4-b377-4e19-b638-10d295dcc6c1",
+      "targetId": "8cb3f943-8ce8-4fe8-b8cc-ce725ce392a3",
+      "description": "(0..N)",
+      "routingPoints": []
+    },
+    {
+      "id": "c41cab9b-083e-442b-86e6-60707e057e73",
+      "type": "edge:weighted",
+      "sourceId": "f5af4d17-1486-4487-9b11-c8d97e1ef5fd",
+      "targetId": "8cb3f943-8ce8-4fe8-b8cc-ce725ce392a3",
+      "description": "(1..N)"
+    },
+    {
+      "id": "fde7c6c9-22f4-4cd0-a2e7-f0d8c6205d25",
+      "type": "edge:weighted",
+      "sourceId": "f5af4d17-1486-4487-9b11-c8d97e1ef5fd",
+      "targetId": "a416fa66-1944-4f1f-9ea5-3a5485127f1b",
+      "description": "(1..N)"
+    },
+    {
+      "id": "ebb88620-01d8-4a0f-a2af-cd1a881396ad",
+      "type": "edge:weighted",
+      "sourceId": "e58d7b34-2ea2-42a7-8feb-2f3e6a951306",
+      "targetId": "a416fa66-1944-4f1f-9ea5-3a5485127f1b",
+      "description": "(0..N)",
+      "routingPoints": []
+    }
+  ],
+  "optionalAttributeEdges": [],
+  "exclusionEdges": [],
+  "inclusionEdges": [],
+  "disjointnessEdges": [],
+  "overlappingEdges": []
+}

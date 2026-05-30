@@ -9,7 +9,7 @@ import {
     toTypeGuard
 } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, DisjointnessEdge, Entity, ErElement, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, OverlappingEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/er-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, Entity, ErElement, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from '../model/er-model';
 import { ErModelState } from '../model/er-model-state';
 
 @injectable()
@@ -101,14 +101,6 @@ export class DeleteElementHandler extends JsonOperationHandler {
             this.safeRemove(sourceModel.weightedEdges, modelElement);
         } else if (OptionalAttributeEdge.is(modelElement)) {
             this.safeRemove(sourceModel.optionalAttributeEdges, modelElement);
-        } else if (ExclusionEdge.is(modelElement)) {
-            this.safeRemove(sourceModel.exclusionEdges, modelElement);
-        } else if (InclusionEdge.is(modelElement)) {
-            this.safeRemove(sourceModel.inclusionEdges, modelElement);
-        } else if (DisjointnessEdge.is(modelElement)) {
-            this.safeRemove(sourceModel.disjointnessEdges, modelElement);
-        } else if (OverlappingEdge.is(modelElement)) {
-            this.safeRemove(sourceModel.overlappingEdges, modelElement);
         }
     }
 }

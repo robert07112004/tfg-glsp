@@ -1,72 +1,68 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
+import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
-import { attributeTypes, DEFAULT_EDGE_TYPE, IDENTIFYING_DEP_RELATION_TYPE, specializationTypes } from '../../utils/validation-constants';
+import { DEFAULT_EDGE_TYPE, entityTypes } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
-
-/* Key attribute rules:
- * 1. Key attribute not connected to anything.
- * 2. Can only be connected with transitions.
- * 3. Can't be connected to identifying dependence relations, specializations and all of the other attributes.
- * 4. Key attributes can't have children, only incoming-edges
- */
 
 @injectable()
 export class KeyAttributeValidator {
-
     @inject(ErModelState)
     protected readonly modelState!: ErModelState;
 
     protected get index(): ErModelIndex {
-        return this.modelState.index;
+        return this.modelState.index as ErModelIndex;
     }
 
     validate(node: GNode): Marker | undefined {
-        const getOutgoingEdges = this.index.getOutgoingEdges(node);
-        const getIncomingEdges = this.index.getIncomingEdges(node);
+        const outgoing = this.index.getOutgoingEdges(node);
+        const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Key attribute not connected to anything.
-        if (getOutgoingEdges.length === 0 && getIncomingEdges.length === 0) {
+        // Rule 1: Not isolated
+        if (outgoing.length === 0 && incoming.length === 0) {
             return createMarker('error',
-                'Atributo clave aislado',
-                node.id,
-                'ERR: sin conectar al modelo'
+                'Este atributo clave no está conectado a ninguna entidad.',
+                node.id, 'ERR: clave-aislada'
             );
         }
 
-        // Rule 2: Can only be connected with transitions.
-        for (const edge of getIncomingEdges) {
+        // A-1: Empty name
+        const name = SQLUtils.cleanNames(node);
+        if (!name) {
+            return createMarker('error',
+                'El nombre del atributo clave no puede estar vacío. Escribe el nombre del campo que actuará como clave primaria en la tabla (ej: "id", "codigo").',
+                node.id, 'ERR: clave-sinNombre'
+            );
+        }
+
+        // Rule 2: Can only connect via normal transitions; A-3: parent must be an entity
+        for (const edge of incoming) {
             if (edge.type !== DEFAULT_EDGE_TYPE) {
                 return createMarker('error',
-                    'No se pueden conectar aristas que no sean transiciones a la clave primaria',
-                    node.id,
-                    'ERR: transition-edge'
+                    'El atributo clave solo puede conectarse mediante aristas normales (transiciones).',
+                    node.id, 'ERR: clave-aristaInvalida'
                 );
             }
 
-            // Rule 3: Can't be connected to identifying dependence relations, specializations and all of the other attributes.
-            const getNode = this.index.get(edge.sourceId) as GNode;
-            if (getNode.type === IDENTIFYING_DEP_RELATION_TYPE || specializationTypes.includes(getNode.type) || attributeTypes.includes(getNode.type)) {
+            // A-3: Parent must be an entity type
+            const sourceNode = this.index.get(edge.sourceId) as GNode;
+            if (!sourceNode || !entityTypes.includes(sourceNode.type)) {
                 return createMarker('error',
-                    'Las claves primarias no pueden estar conectadas con dependencias en identificación, especializaciones u otros atributos',
-                    node.id,
-                    'ERR: connection-pk'
+                    'Los atributos clave (PK) solo pueden pertenecer a entidades. Las interrelaciones no pueden tener clave primaria.',
+                    node.id, 'ERR: clave-enRelacion'
                 );
             }
         }
 
-        // Rule 4: Key attributes can't have children, only incoming-edges
-        if (getOutgoingEdges.length !== 0) {
+        // Rule 4: No outgoing edges (PKs are atomic, no children)
+        if (outgoing.length !== 0) {
             return createMarker('error',
-                'Las claves primarias no pueden tener hijos',
-                node.id,
-                'ERR: children-pks'
+                'El atributo clave no puede tener atributos hijos. Las claves primarias son valores atómicos (indivisibles).',
+                node.id, 'ERR: clave-conHijos'
             );
         }
 
         return undefined;
     }
-
 }
-

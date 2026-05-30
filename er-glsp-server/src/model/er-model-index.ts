@@ -1,6 +1,6 @@
 import { GModelIndex } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
-import { AlternativeKeyAttribute, Attribute, DerivedAttribute, DisjointnessEdge, Entity, ErElement, ErModel, ExclusionEdge, ExistenceDependentRelation, IdentifyingDependentRelation, InclusionEdge, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, OverlappingEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './er-model';
+import { AlternativeKeyAttribute, Attribute, DerivedAttribute, Entity, ErElement, ErModel, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './er-model';
 
 @injectable()
 export class ErModelIndex extends GModelIndex {
@@ -26,11 +26,7 @@ export class ErModelIndex extends GModelIndex {
             ...(ermodel.alternativeKeyAttributes || []),
             ...(ermodel.transitions || []),
             ...(ermodel.weightedEdges || []),
-            ...(ermodel.optionalAttributeEdges || []),
-            ...(ermodel.exclusionEdges || []),
-            ...(ermodel.inclusionEdges || []),
-            ...(ermodel.disjointnessEdges || []),
-            ...(ermodel.overlappingEdges || [])
+            ...(ermodel.optionalAttributeEdges || [])
         ];
 
         for (const element of allElements) {
@@ -127,26 +123,6 @@ export class ErModelIndex extends GModelIndex {
     findOptionalAttributeEdge(id: string): OptionalAttributeEdge | undefined {
         const element = this.findElement(id);
         return OptionalAttributeEdge.is(element) ? element : undefined;
-    }
-
-    findExclusionEdge(id: string): ExclusionEdge | undefined {
-        const element = this.findElement(id);
-        return ExclusionEdge.is(element) ? element : undefined;
-    }
-
-    findInclusionEdge(id: string): InclusionEdge | undefined {
-        const element = this.findElement(id);
-        return InclusionEdge.is(element) ? element : undefined;
-    }
-
-    findDisjointnessEdge(id: string): DisjointnessEdge | undefined {
-        const element = this.findElement(id);
-        return DisjointnessEdge.is(element) ? element : undefined;
-    }
-
-    findOverlappingEdge(id: string): OverlappingEdge | undefined {
-        const element = this.findElement(id);
-        return OverlappingEdge.is(element) ? element : undefined;
     }
 
 }

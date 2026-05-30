@@ -1,16 +1,10 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
+import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
-
-/* Normal attribute rules:
- * 1. Attribute not connected to anything.
- * 2. Edges: Only Transitions (Default) or Optional Links. NEVER Weighted edges.
- * 3. Can't be connected to specializations.
- * 4. Can't connect to attributes that aren't the same type
- */
 
 @injectable()
 export class AttributeValidator {
@@ -18,64 +12,66 @@ export class AttributeValidator {
     protected readonly modelState!: ErModelState;
 
     protected get index(): ErModelIndex {
-        return this.modelState.index;
+        return this.modelState.index as ErModelIndex;
     }
 
     validate(node: GNode): Marker | undefined {
-        const getOutgoingEdges = this.index.getOutgoingEdges(node);
-        const getIncomingEdges = this.index.getIncomingEdges(node);
+        const outgoing = this.index.getOutgoingEdges(node);
+        const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Attribute not connected to anything.
-        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+        // Rule 1: Not isolated
+        if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
-                'Atributo aislado',
-                node.id,
-                'ERR: atributo-sinConexion'
+                'Este atributo no está conectado a ninguna entidad o interrelación.',
+                node.id, 'ERR: atributo-aislado'
             );
         }
 
-        // Rule 2: Can only be connected with transitions or optional edges.
-        for (const edge of getIncomingEdges) {
+        // A-1: Empty name
+        const name = SQLUtils.cleanNames(node);
+        if (!name) {
+            return createMarker('error',
+                'El nombre del atributo no puede estar vacío. Escribe el nombre del campo que representa este atributo en la base de datos (ej: "nombre", "fecha_nacimiento").',
+                node.id, 'ERR: atributo-sinNombre'
+            );
+        }
+
+        // Rule 2: Only normal or optional edges allowed on incoming
+        for (const edge of incoming) {
             if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
                 return createMarker('error',
-                    'No se pueden conectar aristas que no sean transiciones u aristas opcionales al atributo',
-                    node.id,
-                    'ERR: transition-edge'
+                    'Los atributos solo pueden conectarse mediante aristas normales u opcionales.',
+                    node.id, 'ERR: atributo-aristaEntradaInvalida'
                 );
             }
 
-            // Rule 3: Can't be connected to specializations
-            const getNode = this.index.get(edge.sourceId) as GNode;
-            if (specializationTypes.includes(getNode.type)) {
+            // Rule 3: Cannot connect to specializations
+            const sourceNode = this.index.get(edge.sourceId) as GNode;
+            if (sourceNode && specializationTypes.includes(sourceNode.type)) {
                 return createMarker('error',
-                    'Los atributos no pueden estar conectados a especializaciones',
-                    node.id,
-                    'ERR: connection-pk'
+                    'Los atributos no pueden estar conectados a especializaciones.',
+                    node.id, 'ERR: atributo-padreEspecializacion'
                 );
             }
         }
 
-        // Rule 4: Can't connect to attributes that aren't the same type
-        for (const edge of getOutgoingEdges) {
+        // Rule 4: Outgoing edges only to same-type attributes (composite attributes)
+        for (const edge of outgoing) {
             if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
                 return createMarker('error',
-                    'No se pueden conectar aristas que no sean transiciones u aristas opcionales al atributo',
-                    node.id,
-                    'ERR: transition-edge'
+                    'Los atributos solo pueden conectarse mediante aristas normales u opcionales.',
+                    node.id, 'ERR: atributo-aristaSalidaInvalida'
                 );
             }
-
-            const getNode = this.index.get(edge.targetId) as GNode;
-            if ((attributeTypes.includes(getNode.type) && getNode.type !== ATTRIBUTE_TYPE)) {
+            const targetNode = this.index.get(edge.targetId) as GNode;
+            if (targetNode && attributeTypes.includes(targetNode.type) && targetNode.type !== ATTRIBUTE_TYPE) {
                 return createMarker('error',
-                    'Los atributos no pueden estar conectados a otros atributos que no sean del mismo tipo',
-                    node.id,
-                    'ERR: connection-pk'
+                    'Un atributo normal compuesto solo puede tener como hijos otros atributos normales.',
+                    node.id, 'ERR: atributo-hijoInvalido'
                 );
             }
         }
 
         return undefined;
     }
-
 }

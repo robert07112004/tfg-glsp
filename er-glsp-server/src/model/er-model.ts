@@ -1,7 +1,6 @@
 import { AnyObject, hasArrayProp, hasObjectProp, hasStringProp } from '@eclipse-glsp/server';
 
 // Basic interfaces
-
 export interface ErElement {
     id: string;
     type: string;
@@ -20,7 +19,6 @@ export interface ErEdge extends ErElement {
 }
 
 // Utils
-
 function isErNode(object: any, expectedType: string): boolean {
     return (
         AnyObject.is(object) &&
@@ -42,7 +40,6 @@ function isErEdge(object: any, expectedType: string): boolean {
 }
 
 // ER model
-
 export interface ErModel {
     id: string;
     entities: Entity[];
@@ -62,10 +59,6 @@ export interface ErModel {
     transitions: Transition[];
     weightedEdges: WeightedEdge[];
     optionalAttributeEdges: OptionalAttributeEdge[];
-    exclusionEdges: ExclusionEdge[];
-    inclusionEdges: InclusionEdge[];
-    disjointnessEdges: DisjointnessEdge[];
-    overlappingEdges: OverlappingEdge[];
 }
 
 export namespace ErModel {
@@ -75,7 +68,6 @@ export namespace ErModel {
 }
 
 // Entities
-
 export interface Entity extends ErNode { type: 'entity'; }
 export namespace Entity { export const is = (obj: any): obj is Entity => isErNode(obj, 'entity'); }
 
@@ -83,7 +75,6 @@ export interface WeakEntity extends ErNode { type: 'weakEntity'; }
 export namespace WeakEntity { export const is = (obj: any): obj is WeakEntity => isErNode(obj, 'weakEntity'); }
 
 // Attributes
-
 export interface Attribute extends ErNode { type: 'attribute'; }
 export namespace Attribute { export const is = (obj: any): obj is Attribute => isErNode(obj, 'attribute'); }
 
@@ -96,19 +87,11 @@ export namespace AlternativeKeyAttribute { export const is = (obj: any): obj is 
 export interface MultiValuedAttribute extends ErNode { type: 'multiValuedAttribute'; }
 export namespace MultiValuedAttribute { export const is = (obj: any): obj is MultiValuedAttribute => isErNode(obj, 'multiValuedAttribute'); }
 
-export interface DerivedAttribute extends ErNode {
-    type: 'derivedAttribute';
-    equation: string;
-}
-export namespace DerivedAttribute {
-    export const is = (obj: any): obj is DerivedAttribute => isErNode(obj, 'derivedAttribute') && hasStringProp(obj, 'equation');
-}
+export interface DerivedAttribute extends ErNode { type: 'derivedAttribute'; equation: string; }
+export namespace DerivedAttribute { export const is = (obj: any): obj is DerivedAttribute => isErNode(obj, 'derivedAttribute') && hasStringProp(obj, 'equation'); }
 
 // Relations
-
-export interface BaseRelation extends ErNode {
-    cardinality: string;
-}
+export interface BaseRelation extends ErNode { cardinality: string; }
 
 export interface Relation extends BaseRelation {
     type: 'relation';
@@ -136,7 +119,6 @@ export namespace IdentifyingDependentRelation {
 }
 
 // Specializations
-
 export interface PartialExclusiveSpecialization extends ErNode { type: 'partialExclusiveSpecialization'; }
 export namespace PartialExclusiveSpecialization { export const is = (obj: any): obj is PartialExclusiveSpecialization => isErNode(obj, 'partialExclusiveSpecialization'); }
 
@@ -150,7 +132,6 @@ export interface TotalOverlappedSpecialization extends ErNode { type: 'totalOver
 export namespace TotalOverlappedSpecialization { export const is = (obj: any): obj is TotalOverlappedSpecialization => isErNode(obj, 'totalOverlappedSpecialization'); }
 
 // Edges
-
 export interface Transition extends ErEdge { type: 'transition'; }
 export namespace Transition { export const is = (obj: any): obj is Transition => isErEdge(obj, 'transition'); }
 
@@ -164,15 +145,3 @@ export namespace WeightedEdge {
 
 export interface OptionalAttributeEdge extends ErEdge { type: 'edge:optional'; }
 export namespace OptionalAttributeEdge { export const is = (obj: any): obj is OptionalAttributeEdge => isErEdge(obj, 'edge:optional'); }
-
-export interface ExclusionEdge extends ErEdge { type: 'edge:exclusion'; }
-export namespace ExclusionEdge { export const is = (obj: any): obj is ExclusionEdge => isErEdge(obj, 'edge:exclusion'); }
-
-export interface InclusionEdge extends ErEdge { type: 'edge:inclusion'; }
-export namespace InclusionEdge { export const is = (obj: any): obj is InclusionEdge => isErEdge(obj, 'edge:inclusion'); }
-
-export interface DisjointnessEdge extends ErEdge { type: 'edge:disjointness'; }
-export namespace DisjointnessEdge { export const is = (obj: any): obj is DisjointnessEdge => isErEdge(obj, 'edge:disjointness'); }
-
-export interface OverlappingEdge extends ErEdge { type: 'edge:overlap'; }
-export namespace OverlappingEdge { export const is = (obj: any): obj is OverlappingEdge => isErEdge(obj, 'edge:overlap'); }

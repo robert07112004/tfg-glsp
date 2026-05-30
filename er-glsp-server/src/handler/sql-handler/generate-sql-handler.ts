@@ -1,4 +1,4 @@
-import { Action, ActionHandler } from '@eclipse-glsp/server';
+import { Action, ActionHandler, MessageAction } from '@eclipse-glsp/server';
 import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
@@ -32,18 +32,17 @@ export class GenerateSqlActionHandler implements ActionHandler {
         const errors = markers.filter(m => m.kind === 'error');
 
         if (errors.length > 0) {
-            console.error("No se puede generar SQL. Hay errores en el modelo:");
-            errors.forEach(e => console.error(` - ${e.description}`));
-            return [];
+            return [MessageAction.create(
+                `No se puede generar SQL: el modelo tiene ${errors.length} error${errors.length > 1 ? 'es' : ''} de validación. Corrígelos y valida de nuevo.`,
+                { severity: 'WARNING' }
+            )];
         }
 
         const modelUri = this.modelState.uri;
         if (!modelUri) {
-            console.error("No se pudo determinar la ruta del modelo.");
-            return [];
+            return [MessageAction.create('No se pudo determinar la ruta del modelo.', { severity: 'ERROR' })];
         }
 
-        console.log("Validación correcta. Generando SQL...");
         const sql = this.sqlGenerator.generate();
 
         try {
@@ -68,11 +67,13 @@ export class GenerateSqlActionHandler implements ActionHandler {
             }
 
             fs.writeFileSync(filePath, sql, 'utf-8');
-            console.log(`SQL generado en: ${filePath}`);
-        } catch (err) {
-            console.error("Error al guardar el archivo:", err);
-        }
 
-        return [];
+            return [MessageAction.create(
+                `SQL generado correctamente en: ${path.basename(filePath)}`,
+                { severity: 'INFO' }
+            )];
+        } catch (err) {
+            return [MessageAction.create(`Error al guardar el archivo SQL: ${err}`, { severity: 'ERROR' })];
+        }
     }
 }

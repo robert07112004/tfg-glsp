@@ -5,84 +5,102 @@ import { ErModelState } from '../../../../model/er-model-state';
 import { DEFAULT_EDGE_TYPE, ENTITY_TYPE, entityTypes } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
-/* Specializations rules:
- * 1. Specializations not connected to anything.
- * 2. NO weighted edges and optional links allowed.
- * 3. Outcoming edges at least 2 entities
- * 4. One incoming edge from an entity.
- */
-
 @injectable()
 export class AllSpecializationsValidator {
     @inject(ErModelState)
     protected readonly modelState!: ErModelState;
 
     protected get index(): ErModelIndex {
-        return this.modelState.index;
+        return this.modelState.index as ErModelIndex;
     }
 
     validate(node: GNode): Marker | undefined {
-        const getOutgoingEdges = this.index.getOutgoingEdges(node);
-        const getIncomingEdges = this.index.getIncomingEdges(node);
+        const outgoing = this.index.getOutgoingEdges(node);
+        const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Specialization not connected to anything.
-        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+        // Rule 1: Not isolated
+        if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
-                'Especializacion aislada',
-                node.id,
-                'ERR: especializacion-sinConexion'
+                'Esta especialización no está conectada a nada. Debe tener una entidad padre y al menos dos entidades subclase.',
+                node.id, 'ERR: especializacion-aislada'
             );
         }
 
-        // Rule 2: NO weighted edges and optional links allowed.
-        for (const edge of getIncomingEdges) {
+        // Rule 2: Only normal edges allowed (no weighted or optional)
+        for (const edge of incoming) {
             if (edge.type !== DEFAULT_EDGE_TYPE) {
                 return createMarker('error',
-                    'Una especializacion no puede estar conectada con algo que no sea una arista normal',
-                    node.id,
-                    'ERR: spec-connection'
+                    'La conexión entre la entidad padre y la especialización debe ser una arista normal.',
+                    node.id, 'ERR: especializacion-aristaEntradaInvalida'
                 );
             }
         }
-        // Rule 4: One incoming edge from an entity.
-        if (getIncomingEdges.length > 1 && !entityTypes.includes(getIncomingEdges[0].sourceId)) {
-            return createMarker('error',
-                'Una especializacion solo puede tener una entidad como padre',
-                node.id,
-                'ERR: spec-connection'
-            );
-        }
 
-        for (const edge of getOutgoingEdges) {
+        for (const edge of outgoing) {
             if (edge.type !== DEFAULT_EDGE_TYPE) {
                 return createMarker('error',
-                    'Una especializacion no puede estar conectada con algo que no sea una arista normal',
-                    node.id,
-                    'ERR: spec-connection'
-                );
-            }
-
-            // Rule 3: Outcoming edges at least 2 entities
-            const getNode = this.index.get(edge.targetId);
-            if (getNode.type !== ENTITY_TYPE) {
-                return createMarker('error',
-                    'Una especializacion no puede tener como hijos algo que no sea una entidad',
-                    node.id,
-                    'ERR: spec-connection'
+                    'Las conexiones entre la especialización y las subclases deben ser aristas normales.',
+                    node.id, 'ERR: especializacion-aristaSalidaInvalida'
                 );
             }
         }
 
-        if (getOutgoingEdges.length < 2) {
+        // Rule 4 (B-4 fix): Exactly one parent entity
+        if (incoming.length !== 1) {
             return createMarker('error',
-                'Una especializacion no puede tener menos de dos hijos',
-                node.id,
-                'ERR: spec-connection'
+                `Una especialización debe tener exactamente una entidad padre. ${incoming.length === 0 ? 'Falta conectar la entidad padre.' : 'Tiene más de una entidad padre.'}`,
+                node.id, 'ERR: especializacion-padreInvalido'
             );
+        }
+
+        const parentNode = this.index.get(incoming[0].sourceId) as GNode;
+        if (!parentNode || !entityTypes.includes(parentNode.type)) {
+            return createMarker('error',
+                'El padre de una especialización debe ser una entidad.',
+                node.id, 'ERR: especializacion-padreNoEntidad'
+            );
+        }
+
+        // S-1: Parent cannot also be a subclass in the same specialization
+        const childIds = new Set(outgoing.map(e => e.targetId));
+        if (childIds.has(incoming[0].sourceId)) {
+            return createMarker('error',
+                'La entidad padre de esta especialización no puede ser también una de sus subclases.',
+                node.id, 'ERR: especializacion-padreTambienHijo'
+            );
+        }
+
+        // Rule 3: All outgoing targets must be entities
+        for (const edge of outgoing) {
+            const targetNode = this.index.get(edge.targetId) as GNode;
+            if (!targetNode || targetNode.type !== ENTITY_TYPE) {
+                return createMarker('error',
+                    'Las subclases de una especialización deben ser entidades normales.',
+                    node.id, 'ERR: especializacion-hijoNoEntidad'
+                );
+            }
+        }
+
+        // Rule 3: At least 2 subclasses
+        if (outgoing.length < 2) {
+            return createMarker('error',
+                'Una especialización debe tener al menos dos subclases (entidades hijas). Con una sola subclase no tiene sentido dividir la entidad.',
+                node.id, 'ERR: especializacion-pocasSubclases'
+            );
+        }
+
+        // S-2: No duplicate subclasses
+        const seenChildIds = new Set<string>();
+        for (const edge of outgoing) {
+            if (seenChildIds.has(edge.targetId)) {
+                return createMarker('error',
+                    'La misma entidad aparece dos veces como subclase en esta especialización. Cada subclase debe ser una entidad distinta.',
+                    node.id, 'ERR: especializacion-subclaseDuplicada'
+                );
+            }
+            seenChildIds.add(edge.targetId);
         }
 
         return undefined;
-
     }
-
 }

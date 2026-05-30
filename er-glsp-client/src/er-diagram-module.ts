@@ -19,7 +19,7 @@ import {
 import 'balloon-css/balloon.min.css';
 import { Container, ContainerModule } from 'inversify';
 import '../css/diagram.css';
-import { AlternativeKeyAttributeView, AttributeView, ConstraintPortView, DerivedAttributeView, DisjointnessEdgeView, InclusionEdgeView, KeyAttributeView, MultiValuedAttributeView, OverlappingEdgeView, PartialExclusiveSpecializationView, PartialOverlappedSpecializationView, TotalExclusiveSpecializationView, TotalOverlappedSpecializationView, WeakEntityView, WeightedEdgeView } from './views';
+import { AlternativeKeyAttributeView, AttributeView, DerivedAttributeView, KeyAttributeView, MultiValuedAttributeView, PartialExclusiveSpecializationView, PartialOverlappedSpecializationView, TotalExclusiveSpecializationView, TotalOverlappedSpecializationView, WeakEntityView, WeightedEdgeView } from './views';
 
 const erDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
@@ -29,7 +29,6 @@ const erDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     configureDefaultModelElements(context);
 
     // Nodes
-
     const nodeConfigs = [
         { type: DefaultTypes.NODE_RECTANGLE, view: RectangularNodeView },
         { type: 'node:weakEntity', view: WeakEntityView },
@@ -52,31 +51,21 @@ const erDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     });
 
     // Edges
-
     const edgeConfigs = [
         { type: 'edge:weighted', view: WeightedEdgeView },
-        { type: 'edge:optional', view: PolylineEdgeView },
-        { type: 'edge:exclusion', view: PolylineEdgeView },
-        { type: 'edge:inclusion', view: InclusionEdgeView },
-        { type: 'edge:disjointness', view: DisjointnessEdgeView },
-        { type: 'edge:overlap', view: OverlappingEdgeView }
+        { type: 'edge:optional', view: PolylineEdgeView }
     ];
 
     edgeConfigs.forEach(({ type, view }) => {
         configureModelElement(context, type, GEdge, view);
     });
 
-    // Port
-    configureModelElement(context, 'port:constraint', GNode, ConstraintPortView);
-
     // Editable labels
-
     ['label:weighted', DefaultTypes.LABEL].forEach(type => {
         configureModelElement(context, type, GLabel, GLabelView, { enable: [editLabelFeature] });
     });
 
     // Static labels
-
     ['label:cardinality', 'label:static'].forEach(type => {
         configureModelElement(context, type, GLabel, GLabelView);
     });

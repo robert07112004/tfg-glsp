@@ -1,16 +1,10 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
+import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
-import { attributeTypes, DEFAULT_EDGE_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
+import { DEFAULT_EDGE_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
-
-/* 
- * 1. Multi-valued attribute not connected to anything.
- * 2. Edges: Only Transitions (Default) or Optional Links. NEVER Weighted edges.
- * 3. Can't be connected to specializations or dependence relations
- * 4. Can't connect to attributes that aren't the same type
- */
 
 @injectable()
 export class MultiValuedAttributeValidator {
@@ -18,64 +12,59 @@ export class MultiValuedAttributeValidator {
     protected readonly modelState!: ErModelState;
 
     protected get index(): ErModelIndex {
-        return this.modelState.index;
+        return this.modelState.index as ErModelIndex;
     }
 
     validate(node: GNode): Marker | undefined {
-        const getOutgoingEdges = this.index.getOutgoingEdges(node);
-        const getIncomingEdges = this.index.getIncomingEdges(node);
+        const outgoing = this.index.getOutgoingEdges(node);
+        const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Attribute not connected to anything.
-        if (getIncomingEdges.length === 0 && getOutgoingEdges.length === 0) {
+        // Rule 1: Not isolated
+        if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
-                'Atributo aislado',
-                node.id,
-                'ERR: atributo-sinConexion'
+                'Este atributo multivaluado no está conectado a ninguna entidad.',
+                node.id, 'ERR: atributoMultiv-aislado'
             );
         }
 
-        // Rule 2: Can only be connected with transitions or optional edges.
-        for (const edge of getIncomingEdges) {
+        // A-1: Empty name
+        const name = SQLUtils.cleanNames(node);
+        if (!name) {
+            return createMarker('error',
+                'El nombre del atributo multivaluado no puede estar vacío. Escribe el nombre del campo que puede tener múltiples valores (ej: "telefonos", "emails").',
+                node.id, 'ERR: atributoMultiv-sinNombre'
+            );
+        }
+
+        // Rule 2: Only normal or optional edges; Rule 3: no specializations or dependence relations
+        for (const edge of incoming) {
             if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
                 return createMarker('error',
-                    'No se pueden conectar aristas que no sean transiciones o aristas opcionales',
-                    node.id,
-                    'ERR: transition-edge'
+                    'Los atributos multivaluados solo pueden conectarse mediante aristas normales u opcionales.',
+                    node.id, 'ERR: atributoMultiv-aristaInvalida'
                 );
             }
-
-            // Rule 3: Can't be connected to specializations or dependence relations
-            const getNode = this.index.get(edge.sourceId) as GNode;
-            if (specializationTypes.includes(getNode.type) || getNode.type === IDENTIFYING_DEP_RELATION_TYPE || getNode.type === EXISTENCE_DEP_RELATION_TYPE) {
+            const sourceNode = this.index.get(edge.sourceId) as GNode;
+            if (sourceNode && (specializationTypes.includes(sourceNode.type) ||
+                sourceNode.type === IDENTIFYING_DEP_RELATION_TYPE ||
+                sourceNode.type === EXISTENCE_DEP_RELATION_TYPE)) {
                 return createMarker('error',
-                    'Los atributos multivaluados no pueden estar conectados a especializaciones o dependencias',
-                    node.id,
-                    'ERR: connection-mv'
+                    'Los atributos multivaluados no pueden conectarse a especializaciones ni a dependencias.',
+                    node.id, 'ERR: atributoMultiv-padreInvalido'
                 );
             }
         }
 
-        // Rule 4: Can't connect to attributes that aren't the same type
-        for (const edge of getOutgoingEdges) {
+        // Rule 4: Outgoing edges must use normal or optional edges
+        for (const edge of outgoing) {
             if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
                 return createMarker('error',
-                    'No se pueden conectar aristas que no sean transiciones o aristas opcionales',
-                    node.id,
-                    'ERR: transition-edge'
-                );
-            }
-
-            const getNode = this.index.get(edge.targetId) as GNode;
-            if (attributeTypes.includes(getNode.type) && getNode.type !== MULTI_VALUED_ATTRIBUTE_TYPE) {
-                return createMarker('error',
-                    'Los atributos multivaluados no pueden estar conectados a otros atributos que no sean del mismo tipo',
-                    node.id,
-                    'ERR: connection-mv'
+                    'Los atributos multivaluados solo pueden conectarse mediante aristas normales u opcionales.',
+                    node.id, 'ERR: atributoMultiv-aristaInvalida'
                 );
             }
         }
 
         return undefined;
     }
-
 }

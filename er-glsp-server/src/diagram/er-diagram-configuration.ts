@@ -50,14 +50,6 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
             ...defaultShapeConfig
         }));
 
-        hints.push({
-            elementTypeId: 'port:constraint',
-            deletable: false,
-            reparentable: false,
-            repositionable: false,
-            resizable: false
-        });
-
         return hints;
     }
 
@@ -81,7 +73,6 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
         ];
 
         const allMainNodes = [...entityTypes, ...relationTypes, ...attributeTypes];
-        const entityAndRelations = [...entityTypes, ...relationTypes];
 
         const defaultEdgeConfig = {
             deletable: true,
@@ -91,37 +82,10 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
             targetElementTypeIds: allMainNodes
         };
 
-        const constraintEdgeConfig = {
-            deletable: true,
-            repositionable: false,
-            routable: false,
-            sourceElementTypeIds: entityAndRelations,
-            targetElementTypeIds: entityAndRelations
-        };
-
-        const portOnlyConfig = {
-            deletable: true,
-            repositionable: false,
-            routable: false,
-            sourceElementTypeIds: ['port:constraint'],
-            targetElementTypeIds: ['port:constraint']
-        };
-
         return [
-            {
-                elementTypeId: DefaultTypes.EDGE,
-                deletable: true,
-                repositionable: true,
-                routable: true,
-                sourceElementTypeIds: [DefaultTypes.NODE],
-                targetElementTypeIds: [DefaultTypes.NODE]
-            },
+            { elementTypeId: DefaultTypes.EDGE, ...defaultEdgeConfig },
             { elementTypeId: 'edge:weighted', ...defaultEdgeConfig },
             { elementTypeId: 'edge:optional', ...defaultEdgeConfig },
-            { elementTypeId: 'edge:exclusion', ...constraintEdgeConfig },
-            { elementTypeId: 'edge:inclusion', ...constraintEdgeConfig, sourceElementTypeIds: allMainNodes, targetElementTypeIds: allMainNodes },
-            { elementTypeId: 'edge:disjointness', ...portOnlyConfig },
-            { elementTypeId: 'edge:overlap', ...portOnlyConfig }
         ];
     }
 }

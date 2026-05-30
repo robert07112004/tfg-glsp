@@ -1,268 +1,265 @@
-/********************************************************************************
- * Copyright (c) 2020 EclipseSource and others.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v. 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0.
- *
- * This Source Code may also be made available under the following Secondary
- * Licenses when the conditions for such availability set forth in the Eclipse
- * Public License v. 2.0 are satisfied: 
- * -- GNU General Public License, version 2 with the GNU Classpath Exception
- * which is available at https://www.gnu.org/software/classpath/license.html
- * -- MIT License which is available at https://opensource.org/license/mit.
- *
- * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
- ********************************************************************************/
-
 svg {
 	border-style: solid;
 	border-width: 1px;
 	border-color: #bbb;
 }
 
+/* ── Tipografía global ─────────────────────────────────────────────────── */
+.sprotty-graph text,
+.sprotty-graph .sprotty-label {
+	font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+	letter-spacing: 0.02em;
+}
+
 .sprotty-node {
 	fill: inherit;
 }
 
-.entity-node {
-	width: 100px;
-	height: 40px;
+/* ── Entidades fuertes ─────────────────────────────────────────────────── */
+.entity-node .sprotty-node {
+	fill: #F5C842;
+	stroke: #A06810;
+	stroke-width: 1.5px;
+	filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.5));
 }
 
+.entity-node .sprotty-label {
+	font-weight: 600;
+	font-size: 12px;
+	fill: #1E0F00;
+}
+
+.entity-node:hover .sprotty-node {
+	stroke: #D08010;
+	stroke-width: 2px;
+}
+
+.entity-node.selected .sprotty-node {
+	stroke: #5AAEFF;
+	stroke-width: 2.5px;
+}
+
+/* ── Entidades débiles ─────────────────────────────────────────────────── */
+.weak-entity-node {
+	width: 100px;
+	height: 40px;
+	fill: #F5C842;
+	stroke: #A06810;
+	stroke-width: 1.5px;
+	filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.5));
+}
+
+/* El rect interior es transparente: solo se ve su trazo sobre el relleno del exterior */
+.weak-entity-node-inner {
+	fill: none;
+	stroke: #A06810;
+	stroke-width: 2px;
+}
+
+.weak-entity-node .sprotty-label {
+	font-weight: 600;
+	font-size: 12px;
+	fill: #1E0F00;
+	dominant-baseline: central;
+	text-anchor: middle;
+}
+
+.weak-entity-node.selected,
+.weak-entity-node.selected+.weak-entity-node-inner {
+	stroke: #5AAEFF;
+	stroke-width: 2.5px;
+}
+
+/* ── Relaciones (rombos) ───────────────────────────────────────────────── */
 .relation-node {
 	width: 60px;
 	height: 60px;
 }
 
+.relation-node>.sprotty-node {
+	fill: #4A8EE8;
+	stroke: #1848A8;
+	stroke-width: 1.5px;
+	filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.5));
+}
+
+.relation-node .sprotty-label {
+	font-weight: 600;
+	font-size: 12px;
+	fill: #050F30;
+}
+
+.relation-node:hover>.sprotty-node {
+	stroke: #2060D0;
+	stroke-width: 2px;
+}
+
+.relation-node.selected>.sprotty-node {
+	stroke: #5AAEFF;
+	stroke-width: 2.5px;
+}
+
+/* ── Relación de existencia ────────────────────────────────────────────── */
 .existence-dependent-relation-node {
 	width: 60px;
 	height: 60px;
 }
 
-.entity-node>.sprotty-node {
-	fill: #f1bd6c;
-}
-
-.weak-entity-node {
-	width: 100px;
-	height: 40px;
-}
-
-.weak-entity-node,
-.weak-entity-node-inner {
-	fill: #f1bd6c;
-	stroke: #a0522d;
-	stroke-width: 2px;
-}
-
-.weak-entity-node.selected,
-.weak-entity-node.selected+.weak-entity-node-inner {
-	stroke: #007bff;
-	stroke-width: 2px;
-}
-
-.relation-node>.sprotty-node {
-	fill: #1E90FF;
-	stroke: #00008B;
-	stroke-width: 2px;
-}
-
 .existence-dependent-relation-node>.sprotty-node {
-	fill: #1E90FF;
-	stroke: #00008B;
+	fill: #7B70E8;
+	stroke: #3020A8;
+	stroke-width: 1.5px;
+	filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.5));
+}
+
+.existence-dependent-relation-node:hover>.sprotty-node {
+	stroke: #5040D0;
 	stroke-width: 2px;
 }
 
 .existence-dependent-relation-node.selected>.sprotty-node {
-	stroke: #007bff;
-	stroke-width: 3px;
+	stroke: #5AAEFF;
+	stroke-width: 2.5px;
 }
 
 .existence-label {
-	font-weight: bold;
-	font-size: 0.8em;
-	fill: #000;
+	font-weight: 700;
+	font-size: 11px;
+	fill: #0A003A;
 }
 
-.attribute-node ellipse {
-	fill: #ffcccc;
-	stroke: #c00;
-	stroke-width: 2px;
+/* ── Atributos — base compartida ───────────────────────────────────────── */
+.attribute-node ellipse,
+.key-attribute-node ellipse,
+.alternative-key-attribute-node ellipse {
+	fill: #FFB0B0;
+	stroke: #B83030;
+	stroke-width: 1.5px;
+	filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.4));
 }
 
-.attribute-node.selected ellipse {
-	stroke: #007bff;
-	stroke-width: 2px;
+.attribute-node .sprotty-label,
+.key-attribute-node .sprotty-label,
+.alternative-key-attribute-node .sprotty-label,
+.multi-valued-attribute-node .sprotty-label {
+	font-weight: 600;
+	font-size: 12px;
+	fill: #2A0000;
 }
 
-.multi-valued-attribute-node,
-.multi-valued-attribute-node-inner {
-	fill: #ffcccc;
-	stroke: #c00;
-	stroke-width: 1px;
-}
-
-.multi-valued-attribute-node.selected,
-.multi-valued-attribute-node.selected+.multi-valued-attribute-node-inner {
-	stroke: #007bff;
-	stroke-width: 2px;
-}
-
-.derived-attribute-node,
-.derived-attribute-node-inner {
-	fill: #ffcccc;
-	stroke: #c00;
-	stroke-width: 1px;
-	stroke-dasharray: 5, 5;
-}
-
-.derived-attribute-node.selected,
-.derived-attribute-node.selected+.derived-attribute-node-inner {
-	stroke: #007bff;
-	stroke-width: 2px;
-}
-
-.key-attribute-node ellipse {
-	fill: #ffcccc;
-	stroke: #c00;
-	stroke-width: 2px;
-}
-
-.key-attribute-node.selected ellipse {
-	stroke: #007bff;
+.attribute-node.selected ellipse,
+.key-attribute-node.selected ellipse,
+.alternative-key-attribute-node.selected ellipse {
+	stroke: #5AAEFF;
 	stroke-width: 2px;
 }
 
 .key-attribute-label {
 	text-decoration: underline;
+	font-weight: 600;
 }
 
-.alternative-key-attribute-node ellipse {
-	fill: #ffcccc;
-	stroke: #c00;
+.alternative-key-line {
+	stroke: black;
+	stroke-width: 1.5px;
+	stroke-dasharray: 4, 3;
+}
+
+/* ── Atributo multivaluado ─────────────────────────────────────────────── */
+.multi-valued-attribute-node {
+	fill: #FFB0B0;
+	stroke: #B83030;
+	stroke-width: 1.5px;
+	filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.multi-valued-attribute-node-inner {
+	fill: #FFB0B0;
+	stroke: #B83030;
+	stroke-width: 1px;
+}
+
+.multi-valued-attribute-node.selected {
+	stroke: #5AAEFF;
 	stroke-width: 2px;
 }
 
-.alternative-key-attribute-node.selected ellipse {
-	stroke: #007bff;
+.multi-valued-attribute-node.selected+.multi-valued-attribute-node-inner {
+	stroke: #5AAEFF;
+	stroke-width: 1.5px;
+}
+
+/* ── Atributo derivado ─────────────────────────────────────────────────── */
+.derived-attribute-node,
+.derived-attribute-node-inner {
+	fill: #FFD0D0;
+	stroke: #B83030;
+	stroke-width: 1px;
+	stroke-dasharray: 7, 4;
+}
+
+.derived-attribute-node {
+	filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.derived-attribute-node.selected,
+.derived-attribute-node.selected+.derived-attribute-node-inner {
+	stroke: #5AAEFF;
 	stroke-width: 2px;
 }
 
-.weighted-edge {
-	stroke: #ff8800;
-	stroke-width: 2px;
-}
-
-.weighted-edge-label {
-	font-size: 12px;
-	fill: #333;
-}
-
-.cardinality-label {
-	font-style: italic;
-	font-size: 0.9em;
-	fill: #333;
-}
-
-.optional-attribute-edge path {
-	stroke: white;
-	stroke-width: 2px;
-	stroke-dasharray: 5, 5;
-	fill: none;
-}
-
-.optional-attribute-edge.selected path {
-	stroke: #007bff;
-	stroke-width: 2px;
-	stroke-dasharray: 5, 5;
+/* ── Especializaciones ─────────────────────────────────────── */
+.specialization-triangle-node {
+	fill: #90E080;
+	stroke: #287020;
+	stroke-width: 1.5px;
+	filter: drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.4));
 }
 
 .exclusive-arc {
-	stroke: #D9534F;
-	stroke-width: 3px;
+	stroke: #C82020;
+	stroke-width: 2.5px;
 }
 
-.specialization-triangle-node {
-	fill: #FDFD96;
-	stroke: #333;
+.total-line {
+	stroke: #287020;
 	stroke-width: 2px;
 }
 
 .total-circle {
-	fill: white;
-	stroke: #333;
+	fill: #90E080;
+	stroke: #287020;
 	stroke-width: 2px;
 }
 
-.total-line {
-	stroke: #333;
-	stroke-width: 2px;
+/* ── Aristas ponderadas ────────────────────────────────────────────────── */
+.weighted-edge path {
+	stroke: #E89030;
+	stroke-width: 1.8px;
 }
 
-.exclusion-edge path {
-	stroke: white;
-	stroke-width: 2px;
-	stroke-dasharray: 5, 5;
+.weighted-edge-label {
+	font-size: 11px;
+	font-weight: 600;
+	fill: #F0D88A;
+}
+
+.cardinality-label {
+	font-style: italic;
+	font-size: 10px;
+	fill: #E8C860;
+}
+
+/* ── Aristas opcionales / jerarquía ────────────────────────────────────── */
+.optional-attribute-edge path {
+	stroke: #A0AABB;
+	stroke-width: 1.5px;
+	stroke-dasharray: 6, 4;
 	fill: none;
 }
 
-.exclusion-edge.selected path {
-	stroke: #007bff;
+.optional-attribute-edge.selected path {
+	stroke: #5AAEFF;
 	stroke-width: 2px;
-	stroke-dasharray: 5, 5;
-}
-
-.exclusion-label {
-	font-weight: bold;
-	font-size: 0.8em;
-	fill: #000;
-}
-
-.inclusion-edge path {
-	stroke: white;
-	stroke-width: 2px;
-	stroke-dasharray: 5, 5;
-	fill: none;
-}
-
-.inclusion-arrow {
-	fill: white;
-	stroke: white;
-	stroke-width: 1px;
-	stroke-dasharray: none !important;
-}
-
-.inclusion-edge.selected path {
-	stroke: #007bff;
-	stroke-width: 2px;
-	stroke-dasharray: 5, 5;
-}
-
-.inclusion-label {
-	font-weight: bold;
-	font-size: 0.8em;
-	fill: #000;
-}
-
-.disjointness-edge {
-	stroke: white;
-	stroke-width: 2px;
-	fill: none;
-}
-
-.constraint-port {
-	fill: black;
-	r: 3.5;
-}
-
-.overlapping-edge {
-	stroke: white;
-	stroke-width: 2px;
-	fill: none;
-}
-
-.overlapping-arrow {
-	fill: white;
-	stroke: none;
+	stroke-dasharray: 6, 4;
 }
