@@ -6,40 +6,31 @@ const CARDINALITY_REGEX = /^\([0-9]+\.\.([0-9]+|N)\)$/;
 const EQUATION_REGEX = /^[a-zA-Z0-9_\s+\-*/().]+$/;
 
 const ALLOWED_SQL_TYPES = [
-    // Enteros
     'tinyint', 'smallint', 'mediumint', 'int', 'bigint',
     'tinyint\\(\\s*\\d+\\s*\\)', 'smallint\\(\\s*\\d+\\s*\\)',
     'mediumint\\(\\s*\\d+\\s*\\)', 'int\\(\\s*\\d+\\s*\\)', 'bigint\\(\\s*\\d+\\s*\\)',
 
-    // Decimales exactos
     'decimal\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
     'numeric\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
     'decimal\\(\\s*\\d+\\s*\\)',
     'numeric\\(\\s*\\d+\\s*\\)',
 
-    // Decimales aproximados
     'float', 'float\\(\\s*\\d+\\s*\\)',
     'double', 'double\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)',
     'real',
 
-    // Cadenas de texto
     'char\\(\\s*\\d+\\s*\\)', 'varchar\\(\\s*\\d+\\s*\\)',
     'tinytext', 'text', 'mediumtext', 'longtext',
 
-    // Binarios
     'binary\\(\\s*\\d+\\s*\\)', 'varbinary\\(\\s*\\d+\\s*\\)',
     'tinyblob', 'blob', 'mediumblob', 'longblob',
 
-    // Fecha y hora
     'date', 'time', 'datetime', 'timestamp', 'year',
 
-    // Booleano (alias de tinyint(1) en MySQL)
     'boolean', 'bool',
 
-    // JSON
     'json',
 
-    // Enum y Set
     "enum\\(\\s*('[^']*'\\s*,\\s*)*'[^']*'\\s*\\)",
     "set\\(\\s*('[^']*'\\s*,\\s*)*'[^']*'\\s*\\)"
 ];
@@ -55,9 +46,8 @@ function isAttributeNode(elementType: string): boolean {
     ].includes(elementType);
 }
 
-/**
- * A simple edit label validator that verifies that the given name label is not empty.
- */
+
+// Verifies that the given name label is not empty
 @injectable()
 export class ErLabelEditValidator implements LabelEditValidator {
     @inject(ErModelState)

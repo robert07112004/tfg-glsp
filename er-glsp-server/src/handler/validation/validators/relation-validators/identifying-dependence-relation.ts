@@ -1,8 +1,8 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
+import { SQLUtils } from '../../../generator/sql-utils';
 import { relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
@@ -19,7 +19,7 @@ export class IdentifyingDependenceRelationValidator {
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Not isolated
+        // Not isolated
         if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
                 'Esta dependencia en identificación no está conectada a nada. Debe conectarse a una entidad normal y a una entidad débil.',
@@ -27,7 +27,7 @@ export class IdentifyingDependenceRelationValidator {
             );
         }
 
-        // R-1: Empty name
+        // Empty name
         const name = SQLUtils.cleanNames(node);
         if (!name) {
             return createMarker('error',
@@ -36,7 +36,26 @@ export class IdentifyingDependenceRelationValidator {
             );
         }
 
-        // Rule 4: Cardinality must be 1:N
+        // No duplicate relation names across all relation types
+        const sourceModel = this.modelState.sourceModel;
+        if (sourceModel) {
+            const normalize = (n: string) => n.replace(/\s+/g, '').toLowerCase();
+            const currentName = normalize(name);
+            const allRelationNames = [
+                ...(sourceModel.relations || []),
+                ...(sourceModel.existenceDependentRelations || []),
+                ...(sourceModel.identifyingDependentRelations || [])
+            ].map(r => normalize(r.name));
+            const count = allRelationNames.filter(n => n === currentName).length;
+            if (count > 1) {
+                return createMarker('error',
+                    `Ya existe otra interrelación con el nombre "${name}". Cada interrelación (normal o dependencia) debe tener un nombre único en el modelo.`,
+                    node.id, 'ERR: dep-identificacion-nombreDuplicado'
+                );
+            }
+        }
+
+        // Cardinality must be 1:N
         if (!SQLUtils.getCardinality(node).includes('1:N')) {
             return createMarker('error',
                 'Una dependencia en identificación siempre debe ser de cardinalidad 1:N: la entidad fuerte participa con cardinalidad 1 y la entidad débil con N. Revisa las cardinalidades en las aristas ponderadas.',
@@ -44,7 +63,7 @@ export class IdentifyingDependenceRelationValidator {
             );
         }
 
-        // Rule 2 (B-3 fix): Cannot connect to other relations
+        // Cannot connect to other relations
         for (const edge of incoming) {
             const sourceNode = this.index.get(edge.sourceId);
             if (sourceNode && relationTypes.includes(sourceNode.type)) {
@@ -55,7 +74,7 @@ export class IdentifyingDependenceRelationValidator {
             }
         }
 
-        // R-3: At least 2 entity connections (incoming weighted edges)
+        // At least 2 entity connections (incoming weighted edges)
         const entityConnections = incoming.filter(e => e.type === WEIGHTED_EDGE_TYPE);
         if (entityConnections.length < 2) {
             return createMarker('error',

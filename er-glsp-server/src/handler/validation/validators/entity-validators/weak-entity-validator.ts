@@ -1,8 +1,8 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
+import { SQLUtils } from '../../../generator/sql-utils';
 import {
     attributeTypes,
     DEFAULT_EDGE_TYPE,
@@ -29,7 +29,7 @@ export class WeakEntityValidator {
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Weak entity not connected to anything
+        // Weak entity not connected to anything
         if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
                 'Esta entidad débil no está conectada a nada. Debe participar en una dependencia en existencia o en identificación.',
@@ -37,7 +37,7 @@ export class WeakEntityValidator {
             );
         }
 
-        // E-1: Empty name
+        // Empty name
         const name = SQLUtils.cleanNames(node);
         if (!name) {
             return createMarker('error',
@@ -46,7 +46,7 @@ export class WeakEntityValidator {
             );
         }
 
-        // E-2: Duplicate name (checks against all entities and weak entities)
+        // Duplicate name
         const sourceModel = this.modelState.sourceModel;
         if (sourceModel) {
             const otherNames = [
@@ -61,7 +61,7 @@ export class WeakEntityValidator {
             }
         }
 
-        // Rule 5: Attributes must be connected with normal or optional edges
+        // Attributes must be connected with normal or optional edges
         let hasPK = false;
         const attrNames: string[] = [];
         for (const edge of outgoing) {
@@ -81,7 +81,7 @@ export class WeakEntityValidator {
             }
         }
 
-        // Rule 2 (bug fix): connections to relations must use weighted edges
+        // Connections to relations must use weighted edges
         for (const edge of outgoing) {
             const targetNode = this.index.get(edge.targetId) as GNode;
             if (!targetNode) continue;
@@ -93,8 +93,8 @@ export class WeakEntityValidator {
             }
         }
 
-        // D-2: A weak entity can only be the DEPENDENT (N side) in one identifying dependence.
-        // It may be the IDENTIFIER (1 side) in several — that is valid (chained identification).
+        // A weak entity can only be the dependent (N side) in one identifying dependence
+        // It may be the identifier (1 side) in several (that is valid)
         const identifyingDepsAsDependent = outgoing.filter(e => {
             if (this.index.get(e.targetId)?.type !== IDENTIFYING_DEP_RELATION_TYPE) return false;
             const we = this.modelState.sourceModel?.weightedEdges.find(
@@ -109,7 +109,7 @@ export class WeakEntityValidator {
             );
         }
 
-        // Rule 3: PK logic depending on the type of dependence relation
+        // PK logic depending on the type of dependence relation
         for (const edge of outgoing) {
             const targetNode = this.index.get(edge.targetId) as GNode;
             if (!targetNode) continue;
@@ -122,8 +122,7 @@ export class WeakEntityValidator {
             }
 
             if (targetNode.type === IDENTIFYING_DEP_RELATION_TYPE && hasPK) {
-                // Only fire if this entity is on the N (dependent) side.
-                // The 1-side entity is the identifier and may have its own PK.
+                // Cannot have PK if its connected to an identifying dependence relation (N side)
                 const we = this.modelState.sourceModel?.weightedEdges.find(
                     w => w.sourceId === node.id && w.targetId === edge.targetId
                 );
@@ -136,7 +135,7 @@ export class WeakEntityValidator {
             }
         }
 
-        // Rule 4: Cannot be a child in a specialization
+        // Cannot be a child in a specialization
         for (const edge of incoming) {
             const sourceNode = this.index.get(edge.sourceId) as GNode;
             if (!sourceNode) continue;
@@ -148,7 +147,7 @@ export class WeakEntityValidator {
             }
         }
 
-        // E-5: Duplicate attribute names within weak entity
+        // Duplicate attribute names within weak entity
         const seen = new Set<string>();
         for (const attrName of attrNames) {
             if (seen.has(attrName)) {

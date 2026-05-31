@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { ErModelState } from '../../model/er-model-state';
-import { GeneratedTable } from './sql-interfaces';
 import { EntityTransformer } from './sql-entity-transformer';
+import { GeneratedTable } from './sql-interfaces';
 import { RelationTransformer } from './sql-relation-transformer';
 import { SpecializationTransformer } from './sql-specialization-transformer';
 
@@ -15,15 +15,15 @@ export class SQLGenerator {
         const erModel = this.modelState.sourceModel;
         const allTables: GeneratedTable[] = [];
 
-        // 1. Pre-computar datos de especialización una sola vez
+        // Obtains all the info of all the specialization nodes of the er model
         const { byFather, byChild } = SpecializationTransformer.preCompute(erModel);
 
-        // 2. Tablas de entidades fuertes y débiles
+        // Obtains all the info of all the entites of the er model
         for (const entity of [...(erModel.entities || []), ...(erModel.weakEntities || [])]) {
             allTables.push(EntityTransformer.generateEntityTable(entity, erModel, byFather, byChild));
         }
 
-        // 3. Tablas de relaciones N:M, reflexivas N:M y ternarias
+        // Obtains all the info of normal, reflexive and ternary relations of the er model
         const allRels = [
             ...(erModel.relations || []),
             ...(erModel.existenceDependentRelations || []),
@@ -35,16 +35,12 @@ export class SQLGenerator {
             }
         }
 
-        // 4. Ordenar por dependencias y generar el SQL final
+        // Sort by dependencies and generate the SQL code
         const header = "-- Fecha: " + new Date().toLocaleString() + "\n\n";
         return header + this.sortTables(allTables);
     }
 
-    /**
-     * Ordena las tablas mediante un algoritmo topológico:
-     * si la tabla A depende de B (FK hacia B), B se emite antes que A.
-     * Incluye detección de ciclos para evitar bucles infinitos.
-     */
+    // Sorts the tables using a topological algorithm (includes cycle detection to prevent infinite loops)
     private sortTables(tables: GeneratedTable[]): string {
         const sorted: string[] = [];
         const emitted = new Set<string>();
@@ -63,8 +59,6 @@ export class SQLGenerator {
                 return true;
             });
 
-            // Si no se pudo emitir ninguna tabla en esta pasada, hay dependencia circular.
-            // Forzamos la emisión de la primera pendiente para evitar el bucle infinito.
             if (remaining.length === before && remaining.length > 0) {
                 const forced = remaining.shift()!;
                 sorted.push(forced.sql);

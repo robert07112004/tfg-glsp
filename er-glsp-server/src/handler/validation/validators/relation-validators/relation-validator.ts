@@ -1,8 +1,8 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
+import { SQLUtils } from '../../../generator/sql-utils';
 import { attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
@@ -19,7 +19,7 @@ export class RelationValidator {
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Relation not connected to anything
+        // Relation not connected to anything
         if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
                 'Esta interrelación no está conectada a nada. Debe conectarse a al menos dos entidades con aristas ponderadas.',
@@ -27,7 +27,7 @@ export class RelationValidator {
             );
         }
 
-        // R-1: Empty name
+        // Empty name
         const name = SQLUtils.cleanNames(node);
         if (!name) {
             return createMarker('error',
@@ -36,7 +36,7 @@ export class RelationValidator {
             );
         }
 
-        // R-3: At least 2 entity connections (incoming weighted edges)
+        // At least 2 entity connections (incoming weighted edges)
         const entityConnections = incoming.filter(e => e.type === WEIGHTED_EDGE_TYPE);
         if (entityConnections.length < 2) {
             return createMarker('error',
@@ -45,7 +45,7 @@ export class RelationValidator {
             );
         }
 
-        // R-5: All entity connections must have cardinality defined
+        // All entity connections must have cardinality defined
         const sourceModel = this.modelState.sourceModel;
         if (sourceModel) {
             const weightedEdges = sourceModel.weightedEdges.filter(e => e.targetId === node.id);
@@ -60,7 +60,25 @@ export class RelationValidator {
             }
         }
 
-        // R-7: No duplicate attribute names in relation
+        // No duplicate relation names across all relation types
+        if (sourceModel) {
+            const normalize = (n: string) => n.replace(/\s+/g, '').toLowerCase();
+            const currentName = normalize(name);
+            const allRelationNames = [
+                ...(sourceModel.relations || []),
+                ...(sourceModel.existenceDependentRelations || []),
+                ...(sourceModel.identifyingDependentRelations || [])
+            ].map(r => normalize(r.name));
+            const count = allRelationNames.filter(n => n === currentName).length;
+            if (count > 1) {
+                return createMarker('error',
+                    `Ya existe otra interrelación con el nombre "${name}". Cada interrelación (normal o dependencia) debe tener un nombre único en el modelo.`,
+                    node.id, 'ERR: relacion-nombreDuplicado'
+                );
+            }
+        }
+
+        // No duplicate attribute names in relation
         const seen = new Set<string>();
         for (const edge of outgoing) {
             if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) continue;

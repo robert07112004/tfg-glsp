@@ -222,8 +222,6 @@ export class ErGModelFactory implements GModelFactory {
     }
 
     // Logic
-
-    /** Mirrors SQLUtils.isMany for use in the GModel factory (no direct import to avoid coupling). */
     private isManyEdge(description: string): boolean {
         const desc = (description || '').toUpperCase().trim();
         if (desc.includes('N') || desc.includes('M')) return true;

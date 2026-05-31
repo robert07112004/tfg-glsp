@@ -46,7 +46,6 @@ export class ErPasteOperationHandler extends JsonOperationHandler {
             return undefined;
         }
 
-        // Resolve ErModel nodes from the clipboard schemas, skipping edges
         const erNodes = schemas
             .filter(s => !this.isEdgeType(s.type))
             .map(s => this.index.findElement(s.id))
@@ -61,16 +60,10 @@ export class ErPasteOperationHandler extends JsonOperationHandler {
         });
     }
 
-    /** Returns true for the three edge types used in this diagram. */
     protected isEdgeType(type: string): boolean {
         return type === 'edge' || type === 'edge:weighted' || type === 'edge:optional';
     }
 
-    /**
-     * Computes the position offset to apply to every pasted element.
-     * When the mouse position is known the topmost element of the selection is
-     * placed at the cursor; otherwise a fixed 20 px shift is used.
-     */
     protected computeOffset(nodes: ErNode[], lastMousePosition?: Point): Point {
         if (!lastMousePosition) {
             return { x: PASTE_OFFSET, y: PASTE_OFFSET };
@@ -82,7 +75,6 @@ export class ErPasteOperationHandler extends JsonOperationHandler {
         };
     }
 
-    /** Creates a deep clone of an ErNode with a new UUID and offset position, then inserts it in the correct model array. */
     protected cloneToModel(erModel: ErModel, node: ErNode, offset: Point): void {
         const clone: any = {
             ...node,

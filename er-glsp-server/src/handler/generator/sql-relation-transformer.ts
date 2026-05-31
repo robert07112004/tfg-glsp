@@ -6,10 +6,7 @@ import { SQLUtils } from "./sql-utils";
 
 export class RelationTransformer {
 
-    /**
-     * Genera la tabla intermedia para una relación N:M binaria, N:M reflexiva o ternaria.
-     * Rastrea las dependencias hacia las entidades participantes.
-     */
+    // Generates binary and reflexive N:M relations, also generates ternary relations
     public static generateManyToManyTable(relation: BaseRelation, erModel: ErModel): GeneratedTable {
         const relationName = SQLUtils.parseNameAndType(relation.name).name;
         const columns: string[] = [];
@@ -21,7 +18,6 @@ export class RelationTransformer {
         const connectedEdges = (erModel.weightedEdges || []).filter(e => e.targetId === relation.id);
         const isTernary = connectedEdges.length >= 3;
 
-        // Contador de apariciones por nombre de tabla (para detectar reflexivas)
         const nameFrequencies = new Map<string, number>();
         for (const edge of connectedEdges) {
             const entity = this.findEntityByEdge(edge.sourceId, erModel);
@@ -65,7 +61,6 @@ export class RelationTransformer {
             }
         }
 
-        // Claves alternativas y atributos propios del rombo
         const uniques = AttributeTransformer.getAlternativeKeys(relation as any, erModel);
         if (uniques.length > 0) {
             const { columns: akCols, uniqueConstraints } = AttributeTransformer.processAlternativeKeys(uniques, erModel);
@@ -79,7 +74,6 @@ export class RelationTransformer {
             columns.push(...AttributeTransformer.processAttributes([...simples, ...optionals], erModel));
         }
 
-        // Ensamblado de la tabla principal
         let sql = `CREATE TABLE ${relationName} (\n`;
         const allDefs = [
             ...columns,
@@ -89,7 +83,6 @@ export class RelationTransformer {
         ];
         sql += allDefs.join(',\n') + `\n);\n\n`;
 
-        // Tablas de atributos multivaluados del rombo
         const multiValuedAttributes = AttributeTransformer.getMultiValuedAttributes(relation as any, erModel);
         for (const mvAttr of multiValuedAttributes) {
             const mvRootName = SQLUtils.parseNameAndType(mvAttr.name).name;
@@ -119,37 +112,29 @@ export class RelationTransformer {
         return { name: relationName, sql, dependencies };
     }
 
-    /**
-     * Decide si las PKs de una entidad participante deben formar parte de la PRIMARY KEY
-     * de la tabla intermedia. Para binarias N:M siempre sí. Para ternarias, depende
-     * de la cardinalidad de la relación y de la arista de esa entidad.
-     */
+    // Determines whether the PKs of a participating entity should be part of the PRIMARY KEY of the intermediate table
     private static goesIntoPK(edge: { description: string }, relation: BaseRelation, isTernary: boolean, currentPKs: string[], allEdges: { description: string }[]): boolean {
-        if (!isTernary) return true; // Binaria N:M: ambas entidades siempre en PK
+        if (!isTernary) return true; // Binary N:M relations -> both PKs
 
         const edgeDesc = (edge.description || "").toUpperCase();
         const cardinality = (relation.cardinality || "").toUpperCase();
 
-        if (cardinality === 'N:M:P') return true;                          // Las 3 entidades en PK
-        if (cardinality === '1:N:M') return edgeDesc.includes('..N');      // Solo las del lado N/M
-        if (cardinality === '1:1:N') return edgeDesc.includes('..1');      // Las 2 del lado 1
-        if (cardinality === '1:1:1') return currentPKs.length < 2;        // Cualquier combinación de 2
-        return true; // Fallback para casos no contemplados
+        if (cardinality === 'N:M:P') return true;                         // All PK entities
+        if (cardinality === '1:N:M') return edgeDesc.includes('..N');     // Only N side
+        if (cardinality === '1:1:N') return edgeDesc.includes('..1');     // The ones with ..1 cardinality
+        if (cardinality === '1:1:1') return currentPKs.length < 2;        // Any combination of 2
+        return true;
     }
 
-    /**
-     * Devuelve true si la relación necesita una tabla intermedia propia:
-     * - Binaria N:M (incluyendo reflexiva N:M)
-     * - Cualquier relación ternaria (siempre genera tabla intermedia)
-     */
+    // Returns true if the relationship needs its own intermediate table
     public static needsJunctionTable(relation: BaseRelation, erModel: ErModel): boolean {
         const connectedEdges = (erModel.weightedEdges || []).filter(e => e.targetId === relation.id);
 
-        if (connectedEdges.length >= 3) return true; // Ternaria → siempre tabla propia
+        if (connectedEdges.length >= 3) return true;
 
         if (connectedEdges.length === 2) {
             const manyCount = connectedEdges.filter(e => SQLUtils.isMany(e.description)).length;
-            return manyCount >= 2; // Binaria N:M (incluyendo reflexiva N:M)
+            return manyCount >= 2;
         }
 
         return false;

@@ -114,8 +114,8 @@ export class AttributeTransformer {
         const createTableStatements: string[] = [];
         const parentTableName = SQLUtils.parseNameAndType(parentNode.name).name;
 
-        // Si se pasan fullPKs (caso de entidad débil), se usan directamente.
-        // Si no, se calculan las PKs propias del nodo (caso de entidad fuerte o relación N:M).
+        // if fullPKs are passes (weak entity case), they are used directly
+        // otherwise, the node's own PKs are calculated (strong entity or N:M relations case)
         const pkData = fullPKs
             ? fullPKs.map(pk => ({ name: pk.colNameInThisTable, type: pk.type }))
             : this.getPks(parentNode, erModel).map(pk => SQLUtils.parseNameAndType(pk.name));

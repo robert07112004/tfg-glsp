@@ -18,7 +18,7 @@ export class AllSpecializationsValidator {
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Not isolated
+        // Not isolated
         if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
                 'Esta especialización no está conectada a nada. Debe tener una entidad padre y al menos dos entidades subclase.',
@@ -26,7 +26,7 @@ export class AllSpecializationsValidator {
             );
         }
 
-        // Rule 2: Only normal edges allowed (no weighted or optional)
+        // Only normal edges allowed (no weighted or optional)
         for (const edge of incoming) {
             if (edge.type !== DEFAULT_EDGE_TYPE) {
                 return createMarker('error',
@@ -45,7 +45,7 @@ export class AllSpecializationsValidator {
             }
         }
 
-        // Rule 4 (B-4 fix): Exactly one parent entity
+        // Exactly one parent entity
         if (incoming.length !== 1) {
             return createMarker('error',
                 `Una especialización debe tener exactamente una entidad padre. ${incoming.length === 0 ? 'Falta conectar la entidad padre.' : 'Tiene más de una entidad padre.'}`,
@@ -61,7 +61,7 @@ export class AllSpecializationsValidator {
             );
         }
 
-        // S-1: Parent cannot also be a subclass in the same specialization
+        // Parent cannot also be a subclass in the same specialization
         const childIds = new Set(outgoing.map(e => e.targetId));
         if (childIds.has(incoming[0].sourceId)) {
             return createMarker('error',
@@ -70,7 +70,7 @@ export class AllSpecializationsValidator {
             );
         }
 
-        // Rule 3: All outgoing targets must be entities
+        // All outgoing targets must be entities
         for (const edge of outgoing) {
             const targetNode = this.index.get(edge.targetId) as GNode;
             if (!targetNode || targetNode.type !== ENTITY_TYPE) {
@@ -81,7 +81,7 @@ export class AllSpecializationsValidator {
             }
         }
 
-        // Rule 3: At least 2 subclasses
+        // At least 2 subclasses
         if (outgoing.length < 2) {
             return createMarker('error',
                 'Una especialización debe tener al menos dos subclases (entidades hijas). Con una sola subclase no tiene sentido dividir la entidad.',
@@ -89,7 +89,7 @@ export class AllSpecializationsValidator {
             );
         }
 
-        // S-2: No duplicate subclasses
+        // No duplicate subclasses
         const seenChildIds = new Set<string>();
         for (const edge of outgoing) {
             if (seenChildIds.has(edge.targetId)) {

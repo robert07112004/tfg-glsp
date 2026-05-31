@@ -4,7 +4,6 @@ svg {
 	border-color: #bbb;
 }
 
-/* ── Tipografía global ─────────────────────────────────────────────────── */
 .sprotty-graph text,
 .sprotty-graph .sprotty-label {
 	font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -15,7 +14,7 @@ svg {
 	fill: inherit;
 }
 
-/* ── Entidades fuertes ─────────────────────────────────────────────────── */
+/* Entities */
 .entity-node .sprotty-node {
 	fill: #F5C842;
 	stroke: #A06810;
@@ -39,7 +38,6 @@ svg {
 	stroke-width: 2.5px;
 }
 
-/* ── Entidades débiles ─────────────────────────────────────────────────── */
 .weak-entity-node {
 	width: 100px;
 	height: 40px;
@@ -49,7 +47,6 @@ svg {
 	filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.5));
 }
 
-/* El rect interior es transparente: solo se ve su trazo sobre el relleno del exterior */
 .weak-entity-node-inner {
 	fill: none;
 	stroke: #A06810;
@@ -70,7 +67,7 @@ svg {
 	stroke-width: 2.5px;
 }
 
-/* ── Relaciones (rombos) ───────────────────────────────────────────────── */
+/* Relations */
 .relation-node {
 	width: 60px;
 	height: 60px;
@@ -99,7 +96,6 @@ svg {
 	stroke-width: 2.5px;
 }
 
-/* ── Relación de existencia ────────────────────────────────────────────── */
 .existence-dependent-relation-node {
 	width: 60px;
 	height: 60px;
@@ -128,7 +124,7 @@ svg {
 	fill: #0A003A;
 }
 
-/* ── Atributos — base compartida ───────────────────────────────────────── */
+/* Attributes */
 .attribute-node ellipse,
 .key-attribute-node ellipse,
 .alternative-key-attribute-node ellipse {
@@ -165,7 +161,6 @@ svg {
 	stroke-dasharray: 4, 3;
 }
 
-/* ── Atributo multivaluado ─────────────────────────────────────────────── */
 .multi-valued-attribute-node {
 	fill: #FFB0B0;
 	stroke: #B83030;
@@ -189,7 +184,6 @@ svg {
 	stroke-width: 1.5px;
 }
 
-/* ── Atributo derivado ─────────────────────────────────────────────────── */
 .derived-attribute-node,
 .derived-attribute-node-inner {
 	fill: #FFD0D0;
@@ -208,7 +202,7 @@ svg {
 	stroke-width: 2px;
 }
 
-/* ── Especializaciones ─────────────────────────────────────── */
+/* Specializations */
 .specialization-triangle-node {
 	fill: #90E080;
 	stroke: #287020;
@@ -232,7 +226,7 @@ svg {
 	stroke-width: 2px;
 }
 
-/* ── Aristas ponderadas ────────────────────────────────────────────────── */
+/* Weighted Edges */
 .weighted-edge path {
 	stroke: #E89030;
 	stroke-width: 1.8px;
@@ -250,7 +244,7 @@ svg {
 	fill: #E8C860;
 }
 
-/* ── Aristas opcionales / jerarquía ────────────────────────────────────── */
+/* Optional Edges */
 .optional-attribute-edge path {
 	stroke: #A0AABB;
 	stroke-width: 1.5px;

@@ -19,7 +19,7 @@ export class ErApplyLabelEditHandler extends JsonOperationHandler {
                 const modelElement = index.findElement(parentNode.id);
 
                 if (!modelElement) {
-                    throw new GLSPServerError(`Could not find model element for node with id ${parentNode.id}`);
+                    throw new GLSPServerError(`No se pudo encontrar el elemento del modelo para el nodo con ID ${parentNode.id}`);
                 }
 
                 if (DerivedAttribute.is(modelElement) && operation.labelId.endsWith('_equation_label')) {
@@ -29,11 +29,11 @@ export class ErApplyLabelEditHandler extends JsonOperationHandler {
 
                 if ('name' in modelElement) {
                     (modelElement as ErNode).name = operation.text;
-                    (modelElement as ErNode).size = undefined; // reset para que el cliente recalcule el tamaño
+                    (modelElement as ErNode).size = undefined;
                     return;
                 }
 
-                throw new GLSPServerError(`Model element ${parentNode.id} does not support text editing.`);
+                throw new GLSPServerError(`El elemento del modelo ${parentNode.id} no admite la edición de texto`);
             }
 
             const parentEdge = index.findParentElement(operation.labelId, toTypeGuard(GEdge));
@@ -44,7 +44,7 @@ export class ErApplyLabelEditHandler extends JsonOperationHandler {
                 if (WeightedEdge.is(modelElement)) {
                     modelElement.description = operation.text;
                 } else {
-                    throw new GLSPServerError(`Could not find editable model element for edge with id ${parentEdge.id}`);
+                    throw new GLSPServerError(`No se pudo encontrar el elemento de modelo editable para la arista ponderada con ID ${parentEdge.id}`);
                 }
             }
         });

@@ -1,8 +1,8 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
+import { SQLUtils } from '../../../generator/sql-utils';
 import { DEFAULT_EDGE_TYPE, entityTypes } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
@@ -19,7 +19,7 @@ export class KeyAttributeValidator {
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Not isolated
+        // Not isolated
         if (outgoing.length === 0 && incoming.length === 0) {
             return createMarker('error',
                 'Este atributo clave no está conectado a ninguna entidad.',
@@ -27,7 +27,7 @@ export class KeyAttributeValidator {
             );
         }
 
-        // A-1: Empty name
+        // Empty name
         const name = SQLUtils.cleanNames(node);
         if (!name) {
             return createMarker('error',
@@ -36,7 +36,7 @@ export class KeyAttributeValidator {
             );
         }
 
-        // Rule 2: Can only connect via normal transitions; A-3: parent must be an entity
+        // Can only connect via normal transitions
         for (const edge of incoming) {
             if (edge.type !== DEFAULT_EDGE_TYPE) {
                 return createMarker('error',
@@ -45,7 +45,7 @@ export class KeyAttributeValidator {
                 );
             }
 
-            // A-3: Parent must be an entity type
+            // Parent must be an entity type
             const sourceNode = this.index.get(edge.sourceId) as GNode;
             if (!sourceNode || !entityTypes.includes(sourceNode.type)) {
                 return createMarker('error',
@@ -55,7 +55,7 @@ export class KeyAttributeValidator {
             }
         }
 
-        // Rule 4: No outgoing edges (PKs are atomic, no children)
+        // No outgoing edges (no children)
         if (outgoing.length !== 0) {
             return createMarker('error',
                 'El atributo clave no puede tener atributos hijos. Las claves primarias son valores atómicos (indivisibles).',

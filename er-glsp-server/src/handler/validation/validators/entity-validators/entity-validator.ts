@@ -1,8 +1,8 @@
 import { GNode, Marker } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
-import { SQLUtils } from '../../../generator/sql-utils';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
+import { SQLUtils } from '../../../generator/sql-utils';
 import { attributeTypes, DEFAULT_EDGE_TYPE, KEY_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, relationTypes, specializationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
@@ -19,7 +19,7 @@ export class EntityValidator {
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Rule 1: Entity not connected to anything
+        // Entity not connected to anything
         if (incoming.length === 0 && outgoing.length === 0) {
             return createMarker('error',
                 'Esta entidad no está conectada a nada. Debe participar en al menos una interrelación.',
@@ -27,7 +27,7 @@ export class EntityValidator {
             );
         }
 
-        // E-1: Empty name
+        // Empty name
         const name = SQLUtils.cleanNames(node);
         if (!name) {
             return createMarker('error',
@@ -36,7 +36,7 @@ export class EntityValidator {
             );
         }
 
-        // E-2: Duplicate entity name
+        // Duplicate entity name
         const sourceModel = this.modelState.sourceModel;
         if (sourceModel) {
             const otherNames = [
@@ -51,7 +51,6 @@ export class EntityValidator {
             }
         }
 
-        // Rule 2: Must have a PK unless it is a child of a specialization
         let isChildOfSpecialization = false;
         for (const edge of incoming) {
             if (edge.type === DEFAULT_EDGE_TYPE) {
@@ -68,7 +67,7 @@ export class EntityValidator {
             const targetNode = this.index.get(edge.targetId) as GNode;
             if (!targetNode) continue;
 
-            // Rule 3 (B-1 fix): connections to relations must use weighted edges
+            // Connections to relations must use weighted edges
             if (edge.type !== WEIGHTED_EDGE_TYPE && relationTypes.includes(targetNode.type)) {
                 return createMarker('error',
                     'La conexión entre una entidad y una interrelación debe hacerse con una arista ponderada (la que lleva la cardinalidad).',
@@ -83,14 +82,15 @@ export class EntityValidator {
             }
         }
 
+        // Must have a PK unless it is a child of a specialization
         if (!hasPK && !isChildOfSpecialization) {
             return createMarker('error',
-                'Esta entidad no tiene atributo clave (PK). Toda entidad necesita al menos un atributo que identifique de forma única a cada instancia (equivale a la PRIMARY KEY en SQL).',
+                'Esta entidad no tiene atributo clave (PK). Toda entidad necesita al menos un atributo que identifique de forma única a cada instancia (excepto si es hija de una especialización).',
                 node.id, 'ERR: entidad-sinClave'
             );
         }
 
-        // E-5: Duplicate attribute names within entity
+        // Duplicate attribute names within entity
         const seen = new Set<string>();
         for (const attrName of attrNames) {
             if (seen.has(attrName)) {
