@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
-import { ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
+import { ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
 @injectable()
@@ -56,7 +56,7 @@ export class MultiValuedAttributeValidator {
             }
         }
 
-        // Outgoing edges can only go to normal attributes (for composite mulitvalued)
+        // Outgoing edges can only go to normal and multivalued attributes (for composite mulitvalued)
         for (const edge of outgoing) {
             if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
                 return createMarker('error',
@@ -65,9 +65,10 @@ export class MultiValuedAttributeValidator {
                 );
             }
             const targetNode = this.index.get(edge.targetId) as GNode;
-            if (targetNode && attributeTypes.includes(targetNode.type) && targetNode.type !== ATTRIBUTE_TYPE) {
+            if (targetNode && attributeTypes.includes(targetNode.type) &&
+                targetNode.type !== ATTRIBUTE_TYPE && targetNode.type !== MULTI_VALUED_ATTRIBUTE_TYPE) {
                 return createMarker('error',
-                    'Un atributo multivaluado compuesto solo puede tener como hijos otros atributos normales.',
+                    'Un atributo multivaluado compuesto solo puede tener como hijos atributos normales o atributos multivaluados.',
                     node.id, 'ERR: atributoMultiv-hijoInvalido'
                 );
             }

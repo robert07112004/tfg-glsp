@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
-import { ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, entityTypes, OPTIONAL_EDGE_TYPE } from '../../utils/validation-constants';
+import { ALTERNATIVE_KEY_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, entityTypes, OPTIONAL_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker } from '../../utils/validation-utils';
 
 @injectable()
@@ -55,7 +55,7 @@ export class AlternativeKeyAttributeValidator {
             }
         }
 
-        // Outgoing edges can only go to normal attributes (for composite AK)
+        // Outgoing edges can only go to normal and AK attributes (for composite AK)
         for (const edge of outgoing) {
             if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
                 return createMarker('error',
@@ -64,9 +64,10 @@ export class AlternativeKeyAttributeValidator {
                 );
             }
             const targetNode = this.index.get(edge.targetId) as GNode;
-            if (targetNode && attributeTypes.includes(targetNode.type) && targetNode.type !== ATTRIBUTE_TYPE) {
+            if (targetNode && attributeTypes.includes(targetNode.type) &&
+                targetNode.type !== ATTRIBUTE_TYPE && targetNode.type !== ALTERNATIVE_KEY_ATTRIBUTE_TYPE) {
                 return createMarker('error',
-                    'Una clave alternativa compuesta solo puede tener como hijos atributos normales.',
+                    'Una clave alternativa compuesta solo puede tener como hijos atributos normales o claves alternativas.',
                     node.id, 'ERR: claveAlternativa-hijoInvalido'
                 );
             }
