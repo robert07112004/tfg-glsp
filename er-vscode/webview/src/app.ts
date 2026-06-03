@@ -11,7 +11,6 @@ import { Container } from 'inversify';
 
 class ErStarter extends GLSPStarter {
     createContainer(...containerConfiguration: ContainerConfiguration): Container {
-        // Hacemos un casting "as any" para evitar el conflicto de tipos internos de Inversify
         return initializeErDiagramContainer(new Container() as any, ...containerConfiguration);
     }
 }

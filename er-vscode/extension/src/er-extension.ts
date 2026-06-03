@@ -1,19 +1,3 @@
-/********************************************************************************
- * Copyright (c) 2022 EclipseSource and others.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v. 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0.
- *
- * This Source Code may also be made available under the following Secondary
- * Licenses when the conditions for such availability set forth in the Eclipse
- * Public License v. 2.0 are satisfied:
- * -- GNU General Public License, version 2 with the GNU Classpath Exception
- * which is available at https://www.gnu.org/software/classpath/license.html
- * -- MIT License which is available at https://opensource.org/license/mit.
- *
- * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT
- ********************************************************************************/
 import 'reflect-metadata';
 
 import {
@@ -26,16 +10,15 @@ import * as path from 'path';
 import * as process from 'process';
 import * as vscode from 'vscode';
 import ErEditorProvider from './er-editor-provider';
-
 export const LOG_DIR = path.join(__dirname, '..', '..', 'logs');
 
 const DEFAULT_SERVER_PORT = '0';
 
-/** VS Code context key that controls whether the Generate SQL button is visible. */
+// VS Code context key that controls whether the Generate SQL button is visible
 const VALIDATION_CLEAN_CONTEXT = 'er.validationClean';
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-    // SQL button starts hidden: the user must explicitly validate with 0 errors first.
+    // SQL button starts hidden
     vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, false);
 
     let serverProcess: GlspSocketServerLauncher | undefined;
@@ -77,7 +60,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
                     } else if (hasErrors) {
                         // Automatic live validation found errors → disable button.
                         // If no errors in live validation, keep the current state unchanged
-                        // so auto-validation at load does NOT falsely enable the button.
                         vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, false);
                     }
                 }
