@@ -4,7 +4,7 @@ import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
 import { ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
-import { createMarker } from '../../utils/validation-utils';
+import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
 export class AttributeValidator {
@@ -33,6 +33,14 @@ export class AttributeValidator {
             return createMarker('error',
                 'El nombre del atributo no puede estar vacío. Escribe el nombre del campo que representa este atributo en la base de datos (ej: "nombre", "fecha_nacimiento").',
                 node.id, 'ERR: atributo-sinNombre'
+            );
+        }
+
+        // Default name
+        if (hasDefaultName(name, 'NewAttribute')) {
+            return createMarker('error',
+                `"${name.split(':')[0]}" es el nombre por defecto. Asigna un nombre propio a este atributo (ej: "nombre", "fecha_nacimiento").`,
+                node.id, 'ERR: atributo-nombreDefault'
             );
         }
 

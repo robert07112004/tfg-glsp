@@ -27,7 +27,8 @@ import {
     ModelState,
     OperationHandlerConstructor,
     RequestClipboardDataActionHandler,
-    SourceModelStorage
+    SourceModelStorage,
+    ToolPaletteItemProvider
 } from '@eclipse-glsp/server';
 import { injectable } from 'inversify';
 import { DeleteElementHandler } from '../handler/delete-element-handler';
@@ -72,6 +73,7 @@ import { ErModelIndex } from '../model/er-model-index';
 import { ErModelState } from '../model/er-model-state';
 import { ErStorage } from '../model/er-storage';
 import { ErDiagramConfiguration } from './er-diagram-configuration';
+import { ErToolPaletteItemProvider } from './er-tool-palette-item-provider';
 
 @injectable()
 export class ErDiagramModule extends DiagramModule {
@@ -146,6 +148,10 @@ export class ErDiagramModule extends DiagramModule {
     protected override bindGModelIndex(): BindingTarget<GModelIndex> {
         this.context.bind(ErModelIndex).toSelf().inSingletonScope();
         return { service: ErModelIndex };
+    }
+
+    protected override bindToolPaletteItemProvider(): BindingTarget<ToolPaletteItemProvider> | undefined {
+        return ErToolPaletteItemProvider;
     }
 
     protected override bindLabelEditValidator(): BindingTarget<LabelEditValidator> | undefined {

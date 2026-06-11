@@ -14,7 +14,7 @@ import {
     specializationTypes,
     WEIGHTED_EDGE_TYPE
 } from '../../utils/validation-constants';
-import { createMarker } from '../../utils/validation-utils';
+import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
 export class WeakEntityValidator {
@@ -43,6 +43,14 @@ export class WeakEntityValidator {
             return createMarker('error',
                 'El nombre de la entidad débil no puede estar vacío. Escribe un nombre que la identifique (ej: "Teléfono", "Línea").',
                 node.id, 'ERR: entidad-debil-sinNombre'
+            );
+        }
+
+        // Default name
+        if (hasDefaultName(name, 'NewWeakEntity')) {
+            return createMarker('error',
+                `"${name}" es el nombre por defecto. Asigna un nombre propio a esta entidad débil (ej: "Teléfono", "Línea").`,
+                node.id, 'ERR: entidad-debil-nombreDefault'
             );
         }
 

@@ -47,7 +47,6 @@ export class GenerateSqlActionHandler implements ActionHandler {
 
         try {
             let modelPath: string;
-
             if (modelUri.startsWith('file:///')) {
                 modelPath = decodeURIComponent(modelUri.replace('file:///', ''));
                 modelPath = modelPath.replace(/\//g, path.sep);
@@ -58,14 +57,8 @@ export class GenerateSqlActionHandler implements ActionHandler {
             }
 
             const modelDir = path.dirname(modelPath);
-
-            let counter = 1;
-            let filePath = path.join(modelDir, `script_generado${counter}.sql`);
-            while (fs.existsSync(filePath)) {
-                counter++;
-                filePath = path.join(modelDir, `script_generado${counter}.sql`);
-            }
-
+            const baseName = path.basename(modelPath, path.extname(modelPath));
+            const filePath = path.join(modelDir, `${baseName}.sql`);
             fs.writeFileSync(filePath, sql, 'utf-8');
 
             return [MessageAction.create(

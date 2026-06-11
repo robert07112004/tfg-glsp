@@ -6,7 +6,7 @@ import { BaseCreateEdgeHandler } from './base-create-edge-handler';
 @injectable()
 export class CreateTransitionHandler extends BaseCreateEdgeHandler<Transition> {
     readonly elementTypeIds = [DefaultTypes.EDGE];
-    readonly label = 'Transition';
+    readonly label = 'Transition Edge';
     protected readonly edgeType = 'transition';
 
     protected getTargetArray(): Transition[] { return this.modelState.sourceModel.transitions; }

@@ -4,7 +4,7 @@ import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
 import { DEFAULT_EDGE_TYPE, entityTypes } from '../../utils/validation-constants';
-import { createMarker } from '../../utils/validation-utils';
+import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
 export class KeyAttributeValidator {
@@ -33,6 +33,14 @@ export class KeyAttributeValidator {
             return createMarker('error',
                 'El nombre del atributo clave no puede estar vacío. Escribe el nombre del campo que actuará como clave primaria en la tabla (ej: "id", "codigo").',
                 node.id, 'ERR: clave-sinNombre'
+            );
+        }
+
+        // Default name
+        if (hasDefaultName(name, 'NewKeyAttribute')) {
+            return createMarker('error',
+                `"${name.split(':')[0]}" es el nombre por defecto. Asigna un nombre propio a este atributo clave (ej: "id", "codigo").`,
+                node.id, 'ERR: clave-nombreDefault'
             );
         }
 

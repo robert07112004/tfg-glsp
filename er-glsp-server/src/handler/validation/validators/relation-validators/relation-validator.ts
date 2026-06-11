@@ -4,7 +4,7 @@ import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
 import { attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
-import { createMarker } from '../../utils/validation-utils';
+import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
 export class RelationValidator {
@@ -33,6 +33,14 @@ export class RelationValidator {
             return createMarker('error',
                 'El nombre de la interrelación no puede estar vacío. Escribe un nombre que describa la relación entre las entidades (ej: "Compra", "Trabaja_en").',
                 node.id, 'ERR: relacion-sinNombre'
+            );
+        }
+
+        // Default name
+        if (hasDefaultName(name, 'NewRelationNode')) {
+            return createMarker('error',
+                `"${name}" es el nombre por defecto. Asigna un nombre propio a esta interrelación (ej: "Compra", "Trabaja_en").`,
+                node.id, 'ERR: relacion-nombreDefault'
             );
         }
 

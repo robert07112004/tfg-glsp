@@ -4,7 +4,7 @@ import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
 import { relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
-import { createMarker } from '../../utils/validation-utils';
+import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
 export class ExistenceDependenceRelationValidator {
@@ -33,6 +33,14 @@ export class ExistenceDependenceRelationValidator {
             return createMarker('error',
                 'El nombre de la dependencia en existencia no puede estar vacío. Escribe un nombre que describa la relación (ej: "Tiene", "Pertenece_a").',
                 node.id, 'ERR: dep-existencia-sinNombre'
+            );
+        }
+
+        // Default name
+        if (hasDefaultName(name, 'NewDepRelation')) {
+            return createMarker('error',
+                `"${name}" es el nombre por defecto. Asigna un nombre propio a esta dependencia en existencia (ej: "Tiene", "Pertenece_a").`,
+                node.id, 'ERR: dep-existencia-nombreDefault'
             );
         }
 

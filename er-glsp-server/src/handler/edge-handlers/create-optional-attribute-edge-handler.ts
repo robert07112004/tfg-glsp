@@ -5,7 +5,7 @@ import { BaseCreateEdgeHandler } from './base-create-edge-handler';
 @injectable()
 export class CreateOptionalAttributeEdgeHandler extends BaseCreateEdgeHandler<OptionalAttributeEdge> {
     readonly elementTypeIds = ['edge:optional'];
-    readonly label = 'Optional Attribute Link';
+    readonly label = 'Optional Edge';
     protected readonly edgeType = 'edge:optional';
 
     protected getTargetArray(): OptionalAttributeEdge[] { return this.modelState.sourceModel.optionalAttributeEdges; }

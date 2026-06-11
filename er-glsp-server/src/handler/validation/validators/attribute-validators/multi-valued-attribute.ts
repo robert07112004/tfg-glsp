@@ -4,7 +4,7 @@ import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
 import { ATTRIBUTE_TYPE, attributeTypes, DEFAULT_EDGE_TYPE, EXISTENCE_DEP_RELATION_TYPE, IDENTIFYING_DEP_RELATION_TYPE, MULTI_VALUED_ATTRIBUTE_TYPE, OPTIONAL_EDGE_TYPE, specializationTypes } from '../../utils/validation-constants';
-import { createMarker } from '../../utils/validation-utils';
+import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
 export class MultiValuedAttributeValidator {
@@ -33,6 +33,14 @@ export class MultiValuedAttributeValidator {
             return createMarker('error',
                 'El nombre del atributo multivaluado no puede estar vacío. Escribe el nombre del campo que puede tener múltiples valores (ej: "telefonos", "emails").',
                 node.id, 'ERR: atributoMultiv-sinNombre'
+            );
+        }
+
+        // Default name
+        if (hasDefaultName(name, 'NewMultiValuedAttribute')) {
+            return createMarker('error',
+                `"${name.split(':')[0]}" es el nombre por defecto. Asigna un nombre propio a este atributo multivaluado (ej: "telefonos", "emails").`,
+                node.id, 'ERR: atributoMultiv-nombreDefault'
             );
         }
 

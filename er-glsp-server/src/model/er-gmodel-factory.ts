@@ -94,7 +94,7 @@ export class ErGModelFactory implements GModelFactory {
 
     protected createWeakEntityNode(weakEntity: WeakEntity): GNode {
         return this.createBaseNodeBuilder(weakEntity, 'node:weakEntity', 'weak-entity-node', 100, 40)
-            .addLayoutOption('paddingTop', 10).addLayoutOption('paddingBottom', 10)
+            .addLayoutOption('paddingTop', 15).addLayoutOption('paddingBottom', 15)
             .addLayoutOption('paddingLeft', 5).addLayoutOption('paddingRight', 5)
             .add(this.createLabel(`${weakEntity.id}_label`, weakEntity.name))
             .build();

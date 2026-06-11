@@ -4,7 +4,7 @@ import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
 import { relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
-import { createMarker } from '../../utils/validation-utils';
+import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
 export class IdentifyingDependenceRelationValidator {
@@ -36,6 +36,14 @@ export class IdentifyingDependenceRelationValidator {
             );
         }
 
+        // Default name
+        if (hasDefaultName(name, 'NewIdentRelation')) {
+            return createMarker('error',
+                `"${name}" es el nombre por defecto. Asigna un nombre propio a esta dependencia en identificación (ej: "Se_compone_de", "Contiene").`,
+                node.id, 'ERR: dep-identificacion-nombreDefault'
+            );
+        }
+
         // No duplicate relation names across all relation types
         const sourceModel = this.modelState.sourceModel;
         if (sourceModel) {
@@ -51,6 +59,20 @@ export class IdentifyingDependenceRelationValidator {
                 return createMarker('error',
                     `Ya existe otra interrelación con el nombre "${name}". Cada interrelación (normal o dependencia) debe tener un nombre único en el modelo.`,
                     node.id, 'ERR: dep-identificacion-nombreDuplicado'
+                );
+            }
+        }
+
+        // Cardinality must be defined on all connections
+        if (sourceModel) {
+            const weightedEdges = sourceModel.weightedEdges.filter(e => e.targetId === node.id);
+            const hasUndefinedCardinality = weightedEdges.some(
+                e => !e.description || e.description.trim() === '' || e.description.trim().includes('New Weighted Edge')
+            );
+            if (hasUndefinedCardinality) {
+                return createMarker('error',
+                    'Todas las conexiones de la dependencia deben tener una cardinalidad definida. Haz doble clic en cada arista ponderada y escribe la cardinalidad.',
+                    node.id, 'ERR: dep-identificacion-sinCardinalidad'
                 );
             }
         }
