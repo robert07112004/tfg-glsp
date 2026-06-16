@@ -1,5 +1,6 @@
 import {
     AbstractModelValidator,
+    GEdge,
     GModelElement,
     GNode,
     Marker
@@ -18,6 +19,7 @@ import { WeakEntityValidator } from './validators/entity-validators/weak-entity-
 import { ExistenceDependenceRelationValidator } from './validators/relation-validators/existence-dependence-relation';
 import { IdentifyingDependenceRelationValidator } from './validators/relation-validators/identifying-dependence-relation';
 import { RelationValidator } from './validators/relation-validators/relation-validator';
+import { EdgeDirectionValidator } from './validators/edge-validators/edge-direction-validator';
 import { AllSpecializationsValidator } from './validators/specialization-validators/all-specializations-validator';
 
 @injectable()
@@ -63,7 +65,10 @@ export class ErModelValidator extends AbstractModelValidator {
     @inject(AllSpecializationsValidator)
     private allSpecializationsValidator!: AllSpecializationsValidator;
 
-    protected readonly validationMap = new Map<string, (node: GNode) => Marker | undefined>([
+    @inject(EdgeDirectionValidator)
+    private edgeDirectionValidator!: EdgeDirectionValidator;
+
+    protected readonly validationMap = new Map<string, (node: GNode) => Marker[]>([
         [ENTITY_TYPE, (node) => this.entityValidator.validate(node)],
         [WEAK_ENTITY_TYPE, (node) => this.weakEntityValidator.validate(node)],
         [RELATION_TYPE, (node) => this.relationValidator.validate(node)],
@@ -81,14 +86,13 @@ export class ErModelValidator extends AbstractModelValidator {
     ]);
 
     override doBatchValidation(element: GModelElement): Marker[] {
-        if (!(element instanceof GNode)) return [];
-
-        const validator = this.validationMap.get(element.type);
-        if (validator) {
-            const marker = validator(element);
-            return marker ? [marker] : [];
+        if (element instanceof GNode) {
+            const validator = this.validationMap.get(element.type);
+            return validator ? validator(element) : [];
         }
-
+        if (element instanceof GEdge) {
+            return this.edgeDirectionValidator.validate(element);
+        }
         return [];
     }
 

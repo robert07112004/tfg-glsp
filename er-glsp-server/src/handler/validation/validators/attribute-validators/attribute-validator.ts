@@ -15,71 +15,75 @@ export class AttributeValidator {
         return this.modelState.index as ErModelIndex;
     }
 
-    validate(node: GNode): Marker | undefined {
+    validate(node: GNode): Marker[] {
+        const markers: Marker[] = [];
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Not isolated
+        // An isolated node does not allow checking the rest of the rules
         if (incoming.length === 0 && outgoing.length === 0) {
-            return createMarker('error',
+            return [createMarker('error',
                 'Este atributo no está conectado a ninguna entidad o interrelación.',
                 node.id, 'ERR: atributo-aislado'
-            );
+            )];
         }
 
-        // Empty name
+        // Name: empty / default are mutually exclusive
         const name = SQLUtils.cleanNames(node);
         if (!name) {
-            return createMarker('error',
+            markers.push(createMarker('error',
                 'El nombre del atributo no puede estar vacío. Escribe el nombre del campo que representa este atributo en la base de datos (ej: "nombre", "fecha_nacimiento").',
                 node.id, 'ERR: atributo-sinNombre'
-            );
-        }
-
-        // Default name
-        if (hasDefaultName(name, 'NewAttribute')) {
-            return createMarker('error',
+            ));
+        } else if (hasDefaultName(name, 'NewAttribute')) {
+            markers.push(createMarker('error',
                 `"${name.split(':')[0]}" es el nombre por defecto. Asigna un nombre propio a este atributo (ej: "nombre", "fecha_nacimiento").`,
                 node.id, 'ERR: atributo-nombreDefault'
-            );
+            ));
         }
 
-        // Only normal or optional edges allowed on incoming
+        // Only normal or optional edges allowed on incoming, no specialization parents
+        let inEdgeErrorAdded = false;
+        let parentErrorAdded = false;
         for (const edge of incoming) {
-            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
-                return createMarker('error',
+            if (!inEdgeErrorAdded && edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                markers.push(createMarker('error',
                     'Los atributos solo pueden conectarse mediante aristas normales u opcionales.',
                     node.id, 'ERR: atributo-aristaEntradaInvalida'
-                );
+                ));
+                inEdgeErrorAdded = true;
             }
-
-            // Cannot connect to specializations
             const sourceNode = this.index.get(edge.sourceId) as GNode;
-            if (sourceNode && specializationTypes.includes(sourceNode.type)) {
-                return createMarker('error',
+            if (!parentErrorAdded && sourceNode && specializationTypes.includes(sourceNode.type)) {
+                markers.push(createMarker('error',
                     'Los atributos no pueden estar conectados a especializaciones.',
                     node.id, 'ERR: atributo-padreEspecializacion'
-                );
+                ));
+                parentErrorAdded = true;
             }
         }
 
         // Outgoing edges only to same-type attributes (composite attributes)
+        let outEdgeErrorAdded = false;
+        let childErrorAdded = false;
         for (const edge of outgoing) {
-            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
-                return createMarker('error',
+            if (!outEdgeErrorAdded && edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                markers.push(createMarker('error',
                     'Los atributos solo pueden conectarse mediante aristas normales u opcionales.',
                     node.id, 'ERR: atributo-aristaSalidaInvalida'
-                );
+                ));
+                outEdgeErrorAdded = true;
             }
             const targetNode = this.index.get(edge.targetId) as GNode;
-            if (targetNode && attributeTypes.includes(targetNode.type) && targetNode.type !== ATTRIBUTE_TYPE) {
-                return createMarker('error',
+            if (!childErrorAdded && targetNode && attributeTypes.includes(targetNode.type) && targetNode.type !== ATTRIBUTE_TYPE) {
+                markers.push(createMarker('error',
                     'Un atributo normal compuesto solo puede tener como hijos otros atributos normales.',
                     node.id, 'ERR: atributo-hijoInvalido'
-                );
+                ));
+                childErrorAdded = true;
             }
         }
 
-        return undefined;
+        return markers;
     }
 }

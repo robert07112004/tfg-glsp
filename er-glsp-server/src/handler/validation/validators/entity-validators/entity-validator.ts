@@ -15,47 +15,44 @@ export class EntityValidator {
         return this.modelState.index as ErModelIndex;
     }
 
-    validate(node: GNode): Marker | undefined {
+    validate(node: GNode): Marker[] {
+        const markers: Marker[] = [];
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Entity not connected to anything
+        // An isolated entity does not allow checking the rest of the rules
         if (incoming.length === 0 && outgoing.length === 0) {
-            return createMarker('error',
-                'Esta entidad no está conectada a nada. Debe participar en al menos una interrelación.',
+            return [createMarker('error',
+                'Esta entidad no está conectada a nada. Debe tener una PK para crear una tabla.',
                 node.id, 'ERR: entidad-aislada'
-            );
+            )];
         }
 
-        // Empty name
+        // Name: empty / default / duplicate
         const name = SQLUtils.cleanNames(node);
         if (!name) {
-            return createMarker('error',
+            markers.push(createMarker('error',
                 'El nombre de la entidad no puede estar vacío. Escribe un nombre que identifique a esta entidad (ej: "Cliente", "Producto").',
                 node.id, 'ERR: entidad-sinNombre'
-            );
-        }
-
-        // Default name
-        if (hasDefaultName(name, 'NewEntity')) {
-            return createMarker('error',
+            ));
+        } else if (hasDefaultName(name, 'NewEntity')) {
+            markers.push(createMarker('error',
                 `"${name}" es el nombre por defecto. Asigna un nombre propio a esta entidad (ej: "Cliente", "Producto").`,
                 node.id, 'ERR: entidad-nombreDefault'
-            );
-        }
-
-        // Duplicate entity name
-        const sourceModel = this.modelState.sourceModel;
-        if (sourceModel) {
-            const otherNames = [
-                ...sourceModel.entities.filter(e => e.id !== node.id).map(e => e.name.replace(/\s+/g, '').toLowerCase()),
-                ...sourceModel.weakEntities.map(e => e.name.replace(/\s+/g, '').toLowerCase())
-            ];
-            if (otherNames.includes(name.toLowerCase())) {
-                return createMarker('error',
-                    `Ya existe otra entidad con el nombre "${name}". Cada entidad debe tener un nombre único en el diagrama, ya que cada una genera una tabla diferente en SQL.`,
-                    node.id, 'ERR: entidad-nombreDuplicado'
-                );
+            ));
+        } else {
+            const sourceModel = this.modelState.sourceModel;
+            if (sourceModel) {
+                const otherNames = [
+                    ...sourceModel.entities.filter(e => e.id !== node.id).map(e => e.name.replace(/\s+/g, '').toLowerCase()),
+                    ...sourceModel.weakEntities.map(e => e.name.replace(/\s+/g, '').toLowerCase())
+                ];
+                if (otherNames.includes(name.toLowerCase())) {
+                    markers.push(createMarker('error',
+                        `Ya existe otra entidad con el nombre "${name}". Cada entidad debe tener un nombre único en el diagrama, ya que cada una genera una tabla diferente en SQL.`,
+                        node.id, 'ERR: entidad-nombreDuplicado'
+                    ));
+                }
             }
         }
 
@@ -71,16 +68,18 @@ export class EntityValidator {
 
         let hasPK = false;
         const attrNames: string[] = [];
+        let relationEdgeErrorAdded = false;
         for (const edge of outgoing) {
             const targetNode = this.index.get(edge.targetId) as GNode;
             if (!targetNode) continue;
 
             // Connections to relations must use weighted edges
-            if (edge.type !== WEIGHTED_EDGE_TYPE && relationTypes.includes(targetNode.type)) {
-                return createMarker('error',
+            if (!relationEdgeErrorAdded && edge.type !== WEIGHTED_EDGE_TYPE && relationTypes.includes(targetNode.type)) {
+                markers.push(createMarker('error',
                     'La conexión entre una entidad y una interrelación debe hacerse con una arista ponderada (la que lleva la cardinalidad).',
                     node.id, 'ERR: entidad-aristaRelacion'
-                );
+                ));
+                relationEdgeErrorAdded = true;
             }
 
             if ((edge.type === DEFAULT_EDGE_TYPE || edge.type === OPTIONAL_EDGE_TYPE) && attributeTypes.includes(targetNode.type)) {
@@ -92,24 +91,25 @@ export class EntityValidator {
 
         // Must have a PK unless it is a child of a specialization
         if (!hasPK && !isChildOfSpecialization) {
-            return createMarker('error',
+            markers.push(createMarker('error',
                 'Esta entidad no tiene atributo clave (PK). Toda entidad necesita al menos un atributo que identifique de forma única a cada instancia (excepto si es hija de una especialización).',
                 node.id, 'ERR: entidad-sinClave'
-            );
+            ));
         }
 
         // Duplicate attribute names within entity
         const seen = new Set<string>();
         for (const attrName of attrNames) {
             if (seen.has(attrName)) {
-                return createMarker('error',
+                markers.push(createMarker('error',
                     `Esta entidad tiene dos o más atributos con el nombre "${attrName}". Cada atributo debe tener un nombre único dentro de la entidad, ya que en SQL cada columna tiene un nombre distinto.`,
                     node.id, 'ERR: entidad-atributoDuplicado'
-                );
+                ));
+                break;
             }
             seen.add(attrName);
         }
 
-        return undefined;
+        return markers;
     }
 }

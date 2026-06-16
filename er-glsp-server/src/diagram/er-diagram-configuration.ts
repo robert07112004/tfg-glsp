@@ -55,10 +55,12 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
 
     get edgeTypeHints(): EdgeTypeHint[] {
         const entityTypes = [DefaultTypes.NODE_RECTANGLE, 'node:weakEntity'];
-        const relationTypes = [
+        const relationDependencyTypes = [
             DefaultTypes.NODE_DIAMOND,
             'node:existenceDependentRelation',
-            'node:identifyingDependentRelation',
+            'node:identifyingDependentRelation'
+        ];
+        const specializationTypes = [
             'node:partialExclusiveSpecialization',
             'node:totalExclusiveSpecialization',
             'node:partialOverlappedSpecialization',
@@ -72,20 +74,27 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
             'node:alternativeKeyAttribute'
         ];
 
-        const allMainNodes = [...entityTypes, ...relationTypes, ...attributeTypes];
-
-        const defaultEdgeConfig = {
-            deletable: true,
-            repositionable: true,
-            routable: true,
-            sourceElementTypeIds: allMainNodes,
-            targetElementTypeIds: allMainNodes
-        };
+        const baseEdgeConfig = { deletable: true, repositionable: true, routable: true };
 
         return [
-            { elementTypeId: DefaultTypes.EDGE, ...defaultEdgeConfig },
-            { elementTypeId: 'edge:weighted', ...defaultEdgeConfig },
-            { elementTypeId: 'edge:optional', ...defaultEdgeConfig },
+            {
+                elementTypeId: DefaultTypes.EDGE,
+                ...baseEdgeConfig,
+                sourceElementTypeIds: [...entityTypes, ...relationDependencyTypes, ...specializationTypes],
+                targetElementTypeIds: [...attributeTypes, ...specializationTypes, ...entityTypes]
+            },
+            {
+                elementTypeId: 'edge:weighted',
+                ...baseEdgeConfig,
+                sourceElementTypeIds: entityTypes,
+                targetElementTypeIds: relationDependencyTypes
+            },
+            {
+                elementTypeId: 'edge:optional',
+                ...baseEdgeConfig,
+                sourceElementTypeIds: [...entityTypes, ...relationDependencyTypes],
+                targetElementTypeIds: attributeTypes
+            }
         ];
     }
 }

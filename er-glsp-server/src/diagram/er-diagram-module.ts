@@ -57,6 +57,7 @@ import { CreateTotalExclusiveSpecializationNodeHandler } from '../handler/node-h
 import { CreateTotalOverlappedSpecializationNodeHandler } from '../handler/node-handlers/specialization-handlers/create-total-overlapped-specialization-node-handler';
 import { GenerateSqlActionHandler } from '../handler/sql-handler/generate-sql-handler';
 import { ErModelValidator } from '../handler/validation/diagram-validator';
+import { EdgeDirectionValidator } from '../handler/validation/validators/edge-validators/edge-direction-validator';
 import { AlternativeKeyAttributeValidator } from '../handler/validation/validators/attribute-validators/alternative-key-attribute-validator';
 import { AttributeValidator } from '../handler/validation/validators/attribute-validators/attribute-validator';
 import { DerivedAttributeValidator } from '../handler/validation/validators/attribute-validators/derived-attribute-validator';
@@ -140,6 +141,7 @@ export class ErDiagramModule extends DiagramModule {
         this.context.bind(ExistenceDependenceRelationValidator).toSelf();
         this.context.bind(IdentifyingDependenceRelationValidator).toSelf();
         this.context.bind(AllSpecializationsValidator).toSelf();
+        this.context.bind(EdgeDirectionValidator).toSelf();
         this.context.bind(ErModelValidator).toSelf().inSingletonScope();
         this.context.bind(SQLGenerator).toSelf().inSingletonScope();
         return ErModelValidator;

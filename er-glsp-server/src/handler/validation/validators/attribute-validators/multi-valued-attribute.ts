@@ -15,73 +15,78 @@ export class MultiValuedAttributeValidator {
         return this.modelState.index as ErModelIndex;
     }
 
-    validate(node: GNode): Marker | undefined {
+    validate(node: GNode): Marker[] {
+        const markers: Marker[] = [];
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
 
-        // Not isolated
+        // An isolated node does not allow checking the rest of the rules
         if (incoming.length === 0 && outgoing.length === 0) {
-            return createMarker('error',
+            return [createMarker('error',
                 'Este atributo multivaluado no está conectado a ninguna entidad.',
                 node.id, 'ERR: atributoMultiv-aislado'
-            );
+            )];
         }
 
-        // Empty name
+        // Name: empty / default are mutually exclusive
         const name = SQLUtils.cleanNames(node);
         if (!name) {
-            return createMarker('error',
+            markers.push(createMarker('error',
                 'El nombre del atributo multivaluado no puede estar vacío. Escribe el nombre del campo que puede tener múltiples valores (ej: "telefonos", "emails").',
                 node.id, 'ERR: atributoMultiv-sinNombre'
-            );
-        }
-
-        // Default name
-        if (hasDefaultName(name, 'NewMultiValuedAttribute')) {
-            return createMarker('error',
+            ));
+        } else if (hasDefaultName(name, 'NewMultiValuedAttribute')) {
+            markers.push(createMarker('error',
                 `"${name.split(':')[0]}" es el nombre por defecto. Asigna un nombre propio a este atributo multivaluado (ej: "telefonos", "emails").`,
                 node.id, 'ERR: atributoMultiv-nombreDefault'
-            );
+            ));
         }
 
-        // Only normal or optional edges
+        // Only normal or optional edges, no specializations or dependence relations as parents
+        let inEdgeErrorAdded = false;
+        let parentErrorAdded = false;
         for (const edge of incoming) {
-            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
-                return createMarker('error',
+            if (!inEdgeErrorAdded && edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                markers.push(createMarker('error',
                     'Los atributos multivaluados solo pueden conectarse mediante aristas normales u opcionales.',
                     node.id, 'ERR: atributoMultiv-aristaInvalida'
-                );
+                ));
+                inEdgeErrorAdded = true;
             }
-            // No specializations or dependence relations
             const sourceNode = this.index.get(edge.sourceId) as GNode;
-            if (sourceNode && (specializationTypes.includes(sourceNode.type) ||
+            if (!parentErrorAdded && sourceNode && (specializationTypes.includes(sourceNode.type) ||
                 sourceNode.type === IDENTIFYING_DEP_RELATION_TYPE ||
                 sourceNode.type === EXISTENCE_DEP_RELATION_TYPE)) {
-                return createMarker('error',
+                markers.push(createMarker('error',
                     'Los atributos multivaluados no pueden conectarse a especializaciones ni a dependencias.',
                     node.id, 'ERR: atributoMultiv-padreInvalido'
-                );
+                ));
+                parentErrorAdded = true;
             }
         }
 
-        // Outgoing edges can only go to normal and multivalued attributes (for composite mulitvalued)
+        // Outgoing edges can only go to normal and multivalued attributes (for composite multivalued)
+        let outEdgeErrorAdded = false;
+        let childErrorAdded = false;
         for (const edge of outgoing) {
-            if (edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
-                return createMarker('error',
+            if (!outEdgeErrorAdded && edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                markers.push(createMarker('error',
                     'Los atributos multivaluados solo pueden conectarse mediante aristas normales u opcionales.',
                     node.id, 'ERR: atributoMultiv-aristaSalidaInvalida'
-                );
+                ));
+                outEdgeErrorAdded = true;
             }
             const targetNode = this.index.get(edge.targetId) as GNode;
-            if (targetNode && attributeTypes.includes(targetNode.type) &&
+            if (!childErrorAdded && targetNode && attributeTypes.includes(targetNode.type) &&
                 targetNode.type !== ATTRIBUTE_TYPE && targetNode.type !== MULTI_VALUED_ATTRIBUTE_TYPE) {
-                return createMarker('error',
+                markers.push(createMarker('error',
                     'Un atributo multivaluado compuesto solo puede tener como hijos atributos normales o atributos multivaluados.',
                     node.id, 'ERR: atributoMultiv-hijoInvalido'
-                );
+                ));
+                childErrorAdded = true;
             }
         }
 
-        return undefined;
+        return markers;
     }
 }

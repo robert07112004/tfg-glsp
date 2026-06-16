@@ -5,7 +5,6 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { ErModelState } from '../../model/er-model-state';
 import { SQLGenerator } from '../generator/sql-generator';
-import { ErModelValidator } from '../validation/diagram-validator';
 
 export interface GenerateSqlAction extends Action {
     kind: typeof GenerateSqlAction.KIND;
@@ -23,21 +22,9 @@ export class GenerateSqlActionHandler implements ActionHandler {
     readonly actionKinds = [GenerateSqlAction.KIND];
 
     @inject(SQLGenerator) protected sqlGenerator: SQLGenerator;
-    @inject(ErModelValidator) protected validator: ErModelValidator;
     @inject(ErModelState) protected modelState: ErModelState;
 
     execute(action: GenerateSqlAction): Action[] {
-        const root = this.modelState.root;
-        const markers = this.validator.doBatchValidation(root);
-        const errors = markers.filter(m => m.kind === 'error');
-
-        if (errors.length > 0) {
-            return [MessageAction.create(
-                `No se puede generar SQL: el modelo tiene ${errors.length} error${errors.length > 1 ? 'es' : ''} de validación. Corrígelos y valida de nuevo.`,
-                { severity: 'WARNING' }
-            )];
-        }
-
         const modelUri = this.modelState.uri;
         if (!modelUri) {
             return [MessageAction.create('No se pudo determinar la ruta del modelo.', { severity: 'ERROR' })];

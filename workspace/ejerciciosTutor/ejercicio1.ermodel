@@ -326,14 +326,10 @@
     {
       "id": "b04013ff-670d-4883-be6d-14b7e9836331",
       "type": "keyAttribute",
-      "name": "nombre: varchar(20)",
+      "name": "nombre: VARCHAR(20)",
       "position": {
         "x": 172,
         "y": 245
-      },
-      "size": {
-        "width": 123.28913879394531,
-        "height": 27
       }
     },
     {

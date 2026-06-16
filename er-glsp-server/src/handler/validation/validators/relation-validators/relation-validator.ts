@@ -15,61 +15,33 @@ export class RelationValidator {
         return this.modelState.index as ErModelIndex;
     }
 
-    validate(node: GNode): Marker | undefined {
+    validate(node: GNode): Marker[] {
+        const markers: Marker[] = [];
         const outgoing = this.index.getOutgoingEdges(node);
         const incoming = this.index.getIncomingEdges(node);
+        const sourceModel = this.modelState.sourceModel;
 
-        // Relation not connected to anything
+        // An isolated node does not allow checking the rest of the rules
         if (incoming.length === 0 && outgoing.length === 0) {
-            return createMarker('error',
+            return [createMarker('error',
                 'Esta interrelación no está conectada a nada. Debe conectarse a al menos dos entidades con aristas ponderadas.',
                 node.id, 'ERR: relacion-aislada'
-            );
+            )];
         }
 
-        // Empty name
+        // Name: empty / default / duplicate are mutually exclusive
         const name = SQLUtils.cleanNames(node);
         if (!name) {
-            return createMarker('error',
+            markers.push(createMarker('error',
                 'El nombre de la interrelación no puede estar vacío. Escribe un nombre que describa la relación entre las entidades (ej: "Compra", "Trabaja_en").',
                 node.id, 'ERR: relacion-sinNombre'
-            );
-        }
-
-        // Default name
-        if (hasDefaultName(name, 'NewRelationNode')) {
-            return createMarker('error',
+            ));
+        } else if (hasDefaultName(name, 'NewRelationNode')) {
+            markers.push(createMarker('error',
                 `"${name}" es el nombre por defecto. Asigna un nombre propio a esta interrelación (ej: "Compra", "Trabaja_en").`,
                 node.id, 'ERR: relacion-nombreDefault'
-            );
-        }
-
-        // At least 2 entity connections (incoming weighted edges)
-        const entityConnections = incoming.filter(e => e.type === WEIGHTED_EDGE_TYPE);
-        if (entityConnections.length < 2) {
-            return createMarker('error',
-                'Una interrelación debe estar conectada a al menos dos entidades. Conecta las entidades participantes usando aristas ponderadas.',
-                node.id, 'ERR: relacion-pocasEntidades'
-            );
-        }
-
-        // All entity connections must have cardinality defined
-        const sourceModel = this.modelState.sourceModel;
-        if (sourceModel) {
-            const weightedEdges = sourceModel.weightedEdges.filter(e => e.targetId === node.id);
-            const hasUndefinedCardinality = weightedEdges.some(
-                e => !e.description || e.description.trim() === '' || e.description.trim().includes('New Weighted Edge')
-            );
-            if (hasUndefinedCardinality) {
-                return createMarker('error',
-                    'Todas las conexiones de la interrelación deben tener una cardinalidad definida. Haz doble clic en cada arista ponderada y escribe la cardinalidad (ej: 1..1, 1..N, 0..M).',
-                    node.id, 'ERR: relacion-sinCardinalidad'
-                );
-            }
-        }
-
-        // No duplicate relation names across all relation types
-        if (sourceModel) {
+            ));
+        } else if (sourceModel) {
             const normalize = (n: string) => n.replace(/\s+/g, '').toLowerCase();
             const currentName = normalize(name);
             const allRelationNames = [
@@ -77,12 +49,34 @@ export class RelationValidator {
                 ...(sourceModel.existenceDependentRelations || []),
                 ...(sourceModel.identifyingDependentRelations || [])
             ].map(r => normalize(r.name));
-            const count = allRelationNames.filter(n => n === currentName).length;
-            if (count > 1) {
-                return createMarker('error',
+            if (allRelationNames.filter(n => n === currentName).length > 1) {
+                markers.push(createMarker('error',
                     `Ya existe otra interrelación con el nombre "${name}". Cada interrelación (normal o dependencia) debe tener un nombre único en el modelo.`,
                     node.id, 'ERR: relacion-nombreDuplicado'
-                );
+                ));
+            }
+        }
+
+        // At least 2 entity connections (incoming weighted edges)
+        const entityConnections = incoming.filter(e => e.type === WEIGHTED_EDGE_TYPE);
+        if (entityConnections.length < 2) {
+            markers.push(createMarker('error',
+                'Una interrelación debe estar conectada a al menos dos entidades. Conecta las entidades participantes usando aristas ponderadas.',
+                node.id, 'ERR: relacion-pocasEntidades'
+            ));
+        }
+
+        // All entity connections must have cardinality defined
+        if (sourceModel) {
+            const weightedEdges = sourceModel.weightedEdges.filter(e => e.targetId === node.id);
+            const hasUndefinedCardinality = weightedEdges.some(
+                e => !e.description || e.description.trim() === '' || e.description.trim().includes('New Weighted Edge')
+            );
+            if (hasUndefinedCardinality) {
+                markers.push(createMarker('error',
+                    'Todas las conexiones de la interrelación deben tener una cardinalidad definida. Haz doble clic en cada arista ponderada y escribe la cardinalidad (ej: 1..1, 1..N, 0..M).',
+                    node.id, 'ERR: relacion-sinCardinalidad'
+                ));
             }
         }
 
@@ -95,14 +89,15 @@ export class RelationValidator {
             const attrName = SQLUtils.cleanNames(targetNode).toLowerCase();
             if (!attrName) continue;
             if (seen.has(attrName)) {
-                return createMarker('error',
+                markers.push(createMarker('error',
                     `La interrelación tiene dos o más atributos con el nombre "${attrName}". Cada atributo debe tener un nombre único.`,
                     node.id, 'ERR: relacion-atributoDuplicado'
-                );
+                ));
+                break;
             }
             seen.add(attrName);
         }
 
-        return undefined;
+        return markers;
     }
 }
