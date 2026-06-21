@@ -24,7 +24,7 @@ export class CreateDerivedAttributeHandler extends BaseCreateNodeHandler<Derived
     protected override createErNode(position: Point, currentCount: number): DerivedAttribute {
         const node = super.createErNode(position, currentCount);
 
-        node.name = `${this.namePrefix}${currentCount + 1}: integer`;
+        node.name = `${this.namePrefix}${currentCount + 1}: int`;
         node.equation = 'Equation of Derived Attribute';
 
         return node;

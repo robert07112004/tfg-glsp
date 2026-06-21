@@ -1,4 +1,4 @@
-import { Action, ActionHandler, MessageAction } from '@eclipse-glsp/server';
+import { Action, ActionHandler, MessageAction, SOURCE_URI_ARG } from '@eclipse-glsp/server';
 import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import * as path from 'path';
@@ -25,29 +25,25 @@ export class GenerateSqlActionHandler implements ActionHandler {
     @inject(ErModelState) protected modelState: ErModelState;
 
     execute(action: GenerateSqlAction): Action[] {
-        const modelUri = this.modelState.uri;
+        const modelUri = this.modelState.get(SOURCE_URI_ARG) as string | undefined;
+        if (!modelUri) {
+            return [MessageAction.create('No se pudo determinar la ruta del modelo.', { severity: 'ERROR' })];
+        }
+        const sql = this.sqlGenerator.generate();
+
+        /*const modelUri = this.modelState.uri;
         if (!modelUri) {
             return [MessageAction.create('No se pudo determinar la ruta del modelo.', { severity: 'ERROR' })];
         }
 
         const sql = this.sqlGenerator.generate();
-
+*/
         try {
-            let modelPath: string;
-            if (modelUri.startsWith('file:///')) {
-                modelPath = decodeURIComponent(modelUri.replace('file:///', ''));
-                modelPath = modelPath.replace(/\//g, path.sep);
-            } else if (modelUri.startsWith('file://')) {
-                modelPath = fileURLToPath(modelUri);
-            } else {
-                modelPath = modelUri;
-            }
-
+            const modelPath = modelUri.startsWith('file://') ? fileURLToPath(modelUri) : modelUri;
             const modelDir = path.dirname(modelPath);
             const baseName = path.basename(modelPath, path.extname(modelPath));
             const filePath = path.join(modelDir, `${baseName}.sql`);
             fs.writeFileSync(filePath, sql, 'utf-8');
-
             return [MessageAction.create(
                 `SQL generado correctamente en: ${path.basename(filePath)}`,
                 { severity: 'INFO' }

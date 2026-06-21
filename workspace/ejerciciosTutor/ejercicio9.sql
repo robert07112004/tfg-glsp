@@ -1,4 +1,4 @@
--- Fecha: 25/5/2026, 22:42:57
+-- Fecha: 20/6/2026, 17:50:05
 
 CREATE TABLE hospital (
     nombre_h VARCHAR(20) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE hospital_tlf (
 );
 
 CREATE TABLE paciente (
-    n_paciente INTEGER NOT NULL,
+    n_paciente INT NOT NULL,
     dni VARCHAR(9) NOT NULL,
     nom_pac VARCHAR(20) NOT NULL,
     dir VARCHAR(20) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE paciente (
 );
 
 CREATE TABLE sala (
-    num_sala INTEGER NOT NULL,
+    num_sala INT NOT NULL,
     hospital_nombre_h VARCHAR(20) NOT NULL,
     PRIMARY KEY (num_sala, hospital_nombre_h),
     FOREIGN KEY (hospital_nombre_h) REFERENCES hospital(nombre_h) ON DELETE CASCADE
@@ -34,7 +34,7 @@ CREATE TABLE sala (
 
 CREATE TABLE acude (
     hospital_nombre_h VARCHAR(20) NOT NULL,
-    paciente_n_paciente INTEGER NOT NULL,
+    paciente_n_paciente INT NOT NULL,
     PRIMARY KEY (hospital_nombre_h, paciente_n_paciente),
     FOREIGN KEY (hospital_nombre_h) REFERENCES hospital(nombre_h) ON DELETE CASCADE,
     FOREIGN KEY (paciente_n_paciente) REFERENCES paciente(n_paciente) ON DELETE CASCADE
@@ -53,10 +53,10 @@ CREATE TABLE personal (
 );
 
 CREATE TABLE admision (
-    num_adm INTEGER NOT NULL,
+    num_adm INT NOT NULL,
     fecha DATE NOT NULL,
-    paciente_n_paciente INTEGER NOT NULL,
-    sala_num_sala INTEGER NULL,
+    paciente_n_paciente INT NOT NULL,
+    sala_num_sala INT NULL,
     sala_hospital_nombre_h VARCHAR(20) NULL,
     PRIMARY KEY (num_adm),
     FOREIGN KEY (paciente_n_paciente) REFERENCES paciente(n_paciente) ON DELETE NO ACTION,
@@ -65,7 +65,7 @@ CREATE TABLE admision (
 
 CREATE TABLE administracion (
     dni VARCHAR(9) NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'administracion' NOT NULL,
+    tipo ENUM('administracion', 'sanitarios', 'Otro') DEFAULT 'administracion' NOT NULL,
     PRIMARY KEY (dni),
     CHECK (tipo = 'administracion'),
     FOREIGN KEY (dni, tipo) REFERENCES personal(dni, tipo_personal) ON DELETE CASCADE
@@ -73,7 +73,7 @@ CREATE TABLE administracion (
 
 CREATE TABLE sanitarios (
     dni VARCHAR(9) NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'sanitarios' NOT NULL,
+    tipo ENUM('administracion', 'sanitarios', 'Otro') DEFAULT 'sanitarios' NOT NULL,
     tipo_sanitarios ENUM('ats', 'medico') NOT NULL,
     PRIMARY KEY (dni),
     CHECK (tipo = 'sanitarios'),
@@ -83,7 +83,7 @@ CREATE TABLE sanitarios (
 
 CREATE TABLE ats (
     dni VARCHAR(9) NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'ats' NOT NULL,
+    tipo ENUM('ats', 'medico') DEFAULT 'ats' NOT NULL,
     PRIMARY KEY (dni),
     CHECK (tipo = 'ats'),
     FOREIGN KEY (dni, tipo) REFERENCES sanitarios(dni, tipo_sanitarios) ON DELETE CASCADE
@@ -91,7 +91,7 @@ CREATE TABLE ats (
 
 CREATE TABLE medico (
     dni VARCHAR(9) NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'medico' NOT NULL,
+    tipo ENUM('ats', 'medico') DEFAULT 'medico' NOT NULL,
     especialidad VARCHAR(20) NOT NULL,
     PRIMARY KEY (dni),
     CHECK (tipo = 'medico'),
@@ -100,7 +100,7 @@ CREATE TABLE medico (
 
 CREATE TABLE tratamiento (
     nom_tratamiento VARCHAR(20) NOT NULL,
-    admision_num_adm INTEGER NOT NULL,
+    admision_num_adm INT NOT NULL,
     medico_dni VARCHAR(9) NULL,
     PRIMARY KEY (nom_tratamiento, admision_num_adm),
     FOREIGN KEY (admision_num_adm) REFERENCES admision(num_adm) ON DELETE CASCADE,
@@ -111,7 +111,7 @@ CREATE TABLE resultado (
     fecha DATE NOT NULL,
     hora TIME NOT NULL,
     tratamiento_nom_tratamiento VARCHAR(20) NOT NULL,
-    admision_num_adm INTEGER NOT NULL,
+    admision_num_adm INT NOT NULL,
     comentario VARCHAR(20) NOT NULL,
     PRIMARY KEY (fecha, hora, tratamiento_nom_tratamiento, admision_num_adm),
     FOREIGN KEY (tratamiento_nom_tratamiento, admision_num_adm) REFERENCES tratamiento(nom_tratamiento, admision_num_adm) ON DELETE CASCADE

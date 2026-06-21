@@ -23,7 +23,7 @@ export class CreateMultiValuedAttributeHandler extends BaseCreateNodeHandler<Mul
 
     protected override createErNode(position: Point, currentCount: number): MultiValuedAttribute {
         const node = super.createErNode(position, currentCount);
-        node.name = `${this.namePrefix}${currentCount + 1}: integer`;
+        node.name = `${this.namePrefix}${currentCount + 1}: int`;
         return node;
     }
 }

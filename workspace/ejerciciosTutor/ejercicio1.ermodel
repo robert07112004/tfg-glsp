@@ -246,12 +246,12 @@
       "type": "attribute",
       "name": "conservación: varchar(20)",
       "position": {
-        "x": 447,
-        "y": 613
+        "x": 547,
+        "y": 623
       },
       "size": {
-        "width": 133.685302734375,
-        "height": 25
+        "width": 164.6875,
+        "height": 26
       }
     },
     {
@@ -441,7 +441,8 @@
       "id": "f26e6c9d-1a89-4aea-99ef-6ad8ce8e8a6c",
       "type": "transition",
       "sourceId": "7984cfb6-fa3b-4534-87d5-baa82a2ce080",
-      "targetId": "c73fa876-cd1a-4119-a456-479ff1b1acac"
+      "targetId": "c73fa876-cd1a-4119-a456-479ff1b1acac",
+      "routingPoints": []
     },
     {
       "id": "52b82247-bb64-4cfd-9958-2794d0084c62",

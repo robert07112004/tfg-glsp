@@ -23,7 +23,7 @@ export class CreateAttributeHandler extends BaseCreateNodeHandler<Attribute> {
 
     protected override createErNode(position: Point, currentCount: number): Attribute {
         const node = super.createErNode(position, currentCount);
-        node.name = `${this.namePrefix}${currentCount + 1}: integer`;
+        node.name = `${this.namePrefix}${currentCount + 1}: int`;
         return node;
     }
 }

@@ -23,7 +23,7 @@ export class CreateAlternativeKeyAttributeHandler extends BaseCreateNodeHandler<
 
     protected override createErNode(position: Point, currentCount: number): AlternativeKeyAttribute {
         const node = super.createErNode(position, currentCount);
-        node.name = `${this.namePrefix}${currentCount + 1}: integer`;
+        node.name = `${this.namePrefix}${currentCount + 1}: int`;
         return node;
     }
 }

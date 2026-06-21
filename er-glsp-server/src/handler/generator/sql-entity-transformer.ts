@@ -42,7 +42,10 @@ export class EntityTransformer {
 
         if (isExclusive) {
             const discriminatorCol = specInfo.discriminatorCol ?? `tipo_${specInfo.fatherName}`;
-            columns.push(`    tipo VARCHAR(20) DEFAULT '${tableName}' NOT NULL`);
+            const enumValues = specInfo.childNames.map(n => `'${n}'`).join(', ');
+            const isPartial = specInfo.specType === 'partialExclusiveSpecialization';
+            const enumType = isPartial ? `ENUM(${enumValues}, 'Otro')` : `ENUM(${enumValues})`;
+            columns.push(`    tipo ${enumType} DEFAULT '${tableName}' NOT NULL`);
             extraConstraints.push(`    CHECK (tipo = '${tableName}')`);
             const fkColsEx = [...pkNames, 'tipo'].join(', ');
             const refColsEx = [...pkNames, discriminatorCol].join(', ');

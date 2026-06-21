@@ -3,10 +3,10 @@
   "version": "2.5.0",
   "private": true,
   "homepage": "https://www.eclipse.org/glsp/",
-  "bugs": "https://github.com/eclipse-glsp/glsp/issues",
+  "bugs": "https://github.com/robert07112004/tfg-glsp/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eclipse-glsp/glsp-examples.git"
+    "url": "https://github.com/robert07112004/tfg-glsp"
   },
   "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR MIT)",
   "author": {
