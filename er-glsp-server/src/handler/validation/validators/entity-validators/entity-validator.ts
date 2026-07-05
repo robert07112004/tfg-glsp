@@ -69,6 +69,7 @@ export class EntityValidator {
         let hasPK = false;
         const attrNames: string[] = [];
         let relationEdgeErrorAdded = false;
+        let attrEdgeErrorAdded = false;
         for (const edge of outgoing) {
             const targetNode = this.index.get(edge.targetId) as GNode;
             if (!targetNode) continue;
@@ -82,10 +83,19 @@ export class EntityValidator {
                 relationEdgeErrorAdded = true;
             }
 
-            if ((edge.type === DEFAULT_EDGE_TYPE || edge.type === OPTIONAL_EDGE_TYPE) && attributeTypes.includes(targetNode.type)) {
-                if (targetNode.type === KEY_ATTRIBUTE_TYPE) hasPK = true;
-                const attrName = SQLUtils.cleanNames(targetNode).toLowerCase();
-                if (attrName) attrNames.push(attrName);
+            if (attributeTypes.includes(targetNode.type)) {
+                if (!attrEdgeErrorAdded && edge.type !== DEFAULT_EDGE_TYPE && edge.type !== OPTIONAL_EDGE_TYPE) {
+                    markers.push(createMarker('error',
+                        'Los atributos de una entidad deben conectarse con aristas normales u opcionales.',
+                        node.id, 'ERR: entidad-aristaAtributo'
+                    ));
+                    attrEdgeErrorAdded = true;
+                }
+                if (edge.type === DEFAULT_EDGE_TYPE || edge.type === OPTIONAL_EDGE_TYPE) {
+                    if (targetNode.type === KEY_ATTRIBUTE_TYPE) hasPK = true;
+                    const attrName = SQLUtils.cleanNames(targetNode).toLowerCase();
+                    if (attrName) attrNames.push(attrName);
+                }
             }
         }
 

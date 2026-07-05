@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
-import { attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
+import { attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
@@ -78,19 +78,6 @@ export class IdentifyingDependenceRelationValidator {
                 'Una dependencia en identificación siempre debe ser de cardinalidad 1:N: la entidad fuerte participa con cardinalidad 1 y la entidad débil con N. Revisa las cardinalidades en las aristas ponderadas.',
                 node.id, 'ERR: dep-identificacion-cardinalidadInvalida'
             ));
-        }
-
-        // Cannot connect to other relations
-        let relationConnError = false;
-        for (const edge of incoming) {
-            const sourceNode = this.index.get(edge.sourceId);
-            if (!relationConnError && sourceNode && relationTypes.includes(sourceNode.type)) {
-                markers.push(createMarker('error',
-                    'Una dependencia en identificación no puede conectarse a otras interrelaciones.',
-                    node.id, 'ERR: dep-identificacion-conexionRelacion'
-                ));
-                relationConnError = true;
-            }
         }
 
         // At least 2 entity connections (incoming weighted edges)

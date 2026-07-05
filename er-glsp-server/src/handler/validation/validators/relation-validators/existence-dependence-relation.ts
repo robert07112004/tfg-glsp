@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { ErModelIndex } from '../../../../model/er-model-index';
 import { ErModelState } from '../../../../model/er-model-state';
 import { SQLUtils } from '../../../generator/sql-utils';
-import { attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, relationTypes, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
+import { attributeTypes, DEFAULT_EDGE_TYPE, OPTIONAL_EDGE_TYPE, WEIGHTED_EDGE_TYPE } from '../../utils/validation-constants';
 import { createMarker, hasDefaultName } from '../../utils/validation-utils';
 
 @injectable()
@@ -54,19 +54,6 @@ export class ExistenceDependenceRelationValidator {
                     `Ya existe otra interrelación con el nombre "${name}". Cada interrelación (normal o dependencia) debe tener un nombre único en el modelo.`,
                     node.id, 'ERR: dep-existencia-nombreDuplicado'
                 ));
-            }
-        }
-
-        // Cannot connect to other relations
-        let relationConnError = false;
-        for (const edge of incoming) {
-            const sourceNode = this.index.get(edge.sourceId);
-            if (!relationConnError && sourceNode && relationTypes.includes(sourceNode.type)) {
-                markers.push(createMarker('error',
-                    'Una dependencia en existencia no puede conectarse a otras interrelaciones.',
-                    node.id, 'ERR: dep-existencia-conexionRelacion'
-                ));
-                relationConnError = true;
             }
         }
 

@@ -1,4 +1,4 @@
-import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode, GPort } from '@eclipse-glsp/server';
+import { DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 import { inject, injectable } from 'inversify';
 import { AlternativeKeyAttribute, Attribute, DerivedAttribute, Entity, ErEdge, ErNode, ExistenceDependentRelation, IdentifyingDependentRelation, KeyAttribute, MultiValuedAttribute, OptionalAttributeEdge, PartialExclusiveSpecialization, PartialOverlappedSpecialization, Relation, TotalExclusiveSpecialization, TotalOverlappedSpecialization, Transition, WeakEntity, WeightedEdge } from './er-model';
 import { ErModelState } from './er-model-state';
@@ -34,8 +34,6 @@ export class ErGModelFactory implements GModelFactory {
             ...(erModel.weightedEdges || []).map(we => this.createWeightedEdge(we)),
             ...(erModel.optionalAttributeEdges || []).map(oae => this.createOptionalAttributeEdge(oae))
         ]
-
-        this.updatePortPositions(childEdges, childNodes);
 
         const newRoot = GGraph.builder()
             .id(erModel.id)
@@ -253,37 +251,6 @@ export class ErGModelFactory implements GModelFactory {
             }
         }
         return cardinalityText;
-    }
-
-    private updatePortPositions(edges: GEdge[], nodes: GNode[]): void {
-        const ENTITY_WIDTH = 100;
-        const ENTITY_HEIGHT = 40;
-        const RELATION_SIZE = 60;
-        const nodeMap = new Map<string, GNode>(nodes.map(n => [n.id, n]));
-        const t = 0.3;
-
-        edges.forEach(edge => {
-            if (edge.type === 'edge:weighted') {
-                const source = nodeMap.get(edge.sourceId);
-                const target = nodeMap.get(edge.targetId);
-                const port = edge.children?.find(c => c.type === 'port:constraint') as GPort;
-
-                if (source?.position && target?.position && port) {
-                    const sCenter = {
-                        x: source.position.x + (source.size?.width ?? ENTITY_WIDTH) / 2,
-                        y: source.position.y + (source.size?.height ?? ENTITY_HEIGHT) / 2
-                    };
-                    const tCenter = {
-                        x: target.position.x + (target.size?.width ?? RELATION_SIZE) / 2,
-                        y: target.position.y + (target.size?.height ?? RELATION_SIZE) / 2
-                    };
-                    port.position = {
-                        x: (1 - t) * sCenter.x + t * tCenter.x,
-                        y: (1 - t) * sCenter.y + t * tCenter.y
-                    };
-                }
-            }
-        });
     }
 
 }

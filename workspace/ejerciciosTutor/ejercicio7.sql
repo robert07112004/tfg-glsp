@@ -1,4 +1,4 @@
--- Fecha: 25/5/2026, 19:23:07
+-- Fecha: 27/6/2026, 17:38:22
 
 CREATE TABLE titular (
     dni VARCHAR(9) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE cliente (
 );
 
 CREATE TABLE agencia (
-    codigo INTEGER NOT NULL,
+    codigo INT NOT NULL,
     fax VARCHAR(20) NOT NULL,
     dir VARCHAR(20) NOT NULL,
     tlf VARCHAR(9) NOT NULL,
@@ -26,19 +26,19 @@ CREATE TABLE agencia (
 
 CREATE TABLE vendedor (
     dni VARCHAR(9) NOT NULL,
-    agencia_codigo INTEGER NULL,
+    agencia_codigo INT NULL,
     PRIMARY KEY (dni),
     FOREIGN KEY (agencia_codigo) REFERENCES agencia(codigo) ON DELETE SET NULL
 );
 
 CREATE TABLE inmueble (
-    codigo INTEGER NOT NULL,
+    codigo INT NOT NULL,
     superficie FLOAT NOT NULL,
     dir VARCHAR(20) NOT NULL,
     propietario VARCHAR(20) NOT NULL,
     tipo_inmueble ENUM('local_comercial', 'piso', 'Otro') NULL,
     tipo_inmueble_2 ENUM('venta', 'alquiler') NOT NULL,
-    agencia_codigo INTEGER NULL,
+    agencia_codigo INT NULL,
     PRIMARY KEY (codigo),
     UNIQUE (codigo, tipo_inmueble),
     UNIQUE (codigo, tipo_inmueble_2),
@@ -46,8 +46,8 @@ CREATE TABLE inmueble (
 );
 
 CREATE TABLE local_comercial (
-    codigo INTEGER NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'local_comercial' NOT NULL,
+    codigo INT NOT NULL,
+    tipo ENUM('local_comercial', 'piso', 'Otro') DEFAULT 'local_comercial' NOT NULL,
     licencia VARCHAR(20) NOT NULL,
     PRIMARY KEY (codigo),
     CHECK (tipo = 'local_comercial'),
@@ -55,20 +55,20 @@ CREATE TABLE local_comercial (
 );
 
 CREATE TABLE piso (
-    codigo INTEGER NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'piso' NOT NULL,
-    n_hab INTEGER NOT NULL,
+    codigo INT NOT NULL,
+    tipo ENUM('local_comercial', 'piso', 'Otro') DEFAULT 'piso' NOT NULL,
+    n_hab INT NOT NULL,
     gas VARCHAR(20) NOT NULL,
-    n_baños INTEGER NOT NULL,
-    int_ext INTEGER NOT NULL,
+    n_banios INT NOT NULL,
+    int_ext INT NOT NULL,
     PRIMARY KEY (codigo),
     CHECK (tipo = 'piso'),
     FOREIGN KEY (codigo, tipo) REFERENCES inmueble(codigo, tipo_inmueble) ON DELETE CASCADE
 );
 
 CREATE TABLE venta (
-    codigo INTEGER NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'venta' NOT NULL,
+    codigo INT NOT NULL,
+    tipo ENUM('venta', 'alquiler') DEFAULT 'venta' NOT NULL,
     hipoteca VARCHAR(20) NOT NULL,
     precio_v FLOAT NOT NULL,
     PRIMARY KEY (codigo),
@@ -77,8 +77,8 @@ CREATE TABLE venta (
 );
 
 CREATE TABLE alquiler (
-    codigo INTEGER NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'alquiler' NOT NULL,
+    codigo INT NOT NULL,
+    tipo ENUM('venta', 'alquiler') DEFAULT 'alquiler' NOT NULL,
     precio_a FLOAT NOT NULL,
     fianza FLOAT NOT NULL,
     PRIMARY KEY (codigo),
@@ -95,9 +95,9 @@ CREATE TABLE asigna (
 );
 
 CREATE TABLE reserva (
-    inmueble_codigo INTEGER NOT NULL,
+    inmueble_codigo INT NOT NULL,
     cliente_dni VARCHAR(9) NOT NULL,
-    señal FLOAT NOT NULL,
+    senial FLOAT NOT NULL,
     PRIMARY KEY (inmueble_codigo, cliente_dni),
     FOREIGN KEY (inmueble_codigo) REFERENCES inmueble(codigo) ON DELETE CASCADE,
     FOREIGN KEY (cliente_dni) REFERENCES cliente(dni) ON DELETE CASCADE

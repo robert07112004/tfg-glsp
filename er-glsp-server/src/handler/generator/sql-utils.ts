@@ -53,22 +53,13 @@ export class SQLUtils {
 
     /**
      * Determines whether an edge description represents the "many" side of a relationship.
-     *
      * Handles both letter-based notation ("1..N", "0..M") and specific numeric bounds
      * ("2..30", "(1,5)", "1..2") so that cardinality detection is robust regardless of
      * how the user labeled the weighted edge in the diagram.
-     *
-     * Strategy:
-     *   1. If description contains N or M → many.
-     *   2. Otherwise extract all numbers and treat the LAST one as the max value.
-     *      If max > 1 → many.  e.g. "2..30" → [2,30] → max 30 > 1 → true.
-     *                          e.g. "1..1"  → [1,1]  → max 1  = 1 → false.
      */
     static isMany(description: string): boolean {
         const desc = (description || '').toUpperCase().trim();
-        // Explicit N or M → many (preserves existing behaviour for "1..N", "0..M" etc.)
         if (desc.includes('N') || desc.includes('M')) return true;
-        // Numeric max: take the last integer in the description as the maximum value
         const nums = desc.match(/\d+/g);
         if (nums && nums.length > 0) {
             const max = parseInt(nums[nums.length - 1], 10);
@@ -79,11 +70,7 @@ export class SQLUtils {
 
     /**
      * Strips the trailing "_disc" convention suffix that users append to discriminator
-     * attribute names so the generator can identify them.  The suffix must not appear
-     * in the generated SQL column names.
-     *   "num_sala_disc"  →  "num_sala"
-     *   "fecha_disc"     →  "fecha"
-     *   "nombre"         →  "nombre"   (unchanged)
+     * attribute names so the generator can identify them.
      */
     static stripDisc(name: string): string {
         return name.replace(/_disc$/i, '');

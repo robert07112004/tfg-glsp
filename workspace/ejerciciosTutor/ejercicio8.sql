@@ -1,4 +1,4 @@
--- Fecha: 25/5/2026, 19:49:20
+-- Fecha: 27/6/2026, 17:33:49
 
 CREATE TABLE empleado (
     n_ss VARCHAR(20) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE conc_beca (
 
 CREATE TABLE director (
     n_ss VARCHAR(20) NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'director' NOT NULL,
+    tipo ENUM('director', 'no_director') DEFAULT 'director' NOT NULL,
     departamento_nombre VARCHAR(20) NOT NULL,
     PRIMARY KEY (n_ss),
     CHECK (tipo = 'director'),
@@ -42,10 +42,14 @@ CREATE TABLE director (
 
 CREATE TABLE no_director (
     n_ss VARCHAR(20) NOT NULL,
-    tipo VARCHAR(20) DEFAULT 'no_director' NOT NULL,
+    tipo ENUM('director', 'no_director') DEFAULT 'no_director' NOT NULL,
     departamento_nombre VARCHAR(20) NULL,
+    es_r_ventas BOOLEAN DEFAULT FALSE NOT NULL,
+    es_ingeniero BOOLEAN DEFAULT FALSE NOT NULL,
     PRIMARY KEY (n_ss),
     CHECK (tipo = 'no_director'),
+    UNIQUE (n_ss, es_r_ventas),
+    UNIQUE (n_ss, es_ingeniero),
     FOREIGN KEY (n_ss, tipo) REFERENCES empleado(n_ss, tipo_empleado) ON DELETE CASCADE,
     FOREIGN KEY (departamento_nombre) REFERENCES departamento(nombre) ON DELETE SET NULL
 );

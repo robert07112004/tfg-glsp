@@ -16,7 +16,7 @@ import { createMarker } from '../../utils/validation-utils';
 /**
  * Validates the direction (source -> target) of every edge. The SQL generator
  * assumes a fixed orientation for each edge type, so an edge drawn backwards
- * would silently produce wrong SQL. This validator reports such edges instead.
+ * would silently produce wrong SQL.
  */
 @injectable()
 export class EdgeDirectionValidator {
@@ -31,11 +31,8 @@ export class EdgeDirectionValidator {
         const source = this.index.get(edge.sourceId) as GNode | undefined;
         const target = this.index.get(edge.targetId) as GNode | undefined;
 
-        // Dangling edges are removed by the delete-cascade logic; nothing to check here
         if (!source || !target) return [];
-
         if (this.isValidDirection(edge.type, source.type, target.type)) return [];
-
         return [createMarker('error', this.messageFor(edge.type), edge.id, 'ERR: arista-direccionInvalida')];
     }
 
@@ -70,7 +67,7 @@ export class EdgeDirectionValidator {
             return false;
         }
 
-        // Unknown edge type: do not block
+        // Unknown edge type, do not block
         return true;
     }
 

@@ -48,22 +48,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             const msg = message as any;
             if (msg?.action) {
                 const action = msg.action;
-
-                if (action.kind === 'setMarkers') {
-                    const reason = action.reason as string | undefined;
+                // Batch validation
+                if (action.kind === 'setMarkers' && action.reason === 'batch') {
                     const hasErrors = (action.markers ?? []).some((m: any) => m.kind === 'error');
-
-                    if (reason === 'batch') {
-                        // User explicitly pressed the validate button.
-                        // Enable or disable based on whether there are errors.
-                        vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, !hasErrors);
-                    } else if (hasErrors) {
-                        // Automatic live validation found errors → disable button.
-                        // If no errors in live validation, keep the current state unchanged
-                        vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, false);
-                    }
+                    vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, !hasErrors);
                 }
-
                 // Any model modification requires re-validation before generating SQL.
                 if (action.kind === 'setDirtyState' && action.isDirty === true) {
                     vscode.commands.executeCommand('setContext', VALIDATION_CLEAN_CONTEXT, false);

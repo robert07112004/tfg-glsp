@@ -26,18 +26,12 @@ export class GenerateSqlActionHandler implements ActionHandler {
 
     execute(action: GenerateSqlAction): Action[] {
         const modelUri = this.modelState.get(SOURCE_URI_ARG) as string | undefined;
+
         if (!modelUri) {
             return [MessageAction.create('No se pudo determinar la ruta del modelo.', { severity: 'ERROR' })];
         }
         const sql = this.sqlGenerator.generate();
 
-        /*const modelUri = this.modelState.uri;
-        if (!modelUri) {
-            return [MessageAction.create('No se pudo determinar la ruta del modelo.', { severity: 'ERROR' })];
-        }
-
-        const sql = this.sqlGenerator.generate();
-*/
         try {
             const modelPath = modelUri.startsWith('file://') ? fileURLToPath(modelUri) : modelUri;
             const modelDir = path.dirname(modelPath);
