@@ -80,7 +80,7 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
             {
                 elementTypeId: DefaultTypes.EDGE,
                 ...baseEdgeConfig,
-                sourceElementTypeIds: [...entityTypes, ...relationDependencyTypes, ...specializationTypes],
+                sourceElementTypeIds: [...entityTypes, ...attributeTypes, ...relationDependencyTypes, ...specializationTypes],
                 targetElementTypeIds: [...attributeTypes, ...specializationTypes, ...entityTypes]
             },
             {
@@ -92,7 +92,7 @@ export class ErDiagramConfiguration implements DiagramConfiguration {
             {
                 elementTypeId: 'edge:optional',
                 ...baseEdgeConfig,
-                sourceElementTypeIds: [...entityTypes, ...relationDependencyTypes],
+                sourceElementTypeIds: [...entityTypes, ...attributeTypes, ...relationDependencyTypes],
                 targetElementTypeIds: attributeTypes
             }
         ];
